@@ -5,7 +5,7 @@
 	
 	<parent>
 		<groupId>ci.gouv.dgbf.pom</groupId>
-		<artifactId>pom-server-quarkus-oracle-extended</artifactId>
+		<artifactId>pom-server-quarkus-mysql-extended</artifactId>
 		<version>1.0.3-SNAPSHOT</version>
 	</parent>
 	
