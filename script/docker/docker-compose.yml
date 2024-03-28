@@ -1,0 +1,27 @@
+version: '3.8' 
+name: 'form-server'
+
+services:
+  logging-api:
+    image: ${IMAGE_LOGGING_API}
+    container_name: mic-logging-api
+    ports:
+       - ${PORT_LOGGING_API}:8080
+    extra_hosts:
+      sib-database: ${DB_HOST}
+    environment:
+      - SIIB_ENVIRONMENT=${ENV_ID}
+      - SIIB_DB_SID=${DB_SID}
+      
+  form-api:
+    image: ${IMAGE}
+    container_name: mic-form-api
+    ports:
+       - ${PORT}:8080
+    extra_hosts:
+      sib-database: ${DB_HOST}
+    environment:
+      - SIIB_ENVIRONMENT=${ENV_ID}
+      - SIIB_DB_SID=${DB_SID}
+    depends_on:
+      - logging-api
