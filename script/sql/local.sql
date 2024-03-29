@@ -26,7 +26,7 @@ CREATE TABLE TA_GROUPE_ECHEANCE (
 	 AUDIT_ACTEUR VARCHAR(64) NOT NULL COMMENT 'Qui a fait',
 	 AUDIT_FONCTIONNALITE VARCHAR(64) NOT NULL COMMENT 'La fonctionnalité faite',
 	 AUDIT_ACTION VARCHAR(12) NOT NULL COMMENT 'Quoi a été fait sur la donnée',
-	 AUDIT_DATE DATE NOT NULL COMMENT 'Quand cela a été fait',
+	 AUDIT_DATE TIMESTAMP NOT NULL COMMENT 'Quand cela a été fait',
 	 AUDIT_SESSION VARCHAR(36) COMMENT 'Dans quelle session cela a été fait',
 	 
 	-- Constraints
@@ -39,14 +39,14 @@ CREATE TABLE TA_ECHEANCE (
 	IDENTIFIANT VARCHAR(36) NOT NULL COMMENT 'Identifiant de l''échéance',
 	
 	GROUPE VARCHAR(36) NOT NULL COMMENT 'Identifiant du groupe',
-	DATE_ DATE NOT NULL COMMENT 'Date de l''échéance',
+	DATE_ TIMESTAMP NOT NULL COMMENT 'Date de l''échéance',
 	
 	-- Audit
 	 AUDIT_IDENTIFIANT VARCHAR(36) NOT NULL COMMENT 'Identifiant de l''audit',
 	 AUDIT_ACTEUR VARCHAR(64) NOT NULL COMMENT 'Qui a fait',
 	 AUDIT_FONCTIONNALITE VARCHAR(64) NOT NULL COMMENT 'La fonctionnalité faite',
 	 AUDIT_ACTION VARCHAR(12) NOT NULL COMMENT 'Quoi a été fait sur la donnée',
-	 AUDIT_DATE DATE NOT NULL COMMENT 'Quand cela a été fait',
+	 AUDIT_DATE TIMESTAMP NOT NULL COMMENT 'Quand cela a été fait',
 	 AUDIT_SESSION VARCHAR(36) COMMENT 'Dans quelle session cela a été fait',
 	 
 	-- Constraints
@@ -67,7 +67,7 @@ CREATE TABLE TA_MODE_PAIEMENT (
 	 AUDIT_ACTEUR VARCHAR(64) NOT NULL COMMENT 'Qui a fait',
 	 AUDIT_FONCTIONNALITE VARCHAR(64) NOT NULL COMMENT 'La fonctionnalité faite',
 	 AUDIT_ACTION VARCHAR(12) NOT NULL COMMENT 'Quoi a été fait sur la donnée',
-	 AUDIT_DATE DATE NOT NULL COMMENT 'Quand cela a été fait',
+	 AUDIT_DATE TIMESTAMP NOT NULL COMMENT 'Quand cela a été fait',
 	 AUDIT_SESSION VARCHAR(36) COMMENT 'Dans quelle session cela a été fait',
 	 
 	-- Constraints
@@ -87,7 +87,7 @@ CREATE TABLE TA_TYPE_AFFECTATION (
 	 AUDIT_ACTEUR VARCHAR(64) NOT NULL COMMENT 'Qui a fait',
 	 AUDIT_FONCTIONNALITE VARCHAR(64) NOT NULL COMMENT 'La fonctionnalité faite',
 	 AUDIT_ACTION VARCHAR(12) NOT NULL COMMENT 'Quoi a été fait sur la donnée',
-	 AUDIT_DATE DATE NOT NULL COMMENT 'Quand cela a été fait',
+	 AUDIT_DATE TIMESTAMP NOT NULL COMMENT 'Quand cela a été fait',
 	 AUDIT_SESSION VARCHAR(36) COMMENT 'Dans quelle session cela a été fait',
 	 
 	-- Constraints
@@ -107,7 +107,7 @@ CREATE TABLE TA_ANCIENNETE (
 	 AUDIT_ACTEUR VARCHAR(64) NOT NULL COMMENT 'Qui a fait',
 	 AUDIT_FONCTIONNALITE VARCHAR(64) NOT NULL COMMENT 'La fonctionnalité faite',
 	 AUDIT_ACTION VARCHAR(12) NOT NULL COMMENT 'Quoi a été fait sur la donnée',
-	 AUDIT_DATE DATE NOT NULL COMMENT 'Quand cela a été fait',
+	 AUDIT_DATE TIMESTAMP NOT NULL COMMENT 'Quand cela a été fait',
 	 AUDIT_SESSION VARCHAR(36) COMMENT 'Dans quelle session cela a été fait',
 	 
 	-- Constraints
@@ -127,7 +127,7 @@ CREATE TABLE TA_RUBRIQUE (
 	 AUDIT_ACTEUR VARCHAR(64) NOT NULL COMMENT 'Qui a fait',
 	 AUDIT_FONCTIONNALITE VARCHAR(64) NOT NULL COMMENT 'La fonctionnalité faite',
 	 AUDIT_ACTION VARCHAR(12) NOT NULL COMMENT 'Quoi a été fait sur la donnée',
-	 AUDIT_DATE DATE NOT NULL COMMENT 'Quand cela a été fait',
+	 AUDIT_DATE TIMESTAMP NOT NULL COMMENT 'Quand cela a été fait',
 	 AUDIT_SESSION VARCHAR(36) COMMENT 'Dans quelle session cela a été fait',
 	 
 	-- Constraints
@@ -147,7 +147,7 @@ CREATE TABLE TA_GENRE (
 	 AUDIT_ACTEUR VARCHAR(64) NOT NULL COMMENT 'Qui a fait',
 	 AUDIT_FONCTIONNALITE VARCHAR(64) NOT NULL COMMENT 'La fonctionnalité faite',
 	 AUDIT_ACTION VARCHAR(12) NOT NULL COMMENT 'Quoi a été fait sur la donnée',
-	 AUDIT_DATE DATE NOT NULL COMMENT 'Quand cela a été fait',
+	 AUDIT_DATE TIMESTAMP NOT NULL COMMENT 'Quand cela a été fait',
 	 AUDIT_SESSION VARCHAR(36) COMMENT 'Dans quelle session cela a été fait',
 	 
 	-- Constraints
@@ -171,7 +171,7 @@ CREATE TABLE TA_IDENTITE (
 	 AUDIT_ACTEUR VARCHAR(64) NOT NULL COMMENT 'Qui a fait',
 	 AUDIT_FONCTIONNALITE VARCHAR(64) NOT NULL COMMENT 'La fonctionnalité faite',
 	 AUDIT_ACTION VARCHAR(12) NOT NULL COMMENT 'Quoi a été fait sur la donnée',
-	 AUDIT_DATE DATE NOT NULL COMMENT 'Quand cela a été fait',
+	 AUDIT_DATE TIMESTAMP NOT NULL COMMENT 'Quand cela a été fait',
 	 AUDIT_SESSION VARCHAR(36) COMMENT 'Dans quelle session cela a été fait',
 	 
 	-- Constraints
@@ -193,7 +193,7 @@ CREATE TABLE TA_BRANCHE (
 	 AUDIT_ACTEUR VARCHAR(64) NOT NULL COMMENT 'Qui a fait',
 	 AUDIT_FONCTIONNALITE VARCHAR(64) NOT NULL COMMENT 'La fonctionnalité faite',
 	 AUDIT_ACTION VARCHAR(12) NOT NULL COMMENT 'Quoi a été fait sur la donnée',
-	 AUDIT_DATE DATE NOT NULL COMMENT 'Quand cela a été fait',
+	 AUDIT_DATE TIMESTAMP NOT NULL COMMENT 'Quand cela a été fait',
 	 AUDIT_SESSION VARCHAR(36) COMMENT 'Dans quelle session cela a été fait',
 	 
 	-- Constraints
@@ -216,7 +216,7 @@ CREATE TABLE TA_DETAILS_FRAIS (
 	 AUDIT_ACTEUR VARCHAR(64) NOT NULL COMMENT 'Qui a fait',
 	 AUDIT_FONCTIONNALITE VARCHAR(64) NOT NULL COMMENT 'La fonctionnalité faite',
 	 AUDIT_ACTION VARCHAR(12) NOT NULL COMMENT 'Quoi a été fait sur la donnée',
-	 AUDIT_DATE DATE NOT NULL COMMENT 'Quand cela a été fait',
+	 AUDIT_DATE TIMESTAMP NOT NULL COMMENT 'Quand cela a été fait',
 	 AUDIT_SESSION VARCHAR(36) COMMENT 'Dans quelle session cela a été fait',
 	 
 	-- Constraints
@@ -239,7 +239,7 @@ CREATE TABLE TA_FRAIS (
 	 AUDIT_ACTEUR VARCHAR(64) NOT NULL COMMENT 'Qui a fait',
 	 AUDIT_FONCTIONNALITE VARCHAR(64) NOT NULL COMMENT 'La fonctionnalité faite',
 	 AUDIT_ACTION VARCHAR(12) NOT NULL COMMENT 'Quoi a été fait sur la donnée',
-	 AUDIT_DATE DATE NOT NULL COMMENT 'Quand cela a été fait',
+	 AUDIT_DATE TIMESTAMP NOT NULL COMMENT 'Quand cela a été fait',
 	 AUDIT_SESSION VARCHAR(36) COMMENT 'Dans quelle session cela a été fait',
 	 
 	-- Constraints
@@ -266,7 +266,7 @@ CREATE TABLE TA_ELEVE (
 	 AUDIT_ACTEUR VARCHAR(64) NOT NULL COMMENT 'Qui a fait',
 	 AUDIT_FONCTIONNALITE VARCHAR(64) NOT NULL COMMENT 'La fonctionnalité faite',
 	 AUDIT_ACTION VARCHAR(12) NOT NULL COMMENT 'Quoi a été fait sur la donnée',
-	 AUDIT_DATE DATE NOT NULL COMMENT 'Quand cela a été fait',
+	 AUDIT_DATE TIMESTAMP NOT NULL COMMENT 'Quand cela a été fait',
 	 AUDIT_SESSION VARCHAR(36) COMMENT 'Dans quelle session cela a été fait',
 	 
 	-- Constraints
@@ -291,7 +291,7 @@ CREATE TABLE TA_FRAIS_ELEVE (
 	 AUDIT_ACTEUR VARCHAR(64) NOT NULL COMMENT 'Qui a fait',
 	 AUDIT_FONCTIONNALITE VARCHAR(64) NOT NULL COMMENT 'La fonctionnalité faite',
 	 AUDIT_ACTION VARCHAR(12) NOT NULL COMMENT 'Quoi a été fait sur la donnée',
-	 AUDIT_DATE DATE NOT NULL COMMENT 'Quand cela a été fait',
+	 AUDIT_DATE TIMESTAMP NOT NULL COMMENT 'Quand cela a été fait',
 	 AUDIT_SESSION VARCHAR(36) COMMENT 'Dans quelle session cela a été fait',
 	 
 	-- Constraints
@@ -315,7 +315,7 @@ CREATE TABLE TA_PAIEMENT (
 	 AUDIT_ACTEUR VARCHAR(64) NOT NULL COMMENT 'Qui a fait',
 	 AUDIT_FONCTIONNALITE VARCHAR(64) NOT NULL COMMENT 'La fonctionnalité faite',
 	 AUDIT_ACTION VARCHAR(12) NOT NULL COMMENT 'Quoi a été fait sur la donnée',
-	 AUDIT_DATE DATE NOT NULL COMMENT 'Quand cela a été fait',
+	 AUDIT_DATE TIMESTAMP NOT NULL COMMENT 'Quand cela a été fait',
 	 AUDIT_SESSION VARCHAR(36) COMMENT 'Dans quelle session cela a été fait',
 	 
 	-- Constraints
@@ -336,7 +336,7 @@ CREATE TABLE TA_PAIEMENT_FRAIS_ELEVE (
 	 AUDIT_ACTEUR VARCHAR(64) NOT NULL COMMENT 'Qui a fait',
 	 AUDIT_FONCTIONNALITE VARCHAR(64) NOT NULL COMMENT 'La fonctionnalité faite',
 	 AUDIT_ACTION VARCHAR(12) NOT NULL COMMENT 'Quoi a été fait sur la donnée',
-	 AUDIT_DATE DATE NOT NULL COMMENT 'Quand cela a été fait',
+	 AUDIT_DATE TIMESTAMP NOT NULL COMMENT 'Quand cela a été fait',
 	 AUDIT_SESSION VARCHAR(36) COMMENT 'Dans quelle session cela a été fait',
 	 
 	-- Constraints
