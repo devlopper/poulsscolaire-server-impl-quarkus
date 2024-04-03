@@ -10,6 +10,7 @@ import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.cyk.system.poulsscolaire.server.api.IdentityService;
 
 /**
  * Cette classe représente une identité.
@@ -45,6 +46,22 @@ public class Identity extends AbstractIdentifiableAuditable {
   @Transient
   public Boolean isMasculine;
   
+  /**
+   * Cette méthode permet d'assigner les attributs.
+   *
+   * @param request requête
+   * @param array tableau
+   */
+  public void set(IdentityService.IdentityData request, Object[] array) {
+    firstName = request.getFirstName();
+    lastNames = request.getLastNames();
+    emailAddress = request.getEmailAddress();
+    phoneNumber = request.getPhoneNumber();
+    if (array != null) {
+      gender = (Gender) array[0];
+    }
+  }
+  
   public static final String FIELD_FIRST_NAME = "firstName";
   public static final String FIELD_LAST_NAMES = "lastNames";
   public static final String FIELD_EMAIL_ADDRESS = "emailAddress";
@@ -55,10 +72,10 @@ public class Identity extends AbstractIdentifiableAuditable {
   public static final String ENTITY_NAME = "Identity";
   public static final String TABLE_NAME = "TA_IDENTITE";
   
-  public static final String COLUMN_FIRST_NAME = "nom";
-  public static final String COLUMN_LAST_NAMES = "prenoms";
-  public static final String COLUMN_EMAIL_ADDRESS = "adresseEmail";
-  public static final String COLUMN_PHONE_NUMBER = "numeroTelephone";
-  public static final String COLUMN_GENDER = "genre";
+  public static final String COLUMN_FIRST_NAME = "NOM";
+  public static final String COLUMN_LAST_NAMES = "PRENOMS";
+  public static final String COLUMN_EMAIL_ADDRESS = "ADRESSE_EMAIL";
+  public static final String COLUMN_PHONE_NUMBER = "NUMERO_TELEPHONE";
+  public static final String COLUMN_GENDER = "GENRE";
   
 }

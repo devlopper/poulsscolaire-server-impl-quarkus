@@ -25,4 +25,10 @@ public class StudentUpdateBusiness extends AbstractIdentifiableUpdateBusiness<St
   @Inject
   @Getter
   StudentValidator validator;
+
+  @Override
+  protected void prepare(Student student, StudentUpdateRequestDto request) {
+    super.prepare(student, request);
+    student.registrationNumber = request.getRegistrationNumber();
+  }
 }

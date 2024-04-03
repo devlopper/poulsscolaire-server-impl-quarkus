@@ -11,6 +11,8 @@ import jakarta.persistence.EntityManager;
 import java.util.Map;
 import java.util.UUID;
 import org.cyk.system.poulsscolaire.server.api.StudentService.StudentCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.StudentService.StudentUpdateRequestDto;
+import org.cyk.system.poulsscolaire.server.impl.persistence.Identity;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Student;
 import org.junit.jupiter.api.Test;
 
@@ -48,8 +50,24 @@ class StudentBusinessTest extends AbstractTest {
     request.setGenderIdentifier("M");
     request.setAuditWho("christian");
     long count = count(entityManager, Student.ENTITY_NAME);
+    long identityCount = count(entityManager, Identity.ENTITY_NAME);
     createBusiness.process(request);
     assertEquals(count + 1, count(entityManager, Student.ENTITY_NAME));
+    assertEquals(identityCount + 1, count(entityManager, Identity.ENTITY_NAME));
+  }
+  
+  @Test
+  void update() {
+    StudentUpdateRequestDto request = new StudentUpdateRequestDto();
+    request.setIdentifier("toupdate");
+    request.setFirstName(UUID.randomUUID().toString());
+    request.setLastNames(UUID.randomUUID().toString());
+    request.setEmailAddress("m@m.com");
+    request.setGenderIdentifier("M");
+    request.setAuditWho("christian");
+    long count = count(entityManager, Identity.ENTITY_NAME);
+    updateBusiness.process(request);
+    assertEquals(count, count(entityManager, Identity.ENTITY_NAME));
   }
   
   public static class Profile implements QuarkusTestProfile {

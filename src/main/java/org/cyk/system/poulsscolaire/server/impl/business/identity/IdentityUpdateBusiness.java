@@ -28,9 +28,6 @@ public class IdentityUpdateBusiness extends AbstractIdentifiableUpdateBusiness<I
   @Getter
   IdentityValidator validator;
 
-  @Inject
-  IdentityCreateBusiness createBusiness;
-
   @Override
   protected void validate(IdentityUpdateRequestDto request, StringList messages,
       Identity identity) {
@@ -42,6 +39,6 @@ public class IdentityUpdateBusiness extends AbstractIdentifiableUpdateBusiness<I
   @Override
   protected void prepare(Identity identity, IdentityUpdateRequestDto request) {
     super.prepare(identity, request);
-    createBusiness.set(identity, new Object[] {identity.gender}, request);
+    identity.set(request, null);
   }
 }

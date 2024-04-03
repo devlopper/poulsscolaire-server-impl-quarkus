@@ -6,7 +6,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.StudentService.StudentCreateRequestDto;
-import org.cyk.system.poulsscolaire.server.impl.business.identity.IdentityCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.identity.IdentityValidator;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Identity;
 import org.cyk.system.poulsscolaire.server.impl.persistence.IdentityPersistence;
@@ -33,9 +32,6 @@ public class StudentCreateBusiness extends AbstractIdentifiableCreateBusiness<St
 
   @Inject
   IdentityValidator identityValidator;
-  
-  @Inject
-  IdentityCreateBusiness identityCreateBusiness;
 
   @Inject
   IdentityPersistence identityPersistence;
@@ -51,7 +47,8 @@ public class StudentCreateBusiness extends AbstractIdentifiableCreateBusiness<St
     student.identity = new Identity();
     student.identity.generateIdentifier();
     student.identity.audit = student.audit;
-    identityCreateBusiness.set(student.identity, array, request);
+    student.identity.set(request, array);
+    student.registrationNumber = request.getRegistrationNumber();
   }
 
   @Override
