@@ -4,6 +4,7 @@ import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableNamable;
 import ci.gouv.dgbf.extension.server.persistence.query.AbstractDynamicQuery;
+import ci.gouv.dgbf.extension.server.service.api.AbstractIdentifiableFilter;
 import ci.gouv.dgbf.extension.server.service.api.entity.AbstractIdentifiableCodableDto;
 import ci.gouv.dgbf.extension.server.service.api.entity.AbstractIdentifiableCodableNamableDto;
 import ci.gouv.dgbf.extension.server.service.api.entity.AbstractIdentifiableDto;
@@ -14,13 +15,13 @@ import jakarta.persistence.EntityManager;
 import lombok.Getter;
 
 /**
- * Cette classe représente la requête dynamique de {@link Branch}.
+ * Cette classe représente la requête dynamique de {@link Schooling}.
  *
  * @author Christian
  *
  */
 @ApplicationScoped
-public class BranchDynamicQuery extends AbstractDynamicQuery<Branch> {
+public class SchoolingDynamicQuery extends AbstractDynamicQuery<Schooling> {
 
   @Inject
   @Getter
@@ -29,8 +30,8 @@ public class BranchDynamicQuery extends AbstractDynamicQuery<Branch> {
   /**
    * Cette méthode permet d'instancier un object.
    */
-  public BranchDynamicQuery() {
-    super(Branch.class);
+  public SchoolingDynamicQuery() {
+    super(Schooling.class);
   }
 
   @PostConstruct
@@ -43,6 +44,11 @@ public class BranchDynamicQuery extends AbstractDynamicQuery<Branch> {
 
     projectionBuilder().name(AbstractIdentifiableCodableNamableDto.JSON_NAME)
         .fieldName(AbstractIdentifiableCodableNamable.FIELD_NAME).build();
+
+    // Prédicats
+    predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)
+        .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
+        .valueFunction(AbstractIdentifiableFilter::getIdentifier).build();
 
     // Ordres par défaut
     orderBuilder().fieldName(AbstractIdentifiableCodableNamable.FIELD_NAME).build();

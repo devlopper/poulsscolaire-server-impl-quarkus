@@ -1,19 +1,19 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
-import ci.gouv.dgbf.extension.server.persistence.AbstractIdentifiableCodableNamablePersistence;
+import ci.gouv.dgbf.extension.server.persistence.AbstractIdentifiablePersistence;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
 
 /**
- * Cette classe représente les fonctionnalités de persistance de {@link Branch}.
+ * Cette classe représente les fonctionnalités de persistance de {@link Schooling}.
  *
  * @author Christian
  *
  */
 @ApplicationScoped
-public class BranchPersistence extends AbstractIdentifiableCodableNamablePersistence<Branch> {
+public class SchoolingPersistence extends AbstractIdentifiablePersistence<Schooling> {
 
   @Inject
   @Getter
@@ -22,9 +22,9 @@ public class BranchPersistence extends AbstractIdentifiableCodableNamablePersist
   /**
    * Cette méthode permet de construire une instance.
    */
-  public BranchPersistence() {
-    super(Branch.class);
-    name = "branche";
-    pluralName = "branches";
+  public SchoolingPersistence() {
+    super(Schooling.class);
+    name = "scolarité";
+    pluralName = "scolarités";
   }
 }

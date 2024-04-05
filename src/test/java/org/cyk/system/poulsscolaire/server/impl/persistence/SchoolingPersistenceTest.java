@@ -7,13 +7,13 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest
-class BranchPersistenceTest {
+class SchoolingPersistenceTest {
 
   @Inject
-  BranchPersistence persistence;
+  SchoolingPersistence persistence;
   
   @Test
   void getName() {
-    assertEquals("branche", persistence.getName());
+    assertEquals("scolarité", persistence.getName());
   }
 }

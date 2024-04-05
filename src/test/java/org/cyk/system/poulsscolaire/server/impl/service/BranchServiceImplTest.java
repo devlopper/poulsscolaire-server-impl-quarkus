@@ -9,15 +9,15 @@ import io.quarkus.test.junit.QuarkusMock;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import org.cyk.system.poulsscolaire.server.api.BranchDto;
-import org.cyk.system.poulsscolaire.server.api.BranchService;
-import org.cyk.system.poulsscolaire.server.api.BranchService.GetManyResponseDto;
-import org.cyk.system.poulsscolaire.server.impl.business.branch.BranchCreateBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.branch.BranchDeleteBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.branch.BranchReadByIdentifierBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.branch.BranchReadManyBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.branch.BranchReadOneBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.branch.BranchUpdateBusiness;
+import org.cyk.system.poulsscolaire.server.api.SchoolingDto;
+import org.cyk.system.poulsscolaire.server.api.SchoolingService;
+import org.cyk.system.poulsscolaire.server.api.SchoolingService.GetManyResponseDto;
+import org.cyk.system.poulsscolaire.server.impl.business.schooling.SchoolingCreateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.schooling.SchoolingDeleteBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.schooling.SchoolingReadByIdentifierBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.schooling.SchoolingReadManyBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.schooling.SchoolingReadOneBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.schooling.SchoolingUpdateBusiness;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -32,67 +32,67 @@ class BranchServiceImplTest extends AbstractTest {
 
   @Test
   void create() {
-    BranchCreateBusiness business =
-        installMockForType(BranchCreateBusiness.class);
+    SchoolingCreateBusiness business =
+        installMockForType(SchoolingCreateBusiness.class);
     Mockito.when(business.process(any())).thenReturn(new CreateResponseDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
-        .post(BranchService.PATH + "/" + BranchService.CREATE_PATH).then().log()
+        .post(SchoolingService.PATH + "/" + SchoolingService.CREATE_PATH).then().log()
         .ifError().statusCode(jakarta.ws.rs.core.Response.Status.CREATED.getStatusCode());
   }
 
   @Test
   void readMany() {
-    BranchReadManyBusiness business =
-        installMockForType(BranchReadManyBusiness.class);
+    SchoolingReadManyBusiness business =
+        installMockForType(SchoolingReadManyBusiness.class);
     Mockito.when(business.process(any())).thenReturn(new GetManyResponseDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
-        .post(BranchService.PATH + "/" + BranchService.GET_MANY_PATH).then()
+        .post(SchoolingService.PATH + "/" + SchoolingService.GET_MANY_PATH).then()
         .log().ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
   }
 
   @Test
   void readOne() {
-    BranchReadOneBusiness business =
-        installMockForType(BranchReadOneBusiness.class);
-    Mockito.when(business.process(any())).thenReturn(new BranchDto());
+    SchoolingReadOneBusiness business =
+        installMockForType(SchoolingReadOneBusiness.class);
+    Mockito.when(business.process(any())).thenReturn(new SchoolingDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
-        .post(BranchService.PATH + "/" + BranchService.GET_ONE_PATH).then()
+        .post(SchoolingService.PATH + "/" + SchoolingService.GET_ONE_PATH).then()
         .log().ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
   }
   
   @Test
   void readByIdentifier() {
-    BranchReadByIdentifierBusiness business =
-        installMockForType(BranchReadByIdentifierBusiness.class);
-    Mockito.when(business.process(any())).thenReturn(new BranchDto());
+    SchoolingReadByIdentifierBusiness business =
+        installMockForType(SchoolingReadByIdentifierBusiness.class);
+    Mockito.when(business.process(any())).thenReturn(new SchoolingDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
-        .post(BranchService.PATH + "/" + BranchService.GET_BY_IDENTIFIER_PATH)
+        .post(SchoolingService.PATH + "/" + SchoolingService.GET_BY_IDENTIFIER_PATH)
         .then().log().ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
   }
 
   @Test
   void update() {
-    BranchUpdateBusiness business =
-        installMockForType(BranchUpdateBusiness.class);
+    SchoolingUpdateBusiness business =
+        installMockForType(SchoolingUpdateBusiness.class);
     Mockito.when(business.process(any())).thenReturn(new IdentifiableResponseDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
-        .put(BranchService.PATH + "/" + BranchService.UPDATE_PATH).then().log()
+        .put(SchoolingService.PATH + "/" + SchoolingService.UPDATE_PATH).then().log()
         .ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
   }
 
   @Test
   void delete() {
-    BranchDeleteBusiness business =
-        installMockForType(BranchDeleteBusiness.class);
+    SchoolingDeleteBusiness business =
+        installMockForType(SchoolingDeleteBusiness.class);
     Mockito.when(business.process(any())).thenReturn(new IdentifiableResponseDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
-        .delete(BranchService.PATH + "/" + BranchService.DELETE_PATH).then()
+        .delete(SchoolingService.PATH + "/" + SchoolingService.DELETE_PATH).then()
         .log().ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
   }
   

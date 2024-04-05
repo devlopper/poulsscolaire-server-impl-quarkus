@@ -4,6 +4,7 @@ import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableNamable;
 import ci.gouv.dgbf.extension.server.persistence.query.AbstractDynamicQuery;
+import ci.gouv.dgbf.extension.server.service.api.AbstractIdentifiableFilter;
 import ci.gouv.dgbf.extension.server.service.api.entity.AbstractIdentifiableCodableDto;
 import ci.gouv.dgbf.extension.server.service.api.entity.AbstractIdentifiableCodableNamableDto;
 import ci.gouv.dgbf.extension.server.service.api.entity.AbstractIdentifiableDto;
@@ -43,6 +44,11 @@ public class IdentityDynamicQuery extends AbstractDynamicQuery<Identity> {
 
     projectionBuilder().name(AbstractIdentifiableCodableNamableDto.JSON_NAME)
         .fieldName(AbstractIdentifiableCodableNamable.FIELD_NAME).build();
+
+    // Prédicats
+    predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)
+        .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
+        .valueFunction(AbstractIdentifiableFilter::getIdentifier).build();
 
     // Ordres par défaut
     orderBuilder().fieldName(AbstractIdentifiableCodableNamable.FIELD_NAME).build();

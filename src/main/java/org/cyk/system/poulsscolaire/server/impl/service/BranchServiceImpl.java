@@ -12,44 +12,44 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
-import org.cyk.system.poulsscolaire.server.api.BranchDto;
-import org.cyk.system.poulsscolaire.server.api.BranchService;
-import org.cyk.system.poulsscolaire.server.impl.business.branch.BranchCreateBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.branch.BranchDeleteBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.branch.BranchReadByIdentifierBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.branch.BranchReadManyBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.branch.BranchReadOneBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.branch.BranchUpdateBusiness;
+import org.cyk.system.poulsscolaire.server.api.SchoolingDto;
+import org.cyk.system.poulsscolaire.server.api.SchoolingService;
+import org.cyk.system.poulsscolaire.server.impl.business.schooling.SchoolingCreateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.schooling.SchoolingDeleteBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.schooling.SchoolingReadByIdentifierBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.schooling.SchoolingReadManyBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.schooling.SchoolingReadOneBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.schooling.SchoolingUpdateBusiness;
 
 /**
- * Cette classe représente l'implémentation de {@link BranchService}.
+ * Cette classe représente l'implémentation de {@link SchoolingService}.
  *
  * @author Christian
  *
  */
 @ApplicationScoped
-public class BranchServiceImpl extends AbstractServiceImpl implements BranchService {
+public class BranchServiceImpl extends AbstractServiceImpl implements SchoolingService {
 
   @Inject
-  BranchCreateBusiness createBusiness;
+  SchoolingCreateBusiness createBusiness;
   
   @Inject
-  BranchReadManyBusiness readManyBusiness;
+  SchoolingReadManyBusiness readManyBusiness;
   
   @Inject
-  BranchReadOneBusiness readOneBusiness;
+  SchoolingReadOneBusiness readOneBusiness;
   
   @Inject
-  BranchReadByIdentifierBusiness readByIdentifierBusiness;
+  SchoolingReadByIdentifierBusiness readByIdentifierBusiness;
   
   @Inject
-  BranchUpdateBusiness updateBusiness;
+  SchoolingUpdateBusiness updateBusiness;
   
   @Inject
-  BranchDeleteBusiness deleteBusiness;
+  SchoolingDeleteBusiness deleteBusiness;
 
   @Override
-  public Response create(BranchCreateRequestDto request) {
+  public Response create(SchoolingCreateRequestDto request) {
     CreateResponseDto dto = createBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);
@@ -67,7 +67,7 @@ public class BranchServiceImpl extends AbstractServiceImpl implements BranchServ
 
   @Override
   public Response getOne(GetOneRequestDto request) {
-    BranchDto dto = readOneBusiness.process(request);
+    SchoolingDto dto = readOneBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);
     return responseBuilder.build();
@@ -75,14 +75,14 @@ public class BranchServiceImpl extends AbstractServiceImpl implements BranchServ
   
   @Override
   public Response getByIdentifier(GetByIdentifierRequestDto request) {
-    BranchDto dto = readByIdentifierBusiness.process(request);
+    SchoolingDto dto = readByIdentifierBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);
     return responseBuilder.build();
   }
 
   @Override
-  public Response update(BranchUpdateRequestDto request) {
+  public Response update(SchoolingUpdateRequestDto request) {
     IdentifiableResponseDto dto = updateBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);

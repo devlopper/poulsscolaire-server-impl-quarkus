@@ -16,12 +16,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 @QuarkusTest
-class BranchDynamicQueryTest {
+class SchoolingDynamicQueryTest {
 
   @Inject
-  BranchDynamicQuery dynamicQuery;
+  SchoolingDynamicQuery dynamicQuery;
 
-  DynamicQueryParameters<Branch> parameters = new DynamicQueryParameters<>();
+  DynamicQueryParameters<Schooling> parameters = new DynamicQueryParameters<>();
 
   @SuppressWarnings("unchecked")
   @Test

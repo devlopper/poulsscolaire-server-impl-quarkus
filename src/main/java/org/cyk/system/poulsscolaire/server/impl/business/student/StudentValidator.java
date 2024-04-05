@@ -1,6 +1,6 @@
 package org.cyk.system.poulsscolaire.server.impl.business.student;
 
-import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableValidator;
+import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableCodableValidator;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
@@ -14,7 +14,7 @@ import org.cyk.system.poulsscolaire.server.impl.persistence.StudentPersistence;
  *
  */
 @ApplicationScoped
-public class StudentValidator extends AbstractIdentifiableValidator<Student> {
+public class StudentValidator extends AbstractIdentifiableCodableValidator<Student> {
 
   @Inject
   @Getter

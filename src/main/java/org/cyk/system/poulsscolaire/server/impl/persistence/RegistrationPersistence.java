@@ -1,6 +1,6 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
-import ci.gouv.dgbf.extension.server.persistence.AbstractIdentifiableCodableNamablePersistence;
+import ci.gouv.dgbf.extension.server.persistence.AbstractIdentifiableCodablePersistence;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
@@ -14,7 +14,7 @@ import lombok.Getter;
  */
 @ApplicationScoped
 public class RegistrationPersistence
-    extends AbstractIdentifiableCodableNamablePersistence<Registration> {
+    extends AbstractIdentifiableCodablePersistence<Registration> {
 
   @Inject
   @Getter
