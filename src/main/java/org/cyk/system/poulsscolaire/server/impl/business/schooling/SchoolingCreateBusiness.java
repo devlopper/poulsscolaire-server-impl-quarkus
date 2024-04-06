@@ -25,4 +25,13 @@ public class SchoolingCreateBusiness extends AbstractIdentifiableCreateBusiness<
   @Inject
   @Getter
   SchoolingValidator validator;
+
+  @Override
+  protected void setFields(Schooling schooling, Object[] array, SchoolingCreateRequestDto request) {
+    super.setFields(schooling, array, request);
+    schooling.schoolIdentifier = request.getSchoolIdentifier();
+    schooling.branchIdentifier = request.getBranchIdentifier();
+    schooling.periodIdentifier = request.getPeriodIdentifier();
+    schooling.setCode(String.format("S%s", System.currentTimeMillis()));
+  }
 }

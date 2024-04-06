@@ -2,17 +2,16 @@ package org.cyk.system.poulsscolaire.server.impl.persistence;
 
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodable;
-import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableNamable;
 import ci.gouv.dgbf.extension.server.persistence.query.AbstractDynamicQuery;
 import ci.gouv.dgbf.extension.server.service.api.AbstractIdentifiableFilter;
 import ci.gouv.dgbf.extension.server.service.api.entity.AbstractIdentifiableCodableDto;
-import ci.gouv.dgbf.extension.server.service.api.entity.AbstractIdentifiableCodableNamableDto;
 import ci.gouv.dgbf.extension.server.service.api.entity.AbstractIdentifiableDto;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
+import org.cyk.system.poulsscolaire.server.api.SchoolingDto;
 
 /**
  * Cette classe représente la requête dynamique de {@link Schooling}.
@@ -42,8 +41,14 @@ public class SchoolingDynamicQuery extends AbstractDynamicQuery<Schooling> {
     projectionBuilder().name(AbstractIdentifiableCodableDto.JSON_CODE)
         .fieldName(AbstractIdentifiableCodable.FIELD_CODE).build();
 
-    projectionBuilder().name(AbstractIdentifiableCodableNamableDto.JSON_NAME)
-        .fieldName(AbstractIdentifiableCodableNamable.FIELD_NAME).build();
+    projectionBuilder().name(SchoolingDto.JSON_SCHOOL_IDENTIFIER)
+        .fieldName(Schooling.FIELD_SCHOOL_IDENTIFIER).build();
+
+    projectionBuilder().name(SchoolingDto.JSON_BRANCH_IDENTIFIER)
+        .fieldName(Schooling.FIELD_BRANCH_IDENTIFIER).build();
+
+    projectionBuilder().name(SchoolingDto.JSON_PERIOD_IDENTIFIER)
+        .fieldName(Schooling.FIELD_PERIOD_IDENTIFIER).build();
 
     // Prédicats
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)
@@ -51,7 +56,6 @@ public class SchoolingDynamicQuery extends AbstractDynamicQuery<Schooling> {
         .valueFunction(AbstractIdentifiableFilter::getIdentifier).build();
 
     // Ordres par défaut
-    orderBuilder().fieldName(AbstractIdentifiableCodableNamable.FIELD_NAME).build();
     orderBuilder().fieldName(AbstractIdentifiableCodable.FIELD_CODE).build();
   }
 }

@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 
 /**
@@ -36,11 +37,27 @@ public class Registration extends AbstractIdentifiableCodableAuditable {
   @ManyToOne
   @JoinColumn(name = COLUMN_SENIORITY, nullable = false)
   public Seniority seniority;
+    
+  @Transient
+  public String studentAsString;
+  
+  @Transient
+  public String schoolingAsString;
+  
+  @Transient
+  public String assignmentTypeAsString;
+  
+  @Transient
+  public String seniorityAsString;
   
   public static final String FIELD_STUDENT = "student";
+  public static final String FIELD_STUDENT_AS_STRING = "studentAsString";
   public static final String FIELD_SCHOOLING = "schooling";
+  public static final String FIELD_SCHOOLING_AS_STRING = "schoolingAsString";
   public static final String FIELD_ASSIGNMENT_TYPE = "assignmentType";
+  public static final String FIELD_ASSIGNMENT_TYPE_AS_STRING = "assignmentTypeAsString";
   public static final String FIELD_SENIORITY = "seniority";
+  public static final String FIELD_SENIORITY_AS_STRING = "seniorityAsString";
   
   public static final String ENTITY_NAME = "Registration";
   public static final String TABLE_NAME = "TA_INSCRIPTION";

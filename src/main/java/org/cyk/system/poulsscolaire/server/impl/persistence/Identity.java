@@ -8,8 +8,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
 import org.cyk.system.poulsscolaire.server.api.IdentityService;
 
 /**
@@ -20,8 +18,6 @@ import org.cyk.system.poulsscolaire.server.api.IdentityService;
  */
 @Entity(name = Identity.ENTITY_NAME)
 @Table(name = Identity.TABLE_NAME)
-@Getter
-@Setter
 public class Identity extends AbstractIdentifiableAuditable {
 
   @Column(name = COLUMN_FIRST_NAME, nullable = false)

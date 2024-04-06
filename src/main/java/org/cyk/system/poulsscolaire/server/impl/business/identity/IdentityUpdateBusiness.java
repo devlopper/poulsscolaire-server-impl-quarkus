@@ -33,7 +33,7 @@ public class IdentityUpdateBusiness extends AbstractIdentifiableUpdateBusiness<I
       Identity identity) {
     super.validate(request, messages, identity);
     Object[] array = validator.validate(request, messages);
-    identity.setGender((Gender) array[0]);
+    identity.gender = (Gender) array[0];
   }
 
   @Override

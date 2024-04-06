@@ -6,7 +6,6 @@ import ci.gouv.dgbf.extension.test.AbstractTest;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
-import java.util.UUID;
 import org.cyk.system.poulsscolaire.server.api.SchoolingService.SchoolingCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Schooling;
 import org.junit.jupiter.api.Test;
@@ -38,8 +37,9 @@ class SchoolingBusinessTest extends AbstractTest {
   @Test
   void create() {
     SchoolingCreateRequestDto request = new SchoolingCreateRequestDto();
-    request.setCode(UUID.randomUUID().toString());
-    request.setName(UUID.randomUUID().toString());
+    request.setSchoolIdentifier("1");
+    request.setBranchIdentifier("1");
+    request.setPeriodIdentifier("1");
     request.setAuditWho("christian");
     long count = count(entityManager, Schooling.ENTITY_NAME);
     createBusiness.process(request);
