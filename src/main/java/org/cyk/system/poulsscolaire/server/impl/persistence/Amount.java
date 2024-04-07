@@ -41,7 +41,7 @@ public class Amount extends AbstractIdentifiableAuditable {
   public Integer paymentOrderNumber;
 
   @Transient
-  public Boolean paymentOrderNumberAsString;
+  public String paymentOrderNumberAsString;
 
   @Column(name = COLUMN_RENEWABLE)
   public Boolean renewable;
@@ -52,6 +52,9 @@ public class Amount extends AbstractIdentifiableAuditable {
   @ManyToOne
   @JoinColumn(name = COLUMN_DEADLINE)
   public Deadline deadline;
+  
+  @Transient
+  public String deadlineIdentifier;
   
   @Transient
   public String deadlineAsString;
@@ -85,6 +88,7 @@ public class Amount extends AbstractIdentifiableAuditable {
   public static final String FIELD_RENEWABLE = "renewable";
   public static final String FIELD_RENEWABLE_AS_STRING = "renewableAsString";
   public static final String FIELD_DEADLINE = "deadline";
+  public static final String FIELD_DEADLINE_IDENTIFIER = "deadlineIdentifier";
   public static final String FIELD_DEADLINE_AS_STRING = "deadlineAsString";
   
   public static final String ENTITY_NAME = "Amount";
