@@ -36,7 +36,6 @@ public class DeadlineCreateBusiness extends AbstractIdentifiableCreateBusiness<D
   protected Object[] validate(DeadlineCreateRequestDto request, StringList messages) {
     DeadlineGroup group =
         groupValidator.validateInstanceByIdentifier(request.getGroupIdentifier(), messages);
-    validationHelper.validateFuturByName(this, request.getDate(), "date d'échéance", messages);
     return new Object[] {group};
   }
 

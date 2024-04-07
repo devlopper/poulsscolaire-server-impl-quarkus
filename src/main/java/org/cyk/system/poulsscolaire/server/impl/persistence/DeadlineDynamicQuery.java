@@ -13,6 +13,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
+import org.cyk.system.poulsscolaire.server.api.DeadlineDto;
 
 /**
  * Cette classe représente la requête dynamique de {@link Deadline}.
@@ -44,6 +45,14 @@ public class DeadlineDynamicQuery extends AbstractDynamicQuery<Deadline> {
 
     projectionBuilder().name(AbstractIdentifiableCodableNamableDto.JSON_NAME)
         .fieldName(AbstractIdentifiableCodableNamable.FIELD_NAME).build();
+
+    projectionBuilder().name(DeadlineDto.JSON_GROUP_AS_STRING)
+        .nameFieldName(Deadline.FIELD_GROUP_AS_STRING)
+        .fieldName(fieldName(Deadline.FIELD_GROUP, AbstractIdentifiableCodableNamable.FIELD_NAME))
+        .build();
+
+    projectionBuilder().name(DeadlineDto.JSON_DATE_AS_STRING)
+        .nameFieldName(Deadline.FIELD_DATE_AS_STRING).fieldName(Deadline.FIELD_DATE).build();
 
     // Prédicats
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)

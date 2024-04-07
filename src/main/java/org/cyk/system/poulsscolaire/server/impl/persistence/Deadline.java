@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
@@ -28,8 +29,18 @@ public class Deadline extends AbstractIdentifiableCodableNamableAuditable {
   @Column(name = COLUMN_DATE)
   public LocalDateTime date;
   
+  /* Champs calculés */
+  
+  @Transient
+  public String groupAsString;
+  
+  @Transient
+  public String dateAsString;
+  
   public static final String FIELD_GROUP = "group";
   public static final String FIELD_DATE = "date";
+  public static final String FIELD_GROUP_AS_STRING = "groupAsString";
+  public static final String FIELD_DATE_AS_STRING = "dateAsString";
   
   public static final String ENTITY_NAME = "Deadline";
   public static final String TABLE_NAME = "TA_ECHEANCE";
