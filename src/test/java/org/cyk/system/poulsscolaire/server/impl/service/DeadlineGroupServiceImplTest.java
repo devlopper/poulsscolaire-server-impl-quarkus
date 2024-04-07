@@ -9,20 +9,20 @@ import io.quarkus.test.junit.QuarkusMock;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import org.cyk.system.poulsscolaire.server.api.DueGroupDto;
-import org.cyk.system.poulsscolaire.server.api.DueGroupService;
-import org.cyk.system.poulsscolaire.server.api.DueGroupService.GetManyResponseDto;
-import org.cyk.system.poulsscolaire.server.impl.business.duegroup.DueGroupCreateBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.duegroup.DueGroupDeleteBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.duegroup.DueGroupReadByIdentifierBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.duegroup.DueGroupReadManyBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.duegroup.DueGroupReadOneBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.duegroup.DueGroupUpdateBusiness;
+import org.cyk.system.poulsscolaire.server.api.DeadlineGroupDto;
+import org.cyk.system.poulsscolaire.server.api.DeadlineGroupService;
+import org.cyk.system.poulsscolaire.server.api.DeadlineGroupService.GetManyResponseDto;
+import org.cyk.system.poulsscolaire.server.impl.business.deadlinegroup.DeadlineGroupCreateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.deadlinegroup.DeadlineGroupDeleteBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.deadlinegroup.DeadlineGroupReadByIdentifierBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.deadlinegroup.DeadlineGroupReadManyBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.deadlinegroup.DeadlineGroupReadOneBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.deadlinegroup.DeadlineGroupUpdateBusiness;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 @QuarkusTest
-class DueGroupServiceImplTest extends AbstractTest {
+class DeadlineGroupServiceImplTest extends AbstractTest {
 
   <T> T installMockForType(Class<T> clazz) {
     T business = Mockito.mock(clazz);
@@ -32,67 +32,67 @@ class DueGroupServiceImplTest extends AbstractTest {
 
   @Test
   void create() {
-    DueGroupCreateBusiness business =
-        installMockForType(DueGroupCreateBusiness.class);
+    DeadlineGroupCreateBusiness business =
+        installMockForType(DeadlineGroupCreateBusiness.class);
     Mockito.when(business.process(any())).thenReturn(new CreateResponseDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
-        .post(DueGroupService.PATH + "/" + DueGroupService.CREATE_PATH).then().log()
+        .post(DeadlineGroupService.PATH + "/" + DeadlineGroupService.CREATE_PATH).then().log()
         .ifError().statusCode(jakarta.ws.rs.core.Response.Status.CREATED.getStatusCode());
   }
 
   @Test
   void readMany() {
-    DueGroupReadManyBusiness business =
-        installMockForType(DueGroupReadManyBusiness.class);
+    DeadlineGroupReadManyBusiness business =
+        installMockForType(DeadlineGroupReadManyBusiness.class);
     Mockito.when(business.process(any())).thenReturn(new GetManyResponseDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
-        .post(DueGroupService.PATH + "/" + DueGroupService.GET_MANY_PATH).then()
+        .post(DeadlineGroupService.PATH + "/" + DeadlineGroupService.GET_MANY_PATH).then()
         .log().ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
   }
 
   @Test
   void readOne() {
-    DueGroupReadOneBusiness business =
-        installMockForType(DueGroupReadOneBusiness.class);
-    Mockito.when(business.process(any())).thenReturn(new DueGroupDto());
+    DeadlineGroupReadOneBusiness business =
+        installMockForType(DeadlineGroupReadOneBusiness.class);
+    Mockito.when(business.process(any())).thenReturn(new DeadlineGroupDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
-        .post(DueGroupService.PATH + "/" + DueGroupService.GET_ONE_PATH).then()
+        .post(DeadlineGroupService.PATH + "/" + DeadlineGroupService.GET_ONE_PATH).then()
         .log().ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
   }
   
   @Test
   void readByIdentifier() {
-    DueGroupReadByIdentifierBusiness business =
-        installMockForType(DueGroupReadByIdentifierBusiness.class);
-    Mockito.when(business.process(any())).thenReturn(new DueGroupDto());
+    DeadlineGroupReadByIdentifierBusiness business =
+        installMockForType(DeadlineGroupReadByIdentifierBusiness.class);
+    Mockito.when(business.process(any())).thenReturn(new DeadlineGroupDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
-        .post(DueGroupService.PATH + "/" + DueGroupService.GET_BY_IDENTIFIER_PATH)
+        .post(DeadlineGroupService.PATH + "/" + DeadlineGroupService.GET_BY_IDENTIFIER_PATH)
         .then().log().ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
   }
 
   @Test
   void update() {
-    DueGroupUpdateBusiness business =
-        installMockForType(DueGroupUpdateBusiness.class);
+    DeadlineGroupUpdateBusiness business =
+        installMockForType(DeadlineGroupUpdateBusiness.class);
     Mockito.when(business.process(any())).thenReturn(new IdentifiableResponseDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
-        .put(DueGroupService.PATH + "/" + DueGroupService.UPDATE_PATH).then().log()
+        .put(DeadlineGroupService.PATH + "/" + DeadlineGroupService.UPDATE_PATH).then().log()
         .ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
   }
 
   @Test
   void delete() {
-    DueGroupDeleteBusiness business =
-        installMockForType(DueGroupDeleteBusiness.class);
+    DeadlineGroupDeleteBusiness business =
+        installMockForType(DeadlineGroupDeleteBusiness.class);
     Mockito.when(business.process(any())).thenReturn(new IdentifiableResponseDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
-        .delete(DueGroupService.PATH + "/" + DueGroupService.DELETE_PATH).then()
+        .delete(DeadlineGroupService.PATH + "/" + DeadlineGroupService.DELETE_PATH).then()
         .log().ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
   }
   

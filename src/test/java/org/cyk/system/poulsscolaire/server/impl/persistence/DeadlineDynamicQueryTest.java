@@ -11,25 +11,25 @@ import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
-import org.cyk.system.poulsscolaire.server.api.DueGroupDto;
+import org.cyk.system.poulsscolaire.server.api.DeadlineDto;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 @QuarkusTest
-class DueGroupDynamicQueryTest {
+class DeadlineDynamicQueryTest {
 
   @Inject
-  DueGroupDynamicQuery dynamicQuery;
+  DeadlineDynamicQuery dynamicQuery;
 
-  DynamicQueryParameters<DueGroup> parameters = new DynamicQueryParameters<>();
+  DynamicQueryParameters<Deadline> parameters = new DynamicQueryParameters<>();
 
   @Test
   void buildQueryString() {
     parameters.setResultMode(ResultMode.ONE);
-    parameters.filter().addCriteria(DueGroupDto.JSON_IDENTIFIER, "1");
-    assertEquals("SELECT t.identifier FROM DueGroup t WHERE t.identifier = :identifiant",
+    parameters.filter().addCriteria(DeadlineDto.JSON_IDENTIFIER, "1");
+    assertEquals("SELECT t.identifier FROM Deadline t WHERE t.identifier = :identifiant",
         dynamicQuery.buildQueryString(parameters));
   }
 

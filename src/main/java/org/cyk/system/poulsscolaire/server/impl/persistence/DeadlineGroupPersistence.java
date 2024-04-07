@@ -7,13 +7,14 @@ import jakarta.persistence.EntityManager;
 import lombok.Getter;
 
 /**
- * Cette classe représente les fonctionnalités de persistance de {@link DueGroup}.
+ * Cette classe représente les fonctionnalités de persistance de {@link DeadlineGroup}.
  *
  * @author Christian
  *
  */
 @ApplicationScoped
-public class DueGroupPersistence extends AbstractIdentifiableCodableNamablePersistence<DueGroup> {
+public class DeadlineGroupPersistence
+    extends AbstractIdentifiableCodableNamablePersistence<DeadlineGroup> {
 
   @Inject
   @Getter
@@ -22,8 +23,8 @@ public class DueGroupPersistence extends AbstractIdentifiableCodableNamablePersi
   /**
    * Cette méthode permet de construire une instance.
    */
-  public DueGroupPersistence() {
-    super(DueGroup.class);
+  public DeadlineGroupPersistence() {
+    super(DeadlineGroup.class);
     name = "groupe d'échéance";
     pluralName = "groupes d'échéance";
   }

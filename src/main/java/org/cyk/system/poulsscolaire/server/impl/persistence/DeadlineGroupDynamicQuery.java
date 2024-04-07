@@ -15,13 +15,13 @@ import jakarta.persistence.EntityManager;
 import lombok.Getter;
 
 /**
- * Cette classe représente la requête dynamique de {@link DueGroup}.
+ * Cette classe représente la requête dynamique de {@link DeadlineGroup}.
  *
  * @author Christian
  *
  */
 @ApplicationScoped
-public class DueGroupDynamicQuery extends AbstractDynamicQuery<DueGroup> {
+public class DeadlineGroupDynamicQuery extends AbstractDynamicQuery<DeadlineGroup> {
 
   @Inject
   @Getter
@@ -30,8 +30,8 @@ public class DueGroupDynamicQuery extends AbstractDynamicQuery<DueGroup> {
   /**
    * Cette méthode permet d'instancier un object.
    */
-  public DueGroupDynamicQuery() {
-    super(DueGroup.class);
+  public DeadlineGroupDynamicQuery() {
+    super(DeadlineGroup.class);
   }
 
   @PostConstruct

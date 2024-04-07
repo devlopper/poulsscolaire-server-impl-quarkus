@@ -12,44 +12,44 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
-import org.cyk.system.poulsscolaire.server.api.DueGroupDto;
-import org.cyk.system.poulsscolaire.server.api.DueGroupService;
-import org.cyk.system.poulsscolaire.server.impl.business.duegroup.DueGroupCreateBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.duegroup.DueGroupDeleteBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.duegroup.DueGroupReadByIdentifierBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.duegroup.DueGroupReadManyBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.duegroup.DueGroupReadOneBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.duegroup.DueGroupUpdateBusiness;
+import org.cyk.system.poulsscolaire.server.api.DeadlineGroupDto;
+import org.cyk.system.poulsscolaire.server.api.DeadlineGroupService;
+import org.cyk.system.poulsscolaire.server.impl.business.deadlinegroup.DeadlineGroupCreateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.deadlinegroup.DeadlineGroupDeleteBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.deadlinegroup.DeadlineGroupReadByIdentifierBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.deadlinegroup.DeadlineGroupReadManyBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.deadlinegroup.DeadlineGroupReadOneBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.deadlinegroup.DeadlineGroupUpdateBusiness;
 
 /**
- * Cette classe représente l'implémentation de {@link DueGroupService}.
+ * Cette classe représente l'implémentation de {@link DeadlineGroupService}.
  *
  * @author Christian
  *
  */
 @ApplicationScoped
-public class DueGroupServiceImpl extends AbstractServiceImpl implements DueGroupService {
+public class DeadlineGroupServiceImpl extends AbstractServiceImpl implements DeadlineGroupService {
 
   @Inject
-  DueGroupCreateBusiness createBusiness;
+  DeadlineGroupCreateBusiness createBusiness;
   
   @Inject
-  DueGroupReadManyBusiness readManyBusiness;
+  DeadlineGroupReadManyBusiness readManyBusiness;
   
   @Inject
-  DueGroupReadOneBusiness readOneBusiness;
+  DeadlineGroupReadOneBusiness readOneBusiness;
   
   @Inject
-  DueGroupReadByIdentifierBusiness readByIdentifierBusiness;
+  DeadlineGroupReadByIdentifierBusiness readByIdentifierBusiness;
   
   @Inject
-  DueGroupUpdateBusiness updateBusiness;
+  DeadlineGroupUpdateBusiness updateBusiness;
   
   @Inject
-  DueGroupDeleteBusiness deleteBusiness;
+  DeadlineGroupDeleteBusiness deleteBusiness;
 
   @Override
-  public Response create(DueGroupCreateRequestDto request) {
+  public Response create(DeadlineGroupCreateRequestDto request) {
     CreateResponseDto dto = createBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);
@@ -67,7 +67,7 @@ public class DueGroupServiceImpl extends AbstractServiceImpl implements DueGroup
 
   @Override
   public Response getOne(GetOneRequestDto request) {
-    DueGroupDto dto = readOneBusiness.process(request);
+    DeadlineGroupDto dto = readOneBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);
     return responseBuilder.build();
@@ -75,14 +75,14 @@ public class DueGroupServiceImpl extends AbstractServiceImpl implements DueGroup
   
   @Override
   public Response getByIdentifier(GetByIdentifierRequestDto request) {
-    DueGroupDto dto = readByIdentifierBusiness.process(request);
+    DeadlineGroupDto dto = readByIdentifierBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);
     return responseBuilder.build();
   }
 
   @Override
-  public Response update(DueGroupUpdateRequestDto request) {
+  public Response update(DeadlineGroupUpdateRequestDto request) {
     IdentifiableResponseDto dto = updateBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);

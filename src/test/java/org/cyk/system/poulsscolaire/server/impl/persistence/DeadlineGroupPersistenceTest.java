@@ -7,10 +7,10 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest
-class DueGroupPersistenceTest {
+class DeadlineGroupPersistenceTest {
 
   @Inject
-  DueGroupPersistence persistence;
+  DeadlineGroupPersistence persistence;
   
   @Test
   void getName() {
