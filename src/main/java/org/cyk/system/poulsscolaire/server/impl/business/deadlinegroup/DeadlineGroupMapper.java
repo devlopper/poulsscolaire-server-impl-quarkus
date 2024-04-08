@@ -1,7 +1,7 @@
 package org.cyk.system.poulsscolaire.server.impl.business.deadlinegroup;
 
 import ci.gouv.dgbf.extension.server.business.IdentifiableMapper;
-import org.cyk.system.poulsscolaire.server.api.DeadlineGroupDto;
+import org.cyk.system.poulsscolaire.server.api.fee.DeadlineGroupDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.DeadlineGroup;
 import org.mapstruct.Mapper;
 

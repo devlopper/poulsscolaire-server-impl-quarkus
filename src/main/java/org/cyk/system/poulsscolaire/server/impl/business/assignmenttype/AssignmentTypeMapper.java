@@ -1,7 +1,7 @@
 package org.cyk.system.poulsscolaire.server.impl.business.assignmenttype;
 
 import ci.gouv.dgbf.extension.server.business.IdentifiableMapper;
-import org.cyk.system.poulsscolaire.server.api.AssignmentTypeDto;
+import org.cyk.system.poulsscolaire.server.api.configuration.AssignmentTypeDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AssignmentType;
 import org.mapstruct.Mapper;
 

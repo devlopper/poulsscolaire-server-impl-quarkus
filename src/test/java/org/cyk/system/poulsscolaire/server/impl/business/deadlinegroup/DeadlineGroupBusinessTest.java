@@ -7,7 +7,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import java.util.UUID;
-import org.cyk.system.poulsscolaire.server.api.DeadlineGroupService.DeadlineGroupCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.fee.DeadlineGroupService.DeadlineGroupCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.DeadlineGroup;
 import org.junit.jupiter.api.Test;
 

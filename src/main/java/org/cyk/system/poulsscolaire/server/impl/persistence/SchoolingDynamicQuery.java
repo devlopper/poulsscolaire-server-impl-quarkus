@@ -11,7 +11,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
-import org.cyk.system.poulsscolaire.server.api.SchoolingDto;
+import org.cyk.system.poulsscolaire.server.api.configuration.SchoolingDto;
 
 /**
  * Cette classe représente la requête dynamique de {@link Schooling}.

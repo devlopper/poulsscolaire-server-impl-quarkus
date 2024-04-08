@@ -4,7 +4,7 @@ import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableReadByIdentifi
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
-import org.cyk.system.poulsscolaire.server.api.SchoolingDto;
+import org.cyk.system.poulsscolaire.server.api.configuration.SchoolingDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Schooling;
 import org.cyk.system.poulsscolaire.server.impl.persistence.SchoolingDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.SchoolingPersistence;

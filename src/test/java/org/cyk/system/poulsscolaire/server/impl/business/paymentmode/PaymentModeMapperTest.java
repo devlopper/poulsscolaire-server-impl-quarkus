@@ -7,7 +7,7 @@ import ci.gouv.dgbf.extension.server.persistence.entity.embeddable.Audit;
 import ci.gouv.dgbf.extension.server.service.api.entity.AuditDto;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
-import org.cyk.system.poulsscolaire.server.api.PaymentModeDto;
+import org.cyk.system.poulsscolaire.server.api.payment.PaymentModeDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.PaymentMode;
 import org.junit.jupiter.api.Test;
 

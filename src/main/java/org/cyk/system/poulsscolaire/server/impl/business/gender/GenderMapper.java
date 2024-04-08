@@ -1,7 +1,7 @@
 package org.cyk.system.poulsscolaire.server.impl.business.gender;
 
 import ci.gouv.dgbf.extension.server.business.IdentifiableMapper;
-import org.cyk.system.poulsscolaire.server.api.GenderDto;
+import org.cyk.system.poulsscolaire.server.api.configuration.GenderDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Gender;
 import org.mapstruct.Mapper;
 

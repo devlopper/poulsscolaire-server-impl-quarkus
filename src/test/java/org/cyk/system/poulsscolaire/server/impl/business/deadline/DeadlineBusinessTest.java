@@ -11,7 +11,7 @@ import jakarta.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
-import org.cyk.system.poulsscolaire.server.api.DeadlineService.DeadlineCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.fee.DeadlineService.DeadlineCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Deadline;
 import org.junit.jupiter.api.Test;
 

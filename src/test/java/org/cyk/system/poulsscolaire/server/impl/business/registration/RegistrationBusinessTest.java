@@ -9,7 +9,7 @@ import io.quarkus.test.junit.TestProfile;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import java.util.Map;
-import org.cyk.system.poulsscolaire.server.api.RegistrationService.RegistrationCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.registration.RegistrationService.RegistrationCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Registration;
 import org.junit.jupiter.api.Test;
 

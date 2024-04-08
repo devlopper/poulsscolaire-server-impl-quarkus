@@ -7,7 +7,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import java.util.UUID;
-import org.cyk.system.poulsscolaire.server.api.FeeCategoryService.FeeCategoryCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.fee.FeeCategoryService.FeeCategoryCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.FeeCategory;
 import org.junit.jupiter.api.Test;
 

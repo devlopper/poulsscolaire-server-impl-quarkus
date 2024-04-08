@@ -1,7 +1,7 @@
 package org.cyk.system.poulsscolaire.server.impl.business.seniority;
 
 import ci.gouv.dgbf.extension.server.business.IdentifiableMapper;
-import org.cyk.system.poulsscolaire.server.api.SeniorityDto;
+import org.cyk.system.poulsscolaire.server.api.configuration.SeniorityDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Seniority;
 import org.mapstruct.Mapper;
 

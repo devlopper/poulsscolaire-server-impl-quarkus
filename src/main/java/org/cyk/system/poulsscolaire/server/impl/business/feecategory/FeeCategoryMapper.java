@@ -1,7 +1,7 @@
 package org.cyk.system.poulsscolaire.server.impl.business.feecategory;
 
 import ci.gouv.dgbf.extension.server.business.IdentifiableMapper;
-import org.cyk.system.poulsscolaire.server.api.FeeCategoryDto;
+import org.cyk.system.poulsscolaire.server.api.fee.FeeCategoryDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.FeeCategory;
 import org.mapstruct.Mapper;
 

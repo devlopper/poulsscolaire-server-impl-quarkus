@@ -7,7 +7,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.util.Optional;
 import lombok.Getter;
-import org.cyk.system.poulsscolaire.server.api.IdentityService;
+import org.cyk.system.poulsscolaire.server.api.registration.IdentityService;
 import org.cyk.system.poulsscolaire.server.impl.business.gender.GenderValidator;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Gender;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Identity;

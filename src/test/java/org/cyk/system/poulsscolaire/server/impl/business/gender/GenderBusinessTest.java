@@ -7,7 +7,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import java.util.UUID;
-import org.cyk.system.poulsscolaire.server.api.GenderService.GenderCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.configuration.GenderService.GenderCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Gender;
 import org.junit.jupiter.api.Test;
 

@@ -10,7 +10,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
-import org.cyk.system.poulsscolaire.server.api.AmountDto;
+import org.cyk.system.poulsscolaire.server.api.fee.AmountDto;
 
 /**
  * Cette classe représente la requête dynamique de {@link Amount}.

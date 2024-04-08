@@ -5,7 +5,7 @@ import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableCreateBusiness
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
-import org.cyk.system.poulsscolaire.server.api.AmountService.AmountCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.fee.AmountService.AmountCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.business.deadline.DeadlineValidator;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Amount;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AmountPersistence;
@@ -42,11 +42,6 @@ public class AmountCreateBusiness extends AbstractIdentifiableCreateBusiness<Amo
   @Override
   protected void setFields(Amount amount, Object[] array, AmountCreateRequestDto request) {
     super.setFields(amount, array, request);
-    amount.deadline = (Deadline) array[0];
-    amount.optional = request.getOptional();
-    amount.paymentOrderNumber = request.getPaymentOrderNumber();
-    amount.registrationValuePart = request.getRegistrationValuePart();
-    amount.renewable = request.getRenewable();
-    amount.value = request.getValue();
+    amount.set(request, array);
   }
 }

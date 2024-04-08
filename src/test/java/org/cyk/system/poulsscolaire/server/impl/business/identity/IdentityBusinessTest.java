@@ -10,8 +10,8 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import java.util.Map;
 import java.util.UUID;
-import org.cyk.system.poulsscolaire.server.api.IdentityService.IdentityCreateRequestDto;
-import org.cyk.system.poulsscolaire.server.api.IdentityService.IdentityUpdateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.registration.IdentityService.IdentityCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.registration.IdentityService.IdentityUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Identity;
 import org.junit.jupiter.api.Test;
 

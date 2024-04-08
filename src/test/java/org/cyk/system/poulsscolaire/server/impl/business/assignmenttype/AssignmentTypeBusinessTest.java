@@ -7,7 +7,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import java.util.UUID;
-import org.cyk.system.poulsscolaire.server.api.AssignmentTypeService.AssignmentTypeCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.configuration.AssignmentTypeService.AssignmentTypeCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AssignmentType;
 import org.junit.jupiter.api.Test;
 

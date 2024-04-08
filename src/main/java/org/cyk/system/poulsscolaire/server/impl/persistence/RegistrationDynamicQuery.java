@@ -12,7 +12,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
-import org.cyk.system.poulsscolaire.server.api.RegistrationDto;
+import org.cyk.system.poulsscolaire.server.api.registration.RegistrationDto;
 
 /**
  * Cette classe représente la requête dynamique de {@link Registration}.

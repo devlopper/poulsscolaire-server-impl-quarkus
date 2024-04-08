@@ -7,7 +7,7 @@ import ci.gouv.dgbf.extension.server.persistence.entity.embeddable.Audit;
 import ci.gouv.dgbf.extension.server.service.api.entity.AuditDto;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
-import org.cyk.system.poulsscolaire.server.api.DeadlineGroupDto;
+import org.cyk.system.poulsscolaire.server.api.fee.DeadlineGroupDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.DeadlineGroup;
 import org.junit.jupiter.api.Test;
 

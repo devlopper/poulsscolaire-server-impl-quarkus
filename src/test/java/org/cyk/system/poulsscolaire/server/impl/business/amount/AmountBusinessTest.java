@@ -9,7 +9,8 @@ import io.quarkus.test.junit.TestProfile;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import java.util.Map;
-import org.cyk.system.poulsscolaire.server.api.AmountService.AmountCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.fee.AmountService.AmountCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.fee.AmountService.AmountUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Amount;
 import org.junit.jupiter.api.Test;
 
@@ -51,6 +52,22 @@ class AmountBusinessTest extends AbstractTest {
     long count = count(entityManager, Amount.ENTITY_NAME);
     createBusiness.process(request);
     assertEquals(count + 1, count(entityManager, Amount.ENTITY_NAME));
+  }
+  
+  @Test
+  void update() {
+    AmountUpdateRequestDto request = new AmountUpdateRequestDto();
+    request.setIdentifier("toupdate");
+    request.setDeadlineIdentifier("1");
+    request.setOptional(true);
+    request.setPaymentOrderNumber(0);
+    request.setRegistrationValuePart(0L);
+    request.setRenewable(true);
+    request.setValue(0L);
+    request.setAuditWho("christian");
+    long count = count(entityManager, Amount.ENTITY_NAME);
+    updateBusiness.process(request);
+    assertEquals(count, count(entityManager, Amount.ENTITY_NAME));
   }
   
   public static class Profile implements QuarkusTestProfile {

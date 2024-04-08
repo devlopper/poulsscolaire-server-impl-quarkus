@@ -4,7 +4,7 @@ import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableReadByIdentifi
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
-import org.cyk.system.poulsscolaire.server.api.GenderDto;
+import org.cyk.system.poulsscolaire.server.api.configuration.GenderDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Gender;
 import org.cyk.system.poulsscolaire.server.impl.persistence.GenderDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.GenderPersistence;

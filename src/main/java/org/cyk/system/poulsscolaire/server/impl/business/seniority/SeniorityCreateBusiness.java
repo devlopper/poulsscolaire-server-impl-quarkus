@@ -4,7 +4,7 @@ import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableCreateBusiness
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
-import org.cyk.system.poulsscolaire.server.api.SeniorityService.SeniorityCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.configuration.SeniorityService.SeniorityCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Seniority;
 import org.cyk.system.poulsscolaire.server.impl.persistence.SeniorityPersistence;
 

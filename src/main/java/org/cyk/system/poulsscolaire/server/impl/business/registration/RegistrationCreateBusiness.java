@@ -5,7 +5,7 @@ import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableCreateBusiness
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
-import org.cyk.system.poulsscolaire.server.api.RegistrationService.RegistrationCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.registration.RegistrationService.RegistrationCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.business.assignmenttype.AssignmentTypeValidator;
 import org.cyk.system.poulsscolaire.server.impl.business.schooling.SchoolingValidator;
 import org.cyk.system.poulsscolaire.server.impl.business.seniority.SeniorityValidator;

@@ -11,7 +11,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
-import org.cyk.system.poulsscolaire.server.api.DeadlineGroupDto;
+import org.cyk.system.poulsscolaire.server.api.fee.DeadlineGroupDto;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.junit.jupiter.api.Test;

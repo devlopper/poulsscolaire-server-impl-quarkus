@@ -6,7 +6,7 @@ import ci.gouv.dgbf.extension.test.AbstractTest;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
-import org.cyk.system.poulsscolaire.server.api.SchoolingService.SchoolingCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.configuration.SchoolingService.SchoolingCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Schooling;
 import org.junit.jupiter.api.Test;
 

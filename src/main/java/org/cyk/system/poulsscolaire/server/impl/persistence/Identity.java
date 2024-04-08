@@ -8,7 +8,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
-import org.cyk.system.poulsscolaire.server.api.IdentityService;
+import org.cyk.system.poulsscolaire.server.api.registration.IdentityService;
 
 /**
  * Cette classe représente une identité.

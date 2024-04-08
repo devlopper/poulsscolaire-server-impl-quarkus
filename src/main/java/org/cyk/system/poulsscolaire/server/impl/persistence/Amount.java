@@ -7,7 +7,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
-import org.cyk.system.poulsscolaire.server.api.AmountService;
+import jakarta.validation.constraints.NotNull;
+import org.cyk.system.poulsscolaire.server.api.fee.AmountService;
 
 /**
  * Cette classe représente un montant.
@@ -19,39 +20,47 @@ import org.cyk.system.poulsscolaire.server.api.AmountService;
 @Table(name = Amount.TABLE_NAME)
 public class Amount extends AbstractIdentifiableAuditable {
 
+  @NotNull
   @Column(name = COLUMN_VALUE, nullable = false)
   public Long value;
 
-  @Transient
-  public String valueAsString;
-
-  @Column(name = COLUMN_REGISTRATION_VALUE_PART)
+  @NotNull
+  @Column(name = COLUMN_REGISTRATION_VALUE_PART, nullable = false)
   public Long registrationValuePart;
 
-  @Transient
-  public String registrationValuePartAsString;
-
-  @Column(name = COLUMN_OPTIONAL)
+  @NotNull
+  @Column(name = COLUMN_OPTIONAL, nullable = false)
   public Boolean optional;
 
-  @Transient
-  public String optionalAsString;
-
-  @Column(name = COLUMN_PAYMENT_ORDER_NUMBER)
+  @NotNull
+  @Column(name = COLUMN_PAYMENT_ORDER_NUMBER, nullable = false)
   public Integer paymentOrderNumber;
 
-  @Transient
-  public String paymentOrderNumberAsString;
-
-  @Column(name = COLUMN_RENEWABLE)
+  @NotNull
+  @Column(name = COLUMN_RENEWABLE, nullable = false)
   public Boolean renewable;
 
+  @NotNull
+  @ManyToOne
+  @JoinColumn(name = COLUMN_DEADLINE, nullable = false)
+  public Deadline deadline;
+  
+  /* valeurs dérivées */
+  
+  @Transient
+  public String valueAsString;
+  
+  @Transient
+  public String registrationValuePartAsString;
+  
+  @Transient
+  public String optionalAsString;
+  
+  @Transient
+  public String paymentOrderNumberAsString;
+  
   @Transient
   public String renewableAsString;
-  
-  @ManyToOne
-  @JoinColumn(name = COLUMN_DEADLINE)
-  public Deadline deadline;
   
   @Transient
   public String deadlineIdentifier;
@@ -68,9 +77,9 @@ public class Amount extends AbstractIdentifiableAuditable {
   public void set(AmountService.AmountSaveData request, Object[] array) {
     value = request.getValue();
     registrationValuePart = request.getRegistrationValuePart();
-    optional = request.getOptional();
+    optional = request.isOptional();
     paymentOrderNumber = request.getPaymentOrderNumber();
-    renewable = request.getRenewable();
+    renewable = request.isRenewable();
     if (array != null) {
       deadline = (Deadline) array[0];
     }

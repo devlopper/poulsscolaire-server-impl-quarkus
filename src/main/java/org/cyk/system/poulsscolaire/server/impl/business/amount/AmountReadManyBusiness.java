@@ -4,8 +4,8 @@ import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableReadManyBusine
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
-import org.cyk.system.poulsscolaire.server.api.AmountDto;
-import org.cyk.system.poulsscolaire.server.api.AmountService.GetManyResponseDto;
+import org.cyk.system.poulsscolaire.server.api.fee.AmountDto;
+import org.cyk.system.poulsscolaire.server.api.fee.AmountService.GetManyResponseDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Amount;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AmountDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AmountPersistence;

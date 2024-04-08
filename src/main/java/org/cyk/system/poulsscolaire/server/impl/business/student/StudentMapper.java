@@ -1,7 +1,7 @@
 package org.cyk.system.poulsscolaire.server.impl.business.student;
 
 import ci.gouv.dgbf.extension.server.business.IdentifiableMapper;
-import org.cyk.system.poulsscolaire.server.api.StudentDto;
+import org.cyk.system.poulsscolaire.server.api.registration.StudentDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Student;
 import org.mapstruct.Mapper;
 

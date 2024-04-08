@@ -4,7 +4,7 @@ import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableCreateBusiness
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
-import org.cyk.system.poulsscolaire.server.api.FeeCategoryService.FeeCategoryCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.fee.FeeCategoryService.FeeCategoryCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.FeeCategory;
 import org.cyk.system.poulsscolaire.server.impl.persistence.FeeCategoryPersistence;
 

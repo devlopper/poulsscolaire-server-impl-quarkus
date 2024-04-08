@@ -5,7 +5,7 @@ import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableCreateBusiness
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
-import org.cyk.system.poulsscolaire.server.api.StudentService.StudentCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.registration.StudentService.StudentCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.business.identity.IdentityValidator;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Identity;
 import org.cyk.system.poulsscolaire.server.impl.persistence.IdentityPersistence;

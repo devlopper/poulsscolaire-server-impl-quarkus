@@ -4,7 +4,7 @@ import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableCreateBusiness
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
-import org.cyk.system.poulsscolaire.server.api.PaymentModeService.PaymentModeCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.payment.PaymentModeService.PaymentModeCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.PaymentMode;
 import org.cyk.system.poulsscolaire.server.impl.persistence.PaymentModePersistence;
 

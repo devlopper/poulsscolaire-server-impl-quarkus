@@ -4,7 +4,7 @@ import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableUpdateBusiness
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
-import org.cyk.system.poulsscolaire.server.api.DeadlineService.DeadlineUpdateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.fee.DeadlineService.DeadlineUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Deadline;
 import org.cyk.system.poulsscolaire.server.impl.persistence.DeadlinePersistence;
 

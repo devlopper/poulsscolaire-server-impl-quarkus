@@ -3,7 +3,7 @@ package org.cyk.system.poulsscolaire.server.impl.persistence;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.cyk.system.poulsscolaire.server.api.AmountService;
+import org.cyk.system.poulsscolaire.server.api.fee.AmountService;
 import org.junit.jupiter.api.Test;
 
 class AmountTest {
