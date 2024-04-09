@@ -234,11 +234,11 @@ CREATE TABLE TA_MONTANT (
 	IDENTIFIANT VARCHAR(36) NOT NULL COMMENT 'Identifiant du montant',
 
 	VALEUR BIGINT NOT NULL COMMENT 'Valeur du montant',
-	VALEUR_INSCRIPTION BIGINT NOT NULL COMMENT 'Valeur à l''inscriptiondu montant',
-	FACULTATIF BOOLEAN NOT NULL COMMENT 'Facultativité du montant',
-	RECONDUCTIBLE BOOLEAN NOT NULL COMMENT 'Reconductibilité du montant',
-	NUMERO_ORDRE_PAIEMENT INT NOT NULL COMMENT 'Numéro d''ordre de paiement du montant',
-	ECHEANCE VARCHAR(36) NOT NULL COMMENT 'Identifiant de l''échéance du montant',
+	VALEUR_INSCRIPTION BIGINT COMMENT 'Valeur à l''inscriptiondu montant',
+	FACULTATIF BOOLEAN COMMENT 'Facultativité du montant',
+	RECONDUCTIBLE BOOLEAN COMMENT 'Reconductibilité du montant',
+	NUMERO_ORDRE_PAIEMENT INT COMMENT 'Numéro d''ordre de paiement du montant',
+	ECHEANCE VARCHAR(36) COMMENT 'Identifiant de l''échéance du montant',
 	
 	-- Audit
 	 AUDIT_IDENTIFIANT VARCHAR(36) NOT NULL COMMENT 'Identifiant de l''audit',

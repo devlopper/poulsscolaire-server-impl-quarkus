@@ -22,7 +22,7 @@ public class Amount extends AbstractIdentifiableAuditable {
 
   @NotNull
   @Column(name = COLUMN_VALUE, nullable = false)
-  public Long value;
+  public long value;
 
   @NotNull
   @Column(name = COLUMN_REGISTRATION_VALUE_PART, nullable = false)
@@ -77,9 +77,9 @@ public class Amount extends AbstractIdentifiableAuditable {
   public void set(AmountService.AmountSaveData request, Object[] array) {
     value = request.getValue();
     registrationValuePart = request.getRegistrationValuePart();
-    optional = request.isOptional();
+    optional = request.getOptional();
     paymentOrderNumber = request.getPaymentOrderNumber();
-    renewable = request.isRenewable();
+    renewable = request.getRenewable();
     if (array != null) {
       deadline = (Deadline) array[0];
     }
