@@ -4,6 +4,7 @@ import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCoda
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 
 /**
@@ -27,10 +28,22 @@ public class Schooling extends AbstractIdentifiableCodableAuditable {
   @NotNull
   @Column(name = COLUMN_PERIOD_IDENTIFIER, nullable = false)
   public String periodIdentifier;
-    
+  
+  @Transient
+  public String schoolAsString;
+  
+  @Transient
+  public String branchAsString;
+  
+  @Transient
+  public String periodAsString;
+  
   public static final String FIELD_SCHOOL_IDENTIFIER = "schoolIdentifier";
+  public static final String FIELD_SCHOOL_AS_STRING = "schoolAsString";
   public static final String FIELD_BRANCH_IDENTIFIER = "branchIdentifier";
+  public static final String FIELD_BRANCH_AS_STRING = "branchAsString";
   public static final String FIELD_PERIOD_IDENTIFIER = "periodIdentifier";
+  public static final String FIELD_PERIOD_AS_STRING = "periodAsString";
   
   public static final String ENTITY_NAME = "Schooling";
   public static final String TABLE_NAME = "TA_SCOLARITE";

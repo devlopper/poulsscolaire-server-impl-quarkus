@@ -43,11 +43,20 @@ public class SchoolingDynamicQuery extends AbstractDynamicQuery<Schooling> {
 
     projectionBuilder().name(SchoolingDto.JSON_SCHOOL_IDENTIFIER)
         .fieldName(Schooling.FIELD_SCHOOL_IDENTIFIER).build();
+    projectionBuilder().name(SchoolingDto.JSON_SCHOOL_AS_STRING)
+        .nameFieldName(Schooling.FIELD_SCHOOL_AS_STRING)
+        .fieldName(Schooling.FIELD_SCHOOL_IDENTIFIER).build();
 
     projectionBuilder().name(SchoolingDto.JSON_BRANCH_IDENTIFIER)
         .fieldName(Schooling.FIELD_BRANCH_IDENTIFIER).build();
+    projectionBuilder().name(SchoolingDto.JSON_BRANCH_AS_STRING)
+        .nameFieldName(Schooling.FIELD_BRANCH_AS_STRING)
+        .fieldName(Schooling.FIELD_BRANCH_IDENTIFIER).build();
 
     projectionBuilder().name(SchoolingDto.JSON_PERIOD_IDENTIFIER)
+        .fieldName(Schooling.FIELD_PERIOD_IDENTIFIER).build();
+    projectionBuilder().name(SchoolingDto.JSON_PERIOD_AS_STRING)
+        .nameFieldName(Schooling.FIELD_PERIOD_AS_STRING)
         .fieldName(Schooling.FIELD_PERIOD_IDENTIFIER).build();
 
     // Prédicats

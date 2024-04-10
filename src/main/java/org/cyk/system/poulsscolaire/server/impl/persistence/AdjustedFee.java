@@ -27,6 +27,8 @@ public class AdjustedFee extends AbstractAmountContainer {
   @JoinColumn(name = COLUMN_REGISTRATION, nullable = false)
   public Registration registration;
         
+  /* valeurs dérivées */
+  
   @Transient
   public String feeAsString;
   

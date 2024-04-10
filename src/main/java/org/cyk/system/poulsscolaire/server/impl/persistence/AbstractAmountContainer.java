@@ -57,18 +57,6 @@ public abstract class AbstractAmountContainer extends AbstractIdentifiableAudita
   public String amountRenewableAsString;
 
   @Transient
-  public String categoryAsString;
-
-  @Transient
-  public String schoolingAsString;
-
-  @Transient
-  public String assignmentTypeAsString;
-
-  @Transient
-  public String seniorityAsString;
-
-  @Transient
   public String amountDeadlineIdentifier;
 
   @Transient
@@ -76,20 +64,20 @@ public abstract class AbstractAmountContainer extends AbstractIdentifiableAudita
   
   public static final String FIELD_AMOUNT = "amount";
   public static final String FIELD_AMOUNT_AS_STRING = "amountAsString";
-  public static final String FIELD_AMOUNT_VALUE_AS_STRING = "valueAsString";
-  public static final String FIELD_AMOUNT_VALUE = "value";
-  public static final String FIELD_AMOUNT_REGISTRATION_VALUE_PART = "registrationValuePart";
+  public static final String FIELD_AMOUNT_VALUE_AS_STRING = "amountValueAsString";
+  public static final String FIELD_AMOUNT_VALUE = "amountValue";
+  public static final String FIELD_AMOUNT_REGISTRATION_VALUE_PART = "amountRegistrationValuePart";
   public static final String FIELD_AMOUNT_REGISTRATION_VALUE_PART_AS_STRING =
-      "registrationValuePartAsString";
-  public static final String FIELD_AMOUNT_OPTIONAL = "optional";
-  public static final String FIELD_AMOUNT_OPTIONAL_AS_STRING = "optionalAsString";
-  public static final String FIELD_AMOUNT_PAYMENT_ORDER_NUMBER = "paymentOrderNumber";
+      "amountRegistrationValuePartAsString";
+  public static final String FIELD_AMOUNT_OPTIONAL = "amountOptional";
+  public static final String FIELD_AMOUNT_OPTIONAL_AS_STRING = "amountOptionalAsString";
+  public static final String FIELD_AMOUNT_PAYMENT_ORDER_NUMBER = "amountPaymentOrderNumber";
   public static final String FIELD_AMOUNT_PAYMENT_ORDER_NUMBER_AS_STRING =
-      "paymentOrderNumberAsString";
-  public static final String FIELD_AMOUNT_RENEWABLE = "renewable";
-  public static final String FIELD_AMOUNT_RENEWABLE_AS_STRING = "renewableAsString";
-  public static final String FIELD_AMOUNT_DEADLINE_IDENTIFIER = "deadlineIdentifier";
-  public static final String FIELD_AMOUNT_DEADLINE_AS_STRING = "deadlineAsString";
+      "amountPaymentOrderNumberAsString";
+  public static final String FIELD_AMOUNT_RENEWABLE = "amountRenewable";
+  public static final String FIELD_AMOUNT_RENEWABLE_AS_STRING = "amountRenewableAsString";
+  public static final String FIELD_AMOUNT_DEADLINE_IDENTIFIER = "amountDeadlineIdentifier";
+  public static final String FIELD_AMOUNT_DEADLINE_AS_STRING = "amountDeadlineAsString";
 
   public static final String COLUMN_AMOUNT = "MONTANT";
 }
