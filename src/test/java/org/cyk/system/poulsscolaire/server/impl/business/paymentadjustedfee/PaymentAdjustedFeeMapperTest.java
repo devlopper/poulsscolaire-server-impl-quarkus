@@ -66,5 +66,13 @@ class PaymentAdjustedFeeMapperTest {
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
     assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
   }
-  
+ 
+  @Test
+  void mapFromDto_whenAmountNotNull() {
+    PaymentAdjustedFeeDto dto = new PaymentAdjustedFeeDto();
+    dto.setIdentifier("1");
+    dto.setAmount(5);
+    PaymentAdjustedFee instance = mapper.mapFromDto(dto);
+    assertEquals(dto.getAmount(), instance.amount);
+  }
 }

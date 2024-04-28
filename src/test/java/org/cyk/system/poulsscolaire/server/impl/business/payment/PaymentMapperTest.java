@@ -67,4 +67,13 @@ class PaymentMapperTest {
     assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
   }
   
+  @Test
+  void mapFromDto_whenAmountNotNull() {
+    PaymentDto dto = new PaymentDto();
+    dto.setIdentifier("1");
+    dto.setAmount(5);
+    Payment instance = mapper.mapFromDto(dto);
+    assertEquals(dto.getAmount(), instance.amount);
+  }
+  
 }
