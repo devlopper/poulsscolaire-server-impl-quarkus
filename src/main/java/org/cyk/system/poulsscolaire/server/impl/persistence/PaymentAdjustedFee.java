@@ -34,7 +34,10 @@ public class PaymentAdjustedFee extends AbstractIdentifiableAuditable {
   public int amount;
     
   @Transient
-  public String modeAsString;
+  public String paymentAsString;
+  
+  @Transient
+  public String adjustedFeeAsString;
   
   @Transient
   public String amountAsString;
