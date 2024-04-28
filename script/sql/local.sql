@@ -337,6 +337,7 @@ CREATE TABLE TA_FRAIS_AJUSTE (
 CREATE TABLE TA_PAIEMENT (
 	-- Identification
 	IDENTIFIANT VARCHAR(36) NOT NULL COMMENT 'Identifiant de paiement',
+	CODE VARCHAR(16) NOT NULL COMMENT 'Code de paiement',
 
 	MONTANT INT NOT NULL COMMENT 'Montant du paiement',
 	DATE_ DATE NOT NULL COMMENT 'Date du paiement',
