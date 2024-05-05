@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>ci.gouv.dgbf.pom</groupId>
 		<artifactId>pom-server-quarkus-mysql-extended</artifactId>
-		<version>1.0.3-SNAPSHOT</version>
+		<version>1.0.4-SNAPSHOT</version>
 	</parent>
 	
 	<groupId>ci.gouv.dgbf.system.poulsscolaire.server</groupId>

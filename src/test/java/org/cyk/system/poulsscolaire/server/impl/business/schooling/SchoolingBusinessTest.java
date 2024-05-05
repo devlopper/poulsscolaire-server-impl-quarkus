@@ -1,14 +1,22 @@
 package org.cyk.system.poulsscolaire.server.impl.business.schooling;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 
 import ci.gouv.dgbf.extension.test.AbstractTest;
+import io.quarkus.test.junit.QuarkusMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolingService.SchoolingCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.configuration.SchoolingService.SchoolingGenerateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Schooling;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 @QuarkusTest
 class SchoolingBusinessTest extends AbstractTest {
@@ -21,19 +29,22 @@ class SchoolingBusinessTest extends AbstractTest {
 
   @Inject
   SchoolingReadManyBusiness readManyBusiness;
-  
+
   @Inject
   SchoolingReadOneBusiness readOneBusiness;
-  
+
   @Inject
   SchoolingReadByIdentifierBusiness readByIdentifierBusiness;
-  
+
   @Inject
   SchoolingUpdateBusiness updateBusiness;
-  
+
   @Inject
   SchoolingDeleteBusiness deleteBusiness;
-  
+
+  @Inject
+  SchoolingGenerateBusiness generateBusiness;
+
   @Test
   void create() {
     SchoolingCreateRequestDto request = new SchoolingCreateRequestDto();
@@ -43,6 +54,39 @@ class SchoolingBusinessTest extends AbstractTest {
     request.setAuditWho("christian");
     long count = count(entityManager, Schooling.ENTITY_NAME);
     createBusiness.process(request);
+    assertEquals(count + 1, count(entityManager, Schooling.ENTITY_NAME));
+  }
+
+  @Test
+  void generate() {
+    SchoolService schoolService = Mockito.mock(SchoolService.class);
+    Set<SchoolService.Dto> schools = new HashSet<>();
+    SchoolService.Dto school = new SchoolService.Dto();
+    school.identifier = UUID.randomUUID().toString();
+    schools.add(school);
+    Mockito.when(schoolService.getAll()).thenReturn(schools);
+    QuarkusMock.installMockForType(schoolService, SchoolService.class, RestClient.LITERAL);
+
+    BranchService branchService = Mockito.mock(BranchService.class);
+    Set<BranchService.Dto> branchs = new HashSet<>();
+    BranchService.Dto branch = new BranchService.Dto();
+    branch.identifier = UUID.randomUUID().toString();
+    branchs.add(branch);
+    Mockito.when(branchService.getBySchoolIdentifier(any())).thenReturn(branchs);
+    QuarkusMock.installMockForType(branchService, BranchService.class, RestClient.LITERAL);
+
+    PeriodService periodService = Mockito.mock(PeriodService.class);
+    Set<PeriodService.Dto> periods = new HashSet<>();
+    PeriodService.Dto period = new PeriodService.Dto();
+    period.identifier = UUID.randomUUID().toString();
+    periods.add(period);
+    Mockito.when(periodService.getBySchoolIdentifier()).thenReturn(periods);
+    QuarkusMock.installMockForType(periodService, PeriodService.class, RestClient.LITERAL);
+
+    SchoolingGenerateRequestDto request = new SchoolingGenerateRequestDto();
+    request.setAuditWho("christian");
+    long count = count(entityManager, Schooling.ENTITY_NAME);
+    generateBusiness.process(request);
     assertEquals(count + 1, count(entityManager, Schooling.ENTITY_NAME));
   }
 }

@@ -16,6 +16,7 @@ import org.cyk.system.poulsscolaire.server.api.configuration.SchoolingDto;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolingService;
 import org.cyk.system.poulsscolaire.server.impl.business.schooling.SchoolingCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.schooling.SchoolingDeleteBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.schooling.SchoolingGenerateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.schooling.SchoolingReadByIdentifierBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.schooling.SchoolingReadManyBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.schooling.SchoolingReadOneBusiness;
@@ -28,26 +29,29 @@ import org.cyk.system.poulsscolaire.server.impl.business.schooling.SchoolingUpda
  *
  */
 @ApplicationScoped
-public class BranchServiceImpl extends AbstractServiceImpl implements SchoolingService {
+public class SchoolingServiceImpl extends AbstractServiceImpl implements SchoolingService {
 
   @Inject
   SchoolingCreateBusiness createBusiness;
-  
+
   @Inject
   SchoolingReadManyBusiness readManyBusiness;
-  
+
   @Inject
   SchoolingReadOneBusiness readOneBusiness;
-  
+
   @Inject
   SchoolingReadByIdentifierBusiness readByIdentifierBusiness;
-  
+
   @Inject
   SchoolingUpdateBusiness updateBusiness;
-  
+
   @Inject
   SchoolingDeleteBusiness deleteBusiness;
 
+  @Inject
+  SchoolingGenerateBusiness generateBusiness;
+  
   @Override
   public Response create(SchoolingCreateRequestDto request) {
     CreateResponseDto dto = createBusiness.process(request);
@@ -72,7 +76,7 @@ public class BranchServiceImpl extends AbstractServiceImpl implements SchoolingS
     responseBuilder.setDto(dto);
     return responseBuilder.build();
   }
-  
+
   @Override
   public Response getByIdentifier(GetByIdentifierRequestDto request) {
     SchoolingDto dto = readByIdentifierBusiness.process(request);
@@ -92,6 +96,14 @@ public class BranchServiceImpl extends AbstractServiceImpl implements SchoolingS
   @Override
   public Response delete(DeleteOneRequestDto request) {
     IdentifiableResponseDto dto = deleteBusiness.process(request);
+    ResponseBuilder responseBuilder = new ResponseBuilder();
+    responseBuilder.setDto(dto);
+    return responseBuilder.build();
+  }
+
+  @Override
+  public Response generate(SchoolingGenerateRequestDto request) {
+    SchoolingGenerateResponseDto dto = generateBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);
     return responseBuilder.build();
