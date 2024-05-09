@@ -12,6 +12,9 @@ import java.util.Random;
 import java.util.Set;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolingService.SchoolingGenerateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolingService.SchoolingGenerateResponseDto;
+import org.cyk.system.poulsscolaire.server.impl.business.branch.BranchService;
+import org.cyk.system.poulsscolaire.server.impl.business.period.PeriodService;
+import org.cyk.system.poulsscolaire.server.impl.business.school.SchoolService;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Schooling;
 import org.cyk.system.poulsscolaire.server.impl.persistence.SchoolingPersistence;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -58,11 +61,8 @@ public class SchoolingGenerateBusiness
     audit.whatIsCreate();
     List<Schooling> existings = persistence.getAll();
     List<Schooling> news = new ArrayList<>();
-
     Set<SchoolService.Dto> schools = schoolService.getAll();
-    if (!Core.isCollectionEmpty(schools)) {
-      schools.forEach(school -> generateBySchool(school, existings, news, audit));
-    }
+    schools.forEach(school -> generateBySchool(school, existings, news, audit));
     create(news);
     SchoolingGenerateResponseDto response = new SchoolingGenerateResponseDto();
     response.setMessage("Les scolarités ont été générées");
@@ -72,43 +72,34 @@ public class SchoolingGenerateBusiness
 
   void generateBySchool(SchoolService.Dto school, List<Schooling> existings, List<Schooling> news,
       Audit audit) {
-    Set<BranchService.Dto> branchs = branchService.getBySchoolIdentifier(school.identifier);
-    if (Core.isCollectionEmpty(branchs)) {
-      return;
-    }
+    Set<BranchService.Dto> branchs = branchService.getBySchoolIdentifier(school.getIdentifier());
     Set<PeriodService.Dto> periods = periodService.getBySchoolIdentifier();
-    if (Core.isCollectionEmpty(periods)) {
-      return;
-    }
-    branchs.forEach(branch -> {
-      periods.forEach(period -> {
-        instantiate(school, branch, period, existings, news, audit);
-      });
-    });
+    branchs.forEach(branch -> periods.forEach(period -> instantiate(school.getIdentifier(),
+        branch.getIdentifier(), period.getIdentifier(), existings, news, audit)));
   }
 
-  void instantiate(SchoolService.Dto school, BranchService.Dto branch, PeriodService.Dto period,
+  void instantiate(String schoolIdentifier, String branchIdentifier, String periodIdentifier,
       List<Schooling> existings, List<Schooling> news, Audit audit) {
-    if (isExist(school, branch, period, existings)) {
+    if (isExist(schoolIdentifier, branchIdentifier, periodIdentifier, existings)) {
       return;
     }
     Schooling schooling = new Schooling();
     schooling.generateIdentifier();
     schooling.code = String.format("S%s%s%s", RANDOM.nextInt(100, 999), RANDOM.nextInt(100, 999),
         RANDOM.nextInt(100, 999));
-    schooling.schoolIdentifier = school.identifier;
-    schooling.branchIdentifier = branch.identifier;
-    schooling.periodIdentifier = period.identifier;
+    schooling.schoolIdentifier = schoolIdentifier;
+    schooling.branchIdentifier = branchIdentifier;
+    schooling.periodIdentifier = periodIdentifier;
     schooling.audit = audit;
     news.add(schooling);
   }
 
-  boolean isExist(SchoolService.Dto school, BranchService.Dto branch, PeriodService.Dto period,
+  boolean isExist(String schoolIdentifier, String branchIdentifier, String periodIdentifier,
       List<Schooling> existings) {
     return existings.stream()
-        .anyMatch(existing -> existing.schoolIdentifier.equals(school.identifier)
-            && existing.branchIdentifier.equals(branch.identifier)
-            && existing.periodIdentifier.equals(period.identifier));
+        .anyMatch(existing -> Core.and(existing.schoolIdentifier.equals(schoolIdentifier),
+            existing.branchIdentifier.equals(branchIdentifier),
+            existing.periodIdentifier.equals(periodIdentifier)));
   }
 
   @Transactional

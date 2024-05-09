@@ -1,5 +1,6 @@
-package org.cyk.system.poulsscolaire.server.impl.business.schooling;
+package org.cyk.system.poulsscolaire.server.impl.business.school;
 
+import ci.gouv.dgbf.extension.core.segregation.IdentifiableByString;
 import jakarta.json.bind.annotation.JsonbProperty;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -31,9 +32,12 @@ public interface SchoolService {
   @Getter
   @Setter
   @EqualsAndHashCode(of = {"identifier"})
-  class Dto {
+  class Dto implements IdentifiableByString {
     @JsonbProperty(value = "id")
     String identifier;
+    
+    @JsonbProperty(value = "code")
+    String code;
     
     @JsonbProperty(value = "libelle")
     String name;
