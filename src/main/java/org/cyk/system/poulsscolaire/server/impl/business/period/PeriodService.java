@@ -3,6 +3,7 @@ package org.cyk.system.poulsscolaire.server.impl.business.period;
 import jakarta.json.bind.annotation.JsonbProperty;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.QueryParam;
 import java.util.Set;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -23,9 +24,9 @@ public interface PeriodService {
   @GET
   Set<Dto> getAll();
   
-  @Path("list-to-central")
+  @Path("list-to-ecole")
   @GET
-  Set<Dto> getBySchoolIdentifier();
+  Set<Dto> getBySchoolIdentifier(@QueryParam("ecole") String identifier);
 
   /**
    * Cette classe représente une période.

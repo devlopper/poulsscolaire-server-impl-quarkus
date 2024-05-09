@@ -88,7 +88,7 @@ class SchoolingBusinessTest extends AbstractTest {
     PeriodService.Dto period = new PeriodService.Dto();
     period.setIdentifier(UUID.randomUUID().toString());
     periods.add(period);
-    Mockito.when(periodService.getBySchoolIdentifier()).thenReturn(periods);
+    Mockito.when(periodService.getBySchoolIdentifier(any())).thenReturn(periods);
     QuarkusMock.installMockForType(periodService, PeriodService.class, RestClient.LITERAL);
 
     SchoolingGenerateRequestDto request = new SchoolingGenerateRequestDto();

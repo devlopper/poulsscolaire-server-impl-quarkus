@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolingService.SchoolingGenerateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolingService.SchoolingGenerateResponseDto;
 import org.cyk.system.poulsscolaire.server.impl.business.branch.BranchService;
@@ -62,7 +64,9 @@ public class SchoolingGenerateBusiness
     List<Schooling> existings = persistence.getAll();
     List<Schooling> news = new ArrayList<>();
     Set<SchoolService.Dto> schools = schoolService.getAll();
+    Logger.getLogger(getClass().getName()).log(Level.INFO, "#écoles : {0}", schools.size());
     schools.forEach(school -> generateBySchool(school, existings, news, audit));
+    Logger.getLogger(getClass().getName()).log(Level.INFO, "#scolarités : {0}", news.size());
     create(news);
     SchoolingGenerateResponseDto response = new SchoolingGenerateResponseDto();
     response.setMessage("Les scolarités ont été générées");
@@ -73,9 +77,10 @@ public class SchoolingGenerateBusiness
   void generateBySchool(SchoolService.Dto school, List<Schooling> existings, List<Schooling> news,
       Audit audit) {
     Set<BranchService.Dto> branchs = branchService.getBySchoolIdentifier(school.getIdentifier());
-    Set<PeriodService.Dto> periods = periodService.getBySchoolIdentifier();
-    branchs.forEach(branch -> periods.forEach(period -> instantiate(school.getIdentifier(),
-        branch.getIdentifier(), period.getIdentifier(), existings, news, audit)));
+    Set<PeriodService.Dto> periods = periodService.getBySchoolIdentifier(school.getIdentifier());
+    branchs.parallelStream().forEach(
+        branch -> periods.parallelStream().forEach(period -> instantiate(school.getIdentifier(),
+            branch.getIdentifier(), period.getIdentifier(), existings, news, audit)));
   }
 
   void instantiate(String schoolIdentifier, String branchIdentifier, String periodIdentifier,
