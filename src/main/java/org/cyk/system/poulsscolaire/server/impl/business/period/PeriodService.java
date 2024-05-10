@@ -24,7 +24,7 @@ public interface PeriodService {
   @GET
   Set<Dto> getAll();
   
-  @Path("list-to-ecole")
+  @Path("list-opened-or-closed-to-ecole")
   @GET
   Set<Dto> getBySchoolIdentifier(@QueryParam("ecole") String identifier);
 
