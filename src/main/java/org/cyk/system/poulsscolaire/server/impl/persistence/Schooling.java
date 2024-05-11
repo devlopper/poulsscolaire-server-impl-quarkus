@@ -44,6 +44,9 @@ public class Schooling extends AbstractIdentifiableCodableAuditable {
   public Long feeAmountValue;
 
   @Transient
+  public String notOptionalFeeAmountValueAsString;
+
+  @Transient
   public String feeAmountValueAsString;
 
   @Transient
@@ -52,6 +55,9 @@ public class Schooling extends AbstractIdentifiableCodableAuditable {
   @Transient
   public String feeAmountRegistrationValuePartAsString;
 
+  @Transient
+  public String notOptionalFeeAmountRegistrationValuePartAsString;
+  
   public static final String FIELD_SCHOOL_IDENTIFIER = "schoolIdentifier";
   public static final String FIELD_SCHOOL_AS_STRING = "schoolAsString";
   public static final String FIELD_BRANCH_IDENTIFIER = "branchIdentifier";
@@ -60,11 +66,15 @@ public class Schooling extends AbstractIdentifiableCodableAuditable {
   public static final String FIELD_PERIOD_AS_STRING = "periodAsString";
   public static final String FIELD_FEE_AMOUNT_VALUE = "feeAmountValue";
   public static final String FIELD_FEE_AMOUNT_VALUE_AS_STRING = "feeAmountValueAsString";
+  public static final String FIELDT_NOT_OPTIONAL_FEE_AMOUN_VALUE_AS_STRING =
+      "notOptionalFeeAmountValueAsString";
   public static final String FIELD_FEE_AMOUNT_REGISTRATION_VALUE_PART =
       "feeAmountRegistrationValuePart";
   public static final String FIELD_FEE_AMOUNT_REGISTRATION_VALUE_PART_AS_STRING =
       "feeAmountRegistrationValuePartAsString";
-
+  public static final String FIELD_NOT_OPTIONAL_FEE_AMOUNT_REGISTRATION_VALUE_PART_AS_STRING =
+      "notOptionalFeeAmountRegistrationValuePartAsString";
+  
   public static final String ENTITY_NAME = "Schooling";
   public static final String TABLE_NAME = "TA_SCOLARITE";
 

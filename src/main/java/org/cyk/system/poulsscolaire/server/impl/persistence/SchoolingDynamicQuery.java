@@ -82,6 +82,13 @@ public class SchoolingDynamicQuery extends AbstractDynamicQuery<Schooling> {
             String.format("COALESCE(SUM(%s.%s), 0)", amountVariableName, Amount.FIELD_VALUE))
         .resultConsumer((i, a) -> i.feeAmountValueAsString = a.getNextAsLongFormatted()).build();
 
+    projectionBuilder().name(SchoolingDto.JSON_NOT_OPTIONAL_FEE_AMOUNT_VALUE_AS_STRING)
+        .tupleVariableName(amountVariableName)
+        .expression(String.format("COALESCE(SUM(CASE WHEN %1$s.%2$s THEN 0 ELSE %1$s.%3$s END), 0)",
+            amountVariableName, Amount.FIELD_OPTIONAL, Amount.FIELD_VALUE))
+        .resultConsumer((i, a) -> i.notOptionalFeeAmountValueAsString = a.getNextAsLongFormatted())
+        .build();
+
     projectionBuilder().name(SchoolingDto.JSON_FEE_AMOUNT_REGISTRATION_VALUE_PART_AS_STRING)
         .tupleVariableName(amountVariableName)
         .expression(String.format("COALESCE(SUM(%s.%s), 0)", amountVariableName,
@@ -90,16 +97,29 @@ public class SchoolingDynamicQuery extends AbstractDynamicQuery<Schooling> {
             (i, a) -> i.feeAmountRegistrationValuePartAsString = a.getNextAsLongFormatted())
         .build();
 
+    projectionBuilder()
+        .name(SchoolingDto.JSON_NOT_OPTIONAL_FEE_AMOUNT_REGISTRATION_VALUE_PART_AS_STRING)
+        .tupleVariableName(amountVariableName)
+        .expression(String.format("COALESCE(SUM(CASE WHEN %1$s.%2$s THEN 0 ELSE %1$s.%3$s END), 0)",
+            amountVariableName, Amount.FIELD_OPTIONAL, Amount.FIELD_REGISTRATION_VALUE_PART))
+        .resultConsumer((i, a) -> i.notOptionalFeeAmountRegistrationValuePartAsString =
+            a.getNextAsLongFormatted())
+        .build();
+
     // Jointures
     joinBuilder()
         .projectionsNames(SchoolingDto.JSON_FEE_AMOUNT_VALUE_AS_STRING,
-            SchoolingDto.JSON_FEE_AMOUNT_REGISTRATION_VALUE_PART_AS_STRING)
+            SchoolingDto.JSON_FEE_AMOUNT_REGISTRATION_VALUE_PART_AS_STRING,
+            SchoolingDto.JSON_NOT_OPTIONAL_FEE_AMOUNT_VALUE_AS_STRING,
+            SchoolingDto.JSON_NOT_OPTIONAL_FEE_AMOUNT_REGISTRATION_VALUE_PART_AS_STRING)
         .with(Fee.class).tupleVariableName(feeVariableName).fieldName(Fee.FIELD_SCHOOLING)
         .parentFieldName(null).leftInnerOrRight(true).build();
 
     joinBuilder()
         .projectionsNames(SchoolingDto.JSON_FEE_AMOUNT_VALUE_AS_STRING,
-            SchoolingDto.JSON_FEE_AMOUNT_REGISTRATION_VALUE_PART_AS_STRING)
+            SchoolingDto.JSON_FEE_AMOUNT_REGISTRATION_VALUE_PART_AS_STRING,
+            SchoolingDto.JSON_NOT_OPTIONAL_FEE_AMOUNT_VALUE_AS_STRING,
+            SchoolingDto.JSON_NOT_OPTIONAL_FEE_AMOUNT_REGISTRATION_VALUE_PART_AS_STRING)
         .with(Amount.class).tupleVariableName(amountVariableName)
         .parentTupleVariableName(feeVariableName)
         .parentFieldName(AbstractAmountContainer.FIELD_AMOUNT).leftInnerOrRight(true).build();
@@ -134,7 +154,9 @@ public class SchoolingDynamicQuery extends AbstractDynamicQuery<Schooling> {
   protected boolean isGrouped(DynamicQueryParameters<Schooling> parameters) {
     return ProjectionDto.hasOneOfNames(parameters.getProjection(),
         SchoolingDto.JSON_FEE_AMOUNT_VALUE_AS_STRING,
-        SchoolingDto.JSON_FEE_AMOUNT_REGISTRATION_VALUE_PART_AS_STRING);
+        SchoolingDto.JSON_FEE_AMOUNT_REGISTRATION_VALUE_PART_AS_STRING,
+        SchoolingDto.JSON_NOT_OPTIONAL_FEE_AMOUNT_VALUE_AS_STRING,
+        SchoolingDto.JSON_NOT_OPTIONAL_FEE_AMOUNT_REGISTRATION_VALUE_PART_AS_STRING);
   }
 
   @Override

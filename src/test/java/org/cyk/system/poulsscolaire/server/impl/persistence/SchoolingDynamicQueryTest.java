@@ -153,6 +153,17 @@ class SchoolingDynamicQueryTest {
         schoolings.stream().map(s -> s.feeAmountRegistrationValuePartAsString).toList());
   }
 
+  @ParameterizedTest
+  @CsvSource({"feesvalue1,130 000", "feesvalue2,243 000"})
+  void getOne_notOptionalFeeValueAsString(String identifier, String amount) {
+    parameters.setResultMode(ResultMode.ONE);
+    parameters.projection().addNames(SchoolingDto.JSON_IDENTIFIER,
+        SchoolingDto.JSON_NOT_OPTIONAL_FEE_AMOUNT_VALUE_AS_STRING);
+    parameters.filter().addCriteria(SchoolingDto.JSON_IDENTIFIER, identifier);
+    Schooling schooling = dynamicQuery.getOne(parameters);
+    assertEquals(amount, schooling.notOptionalFeeAmountValueAsString);
+  }
+
   public static class Profile implements QuarkusTestProfile {
 
     @Override
