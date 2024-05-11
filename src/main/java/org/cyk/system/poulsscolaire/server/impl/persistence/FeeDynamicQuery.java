@@ -12,6 +12,7 @@ import jakarta.persistence.EntityManager;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.fee.AbstractAmountContainerDto;
 import org.cyk.system.poulsscolaire.server.api.fee.FeeDto;
+import org.cyk.system.poulsscolaire.server.api.fee.FeeFilter;
 
 /**
  * Cette classe représente la requête dynamique de {@link Fee}.
@@ -122,6 +123,10 @@ public class FeeDynamicQuery extends AbstractDynamicQuery<Fee> {
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
         .valueFunction(AbstractIdentifiableFilter::getIdentifier).build();
 
+    predicateBuilder().name(FeeFilter.JSON_SCHOOLING_IDENTIFIER)
+        .fieldName(fieldName(Fee.FIELD_SCHOOLING, AbstractIdentifiable.FIELD_IDENTIFIER))
+        .valueFunction(FeeFilter::getSchoolingIdentifier).build();
+    
     // Ordres par défaut
     // orderBuilder().fieldName(fieldName(Fee.FIELD_DEADLINE, Deadline.FIELD_DATE)).ascending(false)
     // .build();

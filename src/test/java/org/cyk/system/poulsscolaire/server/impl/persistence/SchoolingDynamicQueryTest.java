@@ -1,6 +1,8 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertLinesMatch;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 
@@ -11,13 +13,18 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.QuarkusTestProfile;
 import io.quarkus.test.junit.TestProfile;
 import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolingDto;
+import org.cyk.system.poulsscolaire.server.api.configuration.SchoolingFilter;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mockito;
 
 @QuarkusTest
@@ -28,6 +35,9 @@ class SchoolingDynamicQueryTest {
   SchoolingDynamicQuery dynamicQuery;
 
   DynamicQueryParameters<Schooling> parameters = new DynamicQueryParameters<>();
+
+  @Inject
+  EntityManager entityManager;
 
   @SuppressWarnings("unchecked")
   @Test
@@ -70,6 +80,77 @@ class SchoolingDynamicQueryTest {
     parameters.filter().addCriteria(SchoolingDto.JSON_IDENTIFIER, "1");
     Schooling schooling = dynamicQuery.getOne(parameters);
     assertEquals("2023-2024", schooling.periodAsString);
+  }
+
+  @ParameterizedTest
+  @CsvSource({"feesvalue1,140 000", "feesvalue2,243 000", "nofeesvalue,0"})
+  void getOne_feesValueAsString(String identifier, String amount) {
+    parameters.setResultMode(ResultMode.ONE);
+    parameters.projection().addNames(SchoolingDto.JSON_IDENTIFIER,
+        SchoolingDto.JSON_FEE_AMOUNT_VALUE_AS_STRING);
+    parameters.filter().addCriteria(SchoolingDto.JSON_IDENTIFIER, identifier);
+    Schooling schooling = dynamicQuery.getOne(parameters);
+    assertEquals(amount, schooling.feeAmountValueAsString);
+  }
+
+  @ParameterizedTest
+  @CsvSource({"feesvalue1,140 000,", "feesvalue1,130 000,false", "feesvalue1,10 000,true",
+      "feesvalue2,243 000,"})
+  void getOne_feesValueAsString_whenFilterByOptional(String identifier, String amount,
+      Boolean optional) {
+    parameters.setResultMode(ResultMode.ONE);
+    parameters.projection().addNames(SchoolingDto.JSON_IDENTIFIER,
+        SchoolingDto.JSON_FEE_AMOUNT_VALUE_AS_STRING);
+    parameters.filter().addCriteria(SchoolingDto.JSON_IDENTIFIER, identifier);
+    parameters.filter().addCriteria(SchoolingFilter.JSON_IDENTIFIER, identifier)
+        .addCriteria(SchoolingFilter.JSON_FEE_AMOUNT_OPTIONAL, optional);
+    Schooling schooling = dynamicQuery.getOne(parameters);
+    assertEquals(amount, schooling.feeAmountValueAsString);
+  }
+
+  @ParameterizedTest
+  @CsvSource({"feesvalue1,25 000", "feesvalue2,80 000"})
+  void getOne_feesRegistrationValuePartAsString(String identifier, String amount) {
+    parameters.setResultMode(ResultMode.ONE);
+    parameters.projection().addNames(SchoolingDto.JSON_IDENTIFIER,
+        SchoolingDto.JSON_FEE_AMOUNT_REGISTRATION_VALUE_PART_AS_STRING);
+    parameters.filter().addCriteria(SchoolingDto.JSON_IDENTIFIER, identifier);
+    Schooling schooling = dynamicQuery.getOne(parameters);
+    assertEquals(amount, schooling.feeAmountRegistrationValuePartAsString);
+  }
+
+  @ParameterizedTest
+  @CsvSource({"feesvalue1,25 000,", "feesvalue2,80 000,"})
+  void getOne_feesRegistrationValuePartAsString_whenFilterByOptional(String identifier,
+      String amount, Boolean optional) {
+    parameters.setResultMode(ResultMode.ONE);
+    parameters.projection().addNames(SchoolingDto.JSON_IDENTIFIER,
+        SchoolingDto.JSON_FEE_AMOUNT_REGISTRATION_VALUE_PART_AS_STRING);
+    parameters.filter().addCriteria(SchoolingFilter.JSON_IDENTIFIER, identifier)
+        .addCriteria(SchoolingFilter.JSON_FEE_AMOUNT_OPTIONAL, optional);
+    Schooling schooling = dynamicQuery.getOne(parameters);
+    assertEquals(amount, schooling.feeAmountRegistrationValuePartAsString);
+  }
+
+  @Test
+  void getMany_feesValueAsString() {
+    parameters.projection().addNames(SchoolingDto.JSON_IDENTIFIER,
+        SchoolingDto.JSON_FEE_AMOUNT_VALUE_AS_STRING);
+    List<Schooling> schoolings = dynamicQuery.getMany(parameters);
+    assertEquals(5, schoolings.size());
+    Collection<String> amounts = schoolings.stream().map(s -> s.feeAmountValueAsString).toList();
+    assertTrue(amounts.contains("140 000"));
+    assertTrue(amounts.contains("243 000"));
+    assertTrue(amounts.contains("0"));
+  }
+
+  @Test
+  void getMany_feesRegistrationValuePartAsString() {
+    parameters.projection().addNames(SchoolingDto.JSON_IDENTIFIER,
+        SchoolingDto.JSON_FEE_AMOUNT_REGISTRATION_VALUE_PART_AS_STRING);
+    List<Schooling> schoolings = dynamicQuery.getMany(parameters);
+    assertLinesMatch(List.of("0", "0", "25 000", "80 000", "0"),
+        schoolings.stream().map(s -> s.feeAmountRegistrationValuePartAsString).toList());
   }
 
   public static class Profile implements QuarkusTestProfile {

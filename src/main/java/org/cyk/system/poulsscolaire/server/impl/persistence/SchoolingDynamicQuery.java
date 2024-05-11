@@ -4,15 +4,19 @@ import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableNamable;
 import ci.gouv.dgbf.extension.server.persistence.query.AbstractDynamicQuery;
+import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
 import ci.gouv.dgbf.extension.server.service.api.AbstractIdentifiableFilter;
 import ci.gouv.dgbf.extension.server.service.api.entity.AbstractIdentifiableCodableDto;
 import ci.gouv.dgbf.extension.server.service.api.entity.AbstractIdentifiableDto;
+import ci.gouv.dgbf.extension.server.service.api.request.ProjectionDto;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import java.util.Set;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolingDto;
+import org.cyk.system.poulsscolaire.server.api.configuration.SchoolingFilter;
 
 /**
  * Cette classe représente la requête dynamique de {@link Schooling}.
@@ -30,6 +34,8 @@ public class SchoolingDynamicQuery extends AbstractDynamicQuery<Schooling> {
   String schoolVariableName;
   String branchVariableName;
   String periodVariableName;
+  String feeVariableName;
+  String amountVariableName;
 
   /**
    * Cette méthode permet d'instancier un object.
@@ -39,10 +45,13 @@ public class SchoolingDynamicQuery extends AbstractDynamicQuery<Schooling> {
     schoolVariableName = "s";
     branchVariableName = "b";
     periodVariableName = "p";
+    feeVariableName = "f";
+    amountVariableName = "a";
   }
 
   @PostConstruct
   void postConstruct() {
+    // Projections
     projectionBuilder().name(AbstractIdentifiableDto.JSON_IDENTIFIER)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER).build();
 
@@ -67,6 +76,34 @@ public class SchoolingDynamicQuery extends AbstractDynamicQuery<Schooling> {
         .nameFieldName(Schooling.FIELD_PERIOD_AS_STRING).tupleVariableName(periodVariableName)
         .fieldName(AbstractIdentifiableNamable.FIELD_NAME).build();
 
+    projectionBuilder().name(SchoolingDto.JSON_FEE_AMOUNT_VALUE_AS_STRING)
+        .tupleVariableName(amountVariableName)
+        .expression(
+            String.format("COALESCE(SUM(%s.%s), 0)", amountVariableName, Amount.FIELD_VALUE))
+        .resultConsumer((i, a) -> i.feeAmountValueAsString = a.getNextAsLongFormatted()).build();
+
+    projectionBuilder().name(SchoolingDto.JSON_FEE_AMOUNT_REGISTRATION_VALUE_PART_AS_STRING)
+        .tupleVariableName(amountVariableName)
+        .expression(String.format("COALESCE(SUM(%s.%s), 0)", amountVariableName,
+            Amount.FIELD_REGISTRATION_VALUE_PART))
+        .resultConsumer(
+            (i, a) -> i.feeAmountRegistrationValuePartAsString = a.getNextAsLongFormatted())
+        .build();
+
+    // Jointures
+    joinBuilder()
+        .projectionsNames(SchoolingDto.JSON_FEE_AMOUNT_VALUE_AS_STRING,
+            SchoolingDto.JSON_FEE_AMOUNT_REGISTRATION_VALUE_PART_AS_STRING)
+        .with(Fee.class).tupleVariableName(feeVariableName).fieldName(Fee.FIELD_SCHOOLING)
+        .parentFieldName(null).leftInnerOrRight(true).build();
+
+    joinBuilder()
+        .projectionsNames(SchoolingDto.JSON_FEE_AMOUNT_VALUE_AS_STRING,
+            SchoolingDto.JSON_FEE_AMOUNT_REGISTRATION_VALUE_PART_AS_STRING)
+        .with(Amount.class).tupleVariableName(amountVariableName)
+        .parentTupleVariableName(feeVariableName)
+        .parentFieldName(AbstractAmountContainer.FIELD_AMOUNT).leftInnerOrRight(true).build();
+
     joinBuilder().projectionsNames(SchoolingDto.JSON_SCHOOL_AS_STRING)
         .entityName(School.ENTITY_NAME).tupleVariableName(schoolVariableName)
         .parentFieldName(Schooling.FIELD_SCHOOL_IDENTIFIER).leftInnerOrRight(true).build();
@@ -84,7 +121,34 @@ public class SchoolingDynamicQuery extends AbstractDynamicQuery<Schooling> {
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
         .valueFunction(AbstractIdentifiableFilter::getIdentifier).build();
 
+    predicateBuilder().name(SchoolingFilter.JSON_FEE_AMOUNT_OPTIONAL)
+        .tupleVariableName(feeVariableName)
+        .fieldName(fieldName(AbstractAmountContainer.FIELD_AMOUNT, Amount.FIELD_OPTIONAL))
+        .valueFunction(SchoolingFilter::getFeeAmountOptional).build();
+
     // Ordres par défaut
     orderBuilder().fieldName(AbstractIdentifiableCodable.FIELD_CODE).build();
+  }
+
+  @Override
+  protected boolean isGrouped(DynamicQueryParameters<Schooling> parameters) {
+    return ProjectionDto.hasOneOfNames(parameters.getProjection(),
+        SchoolingDto.JSON_FEE_AMOUNT_VALUE_AS_STRING,
+        SchoolingDto.JSON_FEE_AMOUNT_REGISTRATION_VALUE_PART_AS_STRING);
+  }
+
+  @Override
+  protected void buildGroups(DynamicQueryParameters<Schooling> parameters, Set<String> groups) {
+    /*
+     * On ajoute l'identifiant pour l'apsect technique de regroupement
+     */
+    groups.add("t.identifier");
+    /*
+     * On ajoute le code pour permettre le tri par code
+     */
+    groups.add("t.code");
+    /*
+     * On ajoute les autres au besoin
+     */
   }
 }
