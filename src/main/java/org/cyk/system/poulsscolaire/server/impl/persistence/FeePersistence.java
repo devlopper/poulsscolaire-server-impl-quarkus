@@ -4,6 +4,7 @@ import ci.gouv.dgbf.extension.server.persistence.AbstractIdentifiablePersistence
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import java.util.List;
 import lombok.Getter;
 
 /**
@@ -25,6 +26,17 @@ public class FeePersistence extends AbstractIdentifiablePersistence<Fee> {
   public FeePersistence() {
     super(Fee.class);
     name = "frais";
-    pluralName = "frais";
+    pluralName = name;
+  }
+
+  /**
+   * Cette méthode permet d'obtenir les frais par scolarité.
+   *
+   * @param schooling scolarité
+   * @return les frais
+   */
+  public List<Fee> getBySchooling(Schooling schooling) {
+    return entityManager.createNamedQuery(Fee.QUERY_READ_BY_SCHOOLING_IDENTIFIER, Fee.class)
+        .setParameter(Fee.QUERY_PARAMETER_SCHOOLING, schooling).getResultList();
   }
 }
