@@ -44,30 +44,30 @@ public class Amount extends AbstractIdentifiableAuditable {
   @ManyToOne
   @JoinColumn(name = COLUMN_DEADLINE, nullable = false)
   public Deadline deadline;
-  
+
   /* valeurs dérivées */
-  
+
   @Transient
   public String valueAsString;
-  
+
   @Transient
   public String registrationValuePartAsString;
-  
+
   @Transient
   public String optionalAsString;
-  
+
   @Transient
   public String paymentOrderNumberAsString;
-  
+
   @Transient
   public String renewableAsString;
-  
+
   @Transient
   public String deadlineIdentifier;
-  
+
   @Transient
   public String deadlineAsString;
-  
+
   /**
    * Cette méthode permet d'assigner les attributs.
    *
@@ -84,7 +84,7 @@ public class Amount extends AbstractIdentifiableAuditable {
       deadline = (Deadline) array[0];
     }
   }
-  
+
   public static final String FIELD_VALUE = "value";
   public static final String FIELD_VALUE_AS_STRING = "valueAsString";
   public static final String FIELD_REGISTRATION_VALUE_PART = "registrationValuePart";
@@ -99,10 +99,10 @@ public class Amount extends AbstractIdentifiableAuditable {
   public static final String FIELD_DEADLINE = "deadline";
   public static final String FIELD_DEADLINE_IDENTIFIER = "deadlineIdentifier";
   public static final String FIELD_DEADLINE_AS_STRING = "deadlineAsString";
-  
+
   public static final String ENTITY_NAME = "Amount";
   public static final String TABLE_NAME = "TA_MONTANT";
-  
+
   public static final String COLUMN_VALUE = "VALEUR";
   public static final String COLUMN_REGISTRATION_VALUE_PART = "VALEUR_INSCRIPTION";
   public static final String COLUMN_OPTIONAL = "FACULTATIF";
