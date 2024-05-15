@@ -1,11 +1,9 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
-import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableNamable;
 import ci.gouv.dgbf.extension.server.persistence.query.AbstractDynamicQuery;
 import ci.gouv.dgbf.extension.server.service.api.AbstractIdentifiableFilter;
-import ci.gouv.dgbf.extension.server.service.api.entity.AbstractIdentifiableCodableDto;
 import ci.gouv.dgbf.extension.server.service.api.entity.AbstractIdentifiableCodableNamableDto;
 import ci.gouv.dgbf.extension.server.service.api.entity.AbstractIdentifiableDto;
 import jakarta.annotation.PostConstruct;
@@ -39,9 +37,6 @@ public class SchoolDynamicQuery extends AbstractDynamicQuery<School> {
     projectionBuilder().name(AbstractIdentifiableDto.JSON_IDENTIFIER)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER).build();
 
-    projectionBuilder().name(AbstractIdentifiableCodableDto.JSON_CODE)
-        .fieldName(AbstractIdentifiableCodable.FIELD_CODE).build();
-
     projectionBuilder().name(AbstractIdentifiableCodableNamableDto.JSON_NAME)
         .fieldName(AbstractIdentifiableCodableNamable.FIELD_NAME).build();
 
@@ -52,6 +47,5 @@ public class SchoolDynamicQuery extends AbstractDynamicQuery<School> {
 
     // Ordres par défaut
     orderBuilder().fieldName(AbstractIdentifiableCodableNamable.FIELD_NAME).build();
-    orderBuilder().fieldName(AbstractIdentifiableCodable.FIELD_CODE).build();
   }
 }

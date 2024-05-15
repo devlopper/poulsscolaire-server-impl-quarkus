@@ -30,6 +30,7 @@ public class CashRegister extends AbstractIdentifiableCodableNamableAuditable {
   public String amountAsString;
   
   public static final String FIELD_SCHOOL_IDENTIFIER = "schoolIdentifier";
+  public static final String FIELD_SCHOOL_AS_STRING = "schoolAsString";
   public static final String FIELD_AMOUNT_AS_STRING = "amountAsString";
   
   public static final String ENTITY_NAME = "CashRegister";

@@ -25,4 +25,11 @@ public class CashRegisterCreateBusiness extends AbstractIdentifiableCreateBusine
   @Inject
   @Getter
   CashRegisterValidator validator;
+
+  @Override
+  protected void setFields(CashRegister cashRegister, Object[] array,
+      CashRegisterCreateRequestDto request) {
+    super.setFields(cashRegister, array, request);
+    cashRegister.schoolIdentifier = request.getSchoolIdentifier();
+  }
 }
