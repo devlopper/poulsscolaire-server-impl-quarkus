@@ -59,6 +59,5 @@ public class AdjustedFee extends AbstractAmountContainer {
           + PaymentAdjustedFee.FIELD_ADJUSTED_FEE + " = t " + "WHERE t." + FIELD_REGISTRATION
           + " = :" + FIELD_REGISTRATION
           + " AND (t.amount.optional IS NULL OR t.amount.optional = false)"
-          + " AND t.amount.value > 0" + " GROUP BY t." + FIELD_FEE
-          + " ORDER BY t.amount.paymentOrderNumber ASC";
+          + " AND t.amount.value > 0" + " GROUP BY t" + " ORDER BY t.amount.paymentOrderNumber ASC";
 }

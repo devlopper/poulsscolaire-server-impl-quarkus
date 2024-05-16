@@ -289,7 +289,7 @@ CREATE TABLE TA_MONTANT (
 	-- Identification
 	IDENTIFIANT VARCHAR(36) NOT NULL COMMENT 'Identifiant du montant',
 
-	VALEUR BIGINT NOT NULL COMMENT 'Valeur du montant',
+	VALEUR INT NOT NULL COMMENT 'Valeur du montant',
 	VALEUR_INSCRIPTION BIGINT COMMENT 'Valeur à l''inscriptiondu montant',
 	FACULTATIF BOOLEAN COMMENT 'Facultativité du montant',
 	RECONDUCTIBLE BOOLEAN COMMENT 'Reconductibilité du montant',
@@ -394,7 +394,8 @@ CREATE TABLE TA_PAIEMENT (
 	-- Identification
 	IDENTIFIANT VARCHAR(36) NOT NULL COMMENT 'Identifiant de paiement',
 	CODE VARCHAR(16) NOT NULL COMMENT 'Code de paiement',
-
+	
+	INSCRIPTION VARCHAR(36) NOT NULL COMMENT 'Identifiant de l''inscription',
 	MONTANT INT NOT NULL COMMENT 'Montant du paiement',
 	DATE_ DATE NOT NULL COMMENT 'Date du paiement',
 	MODE VARCHAR(36) NOT NULL COMMENT 'Identifiant du mode de paiement',
