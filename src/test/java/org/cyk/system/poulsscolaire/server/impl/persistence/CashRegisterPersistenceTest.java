@@ -14,7 +14,7 @@ class CashRegisterPersistenceTest {
   
   @Test
   void getName() {
-    assertEquals("mode de paiement", persistence.getName());
+    assertEquals("caisse enregistreuse", persistence.getName());
   }
   
 }

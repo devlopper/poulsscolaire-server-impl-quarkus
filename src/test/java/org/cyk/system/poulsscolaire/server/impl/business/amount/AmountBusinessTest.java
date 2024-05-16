@@ -47,7 +47,7 @@ class AmountBusinessTest extends AbstractTest {
     request.setPaymentOrderNumber(0);
     request.setRegistrationValuePart(0L);
     request.setRenewable(true);
-    request.setValue(0L);
+    request.setValue(0);
     request.setAuditWho("christian");
     long count = count(entityManager, Amount.ENTITY_NAME);
     createBusiness.process(request);
@@ -63,7 +63,7 @@ class AmountBusinessTest extends AbstractTest {
     request.setPaymentOrderNumber(0);
     request.setRegistrationValuePart(0L);
     request.setRenewable(true);
-    request.setValue(0L);
+    request.setValue(0);
     request.setAuditWho("christian");
     long count = count(entityManager, Amount.ENTITY_NAME);
     updateBusiness.process(request);

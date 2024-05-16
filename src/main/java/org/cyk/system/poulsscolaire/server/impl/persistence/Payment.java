@@ -8,6 +8,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * Cette classe représente un paiement.
@@ -19,6 +20,11 @@ import jakarta.validation.constraints.NotNull;
 @Table(name = Payment.TABLE_NAME)
 public class Payment extends AbstractIdentifiableCodableAuditable {
 
+  @NotNull
+  @ManyToOne
+  @JoinColumn(name = COLUMN_REGISTRATION, nullable = false)
+  public Registration registration;
+  
   @NotNull
   @ManyToOne
   @JoinColumn(name = COLUMN_MODE, nullable = false)
@@ -37,6 +43,10 @@ public class Payment extends AbstractIdentifiableCodableAuditable {
   @Transient
   public String dateAsString;
   
+  @Transient
+  public List<Object[]> payables;
+  
+  public static final String FIELD_REGISTRATION = "registration";
   public static final String FIELD_MODE = "mode";
   public static final String FIELD_MODE_AS_STRING = "modeAsString";
   public static final String FIELD_AMOUNT = "amount";
@@ -46,6 +56,7 @@ public class Payment extends AbstractIdentifiableCodableAuditable {
   public static final String ENTITY_NAME = "Payment";
   public static final String TABLE_NAME = "TA_PAIEMENT";
   
+  public static final String COLUMN_REGISTRATION = "INSCRIPTION";
   public static final String COLUMN_MODE = "MODE";
   public static final String COLUMN_AMOUNT = "MONTANT";
 }

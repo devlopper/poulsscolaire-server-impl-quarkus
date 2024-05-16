@@ -4,6 +4,7 @@ import ci.gouv.dgbf.extension.server.persistence.AbstractIdentifiablePersistence
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import java.util.List;
 import lombok.Getter;
 
 /**
@@ -26,5 +27,18 @@ public class AdjustedFeePersistence extends AbstractIdentifiablePersistence<Adju
     super(AdjustedFee.class);
     name = "frais ajusté";
     pluralName = "frais ajustés";
+  }
+
+  /**
+   * Cette méthode permet d'obtenir les frais ajustés à payer par inscription.
+   *
+   * @param registration inscription
+   * @return les frais ajustés à payer
+   */
+  public List<Object[]> getForPaymentByRegistration(Registration registration) {
+    return entityManager
+        .createNamedQuery(AdjustedFee.QUERY_READ_FOR_PAYMENT_BY_REGISTRATION_IDENTIFIER,
+            Object[].class)
+        .setParameter(AdjustedFee.FIELD_REGISTRATION, registration).getResultList();
   }
 }
