@@ -45,7 +45,7 @@ class AmountBusinessTest extends AbstractTest {
     request.setDeadlineIdentifier("1");
     request.setOptional(true);
     request.setPaymentOrderNumber(0);
-    request.setRegistrationValuePart(0L);
+    request.setRegistrationValuePart(0);
     request.setRenewable(true);
     request.setValue(0);
     request.setAuditWho("christian");
@@ -61,7 +61,7 @@ class AmountBusinessTest extends AbstractTest {
     request.setDeadlineIdentifier("1");
     request.setOptional(true);
     request.setPaymentOrderNumber(0);
-    request.setRegistrationValuePart(0L);
+    request.setRegistrationValuePart(0);
     request.setRenewable(true);
     request.setValue(0);
     request.setAuditWho("christian");
