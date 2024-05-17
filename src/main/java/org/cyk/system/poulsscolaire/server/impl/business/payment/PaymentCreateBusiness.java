@@ -56,14 +56,14 @@ public class PaymentCreateBusiness extends AbstractIdentifiableCreateBusiness<Pa
         .validateInstanceByIdentifier(request.getRegistrationIdentifier(), messages);
     PaymentMode mode =
         modeValidator.validateInstanceByIdentifier(request.getModeIdentifier(), messages);
-    validationHelper.validateLowerThan(this, request.getAmount(), 0, "montant est obligatoire",
-        messages);
+    validationHelper.validateLowerThanByName(this, Integer.valueOf(request.getAmount()).longValue(),
+        0L, "montant", "zéro", messages);
     List<Object[]> payables = null;
     if (registration != null) {
       payables = adjustedFeePersistence.getForPaymentByRegistration(registration);
       if (!messages.addIfCollectionEmpty(payables, "Aucun frais à payer")) {
         validationHelper.validateGreaterThanByName(this, request.getAmount(),
-            payables.stream().mapToLong(array -> (Long) array[2]).sum(), "montant", "rest à payer",
+            payables.stream().mapToLong(array -> (Long) array[2]).sum(), "montant", "reste à payer",
             messages);
         messages.addIfTrue(
             request.getAmount() > payables.stream().mapToLong(array -> (Long) array[2]).sum(),
@@ -79,8 +79,8 @@ public class PaymentCreateBusiness extends AbstractIdentifiableCreateBusiness<Pa
     super.setFields(payment, array, request);
     payment.registration = (Registration) array[0];
     payment.mode = (PaymentMode) array[1];
-    payment.amount = request.getAmount();
     payment.code = String.format("P%s", System.currentTimeMillis());
+    payment.amount = request.getAmount();
     payment.payables = (List<Object[]>) array[2];
   }
 

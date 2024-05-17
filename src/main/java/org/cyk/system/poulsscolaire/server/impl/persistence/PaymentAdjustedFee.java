@@ -55,12 +55,4 @@ public class PaymentAdjustedFee extends AbstractIdentifiableAuditable {
   public static final String COLUMN_PAYMENT = "PAIEMENT";
   public static final String COLUMN_ADJUSTED_FEE = "FRAIS_AJUSTE";
   public static final String COLUMN_AMOUNT = "MONTANT";
-
-  public static final String QUERY_PARAMETER_REGISTRATION = "registration";
-  public static final String QUERY_READ_BY_REGISTRATION_IDENTIFIER =
-      "PaymentAdjustedFee.readByRegistration";
-  public static final String QUERY_READ_BY_REGISTRATION_VALUE =
-      "SELECT t FROM AdjustedFee t WHERE t." + FIELD_ADJUSTED_FEE + "."
-          + AdjustedFee.FIELD_REGISTRATION + " = :" + QUERY_PARAMETER_REGISTRATION
-          + " ORDER BY t.adjustedFee.amount.paymentOrderNumber ASC";
 }
