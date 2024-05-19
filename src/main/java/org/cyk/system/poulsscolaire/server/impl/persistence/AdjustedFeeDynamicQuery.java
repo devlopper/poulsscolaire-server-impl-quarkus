@@ -55,9 +55,20 @@ public class AdjustedFeeDynamicQuery extends AbstractDynamicQuery<AdjustedFee> {
 
     projectionBuilder().name(AdjustedFeeDto.JSON_AMOUNT_VALUE_PAID_AS_STRING)
         .tupleVariableName(paymentAdjustedFeeVariableName)
-        .expression(String.format("COALESCE(SUM(%s.%s), 0)", paymentAdjustedFeeVariableName,
+        .expression(String.format("SUM(COALESCE(%s.%s, 0))", paymentAdjustedFeeVariableName,
             PaymentAdjustedFee.FIELD_AMOUNT))
         .resultConsumer((i, a) -> i.amountValuePaidAsString = a.getNextAsLongFormatted()).build();
+
+    projectionBuilder().name(AdjustedFeeDto.JSON_AMOUNT_VALUE_LEFT_TO_PAY_AS_STRING)
+        .tupleVariableName(paymentAdjustedFeeVariableName)
+        .expression(String.format(
+            "CASE WHEN %1$s.%2$s THEN 0 ELSE COALESCE(%1$s.%3$s,0) END"
+            + " - SUM(COALESCE(%4$s.%5$s,0))",
+            variableName, fieldName(AbstractAmountContainer.FIELD_AMOUNT, Amount.FIELD_OPTIONAL),
+            fieldName(AbstractAmountContainer.FIELD_AMOUNT, Amount.FIELD_VALUE),
+            paymentAdjustedFeeVariableName, PaymentAdjustedFee.FIELD_AMOUNT))
+        .resultConsumer((i, a) -> i.amountValueLeftToPayAsString = a.getNextAsLongFormatted())
+        .build();
 
     projectionBuilder().name(AdjustedFeeDto.JSON_FEE_IDENTIFIER)
         .nameFieldName(AdjustedFee.FIELD_FEE_IDENTIFIER)
