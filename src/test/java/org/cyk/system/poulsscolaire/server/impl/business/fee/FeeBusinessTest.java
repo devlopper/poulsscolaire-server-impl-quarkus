@@ -1,7 +1,9 @@
 package org.cyk.system.poulsscolaire.server.impl.business.fee;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import ci.gouv.dgbf.extension.server.business.BusinessInputValidationException;
 import ci.gouv.dgbf.extension.test.AbstractTest;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.QuarkusTestProfile;
@@ -46,6 +48,26 @@ class FeeBusinessTest extends AbstractTest {
     request.setAssignmentTypeIdentifier("1");
     request.setSeniorityIdentifier("1");
     request.setSchoolingIdentifier("1");
+    request.setCategoryIdentifier("2");
+    request.setDeadlineIdentifier("1");
+    request.setOptional(true);
+    request.setPaymentOrderNumber(2);
+    request.setRenewable(true);
+    request.setValue(1);
+    request.setAuditWho("christian");
+    long feeCount = count(entityManager, Fee.ENTITY_NAME);
+    long amountCount = count(entityManager, Amount.ENTITY_NAME);
+    createBusiness.process(request);
+    assertEquals(feeCount + 1, count(entityManager, Fee.ENTITY_NAME));
+    assertEquals(amountCount + 1, count(entityManager, Amount.ENTITY_NAME));
+  }
+  
+  @Test
+  void create_whenValueZero() {
+    FeeCreateRequestDto request = new FeeCreateRequestDto();
+    request.setAssignmentTypeIdentifier("1");
+    request.setSeniorityIdentifier("1");
+    request.setSchoolingIdentifier("1");
     request.setCategoryIdentifier("1");
     request.setDeadlineIdentifier("1");
     request.setOptional(true);
@@ -54,11 +76,40 @@ class FeeBusinessTest extends AbstractTest {
     request.setRenewable(true);
     request.setValue(0);
     request.setAuditWho("christian");
-    long feeCount = count(entityManager, Fee.ENTITY_NAME);
-    long amountCount = count(entityManager, Amount.ENTITY_NAME);
-    createBusiness.process(request);
-    assertEquals(feeCount + 1, count(entityManager, Fee.ENTITY_NAME));
-    assertEquals(amountCount + 1, count(entityManager, Amount.ENTITY_NAME));
+    assertThrows(BusinessInputValidationException.class, () -> createBusiness.process(request));
+  }
+  
+  @Test
+  void create_whenRegistrationValuePartGreaterThanValue() {
+    FeeCreateRequestDto request = new FeeCreateRequestDto();
+    request.setAssignmentTypeIdentifier("1");
+    request.setSeniorityIdentifier("1");
+    request.setSchoolingIdentifier("1");
+    request.setCategoryIdentifier("1");
+    request.setDeadlineIdentifier("1");
+    request.setOptional(true);
+    request.setPaymentOrderNumber(0);
+    request.setRegistrationValuePart(2);
+    request.setRenewable(true);
+    request.setValue(1);
+    request.setAuditWho("christian");
+    assertThrows(BusinessInputValidationException.class, () -> createBusiness.process(request));
+  }
+  
+  @Test
+  void create_whenPaymentOrderNumberExist() {
+    FeeCreateRequestDto request = new FeeCreateRequestDto();
+    request.setAssignmentTypeIdentifier("1");
+    request.setSeniorityIdentifier("1");
+    request.setSchoolingIdentifier("1");
+    request.setCategoryIdentifier("1");
+    request.setDeadlineIdentifier("1");
+    request.setOptional(true);
+    request.setPaymentOrderNumber(0);
+    request.setRenewable(true);
+    request.setValue(1);
+    request.setAuditWho("christian");
+    assertThrows(BusinessInputValidationException.class, () -> createBusiness.process(request));
   }
   
   @Test

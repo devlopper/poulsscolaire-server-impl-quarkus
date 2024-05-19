@@ -2,6 +2,7 @@ package org.cyk.system.poulsscolaire.server.impl.persistence;
 
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableNamable;
+import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableNamable;
 import ci.gouv.dgbf.extension.server.persistence.query.AbstractDynamicQuery;
 import ci.gouv.dgbf.extension.server.service.api.AbstractIdentifiableFilter;
 import ci.gouv.dgbf.extension.server.service.api.entity.AbstractIdentifiableDto;
@@ -27,11 +28,18 @@ public class FeeDynamicQuery extends AbstractDynamicQuery<Fee> {
   @Getter
   EntityManager entityManager;
 
+  String schoolVariableName;
+  String periodVariableName;
+  String branchVariableName;
+
   /**
    * Cette méthode permet d'instancier un object.
    */
   public FeeDynamicQuery() {
     super(Fee.class);
+    schoolVariableName = "school";
+    periodVariableName = "period";
+    branchVariableName = "branch";
   }
 
   @PostConstruct
@@ -39,25 +47,43 @@ public class FeeDynamicQuery extends AbstractDynamicQuery<Fee> {
     projectionBuilder().name(AbstractIdentifiableDto.JSON_IDENTIFIER)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER).build();
 
-    projectionBuilder().name(FeeDto.JSON_SCHOOLING_AS_STRING)
-        .nameFieldName(Fee.FIELD_SCHOOLING_AS_STRING)
-        .expression(String.format("CONCAT(%s,' ',%s,' ',%s)",
-            fieldName(Fee.FIELD_SCHOOLING, Schooling.FIELD_SCHOOL_IDENTIFIER),
-            fieldName(Fee.FIELD_SCHOOLING, Schooling.FIELD_BRANCH_IDENTIFIER),
-            fieldName(Fee.FIELD_SCHOOLING, Schooling.FIELD_PERIOD_IDENTIFIER)))
-        .resultConsumer((i, a) -> i.schoolingAsString = a.getNextAsString()).build();
+    projectionBuilder().name(FeeDto.JSON_SCHOOLING_IDENTIFIER)
+        .nameFieldName(Fee.FIELD_SCHOOLING_IDENTIFIER)
+        .fieldName(fieldName(Fee.FIELD_SCHOOLING, AbstractIdentifiable.FIELD_IDENTIFIER)).build();
 
+    projectionBuilder().name(FeeDto.JSON_SCHOOLING_SCHOOL_AS_STRING)
+        .nameFieldName(Fee.FIELD_SCHOOLING_SCHOOL_AS_STRING).tupleVariableName(schoolVariableName)
+        .fieldName(AbstractIdentifiableNamable.FIELD_NAME).build();
+
+    projectionBuilder().name(FeeDto.JSON_SCHOOLING_PERIOD_AS_STRING)
+        .nameFieldName(Fee.FIELD_SCHOOLING_PERIOD_AS_STRING).tupleVariableName(periodVariableName)
+        .fieldName(AbstractIdentifiableNamable.FIELD_NAME).build();
+
+    projectionBuilder().name(FeeDto.JSON_SCHOOLING_BRANCH_AS_STRING)
+        .nameFieldName(Fee.FIELD_SCHOOLING_BRANCH_AS_STRING).tupleVariableName(branchVariableName)
+        .fieldName(AbstractIdentifiableNamable.FIELD_NAME).build();
+
+    projectionBuilder().name(FeeDto.JSON_ASSIGNMENT_TYPE_IDENTIFIER)
+        .nameFieldName(Fee.FIELD_ASSIGNMENT_TYPE_IDENTIFIER)
+        .fieldName(fieldName(Fee.FIELD_ASSIGNMENT_TYPE, AbstractIdentifiable.FIELD_IDENTIFIER))
+        .build();
     projectionBuilder().name(FeeDto.JSON_ASSIGNMENT_TYPE_AS_STRING)
         .nameFieldName(Fee.FIELD_ASSIGNMENT_TYPE_AS_STRING)
         .fieldName(
             fieldName(Fee.FIELD_ASSIGNMENT_TYPE, AbstractIdentifiableCodableNamable.FIELD_NAME))
         .build();
 
+    projectionBuilder().name(FeeDto.JSON_SENIORITY_IDENTIFIER)
+        .nameFieldName(Fee.FIELD_SENIORITY_IDENTIFIER)
+        .fieldName(fieldName(Fee.FIELD_SENIORITY, AbstractIdentifiable.FIELD_IDENTIFIER)).build();
     projectionBuilder().name(FeeDto.JSON_SENIORITY_AS_STRING)
         .nameFieldName(Fee.FIELD_SENIORITY_AS_STRING)
         .fieldName(fieldName(Fee.FIELD_SENIORITY, AbstractIdentifiableCodableNamable.FIELD_NAME))
         .build();
 
+    projectionBuilder().name(FeeDto.JSON_CATEGORY_IDENTIFIER)
+        .nameFieldName(Fee.FIELD_CATEGORY_IDENTIFIER)
+        .fieldName(fieldName(Fee.FIELD_CATEGORY, AbstractIdentifiable.FIELD_IDENTIFIER)).build();
     projectionBuilder().name(FeeDto.JSON_CATEGORY_AS_STRING)
         .nameFieldName(Fee.FIELD_CATEGORY_AS_STRING)
         .fieldName(fieldName(Fee.FIELD_CATEGORY, AbstractIdentifiableCodableNamable.FIELD_NAME))
@@ -109,14 +135,30 @@ public class FeeDynamicQuery extends AbstractDynamicQuery<Fee> {
 
     projectionBuilder().name(AbstractAmountContainerDto.JSON_AMOUNT_DEADLINE_IDENTIFIER)
         .nameFieldName(AbstractAmountContainer.FIELD_AMOUNT_DEADLINE_IDENTIFIER)
-        .fieldName(
-            fieldName(AbstractAmountContainer.FIELD_AMOUNT, Amount.FIELD_DEADLINE_IDENTIFIER))
+        .fieldName(fieldName(AbstractAmountContainer.FIELD_AMOUNT, Amount.FIELD_DEADLINE,
+            AbstractIdentifiable.FIELD_IDENTIFIER))
         .build();
     projectionBuilder().name(AbstractAmountContainerDto.JSON_AMOUNT_DEADLINE_AS_STRING)
         .nameFieldName(AbstractAmountContainer.FIELD_AMOUNT_DEADLINE_AS_STRING)
         .fieldName(fieldName(AbstractAmountContainer.FIELD_AMOUNT, Amount.FIELD_DEADLINE,
             AbstractIdentifiableCodableNamable.FIELD_NAME))
         .build();
+
+    // Jointure
+    joinBuilder().projectionsNames(FeeDto.JSON_SCHOOLING_SCHOOL_AS_STRING)
+        .entityName(School.ENTITY_NAME).tupleVariableName(schoolVariableName)
+        .parentFieldName(fieldName(Fee.FIELD_SCHOOLING, Schooling.FIELD_SCHOOL_IDENTIFIER))
+        .leftInnerOrRight(true).build();
+
+    joinBuilder().projectionsNames(FeeDto.JSON_SCHOOLING_PERIOD_AS_STRING)
+        .entityName(Period.ENTITY_NAME).tupleVariableName(periodVariableName)
+        .parentFieldName(fieldName(Fee.FIELD_SCHOOLING, Schooling.FIELD_PERIOD_IDENTIFIER))
+        .leftInnerOrRight(true).build();
+
+    joinBuilder().projectionsNames(FeeDto.JSON_SCHOOLING_BRANCH_AS_STRING)
+        .entityName(Branch.ENTITY_NAME).tupleVariableName(branchVariableName)
+        .parentFieldName(fieldName(Fee.FIELD_SCHOOLING, Schooling.FIELD_BRANCH_IDENTIFIER))
+        .leftInnerOrRight(true).build();
 
     // Prédicats
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)
@@ -126,7 +168,7 @@ public class FeeDynamicQuery extends AbstractDynamicQuery<Fee> {
     predicateBuilder().name(FeeFilter.JSON_SCHOOLING_IDENTIFIER)
         .fieldName(fieldName(Fee.FIELD_SCHOOLING, AbstractIdentifiable.FIELD_IDENTIFIER))
         .valueFunction(FeeFilter::getSchoolingIdentifier).build();
-    
+
     // Ordres par défaut
     // orderBuilder().fieldName(fieldName(Fee.FIELD_DEADLINE, Deadline.FIELD_DATE)).ascending(false)
     // .build();

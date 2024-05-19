@@ -40,6 +40,9 @@ public class Student extends AbstractIdentifiableCodableAuditable {
   public String phoneNumber;
   
   @Transient
+  public String genderIdentifier;
+  
+  @Transient
   public String genderAsString;
   
   @Transient
@@ -60,6 +63,7 @@ public class Student extends AbstractIdentifiableCodableAuditable {
   public static final String FIELD_LAST_NAMES = "lastNames";
   public static final String FIELD_EMAIL_ADDRESS = "emailAddress";
   public static final String FIELD_PHONE_NUMBER = "phoneNumber";
+  public static final String FIELD_GENDER_IDENTIFIER = "genderIdentifier";
   public static final String FIELD_GENDER_AS_STRING = "genderAsString";
   public static final String FIELD_IS_MASCULINE = "isMasculine";
   

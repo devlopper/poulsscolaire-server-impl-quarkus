@@ -19,10 +19,10 @@ class FeePersistenceTest {
 
   @Inject
   FeePersistence persistence;
-  
+
   @Inject
   EntityManager entityManager;
-  
+
   @Test
   void getName() {
     assertEquals("frais", persistence.getName());
@@ -34,7 +34,19 @@ class FeePersistenceTest {
     List<Fee> fees = persistence.getBySchooling(entityManager.find(Schooling.class, identifier));
     assertEquals(count, fees.size());
   }
-  
+
+  @ParameterizedTest
+  @CsvSource({"feesvalue1,1,1,1,true", "feesvalue1,1,1,2,true", "feesvalue1,1,1,3,true",
+      "feesvalue1,1,1,4,false"})
+  void isPaymentOrderNumberExist(String schoolingIdentifier, String assignmentTypeIdentifier,
+      String seniorityIdentifier, Integer paymentOrderNumber, boolean expected) {
+    assertEquals(expected,
+        persistence.isPaymentOrderNumberExist(
+            entityManager.find(Schooling.class, schoolingIdentifier),
+            entityManager.find(AssignmentType.class, assignmentTypeIdentifier),
+            entityManager.find(Seniority.class, seniorityIdentifier), paymentOrderNumber));
+  }
+
   public static class Profile implements QuarkusTestProfile {
 
     @Override

@@ -27,13 +27,13 @@ public abstract class AbstractAmountContainer extends AbstractIdentifiableAudita
   public String amountAsString;
 
   @Transient
-  public long amountValue;
+  public int amountValue;
 
   @Transient
   public String amountValueAsString;
 
   @Transient
-  public Long amountRegistrationValuePart;
+  public Integer amountRegistrationValuePart;
 
   @Transient
   public String amountRegistrationValuePartAsString;

@@ -8,6 +8,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
+import java.util.Optional;
 import org.cyk.system.poulsscolaire.server.api.fee.AmountService;
 
 /**
@@ -76,7 +77,7 @@ public class Amount extends AbstractIdentifiableAuditable {
    */
   public void set(AmountService.AmountSaveData request, Object[] array) {
     value = request.getValue();
-    registrationValuePart = request.getRegistrationValuePart();
+    registrationValuePart = Optional.ofNullable(request.getRegistrationValuePart()).orElse(0);
     optional = request.getOptional();
     paymentOrderNumber = request.getPaymentOrderNumber();
     renewable = request.getRenewable();

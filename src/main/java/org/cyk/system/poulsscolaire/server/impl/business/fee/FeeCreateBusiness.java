@@ -4,6 +4,7 @@ import ci.gouv.dgbf.extension.core.StringList;
 import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableCreateBusiness;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import java.util.Optional;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.fee.FeeService.FeeCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.business.assignmenttype.AssignmentTypeValidator;
@@ -65,10 +66,18 @@ public class FeeCreateBusiness extends
         .validateInstanceByIdentifier(request.getAssignmentTypeIdentifier(), messages);
     Seniority seniority =
         seniorityValidator.validateInstanceByIdentifier(request.getSeniorityIdentifier(), messages);
+    messages.addIfTrue(persistence.isPaymentOrderNumberExist(schooling, assignmentType, seniority,
+        request.getPaymentOrderNumber()), "Le numéro d'ordre de paiement existe déja");
     FeeCategory category =
         categoryValidator.validateInstanceByIdentifier(request.getCategoryIdentifier(), messages);
     Deadline deadline =
         deadlineValidator.validateInstanceByIdentifier(request.getDeadlineIdentifier(), messages);
+    validationHelper.validateLowerThanByName(this, request.getValue(), 1, "montant", "un",
+        messages);
+    validationHelper.validateGreaterThanByName(this,
+        Optional.ofNullable(request.getRegistrationValuePart()).orElse(0), request.getValue(),
+        "part inscription", "montant", messages);
+
     return new Object[] {deadline, schooling, assignmentType, seniority, category};
   }
 
