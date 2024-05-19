@@ -88,20 +88,21 @@ public class PaymentCreateBusiness extends AbstractIdentifiableCreateBusiness<Pa
   protected void doTransact(Payment payment) {
     super.doTransact(payment);
     AtomicInteger amount = new AtomicInteger(payment.amount);
-    Collection<PaymentAdjustedFee> paymentAdjustedFees = payment.payables.stream().map(array -> {
-      PaymentAdjustedFee paymentAdjustedFee = new PaymentAdjustedFee();
-      paymentAdjustedFee.generateIdentifier();
-      paymentAdjustedFee.audit = payment.audit;
-      paymentAdjustedFee.payment = payment;
-      paymentAdjustedFee.adjustedFee = (AdjustedFee) array[0];
-      if (amount.get() >= paymentAdjustedFee.adjustedFee.amount.value) {
-        paymentAdjustedFee.amount = paymentAdjustedFee.adjustedFee.amount.value;
-      } else {
-        paymentAdjustedFee.amount = amount.get();
-      }
-      amount.addAndGet(-paymentAdjustedFee.amount);
-      return paymentAdjustedFee;
-    }).toList();
+    Collection<PaymentAdjustedFee> paymentAdjustedFees =
+        payment.payables.stream().takeWhile(array -> amount.get() > 0).map(array -> {
+          PaymentAdjustedFee paymentAdjustedFee = new PaymentAdjustedFee();
+          paymentAdjustedFee.generateIdentifier();
+          paymentAdjustedFee.audit = payment.audit;
+          paymentAdjustedFee.payment = payment;
+          paymentAdjustedFee.adjustedFee = (AdjustedFee) array[0];
+          if (amount.get() >= paymentAdjustedFee.adjustedFee.amount.value) {
+            paymentAdjustedFee.amount = paymentAdjustedFee.adjustedFee.amount.value;
+          } else {
+            paymentAdjustedFee.amount = amount.get();
+          }
+          amount.addAndGet(-paymentAdjustedFee.amount);
+          return paymentAdjustedFee;
+        }).toList();
     paymentAdjustedFeePersistence.create(paymentAdjustedFees);
   }
 }

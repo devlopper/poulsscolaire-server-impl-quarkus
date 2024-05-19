@@ -55,7 +55,8 @@ class PaymentBusinessTest extends AbstractTest {
 
   @ParameterizedTest
   @CsvSource(value = {"onepayable_amountless,100,1", "onepayable_amountequal,1,1",
-      "twopayables_amountless,25,2"})
+      "twopayables_amountless,25,2", "twopayables_oneoptional_amountless,9,1",
+      "twopayables_amountlessone,9,1"})
   void create_whenOnePayable_whenAmountLess(String identifier, int amount,
       int numberofAdjustedPayment) {
     PaymentCreateRequestDto request = new PaymentCreateRequestDto();

@@ -1,19 +1,12 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
-import io.quarkus.test.junit.QuarkusMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-import org.hibernate.Session;
-import org.hibernate.query.Query;
+import org.cyk.system.poulsscolaire.server.api.fee.AdjustedFeeDto;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 @QuarkusTest
 class AdjustedFeeDynamicQueryTest {
@@ -22,20 +15,14 @@ class AdjustedFeeDynamicQueryTest {
   AdjustedFeeDynamicQuery dynamicQuery;
 
   DynamicQueryParameters<AdjustedFee> parameters = new DynamicQueryParameters<>();
-  
-  @SuppressWarnings("unchecked")
+
   @Test
-  void getMany() {
-    @SuppressWarnings("rawtypes")
-    Query query = Mockito.mock(Query.class);
-    List<Object[]> arrays = new ArrayList<>();
-    arrays.add(new Object[] {"1"});
-    Mockito.when(query.getResultList()).thenReturn(arrays);
-    
-    Session session = Mockito.mock(Session.class);
-    Mockito.when(session.createQuery(anyString(), any())).thenReturn(query);
-    QuarkusMock.installMockForType(session, Session.class);
-    
-    assertEquals(1, dynamicQuery.getMany(parameters).size());
+  void buildQueryString() {
+    parameters.projection().addNames(AdjustedFeeDto.JSON_AMOUNT_VALUE_LEFT_TO_PAY_AS_STRING);
+    assertEquals(
+        "SELECT CASE WHEN t.amount.optional THEN 0 ELSE COALESCE(t.amount.value,0) END"
+            + " - SUM(COALESCE(p.amount,0)) FROM AdjustedFee t "
+            + "ORDER BY t.fee.category.name DESC,t.registration.code DESC",
+        dynamicQuery.buildQueryString(parameters));
   }
 }
