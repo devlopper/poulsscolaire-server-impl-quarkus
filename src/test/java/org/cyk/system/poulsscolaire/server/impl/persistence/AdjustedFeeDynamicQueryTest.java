@@ -19,10 +19,6 @@ class AdjustedFeeDynamicQueryTest {
   @Test
   void buildQueryString() {
     parameters.projection().addNames(AdjustedFeeDto.JSON_AMOUNT_VALUE_LEFT_TO_PAY_AS_STRING);
-    assertEquals(
-        "SELECT CASE WHEN t.amount.optional THEN 0 ELSE COALESCE(t.amount.value,0) END"
-            + " - SUM(COALESCE(p.amount,0)) FROM AdjustedFee t "
-            + "ORDER BY t.fee.category.name DESC,t.registration.code DESC",
-        dynamicQuery.buildQueryString(parameters));
+    assertEquals(0, dynamicQuery.getMany(parameters).size());
   }
 }

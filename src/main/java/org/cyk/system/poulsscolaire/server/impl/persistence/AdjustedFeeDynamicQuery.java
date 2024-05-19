@@ -63,7 +63,7 @@ public class AdjustedFeeDynamicQuery extends AbstractDynamicQuery<AdjustedFee> {
         .tupleVariableName(paymentAdjustedFeeVariableName)
         .expression(String.format(
             "CASE WHEN %1$s.%2$s THEN 0 ELSE COALESCE(%1$s.%3$s,0) END"
-            + " - SUM(COALESCE(%4$s.%5$s,0))",
+                + " - SUM(COALESCE(%4$s.%5$s,0))",
             variableName, fieldName(AbstractAmountContainer.FIELD_AMOUNT, Amount.FIELD_OPTIONAL),
             fieldName(AbstractAmountContainer.FIELD_AMOUNT, Amount.FIELD_VALUE),
             paymentAdjustedFeeVariableName, PaymentAdjustedFee.FIELD_AMOUNT))
@@ -140,7 +140,9 @@ public class AdjustedFeeDynamicQuery extends AbstractDynamicQuery<AdjustedFee> {
     // Jointures
     joinBuilder()
         .projectionsNames(AdjustedFeeDto.JSON_AMOUNT_VALUE_PAID,
-            AdjustedFeeDto.JSON_AMOUNT_VALUE_PAID_AS_STRING)
+            AdjustedFeeDto.JSON_AMOUNT_VALUE_PAID_AS_STRING,
+            AdjustedFeeDto.JSON_AMOUNT_VALUE_LEFT_TO_PAY,
+            AdjustedFeeDto.JSON_AMOUNT_VALUE_LEFT_TO_PAY_AS_STRING)
         .with(PaymentAdjustedFee.class).tupleVariableName(paymentAdjustedFeeVariableName)
         .fieldName(PaymentAdjustedFee.FIELD_ADJUSTED_FEE).parentFieldName(null)
         .leftInnerOrRight(true).build();
@@ -166,7 +168,9 @@ public class AdjustedFeeDynamicQuery extends AbstractDynamicQuery<AdjustedFee> {
   @Override
   protected boolean isGrouped(DynamicQueryParameters<AdjustedFee> parameters) {
     return ProjectionDto.hasOneOfNames(parameters.getProjection(),
-        AdjustedFeeDto.JSON_AMOUNT_VALUE_PAID, AdjustedFeeDto.JSON_AMOUNT_VALUE_PAID_AS_STRING);
+        AdjustedFeeDto.JSON_AMOUNT_VALUE_PAID, AdjustedFeeDto.JSON_AMOUNT_VALUE_PAID_AS_STRING,
+        AdjustedFeeDto.JSON_AMOUNT_VALUE_LEFT_TO_PAY,
+        AdjustedFeeDto.JSON_AMOUNT_VALUE_LEFT_TO_PAY_AS_STRING);
   }
 
   @Override
