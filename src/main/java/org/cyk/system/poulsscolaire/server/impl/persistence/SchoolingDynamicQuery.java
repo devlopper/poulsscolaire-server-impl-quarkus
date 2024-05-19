@@ -86,7 +86,8 @@ public class SchoolingDynamicQuery extends AbstractDynamicQuery<Schooling> {
         .tupleVariableName(amountVariableName)
         .expression(String.format("COALESCE(SUM(CASE WHEN %1$s.%2$s THEN 0 ELSE %1$s.%3$s END), 0)",
             amountVariableName, Amount.FIELD_OPTIONAL, Amount.FIELD_VALUE))
-        .resultConsumer((i, a) -> i.notOptionalFeeAmountValueAsString = a.getNextAsLongFormatted())
+        .resultConsumer(
+            (i, a) -> i.notOptionalFeeAmountValueAsString = a.getNextAsLongFormatted())
         .build();
 
     projectionBuilder().name(SchoolingDto.JSON_FEE_AMOUNT_REGISTRATION_VALUE_PART_AS_STRING)
@@ -164,11 +165,11 @@ public class SchoolingDynamicQuery extends AbstractDynamicQuery<Schooling> {
     /*
      * On ajoute l'identifiant pour l'apsect technique de regroupement
      */
-    groups.add("t.identifier");
+    groups.add(fieldName(variableName, AbstractIdentifiable.FIELD_IDENTIFIER));
     /*
      * On ajoute le code pour permettre le tri par code
      */
-    groups.add("t.code");
+    groups.add(fieldName(variableName, AbstractIdentifiableCodable.FIELD_CODE));
     /*
      * On ajoute les autres au besoin
      */

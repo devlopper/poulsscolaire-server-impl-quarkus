@@ -41,7 +41,7 @@ public class Schooling extends AbstractIdentifiableCodableAuditable {
   public String periodAsString;
 
   @Transient
-  public Long feeAmountValue;
+  public Integer feeAmountValue;
 
   @Transient
   public String notOptionalFeeAmountValueAsString;
@@ -50,7 +50,7 @@ public class Schooling extends AbstractIdentifiableCodableAuditable {
   public String feeAmountValueAsString;
 
   @Transient
-  public Long feeAmountRegistrationValuePart;
+  public Integer feeAmountRegistrationValuePart;
 
   @Transient
   public String feeAmountRegistrationValuePartAsString;

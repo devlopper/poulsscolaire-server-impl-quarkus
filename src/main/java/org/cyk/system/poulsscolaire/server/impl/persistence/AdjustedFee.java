@@ -35,16 +35,32 @@ public class AdjustedFee extends AbstractAmountContainer {
   /* valeurs dérivées */
 
   @Transient
+  public String feeIdentifier;
+  
+  @Transient
   public String feeAsString;
 
   @Transient
-  public String registrationAsString;
+  public String registrationIdentifier;
 
+  @Transient
+  public String registrationAsString;
+  
+  @Transient
+  public Integer amountValuePaid;
+
+  @Transient
+  public String amountValuePaidAsString;
+  
   public static final String FIELD_FEE = "fee";
+  public static final String FIELD_FEE_IDENTIFIER = "feeIdentifier";
   public static final String FIELD_FEE_AS_STRING = "feeAsString";
   public static final String FIELD_REGISTRATION = "registration";
+  public static final String FIELD_REGISTRATION_IDENTIFIER = "registrationIdentifier";
   public static final String FIELD_REGISTRATION_AS_STRING = "registrationAsString";
-
+  public static final String FIELD_AMOUNT_VALUE_PAID_AS_STRING = "amountValuePaidAsString";
+  public static final String FIELD_AMOUNT_VALUE_PAID = "amountValuePaid";
+  
   public static final String ENTITY_NAME = "AdjustedFee";
   public static final String TABLE_NAME = "TA_FRAIS_AJUSTE";
 

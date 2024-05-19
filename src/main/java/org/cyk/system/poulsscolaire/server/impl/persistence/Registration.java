@@ -50,6 +50,18 @@ public class Registration extends AbstractIdentifiableCodableAuditable {
   @Transient
   public String seniorityAsString;
   
+  @Transient
+  public Integer notOptionalFeeAmountValue;
+
+  @Transient
+  public String notOptionalFeeAmountValueAsString;
+
+  @Transient
+  public Integer notOptionalFeeAmountRegistrationValuePart;
+
+  @Transient
+  public String notOptionalFeeAmountRegistrationValuePartAsString;
+  
   public static final String FIELD_STUDENT = "student";
   public static final String FIELD_STUDENT_AS_STRING = "studentAsString";
   public static final String FIELD_SCHOOLING = "schooling";
@@ -58,6 +70,13 @@ public class Registration extends AbstractIdentifiableCodableAuditable {
   public static final String FIELD_ASSIGNMENT_TYPE_AS_STRING = "assignmentTypeAsString";
   public static final String FIELD_SENIORITY = "seniority";
   public static final String FIELD_SENIORITY_AS_STRING = "seniorityAsString";
+  public static final String FIELD_NOT_OPTIONAL_FEE_AMOUNT_VALUE = "notOptionalFeeAmountValue";
+  public static final String FIELDT_NOT_OPTIONAL_FEE_AMOUN_VALUE_AS_STRING =
+      "notOptionalFeeAmountValueAsString";
+  public static final String FIELD_NOT_OPTIONAL_FEE_AMOUNT_REGISTRATION_VALUE_PART =
+      "notOptionalFeeAmountRegistrationValuePart";
+  public static final String FIELD_NOT_OPTIONAL_FEE_AMOUNT_REGISTRATION_VALUE_PART_AS_STRING =
+      "notOptionalFeeAmountRegistrationValuePartAsString";
   
   public static final String ENTITY_NAME = "Registration";
   public static final String TABLE_NAME = "TA_INSCRIPTION";
