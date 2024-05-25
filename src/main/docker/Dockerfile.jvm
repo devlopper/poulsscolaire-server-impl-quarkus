@@ -81,8 +81,8 @@ FROM registry.access.redhat.com/ubi8/openjdk-17:1.14
 ENV SIIB_DB_HOST sib-database
 ENV SIIB_DB_PORT 1521
 ENV SIIB_DB_SID SIB
-ENV SIIB_DB_USER formulaire
-ENV SIIB_DB_PASSWORD formulaire
+ENV SIIB_DB_USER poulsscolaire
+ENV SIIB_DB_PASSWORD poulsscolaire
 
 ENV DATASOURCE_JDBC_URL 'jdbc:oracle:thin:@${SIIB_DB_HOST}:${SIIB_DB_PORT}:${SIIB_DB_SID}'
 ENV DATASOURCE_USER '${SIIB_DB_USER}'
