@@ -290,7 +290,7 @@ CREATE TABLE TA_MONTANT (
 	IDENTIFIANT VARCHAR(36) NOT NULL COMMENT 'Identifiant du montant',
 
 	VALEUR INT NOT NULL COMMENT 'Valeur du montant',
-	VALEUR_INSCRIPTION BIGINT COMMENT 'Valeur à l''inscriptiondu montant',
+	VALEUR_INSCRIPTION INT COMMENT 'Valeur à l''inscriptiondu montant',
 	FACULTATIF BOOLEAN COMMENT 'Facultativité du montant',
 	RECONDUCTIBLE BOOLEAN COMMENT 'Reconductibilité du montant',
 	NUMERO_ORDRE_PAIEMENT INT COMMENT 'Numéro d''ordre de paiement du montant',
