@@ -91,18 +91,27 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
         .build();
 
     projectionBuilder().name(RegistrationDto.JSON_PAID_AMOUNT_AS_STRING)
-        .expressionFunction(p -> ProjectionDto.hasOneOfNames(p.projection(),
-            RegistrationDto.JSON_TOTAL_AMOUNT_AS_STRING,
-            RegistrationDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING)
-                ? querySumPayment
-                : formatSum(formatValueOrZeroIfNull(paymentAdjustedFeeVariableName,
-                    PaymentAdjustedFee.FIELD_AMOUNT)))
+        .expressionFunction(p -> hasTotalProjection(p.projection()) ? querySumPayment
+            : formatSum(formatValueOrZeroIfNull(paymentAdjustedFeeVariableName,
+                PaymentAdjustedFee.FIELD_AMOUNT)))
         .resultConsumer((i, a) -> i.paidAmountAsString = a.getNextAsLongFormatted()).build();
+
+    projectionBuilder().name(RegistrationDto.JSON_PAID_REGISTRATION_AMOUNT_AS_STRING)
+        .expression(String.format("(CASE WHEN %1$s >= %2$s THEN %2$s ELSE %1$s END)",
+            formatAmountSum(Amount.FIELD_REGISTRATION_VALUE_PART), querySumPayment))
+        .resultConsumer((i, a) -> i.paidRegistrationAmountAsString = a.getNextAsLongFormatted())
+        .build();
 
     projectionBuilder().name(RegistrationDto.JSON_PAYABLE_AMOUNT_AS_STRING)
         .expression(
             String.format("(%s - %s)", formatAmountSum(Amount.FIELD_VALUE), querySumPayment))
         .resultConsumer((i, a) -> i.payableAmountAsString = a.getNextAsLongFormatted()).build();
+
+    projectionBuilder().name(RegistrationDto.JSON_PAYABLE_REGISTRATION_AMOUNT_AS_STRING)
+        .expression(String.format("(CASE WHEN %1$s >= %2$s THEN %1$s - %2$s ELSE 0 END)",
+            formatAmountSum(Amount.FIELD_REGISTRATION_VALUE_PART), querySumPayment))
+        .resultConsumer((i, a) -> i.payableRegistrationAmountAsString = a.getNextAsLongFormatted())
+        .build();
 
     // Jointures
     joinBuilder()
@@ -119,10 +128,7 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
         .parentTupleVariableName(adjustedFeeVariableName)
         .parentFieldName(AbstractAmountContainer.FIELD_AMOUNT).leftInnerOrRight(true).build();
 
-    joinBuilder()
-        .disabledFunction(p -> ProjectionDto.hasOneOfNames(p.projection(),
-            RegistrationDto.JSON_TOTAL_AMOUNT_AS_STRING,
-            RegistrationDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING))
+    joinBuilder().disabledFunction(p -> hasTotalProjection(p.projection()))
         .projectionsNames(RegistrationDto.JSON_PAID_AMOUNT_AS_STRING,
             RegistrationDto.JSON_PAYABLE_AMOUNT_AS_STRING,
             RegistrationDto.JSON_PAID_REGISTRATION_AMOUNT_AS_STRING,
@@ -130,10 +136,7 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
         .with(Payment.class).tupleVariableName(paymentVariableName)
         .fieldName(Payment.FIELD_REGISTRATION).parentFieldName(null).leftInnerOrRight(true).build();
 
-    joinBuilder()
-        .disabledFunction(p -> ProjectionDto.hasOneOfNames(p.projection(),
-            RegistrationDto.JSON_TOTAL_AMOUNT_AS_STRING,
-            RegistrationDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING))
+    joinBuilder().disabledFunction(p -> hasTotalProjection(p.projection()))
         .projectionsNames(RegistrationDto.JSON_PAID_AMOUNT_AS_STRING,
             RegistrationDto.JSON_PAYABLE_AMOUNT_AS_STRING,
             RegistrationDto.JSON_PAID_REGISTRATION_AMOUNT_AS_STRING,
@@ -154,14 +157,6 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
   String formatAmountSum(String valueFieldName) {
     return String.format("SUM(CASE WHEN %s.%s THEN 0 ELSE %s END)", amountVariableName,
         Amount.FIELD_OPTIONAL, formatValueOrZeroIfNull(amountVariableName, valueFieldName));
-  }
-
-  protected String formatValueOrZeroIfNull(String variableName, String valueFieldName) {
-    return String.format("COALESCE(%s.%s,0)", variableName, valueFieldName);
-  }
-
-  protected String formatSum(String value) {
-    return String.format("SUM(%s)", value);
   }
 
   @Override
@@ -187,5 +182,10 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
     /*
      * On ajoute les autres au besoin
      */
+  }
+
+  boolean hasTotalProjection(ProjectionDto projection) {
+    return ProjectionDto.hasOneOfNames(projection, RegistrationDto.JSON_TOTAL_AMOUNT_AS_STRING,
+        RegistrationDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING);
   }
 }

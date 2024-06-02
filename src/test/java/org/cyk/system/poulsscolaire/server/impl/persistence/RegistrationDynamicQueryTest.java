@@ -54,18 +54,25 @@ class RegistrationDynamicQueryTest {
   }
 
   @ParameterizedTest
-  @CsvSource({"i1,120 000,5,119 995"})
-  void getOne_totalAmountAsString_paidAmountAsString_payableAmountAsString(String identifier,
-      String total, String paid, String payable) {
+  @CsvSource({"i1,120 000,5,119 995,20 000,5,19 995"})
+  void getOne_amounts(String identifier, String total, String paid, String payable,
+      String totalRegistration, String paidRegistration, String payableRegistration) {
     parameters.setResultMode(ResultMode.ONE);
     parameters.projection().addNames(RegistrationDto.JSON_IDENTIFIER,
         RegistrationDto.JSON_TOTAL_AMOUNT_AS_STRING, RegistrationDto.JSON_PAID_AMOUNT_AS_STRING,
-        RegistrationDto.JSON_PAYABLE_AMOUNT_AS_STRING);
+        RegistrationDto.JSON_PAYABLE_AMOUNT_AS_STRING,
+        RegistrationDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING,
+        RegistrationDto.JSON_PAID_REGISTRATION_AMOUNT_AS_STRING,
+        RegistrationDto.JSON_PAYABLE_REGISTRATION_AMOUNT_AS_STRING);
     parameters.filter().addCriteria(RegistrationDto.JSON_IDENTIFIER, identifier);
     Registration registration = dynamicQuery.getOne(parameters);
     assertEquals(total, registration.totalAmountAsString);
     assertEquals(paid, registration.paidAmountAsString);
     assertEquals(payable, registration.payableAmountAsString);
+
+    assertEquals(totalRegistration, registration.totalRegistrationAmountAsString);
+    assertEquals(paidRegistration, registration.paidRegistrationAmountAsString);
+    assertEquals(payableRegistration, registration.payableRegistrationAmountAsString);
   }
 
   @ParameterizedTest
