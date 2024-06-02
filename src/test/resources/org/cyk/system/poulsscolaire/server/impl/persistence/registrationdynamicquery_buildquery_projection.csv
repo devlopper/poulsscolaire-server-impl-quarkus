@@ -1,0 +1,4 @@
+Projection, Requête
+montantTotalChaine, "SELECT SUM(CASE WHEN a.optional THEN 0 ELSE COALESCE(a.value,0) END) FROM Registration t LEFT JOIN AdjustedFee af ON af.registration = t LEFT JOIN Amount a ON a = af.amount GROUP BY t.identifier,t.code ORDER BY t.code ASC"
+montantPayeChaine, "SELECT SUM(COALESCE(paf.amount,0)) FROM Registration t LEFT JOIN Payment p ON p.registration = t LEFT JOIN PaymentAdjustedFee paf ON paf.payment = p GROUP BY t.identifier,t.code ORDER BY t.code ASC"
+montantPayableChaine, "SELECT (SUM(CASE WHEN a.optional THEN 0 ELSE COALESCE(a.value,0) END) - (SELECT SUM(v.amount) FROM PaymentAdjustedFee v WHERE v.payment.registration = t)) FROM Registration t LEFT JOIN Payment p ON p.registration = t LEFT JOIN PaymentAdjustedFee paf ON paf.payment = p GROUP BY t.identifier,t.code ORDER BY t.code ASC"

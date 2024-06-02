@@ -50,17 +50,29 @@ public class Registration extends AbstractIdentifiableCodableAuditable {
   @Transient
   public String seniorityAsString;
   
+  /*
+   * Amount
+   */
   @Transient
-  public Integer notOptionalFeeAmountValue;
+  public String totalAmountAsString;
 
   @Transient
-  public String notOptionalFeeAmountValueAsString;
+  public String paidAmountAsString;
 
   @Transient
-  public Integer notOptionalFeeAmountRegistrationValuePart;
+  public String payableAmountAsString;
+
+  /*
+   * Registration amount
+   */
+  @Transient
+  public String totalRegistrationAmountAsString;
 
   @Transient
-  public String notOptionalFeeAmountRegistrationValuePartAsString;
+  public String paidRegistrationAmountAsString;
+
+  @Transient
+  public String payableRegistrationAmountAsString;
   
   public static final String FIELD_STUDENT = "student";
   public static final String FIELD_STUDENT_AS_STRING = "studentAsString";

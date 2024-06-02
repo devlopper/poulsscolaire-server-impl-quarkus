@@ -31,6 +31,10 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
   EntityManager entityManager;
   String adjustedFeeVariableName;
   String amountVariableName;
+  String paymentVariableName;
+  String paymentAdjustedFeeVariableName;
+
+  String querySumPayment;
 
   /**
    * Cette méthode permet d'instancier un object.
@@ -39,6 +43,11 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
     super(Registration.class);
     adjustedFeeVariableName = "af";
     amountVariableName = "a";
+    paymentVariableName = "p";
+    paymentAdjustedFeeVariableName = "paf";
+
+    querySumPayment =
+        "(SELECT SUM(v.amount) FROM PaymentAdjustedFee v WHERE v.payment.registration = t)";
   }
 
   @PostConstruct
@@ -72,37 +81,66 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
             fieldName(Registration.FIELD_SENIORITY, AbstractIdentifiableCodableNamable.FIELD_NAME))
         .build();
 
-    projectionBuilder().name(RegistrationDto.JSON_NOT_OPTIONAL_FEE_AMOUNT_VALUE_AS_STRING)
-        .tupleVariableName(amountVariableName)
-        .expression(String.format("COALESCE(SUM(CASE WHEN %1$s.%2$s THEN 0 ELSE %1$s.%3$s END), 0)",
-            amountVariableName, Amount.FIELD_OPTIONAL, Amount.FIELD_VALUE))
-        .resultConsumer(
-            (i, a) -> i.notOptionalFeeAmountValueAsString = a.getNextAsLongFormatted())
+    projectionBuilder().name(RegistrationDto.JSON_TOTAL_AMOUNT_AS_STRING)
+        .tupleVariableName(amountVariableName).expression(formatAmountSum(Amount.FIELD_VALUE))
+        .resultConsumer((i, a) -> i.totalAmountAsString = a.getNextAsLongFormatted()).build();
+
+    projectionBuilder().name(RegistrationDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING)
+        .expression(formatAmountSum(Amount.FIELD_REGISTRATION_VALUE_PART))
+        .resultConsumer((i, a) -> i.totalRegistrationAmountAsString = a.getNextAsLongFormatted())
         .build();
 
-    projectionBuilder()
-        .name(RegistrationDto.JSON_NOT_OPTIONAL_FEE_AMOUNT_REGISTRATION_VALUE_PART_AS_STRING)
-        .tupleVariableName(amountVariableName)
-        .expression(String.format("COALESCE(SUM(CASE WHEN %1$s.%2$s THEN 0 ELSE %1$s.%3$s END), 0)",
-            amountVariableName, Amount.FIELD_OPTIONAL, Amount.FIELD_REGISTRATION_VALUE_PART))
-        .resultConsumer((i, a) -> i.notOptionalFeeAmountRegistrationValuePartAsString =
-            a.getNextAsLongFormatted())
-        .build();
+    projectionBuilder().name(RegistrationDto.JSON_PAID_AMOUNT_AS_STRING)
+        .expressionFunction(p -> ProjectionDto.hasOneOfNames(p.projection(),
+            RegistrationDto.JSON_TOTAL_AMOUNT_AS_STRING,
+            RegistrationDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING)
+                ? querySumPayment
+                : formatSum(formatValueOrZeroIfNull(paymentAdjustedFeeVariableName,
+                    PaymentAdjustedFee.FIELD_AMOUNT)))
+        .resultConsumer((i, a) -> i.paidAmountAsString = a.getNextAsLongFormatted()).build();
+
+    projectionBuilder().name(RegistrationDto.JSON_PAYABLE_AMOUNT_AS_STRING)
+        .expression(
+            String.format("(%s - %s)", formatAmountSum(Amount.FIELD_VALUE), querySumPayment))
+        .resultConsumer((i, a) -> i.payableAmountAsString = a.getNextAsLongFormatted()).build();
 
     // Jointures
     joinBuilder()
-        .projectionsNames(RegistrationDto.JSON_NOT_OPTIONAL_FEE_AMOUNT_VALUE_AS_STRING,
-            RegistrationDto.JSON_NOT_OPTIONAL_FEE_AMOUNT_REGISTRATION_VALUE_PART_AS_STRING)
+        .projectionsNames(RegistrationDto.JSON_TOTAL_AMOUNT_AS_STRING,
+            RegistrationDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING)
         .with(AdjustedFee.class).tupleVariableName(adjustedFeeVariableName)
         .fieldName(AdjustedFee.FIELD_REGISTRATION).parentFieldName(null).leftInnerOrRight(true)
         .build();
 
     joinBuilder()
-        .projectionsNames(RegistrationDto.JSON_NOT_OPTIONAL_FEE_AMOUNT_VALUE_AS_STRING,
-            RegistrationDto.JSON_NOT_OPTIONAL_FEE_AMOUNT_REGISTRATION_VALUE_PART_AS_STRING)
+        .projectionsNames(RegistrationDto.JSON_TOTAL_AMOUNT_AS_STRING,
+            RegistrationDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING)
         .with(Amount.class).tupleVariableName(amountVariableName)
         .parentTupleVariableName(adjustedFeeVariableName)
         .parentFieldName(AbstractAmountContainer.FIELD_AMOUNT).leftInnerOrRight(true).build();
+
+    joinBuilder()
+        .disabledFunction(p -> ProjectionDto.hasOneOfNames(p.projection(),
+            RegistrationDto.JSON_TOTAL_AMOUNT_AS_STRING,
+            RegistrationDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING))
+        .projectionsNames(RegistrationDto.JSON_PAID_AMOUNT_AS_STRING,
+            RegistrationDto.JSON_PAYABLE_AMOUNT_AS_STRING,
+            RegistrationDto.JSON_PAID_REGISTRATION_AMOUNT_AS_STRING,
+            RegistrationDto.JSON_PAYABLE_REGISTRATION_AMOUNT_AS_STRING)
+        .with(Payment.class).tupleVariableName(paymentVariableName)
+        .fieldName(Payment.FIELD_REGISTRATION).parentFieldName(null).leftInnerOrRight(true).build();
+
+    joinBuilder()
+        .disabledFunction(p -> ProjectionDto.hasOneOfNames(p.projection(),
+            RegistrationDto.JSON_TOTAL_AMOUNT_AS_STRING,
+            RegistrationDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING))
+        .projectionsNames(RegistrationDto.JSON_PAID_AMOUNT_AS_STRING,
+            RegistrationDto.JSON_PAYABLE_AMOUNT_AS_STRING,
+            RegistrationDto.JSON_PAID_REGISTRATION_AMOUNT_AS_STRING,
+            RegistrationDto.JSON_PAYABLE_REGISTRATION_AMOUNT_AS_STRING)
+        .with(PaymentAdjustedFee.class).tupleVariableName(paymentAdjustedFeeVariableName)
+        .fieldName(PaymentAdjustedFee.FIELD_PAYMENT).parentTupleVariableName(paymentVariableName)
+        .parentFieldName(null).leftInnerOrRight(true).build();
 
     // Prédicats
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)
@@ -113,11 +151,27 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
     orderBuilder().fieldName(AbstractIdentifiableCodable.FIELD_CODE).build();
   }
 
+  String formatAmountSum(String valueFieldName) {
+    return String.format("SUM(CASE WHEN %s.%s THEN 0 ELSE %s END)", amountVariableName,
+        Amount.FIELD_OPTIONAL, formatValueOrZeroIfNull(amountVariableName, valueFieldName));
+  }
+
+  protected String formatValueOrZeroIfNull(String variableName, String valueFieldName) {
+    return String.format("COALESCE(%s.%s,0)", variableName, valueFieldName);
+  }
+
+  protected String formatSum(String value) {
+    return String.format("SUM(%s)", value);
+  }
+
   @Override
   protected boolean isGrouped(DynamicQueryParameters<Registration> parameters) {
     return ProjectionDto.hasOneOfNames(parameters.getProjection(),
-        RegistrationDto.JSON_NOT_OPTIONAL_FEE_AMOUNT_VALUE_AS_STRING,
-        RegistrationDto.JSON_NOT_OPTIONAL_FEE_AMOUNT_REGISTRATION_VALUE_PART_AS_STRING);
+        RegistrationDto.JSON_TOTAL_AMOUNT_AS_STRING, RegistrationDto.JSON_PAID_AMOUNT_AS_STRING,
+        RegistrationDto.JSON_PAYABLE_AMOUNT_AS_STRING,
+        RegistrationDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING,
+        RegistrationDto.JSON_PAID_REGISTRATION_AMOUNT_AS_STRING,
+        RegistrationDto.JSON_PAYABLE_REGISTRATION_AMOUNT_AS_STRING);
   }
 
   @Override

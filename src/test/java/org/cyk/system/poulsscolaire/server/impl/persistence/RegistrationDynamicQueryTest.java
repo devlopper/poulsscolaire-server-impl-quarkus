@@ -1,26 +1,18 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters.ResultMode;
-import io.quarkus.test.junit.QuarkusMock;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.QuarkusTestProfile;
 import io.quarkus.test.junit.TestProfile;
 import jakarta.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import org.cyk.system.poulsscolaire.server.api.registration.RegistrationDto;
-import org.hibernate.Session;
-import org.hibernate.query.Query;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.mockito.Mockito;
 
 @QuarkusTest
 @TestProfile(RegistrationDynamicQueryTest.Profile.class)
@@ -31,42 +23,60 @@ class RegistrationDynamicQueryTest {
 
   DynamicQueryParameters<Registration> parameters = new DynamicQueryParameters<>();
 
-  @SuppressWarnings("unchecked")
-  @Test
-  void getMany() {
-    @SuppressWarnings("rawtypes")
-    Query query = Mockito.mock(Query.class);
-    List<Object[]> arrays = new ArrayList<>();
-    arrays.add(new Object[] {"1"});
-    Mockito.when(query.getResultList()).thenReturn(arrays);
-
-    Session session = Mockito.mock(Session.class);
-    Mockito.when(session.createQuery(anyString(), any())).thenReturn(query);
-    QuarkusMock.installMockForType(session, Session.class);
-
-    assertEquals(1, dynamicQuery.getMany(parameters).size());
+  @ParameterizedTest
+  @CsvFileSource(resources = {"registrationdynamicquery_buildquery_projection.csv"},
+      useHeadersInDisplayName = true)
+  void buildQuery_amount(String amount, String expected) {
+    parameters.projection().addNames(amount);
+    assertEquals(expected, dynamicQuery.buildQueryString(parameters));
   }
 
   @ParameterizedTest
   @CsvSource({"i1,120 000"})
-  void getOne_notOptionalFeeValueAsString(String identifier, String amount) {
+  void getOne_totalAmountAsString(String identifier, String value) {
     parameters.setResultMode(ResultMode.ONE);
     parameters.projection().addNames(RegistrationDto.JSON_IDENTIFIER,
-        RegistrationDto.JSON_NOT_OPTIONAL_FEE_AMOUNT_VALUE_AS_STRING);
+        RegistrationDto.JSON_TOTAL_AMOUNT_AS_STRING);
     parameters.filter().addCriteria(RegistrationDto.JSON_IDENTIFIER, identifier);
     Registration registration = dynamicQuery.getOne(parameters);
-    assertEquals(amount, registration.notOptionalFeeAmountValueAsString);
+    assertEquals(value, registration.totalAmountAsString);
+  }
+
+  @ParameterizedTest
+  @CsvSource({"i1,5"})
+  void getOne_paidAmountAsString(String identifier, String value) {
+    parameters.setResultMode(ResultMode.ONE);
+    parameters.projection().addNames(RegistrationDto.JSON_IDENTIFIER,
+        RegistrationDto.JSON_PAID_AMOUNT_AS_STRING);
+    parameters.filter().addCriteria(RegistrationDto.JSON_IDENTIFIER, identifier);
+    Registration registration = dynamicQuery.getOne(parameters);
+    assertEquals(value, registration.paidAmountAsString);
+  }
+
+  @ParameterizedTest
+  @CsvSource({"i1,120 000,5,119 995"})
+  void getOne_totalAmountAsString_paidAmountAsString_payableAmountAsString(String identifier,
+      String total, String paid, String payable) {
+    parameters.setResultMode(ResultMode.ONE);
+    parameters.projection().addNames(RegistrationDto.JSON_IDENTIFIER,
+        RegistrationDto.JSON_TOTAL_AMOUNT_AS_STRING, RegistrationDto.JSON_PAID_AMOUNT_AS_STRING,
+        RegistrationDto.JSON_PAYABLE_AMOUNT_AS_STRING);
+    parameters.filter().addCriteria(RegistrationDto.JSON_IDENTIFIER, identifier);
+    Registration registration = dynamicQuery.getOne(parameters);
+    assertEquals(total, registration.totalAmountAsString);
+    assertEquals(paid, registration.paidAmountAsString);
+    assertEquals(payable, registration.payableAmountAsString);
   }
 
   @ParameterizedTest
   @CsvSource({"i1,20 000"})
-  void getOne_notOptionalFeeAmountRegistrationValuePartAsString(String identifier, String amount) {
+  void getOne_totalRegistrationAmountAsString(String identifier, String amount) {
     parameters.setResultMode(ResultMode.ONE);
     parameters.projection().addNames(RegistrationDto.JSON_IDENTIFIER,
-        RegistrationDto.JSON_NOT_OPTIONAL_FEE_AMOUNT_REGISTRATION_VALUE_PART_AS_STRING);
+        RegistrationDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING);
     parameters.filter().addCriteria(RegistrationDto.JSON_IDENTIFIER, identifier);
     Registration registration = dynamicQuery.getOne(parameters);
-    assertEquals(amount, registration.notOptionalFeeAmountRegistrationValuePartAsString);
+    assertEquals(amount, registration.totalRegistrationAmountAsString);
   }
 
   public static class Profile implements QuarkusTestProfile {
