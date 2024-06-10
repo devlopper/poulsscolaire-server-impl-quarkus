@@ -27,6 +27,10 @@ public class FeeCategoryDynamicQuery extends AbstractDynamicQuery<FeeCategory> {
   @Getter
   EntityManager entityManager;
 
+  String querySumAdjustedFeeAmount;
+  String querySumAdjustedFeeRegistrationAmount;
+  String querySumPayment;
+  
   /**
    * Cette méthode permet d'instancier un object.
    */
