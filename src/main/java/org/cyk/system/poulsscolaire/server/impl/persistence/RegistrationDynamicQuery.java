@@ -50,8 +50,8 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
     paymentVariableName = "p";
     paymentAdjustedFeeVariableName = "paf";
 
-    querySumPayment =
-        "(SELECT SUM(v.amount) FROM PaymentAdjustedFee v WHERE v.payment.registration = t)";
+    querySumPayment = formatValueOrZeroIfNull("(SELECT " + formatSum("v.amount")
+        + " FROM PaymentAdjustedFee v WHERE v.payment.registration = t)");
   }
 
   @PostConstruct
@@ -156,7 +156,7 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
     // Ordres par défaut
     orderBuilder().fieldName(AbstractIdentifiableCodable.FIELD_CODE).build();
   }
-  
+
   String getSumPaymentQuery(ProjectionDto projection) {
     return hasTotalProjection(projection) ? querySumPayment
         : formatSum(formatValueOrZeroIfNull(paymentAdjustedFeeVariableName,

@@ -36,7 +36,8 @@ class FeeCategoryDynamicQueryTest {
   @Test
   void getSumPaymentQuery_whenHasTotalProjection() {
     assertEquals(
-        "(SELECT SUM(v.amount) FROM PaymentAdjustedFee v WHERE v.adjustedFee.fee.category = t)",
+        "COALESCE((SELECT SUM(v.amount) FROM PaymentAdjustedFee v "
+        + "WHERE v.adjustedFee.fee.category = t),0)",
         dynamicQuery.getSumPaymentQuery(
             new ProjectionDto().addNames(FeeCategoryDto.JSON_TOTAL_AMOUNT_AS_STRING)));
   }

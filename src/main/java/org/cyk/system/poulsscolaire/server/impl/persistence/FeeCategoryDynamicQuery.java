@@ -55,8 +55,8 @@ public class FeeCategoryDynamicQuery extends AbstractDynamicQuery<FeeCategory> {
     amountVariableName = "a";
     paymentAdjustedFeeVariableName = "paf";
 
-    querySumPayment =
-        "(SELECT SUM(v.amount) FROM PaymentAdjustedFee v WHERE v.adjustedFee.fee.category = t)";
+    querySumPayment = formatValueOrZeroIfNull("(SELECT " + formatSum("v.amount")
+        + " FROM PaymentAdjustedFee v WHERE v.adjustedFee.fee.category = t)");
   }
 
   @PostConstruct
@@ -77,7 +77,7 @@ public class FeeCategoryDynamicQuery extends AbstractDynamicQuery<FeeCategory> {
 
     projectionBuilder().name(FeeCategoryDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING)
         .tupleVariableName(amountVariableName)
-        .expression(amountDynamicQuery.formatValueSum(amountVariableName))
+        .expression(amountDynamicQuery.formatRegistrationValuePartSum(amountVariableName))
         .resultConsumer((i, a) -> i.totalRegistrationAmountAsString = a.getNextAsLongFormatted())
         .build();
 
