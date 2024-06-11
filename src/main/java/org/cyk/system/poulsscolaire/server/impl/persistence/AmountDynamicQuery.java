@@ -80,4 +80,17 @@ public class AmountDynamicQuery extends AbstractDynamicQuery<Amount> {
     orderBuilder().fieldName(fieldName(Amount.FIELD_DEADLINE, Deadline.FIELD_DATE)).ascending(false)
         .build();
   }
+  
+  String formatSum(String variableName, String fieldName) {
+    return formatSum(String.format("CASE WHEN %s.%s THEN 0 ELSE %s END", variableName,
+        Amount.FIELD_OPTIONAL, formatValueOrZeroIfNull(variableName, fieldName)));
+  }
+  
+  String formatValueSum(String variableName) {
+    return formatSum(variableName, Amount.FIELD_VALUE);
+  }
+  
+  String formatRegistrationValuePartSum(String variableName) {
+    return formatSum(variableName, Amount.FIELD_REGISTRATION_VALUE_PART);
+  }
 }

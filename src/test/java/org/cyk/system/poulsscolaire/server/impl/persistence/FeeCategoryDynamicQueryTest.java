@@ -1,19 +1,15 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
-import io.quarkus.test.junit.QuarkusMock;
+import ci.gouv.dgbf.extension.server.service.api.request.ProjectionDto;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-import org.hibernate.Session;
-import org.hibernate.query.Query;
+import org.cyk.system.poulsscolaire.server.api.fee.FeeCategoryDto;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
 
 @QuarkusTest
 class FeeCategoryDynamicQueryTest {
@@ -22,20 +18,26 @@ class FeeCategoryDynamicQueryTest {
   FeeCategoryDynamicQuery dynamicQuery;
 
   DynamicQueryParameters<FeeCategory> parameters = new DynamicQueryParameters<>();
-  
-  @SuppressWarnings("unchecked")
+
+  @ParameterizedTest
+  @CsvFileSource(resources = {"feecategorydynamicquery_buildquery_projection.csv"},
+      useHeadersInDisplayName = true)
+  void buildQuery_amount(String amount, String expected) {
+    parameters.projection().addNames(amount);
+    assertEquals(expected, dynamicQuery.buildQueryString(parameters));
+  }
+
   @Test
-  void getMany() {
-    @SuppressWarnings("rawtypes")
-    Query query = Mockito.mock(Query.class);
-    List<Object[]> arrays = new ArrayList<>();
-    arrays.add(new Object[] {"1"});
-    Mockito.when(query.getResultList()).thenReturn(arrays);
-    
-    Session session = Mockito.mock(Session.class);
-    Mockito.when(session.createQuery(anyString(), any())).thenReturn(query);
-    QuarkusMock.installMockForType(session, Session.class);
-    
-    assertEquals(1, dynamicQuery.getMany(parameters).size());
+  void getSumPaymentQuery_whenHasNotTotalProjection() {
+    assertEquals("SUM(COALESCE(paf.amount,0))",
+        dynamicQuery.getSumPaymentQuery(new ProjectionDto().addNames("a")));
+  }
+
+  @Test
+  void getSumPaymentQuery_whenHasTotalProjection() {
+    assertEquals(
+        "(SELECT SUM(v.amount) FROM PaymentAdjustedFee v WHERE v.adjustedFee.fee.category = t)",
+        dynamicQuery.getSumPaymentQuery(
+            new ProjectionDto().addNames(FeeCategoryDto.JSON_TOTAL_AMOUNT_AS_STRING)));
   }
 }

@@ -22,7 +22,7 @@ class AmountDynamicQueryTest {
   AmountDynamicQuery dynamicQuery;
 
   DynamicQueryParameters<Amount> parameters = new DynamicQueryParameters<>();
-  
+
   @SuppressWarnings("unchecked")
   @Test
   void getMany() {
@@ -31,11 +31,23 @@ class AmountDynamicQueryTest {
     List<Object[]> arrays = new ArrayList<>();
     arrays.add(new Object[] {"1"});
     Mockito.when(query.getResultList()).thenReturn(arrays);
-    
+
     Session session = Mockito.mock(Session.class);
     Mockito.when(session.createQuery(anyString(), any())).thenReturn(query);
     QuarkusMock.installMockForType(session, Session.class);
-    
+
     assertEquals(1, dynamicQuery.getMany(parameters).size());
+  }
+
+  @Test
+  void formatValueSum() {
+    assertEquals("SUM(CASE WHEN a.optional THEN 0 ELSE COALESCE(a.value,0) END)",
+        dynamicQuery.formatValueSum("a"));
+  }
+
+  @Test
+  void formatRegistrationValuePartSum() {
+    assertEquals("SUM(CASE WHEN a.optional THEN 0 ELSE COALESCE(a.registrationValuePart,0) END)",
+        dynamicQuery.formatRegistrationValuePartSum("a"));
   }
 }

@@ -29,6 +29,10 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
   @Inject
   @Getter
   EntityManager entityManager;
+
+  @Inject
+  AmountDynamicQuery amountDynamicQuery;
+
   String adjustedFeeVariableName;
   String amountVariableName;
   String paymentVariableName;
@@ -82,34 +86,33 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
         .build();
 
     projectionBuilder().name(RegistrationDto.JSON_TOTAL_AMOUNT_AS_STRING)
-        .tupleVariableName(amountVariableName).expression(formatAmountSum(Amount.FIELD_VALUE))
+        .tupleVariableName(amountVariableName)
+        .expression(amountDynamicQuery.formatValueSum(amountVariableName))
         .resultConsumer((i, a) -> i.totalAmountAsString = a.getNextAsLongFormatted()).build();
 
     projectionBuilder().name(RegistrationDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING)
-        .expression(formatAmountSum(Amount.FIELD_REGISTRATION_VALUE_PART))
+        .expression(amountDynamicQuery.formatRegistrationValuePartSum(amountVariableName))
         .resultConsumer((i, a) -> i.totalRegistrationAmountAsString = a.getNextAsLongFormatted())
         .build();
 
     projectionBuilder().name(RegistrationDto.JSON_PAID_AMOUNT_AS_STRING)
-        .expressionFunction(p -> hasTotalProjection(p.projection()) ? querySumPayment
-            : formatSum(formatValueOrZeroIfNull(paymentAdjustedFeeVariableName,
-                PaymentAdjustedFee.FIELD_AMOUNT)))
+        .expressionFunction(p -> getSumPaymentQuery(p.projection()))
         .resultConsumer((i, a) -> i.paidAmountAsString = a.getNextAsLongFormatted()).build();
 
     projectionBuilder().name(RegistrationDto.JSON_PAID_REGISTRATION_AMOUNT_AS_STRING)
         .expression(String.format("(CASE WHEN %1$s >= %2$s THEN %2$s ELSE %1$s END)",
-            formatAmountSum(Amount.FIELD_REGISTRATION_VALUE_PART), querySumPayment))
+            amountDynamicQuery.formatRegistrationValuePartSum(amountVariableName), querySumPayment))
         .resultConsumer((i, a) -> i.paidRegistrationAmountAsString = a.getNextAsLongFormatted())
         .build();
 
     projectionBuilder().name(RegistrationDto.JSON_PAYABLE_AMOUNT_AS_STRING)
-        .expression(
-            String.format("(%s - %s)", formatAmountSum(Amount.FIELD_VALUE), querySumPayment))
+        .expression(String.format("(%s - %s)",
+            amountDynamicQuery.formatValueSum(amountVariableName), querySumPayment))
         .resultConsumer((i, a) -> i.payableAmountAsString = a.getNextAsLongFormatted()).build();
 
     projectionBuilder().name(RegistrationDto.JSON_PAYABLE_REGISTRATION_AMOUNT_AS_STRING)
         .expression(String.format("(CASE WHEN %1$s >= %2$s THEN %1$s - %2$s ELSE 0 END)",
-            formatAmountSum(Amount.FIELD_REGISTRATION_VALUE_PART), querySumPayment))
+            amountDynamicQuery.formatRegistrationValuePartSum(amountVariableName), querySumPayment))
         .resultConsumer((i, a) -> i.payableRegistrationAmountAsString = a.getNextAsLongFormatted())
         .build();
 
@@ -153,10 +156,11 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
     // Ordres par défaut
     orderBuilder().fieldName(AbstractIdentifiableCodable.FIELD_CODE).build();
   }
-
-  String formatAmountSum(String valueFieldName) {
-    return String.format("SUM(CASE WHEN %s.%s THEN 0 ELSE %s END)", amountVariableName,
-        Amount.FIELD_OPTIONAL, formatValueOrZeroIfNull(amountVariableName, valueFieldName));
+  
+  String getSumPaymentQuery(ProjectionDto projection) {
+    return hasTotalProjection(projection) ? querySumPayment
+        : formatSum(formatValueOrZeroIfNull(paymentAdjustedFeeVariableName,
+            PaymentAdjustedFee.FIELD_AMOUNT));
   }
 
   @Override
