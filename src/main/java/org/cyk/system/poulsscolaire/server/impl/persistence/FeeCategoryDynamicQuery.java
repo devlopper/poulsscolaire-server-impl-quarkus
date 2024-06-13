@@ -40,8 +40,6 @@ public class FeeCategoryDynamicQuery extends AbstractDynamicQuery<FeeCategory> {
   String amountVariableName;
   String paymentAdjustedFeeVariableName;
 
-  String querySumAdjustedFeeAmount;
-  String querySumAdjustedFeeRegistrationAmount;
   String querySumPayment;
 
   /**

@@ -56,7 +56,7 @@ public class PaymentCreateBusiness extends AbstractIdentifiableCreateBusiness<Pa
         .validateInstanceByIdentifier(request.getRegistrationIdentifier(), messages);
     PaymentMode mode =
         modeValidator.validateInstanceByIdentifier(request.getModeIdentifier(), messages);
-    validationHelper.validateLowerThanByName(this, Integer.valueOf(request.getAmount()).longValue(),
+    validationHelper.validateLowerThanByName(this, request.getAmount(),
         0L, "montant", "zéro", messages);
     List<Object[]> payables = null;
     if (registration != null) {

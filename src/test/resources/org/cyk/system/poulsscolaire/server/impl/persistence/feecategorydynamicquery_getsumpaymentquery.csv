@@ -1,0 +1,3 @@
+Projection, Requête
+a,"SUM(COALESCE(paf.amount,0))"
+montantTotalChaine,"COALESCE((SELECT SUM(v.amount) FROM PaymentAdjustedFee v WHERE v.adjustedFee.fee.category = t),0)"
