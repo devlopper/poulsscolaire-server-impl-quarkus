@@ -3,17 +3,13 @@ package org.cyk.system.poulsscolaire.server.impl.persistence;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableNamable;
-import ci.gouv.dgbf.extension.server.persistence.query.AbstractDynamicQuery;
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
 import ci.gouv.dgbf.extension.server.service.api.AbstractIdentifiableFilter;
 import ci.gouv.dgbf.extension.server.service.api.entity.AbstractIdentifiableDto;
 import ci.gouv.dgbf.extension.server.service.api.request.ProjectionDto;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import jakarta.persistence.EntityManager;
 import java.util.Set;
-import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.fee.AbstractAmountContainerDto;
 import org.cyk.system.poulsscolaire.server.api.fee.AdjustedFeeDto;
 import org.cyk.system.poulsscolaire.server.api.fee.AdjustedFeeFilter;
@@ -25,11 +21,7 @@ import org.cyk.system.poulsscolaire.server.api.fee.AdjustedFeeFilter;
  *
  */
 @ApplicationScoped
-public class AdjustedFeeDynamicQuery extends AbstractDynamicQuery<AdjustedFee> {
-
-  @Inject
-  @Getter
-  EntityManager entityManager;
+public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery<AdjustedFee> {
 
   String paymentAdjustedFeeVariableName;
 
@@ -41,8 +33,10 @@ public class AdjustedFeeDynamicQuery extends AbstractDynamicQuery<AdjustedFee> {
     paymentAdjustedFeeVariableName = "p";
   }
 
+  @Override
   @PostConstruct
   void postConstruct() {
+    super.postConstruct();
     projectionBuilder().name(AbstractIdentifiableDto.JSON_IDENTIFIER)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER).build();
 
@@ -155,7 +149,7 @@ public class AdjustedFeeDynamicQuery extends AbstractDynamicQuery<AdjustedFee> {
     predicateBuilder().name(AdjustedFeeFilter.JSON_REGISTRATION_IDENTIFIER)
         .fieldName(fieldName(AdjustedFee.FIELD_REGISTRATION, AbstractIdentifiable.FIELD_IDENTIFIER))
         .valueFunction(AdjustedFeeFilter::getRegistrationIdentifier).build();
-
+    
     // Ordres par défaut
     orderBuilder().fieldName(fieldName(AdjustedFee.FIELD_FEE, Fee.FIELD_CATEGORY,
         AbstractIdentifiableCodableNamable.FIELD_NAME)).ascending(false).build();

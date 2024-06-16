@@ -3,14 +3,10 @@ package org.cyk.system.poulsscolaire.server.impl.persistence;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableNamable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableNamable;
-import ci.gouv.dgbf.extension.server.persistence.query.AbstractDynamicQuery;
 import ci.gouv.dgbf.extension.server.service.api.AbstractIdentifiableFilter;
 import ci.gouv.dgbf.extension.server.service.api.entity.AbstractIdentifiableDto;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import jakarta.persistence.EntityManager;
-import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.fee.AbstractAmountContainerDto;
 import org.cyk.system.poulsscolaire.server.api.fee.FeeDto;
 import org.cyk.system.poulsscolaire.server.api.fee.FeeFilter;
@@ -22,11 +18,7 @@ import org.cyk.system.poulsscolaire.server.api.fee.FeeFilter;
  *
  */
 @ApplicationScoped
-public class FeeDynamicQuery extends AbstractDynamicQuery<Fee> {
-
-  @Inject
-  @Getter
-  EntityManager entityManager;
+public class FeeDynamicQuery extends AbstractAmountContainerDynamicQuery<Fee> {
 
   String schoolVariableName;
   String periodVariableName;
@@ -42,8 +34,10 @@ public class FeeDynamicQuery extends AbstractDynamicQuery<Fee> {
     branchVariableName = "branch";
   }
 
+  @Override
   @PostConstruct
   void postConstruct() {
+    super.postConstruct();
     projectionBuilder().name(AbstractIdentifiableDto.JSON_IDENTIFIER)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER).build();
 
