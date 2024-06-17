@@ -3,8 +3,6 @@ package org.cyk.system.poulsscolaire.server.impl.persistence;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableNamable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Cette classe représente une école.
@@ -14,8 +12,6 @@ import lombok.Setter;
  */
 @Entity(name = School.ENTITY_NAME)
 @Table(name = School.TABLE_NAME)
-@Getter
-@Setter
 public class School extends AbstractIdentifiableNamable {
 
   public static final String ENTITY_NAME = "School";

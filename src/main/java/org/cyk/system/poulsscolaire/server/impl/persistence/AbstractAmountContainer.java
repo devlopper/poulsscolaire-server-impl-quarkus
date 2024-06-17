@@ -60,6 +60,9 @@ public abstract class AbstractAmountContainer extends AbstractIdentifiableAudita
   public String amountDeadlineIdentifier;
 
   @Transient
+  public Boolean amountDeadlineOver;
+  
+  @Transient
   public String amountDeadlineAsString;
   
   public static final String FIELD_AMOUNT = "amount";
@@ -77,6 +80,7 @@ public abstract class AbstractAmountContainer extends AbstractIdentifiableAudita
   public static final String FIELD_AMOUNT_RENEWABLE = "amountRenewable";
   public static final String FIELD_AMOUNT_RENEWABLE_AS_STRING = "amountRenewableAsString";
   public static final String FIELD_AMOUNT_DEADLINE_IDENTIFIER = "amountDeadlineIdentifier";
+  public static final String FIELD_AMOUNT_DEADLINE_OVER = "amountDeadlineOver";
   public static final String FIELD_AMOUNT_DEADLINE_AS_STRING = "amountDeadlineAsString";
 
   public static final String COLUMN_AMOUNT = "MONTANT";

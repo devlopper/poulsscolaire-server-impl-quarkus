@@ -52,13 +52,17 @@ public class PeriodRepatriateBusiness
     audit.whatIsCreate();
     List<String> existingsIdentifiers = persistence.getAllIdentifiers();
     Set<PeriodService.Dto> dtos = service.getAll();
-    List<Period> branchs =
-        dtos.stream().filter(dto -> !existingsIdentifiers.contains(dto.getIdentifier()))
-            .map(dto -> mapper.map(dto)).toList();
-    create(branchs);
+    List<Period> periods = dtos.stream()
+        .filter(dto -> !existingsIdentifiers.contains(dto.getIdentifier())).map(dto -> {
+          Period period = mapper.map(dto);
+          // TODO: get info from api
+          period.opened = false;
+          return period;
+        }).toList();
+    create(periods);
     PeriodRepatriateResponseDto response = new PeriodRepatriateResponseDto();
     response.setMessage("Les branches ont été rapatriées");
-    response.setCount(branchs.size());
+    response.setCount(periods.size());
     return response;
   }
 

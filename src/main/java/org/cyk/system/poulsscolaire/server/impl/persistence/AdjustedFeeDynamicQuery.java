@@ -72,8 +72,8 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
             Fee.FIELD_CATEGORY, AbstractIdentifiableCodableNamable.FIELD_NAME))
         .build();
     projectionBuilder().name(AdjustedFeeDto.JSON_FEE_OPTIONAL)
-        .nameFieldName(AdjustedFee.FIELD_FEE_OPTIONAL)
-        .fieldName(fieldName(AdjustedFee.FIELD_FEE, Fee.FIELD_AMOUNT, Amount.FIELD_OPTIONAL))
+        .nameFieldName(AdjustedFee.FIELD_FEE_OPTIONAL).fieldName(fieldName(AdjustedFee.FIELD_FEE,
+            AbstractAmountContainer.FIELD_AMOUNT, Amount.FIELD_OPTIONAL))
         .build();
 
     projectionBuilder().name(AdjustedFeeDto.JSON_REGISTRATION_IDENTIFIER)
@@ -122,18 +122,6 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
     projectionBuilder().name(AbstractAmountContainerDto.JSON_AMOUNT_RENEWABLE_AS_STRING)
         .nameFieldName(AbstractAmountContainer.FIELD_AMOUNT_RENEWABLE_AS_STRING)
         .fieldName(fieldName(AbstractAmountContainer.FIELD_AMOUNT, Amount.FIELD_RENEWABLE)).build();
-
-
-    projectionBuilder().name(AbstractAmountContainerDto.JSON_AMOUNT_DEADLINE_IDENTIFIER)
-        .nameFieldName(AbstractAmountContainer.FIELD_AMOUNT_DEADLINE_IDENTIFIER)
-        .fieldName(fieldName(AbstractAmountContainer.FIELD_AMOUNT, Amount.FIELD_DEADLINE,
-            AbstractIdentifiable.FIELD_IDENTIFIER))
-        .build();
-    projectionBuilder().name(AbstractAmountContainerDto.JSON_AMOUNT_DEADLINE_AS_STRING)
-        .nameFieldName(AbstractAmountContainer.FIELD_AMOUNT_DEADLINE_AS_STRING)
-        .fieldName(fieldName(AbstractAmountContainer.FIELD_AMOUNT, Amount.FIELD_DEADLINE,
-            AbstractIdentifiableCodableNamable.FIELD_NAME))
-        .build();
 
     // Jointures
     joinBuilder()

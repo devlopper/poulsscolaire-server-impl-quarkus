@@ -22,11 +22,11 @@ public class Deadline extends AbstractIdentifiableCodableNamableAuditable {
 
   @NotNull
   @ManyToOne
-  @JoinColumn(name = COLUMN_GROUP)
+  @JoinColumn(name = COLUMN_GROUP, nullable = false)
   public DeadlineGroup group;
   
   @NotNull
-  @Column(name = COLUMN_DATE)
+  @Column(name = COLUMN_DATE, nullable = false)
   public LocalDateTime date;
   
   /* Champs calculés */

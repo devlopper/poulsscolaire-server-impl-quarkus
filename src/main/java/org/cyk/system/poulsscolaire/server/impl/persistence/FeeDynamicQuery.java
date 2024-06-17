@@ -127,17 +127,6 @@ public class FeeDynamicQuery extends AbstractAmountContainerDynamicQuery<Fee> {
         .nameFieldName(AbstractAmountContainer.FIELD_AMOUNT_RENEWABLE_AS_STRING)
         .fieldName(fieldName(AbstractAmountContainer.FIELD_AMOUNT, Amount.FIELD_RENEWABLE)).build();
 
-    projectionBuilder().name(AbstractAmountContainerDto.JSON_AMOUNT_DEADLINE_IDENTIFIER)
-        .nameFieldName(AbstractAmountContainer.FIELD_AMOUNT_DEADLINE_IDENTIFIER)
-        .fieldName(fieldName(AbstractAmountContainer.FIELD_AMOUNT, Amount.FIELD_DEADLINE,
-            AbstractIdentifiable.FIELD_IDENTIFIER))
-        .build();
-    projectionBuilder().name(AbstractAmountContainerDto.JSON_AMOUNT_DEADLINE_AS_STRING)
-        .nameFieldName(AbstractAmountContainer.FIELD_AMOUNT_DEADLINE_AS_STRING)
-        .fieldName(fieldName(AbstractAmountContainer.FIELD_AMOUNT, Amount.FIELD_DEADLINE,
-            AbstractIdentifiableCodableNamable.FIELD_NAME))
-        .build();
-
     // Jointure
     joinBuilder().projectionsNames(FeeDto.JSON_SCHOOLING_SCHOOL_AS_STRING)
         .entityName(School.ENTITY_NAME).tupleVariableName(schoolVariableName)
