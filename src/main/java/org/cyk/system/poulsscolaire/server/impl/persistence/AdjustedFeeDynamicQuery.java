@@ -71,6 +71,10 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
         .nameFieldName(AdjustedFee.FIELD_FEE_AS_STRING).fieldName(fieldName(AdjustedFee.FIELD_FEE,
             Fee.FIELD_CATEGORY, AbstractIdentifiableCodableNamable.FIELD_NAME))
         .build();
+    projectionBuilder().name(AdjustedFeeDto.JSON_FEE_OPTIONAL)
+        .nameFieldName(AdjustedFee.FIELD_FEE_OPTIONAL)
+        .fieldName(fieldName(AdjustedFee.FIELD_FEE, Fee.FIELD_AMOUNT, Amount.FIELD_OPTIONAL))
+        .build();
 
     projectionBuilder().name(AdjustedFeeDto.JSON_REGISTRATION_IDENTIFIER)
         .nameFieldName(AdjustedFee.FIELD_REGISTRATION_IDENTIFIER)
@@ -149,7 +153,7 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
     predicateBuilder().name(AdjustedFeeFilter.JSON_REGISTRATION_IDENTIFIER)
         .fieldName(fieldName(AdjustedFee.FIELD_REGISTRATION, AbstractIdentifiable.FIELD_IDENTIFIER))
         .valueFunction(AdjustedFeeFilter::getRegistrationIdentifier).build();
-    
+
     // Ordres par défaut
     orderBuilder().fieldName(fieldName(AdjustedFee.FIELD_FEE, Fee.FIELD_CATEGORY,
         AbstractIdentifiableCodableNamable.FIELD_NAME)).ascending(false).build();

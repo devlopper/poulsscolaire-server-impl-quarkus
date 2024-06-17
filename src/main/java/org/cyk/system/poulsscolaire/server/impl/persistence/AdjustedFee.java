@@ -38,6 +38,9 @@ public class AdjustedFee extends AbstractAmountContainer {
   public String feeIdentifier;
   
   @Transient
+  public Boolean feeOptional;
+  
+  @Transient
   public String feeAsString;
 
   @Transient
@@ -60,6 +63,7 @@ public class AdjustedFee extends AbstractAmountContainer {
   
   public static final String FIELD_FEE = "fee";
   public static final String FIELD_FEE_IDENTIFIER = "feeIdentifier";
+  public static final String FIELD_FEE_OPTIONAL = "feeOptional";
   public static final String FIELD_FEE_AS_STRING = "feeAsString";
   public static final String FIELD_REGISTRATION = "registration";
   public static final String FIELD_REGISTRATION_IDENTIFIER = "registrationIdentifier";
