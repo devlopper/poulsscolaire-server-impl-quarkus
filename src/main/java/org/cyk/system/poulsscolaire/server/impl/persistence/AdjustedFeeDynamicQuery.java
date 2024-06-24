@@ -11,6 +11,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.util.Set;
 import org.cyk.system.poulsscolaire.server.api.fee.AbstractAmountContainerDto;
+import org.cyk.system.poulsscolaire.server.api.fee.AbstractAmountContainerFilter;
 import org.cyk.system.poulsscolaire.server.api.fee.AdjustedFeeDto;
 import org.cyk.system.poulsscolaire.server.api.fee.AdjustedFeeFilter;
 
@@ -53,15 +54,11 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
             PaymentAdjustedFee.FIELD_AMOUNT))
         .resultConsumer((i, a) -> i.amountValuePaidAsString = a.getNextAsLongFormatted()).build();
 
-    projectionBuilder().name(AdjustedFeeDto.JSON_AMOUNT_VALUE_LEFT_TO_PAY_AS_STRING)
-        .tupleVariableName(paymentAdjustedFeeVariableName)
-        .expression(String.format(
-            "CASE WHEN %1$s.%2$s THEN 0 ELSE COALESCE(%1$s.%3$s,0) END"
-                + " - SUM(COALESCE(%4$s.%5$s,0))",
-            variableName, fieldName(AbstractAmountContainer.FIELD_AMOUNT, Amount.FIELD_OPTIONAL),
-            fieldName(AbstractAmountContainer.FIELD_AMOUNT, Amount.FIELD_VALUE),
-            paymentAdjustedFeeVariableName, PaymentAdjustedFee.FIELD_AMOUNT))
-        .resultConsumer((i, a) -> i.amountValueLeftToPayAsString = a.getNextAsLongFormatted())
+    projectionBuilderAmountPayable(AdjustedFeeDto.JSON_AMOUNT_VALUE_PAYABLE)
+        .resultConsumer((i, a) -> i.amountValuePayable = a.getNextAsLong()).build();
+
+    projectionBuilderAmountPayable(AdjustedFeeDto.JSON_AMOUNT_VALUE_PAYABLE_AS_STRING)
+        .resultConsumer((i, a) -> i.amountValuePayableAsString = a.getNextAsLongFormatted())
         .build();
 
     projectionBuilder().name(AdjustedFeeDto.JSON_FEE_IDENTIFIER)
@@ -81,10 +78,9 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
         .fieldName(fieldName(AdjustedFee.FIELD_REGISTRATION, AbstractIdentifiable.FIELD_IDENTIFIER))
         .build();
     projectionBuilder().name(AdjustedFeeDto.JSON_REGISTRATION_AS_STRING)
-        .nameFieldName(AdjustedFee.FIELD_REGISTRATION_AS_STRING)
-        .fieldName(
-            fieldName(AdjustedFee.FIELD_REGISTRATION, AbstractIdentifiableCodable.FIELD_CODE))
-        .build();
+        .expression("CONCAT(t.registration.code,' (',t.registration.student.identity.firstName"
+            + ",' ',t.registration.student.identity.lastNames,')')")
+        .resultConsumer((i, a) -> i.registrationAsString = a.getNextAsString()).build();
 
     projectionBuilder().name(AbstractAmountContainerDto.JSON_AMOUNT_REGISTRATION_VALUE_PART)
         .nameFieldName(AbstractAmountContainer.FIELD_AMOUNT_REGISTRATION_VALUE_PART)
@@ -127,8 +123,9 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
     joinBuilder()
         .projectionsNames(AdjustedFeeDto.JSON_AMOUNT_VALUE_PAID,
             AdjustedFeeDto.JSON_AMOUNT_VALUE_PAID_AS_STRING,
-            AdjustedFeeDto.JSON_AMOUNT_VALUE_LEFT_TO_PAY,
-            AdjustedFeeDto.JSON_AMOUNT_VALUE_LEFT_TO_PAY_AS_STRING)
+            AdjustedFeeDto.JSON_AMOUNT_VALUE_PAYABLE,
+            AdjustedFeeDto.JSON_AMOUNT_VALUE_PAYABLE_AS_STRING)
+        .predicatesNames(AbstractAmountContainerFilter.JSON_AMOUNT_VALUE_PAYABLE_EQUALS_ZERO)
         .with(PaymentAdjustedFee.class).tupleVariableName(paymentAdjustedFeeVariableName)
         .fieldName(PaymentAdjustedFee.FIELD_ADJUSTED_FEE).parentFieldName(null)
         .leftInnerOrRight(true).build();
@@ -142,6 +139,15 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
         .fieldName(fieldName(AdjustedFee.FIELD_REGISTRATION, AbstractIdentifiable.FIELD_IDENTIFIER))
         .valueFunction(AdjustedFeeFilter::getRegistrationIdentifier).build();
 
+    predicateBuilder().name(AdjustedFeeFilter.JSON_FEE_IDENTIFIER)
+        .fieldName(fieldName(AdjustedFee.FIELD_FEE, AbstractIdentifiable.FIELD_IDENTIFIER))
+        .valueFunction(AdjustedFeeFilter::getFeeIdentifier).build();
+
+    predicateBuilder().name(AbstractAmountContainerFilter.JSON_AMOUNT_VALUE_PAYABLE_EQUALS_ZERO)
+        .expression("(SELECT COALESCE(SUM(sv.amount),0) FROM PaymentAdjustedFee sv "
+            + "WHERE sv.adjustedFee = t)")
+        .valueFunction(AdjustedFeeFilter::getAmountValuePayableEqualsZero).build();
+
     // Ordres par défaut
     orderBuilder().fieldName(fieldName(AdjustedFee.FIELD_FEE, Fee.FIELD_CATEGORY,
         AbstractIdentifiableCodableNamable.FIELD_NAME)).ascending(false).build();
@@ -151,12 +157,44 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
         .ascending(false).build();
   }
 
+  ProjectionBuilder projectionBuilderAmountPayable(String name) {
+    return projectionBuilder().name(name).tupleVariableName(paymentAdjustedFeeVariableName)
+        .expression(amountPayableExpression());
+  }
+
+  String amountPayableExpression() {
+    return formatCaseOptional("0",
+        formatValueOrZeroIfNull(String.format("%1$s.%2$s", variableName,
+            fieldName(AbstractAmountContainer.FIELD_AMOUNT, Amount.FIELD_VALUE))))
+        + " - " + formatSum(formatValueOrZeroIfNull(
+            fieldName(paymentAdjustedFeeVariableName, PaymentAdjustedFee.FIELD_AMOUNT)));
+  }
+
+  String formatCaseOptional(String whenOptional, String whenNotOptional) {
+    return formatCase(
+        String.format("%s.%s", variableName,
+            fieldName(AbstractAmountContainer.FIELD_AMOUNT, Amount.FIELD_OPTIONAL)),
+        whenOptional, whenNotOptional);
+  }
+
+  String amountPayableSubquery() {
+    return String.format("t.amount.value - (%s)", amountPaidSubquery());
+  }
+
+  String amountPaidSubquery() {
+    return String.format("SELECT SUM(COALESCE(%2$s.%3$s,0)) FROM %1$s %2$s WHERE %2$s.%4$s = t",
+        PaymentAdjustedFee.ENTITY_NAME, "p", PaymentAdjustedFee.FIELD_AMOUNT,
+        PaymentAdjustedFee.FIELD_ADJUSTED_FEE);
+  }
+
   @Override
   protected boolean isGrouped(DynamicQueryParameters<AdjustedFee> parameters) {
     return ProjectionDto.hasOneOfNames(parameters.getProjection(),
         AdjustedFeeDto.JSON_AMOUNT_VALUE_PAID, AdjustedFeeDto.JSON_AMOUNT_VALUE_PAID_AS_STRING,
-        AdjustedFeeDto.JSON_AMOUNT_VALUE_LEFT_TO_PAY,
-        AdjustedFeeDto.JSON_AMOUNT_VALUE_LEFT_TO_PAY_AS_STRING);
+        AdjustedFeeDto.JSON_AMOUNT_VALUE_PAYABLE,
+        AdjustedFeeDto.JSON_AMOUNT_VALUE_PAYABLE_AS_STRING)
+        || parameters.filter().getCriteriaByName(
+            AbstractAmountContainerFilter.JSON_AMOUNT_VALUE_PAYABLE_EQUALS_ZERO) != null;
   }
 
   @Override

@@ -56,5 +56,10 @@ public abstract class AbstractAmountContainerDynamicQuery<T extends AbstractAmou
     predicateBuilder().name(AbstractAmountContainerFilter.JSON_AMOUNT_OPTIONAL)
         .fieldName(fieldName(AbstractAmountContainer.FIELD_AMOUNT, Amount.FIELD_OPTIONAL))
         .valueFunction(AbstractAmountContainerFilter::getAmountOptional).build();
+
+    predicateBuilder().name(AbstractAmountContainerFilter.JSON_AMOUNT_DEADLINE_DATE_OVER)
+        .expression("(:dateEcheancePassee = true AND t.amount.deadline.date < local_datetime) "
+            + "OR (:dateEcheancePassee = false AND t.amount.deadline.date >= local_datetime)")
+        .valueFunction(AbstractAmountContainerFilter::getAmountDeadlineDateOver).build();
   }
 }

@@ -52,6 +52,9 @@ public class Amount extends AbstractIdentifiableAuditable {
   public String valueAsString;
 
   @Transient
+  public Boolean valuePayableEqualsZero;
+
+  @Transient
   public String registrationValuePartAsString;
 
   @Transient
@@ -68,6 +71,9 @@ public class Amount extends AbstractIdentifiableAuditable {
 
   @Transient
   public String deadlineAsString;
+
+  @Transient
+  public Boolean deadlineDateOver;
 
   /**
    * Cette méthode permet d'assigner les attributs.
@@ -88,6 +94,7 @@ public class Amount extends AbstractIdentifiableAuditable {
 
   public static final String FIELD_VALUE = "value";
   public static final String FIELD_VALUE_AS_STRING = "valueAsString";
+  public static final String FIELD_VALUE_PAYABLE_EQUALS_ZERO = "valuePayableEqualsZero";
   public static final String FIELD_REGISTRATION_VALUE_PART = "registrationValuePart";
   public static final String FIELD_REGISTRATION_VALUE_PART_AS_STRING =
       "registrationValuePartAsString";
@@ -100,6 +107,7 @@ public class Amount extends AbstractIdentifiableAuditable {
   public static final String FIELD_DEADLINE = "deadline";
   public static final String FIELD_DEADLINE_IDENTIFIER = "deadlineIdentifier";
   public static final String FIELD_DEADLINE_AS_STRING = "deadlineAsString";
+  public static final String FIELD_DEADLINE_DATE_OVER = "deadlineDateOver";
 
   public static final String ENTITY_NAME = "Amount";
   public static final String TABLE_NAME = "TA_MONTANT";
