@@ -33,7 +33,7 @@ class AdjustedFeeDynamicQueryTest {
   @Test
   void amountPaidSubquery() {
     assertEquals(
-        "SELECT SUM(COALESCE(p.amount,0)) FROM PaymentAdjustedFee p WHERE p.adjustedFee = t",
+        "(SELECT COALESCE(SUM(p.amount),0) FROM PaymentAdjustedFee p WHERE p.adjustedFee = t)",
         dynamicQuery.amountPaidSubquery());
   }
 
@@ -65,11 +65,20 @@ class AdjustedFeeDynamicQueryTest {
   }
 
   @Test
-  void get_whenFilterAmountValuePayableEqualsZero() {
+  void get_whenFilterAmountValuePayableEqualsZeroTrue() {
     parameters.projection().addNames(AdjustedFeeDto.JSON_IDENTIFIER);
     parameters.filter().addCriteria(AdjustedFeeFilter.JSON_AMOUNT_VALUE_PAYABLE_EQUALS_ZERO, true);
     List<AdjustedFee> instances = dynamicQuery.getMany(parameters);
     assertLinesMatch(List.of("deadlineover", "payableequalszero"),
+        instances.stream().map(i -> i.getIdentifier()).toList());
+  }
+  
+  @Test
+  void get_whenFilterAmountValuePayableEqualsZeroFalse() {
+    parameters.projection().addNames(AdjustedFeeDto.JSON_IDENTIFIER);
+    parameters.filter().addCriteria(AdjustedFeeFilter.JSON_AMOUNT_VALUE_PAYABLE_EQUALS_ZERO, false);
+    List<AdjustedFee> instances = dynamicQuery.getMany(parameters);
+    assertLinesMatch(List.of("amountvaluepayable"),
         instances.stream().map(i -> i.getIdentifier()).toList());
   }
 

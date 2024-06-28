@@ -144,8 +144,9 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
         .valueFunction(AdjustedFeeFilter::getFeeIdentifier).build();
 
     predicateBuilder().name(AbstractAmountContainerFilter.JSON_AMOUNT_VALUE_PAYABLE_EQUALS_ZERO)
-        .expression("(SELECT COALESCE(SUM(sv.amount),0) FROM PaymentAdjustedFee sv "
-            + "WHERE sv.adjustedFee = t)")
+        .expression(
+            String.format("CASE WHEN :valeurPayableEgaleZero = true THEN %1$s=0 ELSE %1$s<>0 END",
+                amountPayableSubquery()))
         .valueFunction(AdjustedFeeFilter::getAmountValuePayableEqualsZero).build();
 
     // Ordres par défaut
@@ -178,13 +179,14 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
   }
 
   String amountPayableSubquery() {
-    return String.format("t.amount.value - (%s)", amountPaidSubquery());
+    return formatSubQuery(String.format("t.amount.value - %s", amountPaidSubquery()));
   }
 
   String amountPaidSubquery() {
-    return String.format("SELECT SUM(COALESCE(%2$s.%3$s,0)) FROM %1$s %2$s WHERE %2$s.%4$s = t",
-        PaymentAdjustedFee.ENTITY_NAME, "p", PaymentAdjustedFee.FIELD_AMOUNT,
-        PaymentAdjustedFee.FIELD_ADJUSTED_FEE);
+    return formatSubQuery(
+        String.format("SELECT COALESCE(SUM(%2$s.%3$s),0) FROM %1$s %2$s WHERE %2$s.%4$s = t",
+            PaymentAdjustedFee.ENTITY_NAME, "p", PaymentAdjustedFee.FIELD_AMOUNT,
+            PaymentAdjustedFee.FIELD_ADJUSTED_FEE));
   }
 
   @Override
@@ -192,9 +194,7 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
     return ProjectionDto.hasOneOfNames(parameters.getProjection(),
         AdjustedFeeDto.JSON_AMOUNT_VALUE_PAID, AdjustedFeeDto.JSON_AMOUNT_VALUE_PAID_AS_STRING,
         AdjustedFeeDto.JSON_AMOUNT_VALUE_PAYABLE,
-        AdjustedFeeDto.JSON_AMOUNT_VALUE_PAYABLE_AS_STRING)
-        || parameters.filter().getCriteriaByName(
-            AbstractAmountContainerFilter.JSON_AMOUNT_VALUE_PAYABLE_EQUALS_ZERO) != null;
+        AdjustedFeeDto.JSON_AMOUNT_VALUE_PAYABLE_AS_STRING);
   }
 
   @Override
