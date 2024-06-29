@@ -42,12 +42,33 @@ public class AdjustedFee extends AbstractAmountContainer {
   
   @Transient
   public String feeAsString;
+  
+  @Transient
+  public String feeCategoryAsString;
 
   @Transient
   public String registrationIdentifier;
 
   @Transient
   public String registrationAsString;
+  
+  @Transient
+  public String registrationSchoolingSchoolAsString;
+
+  @Transient
+  public String registrationSchoolingBranchAsString;
+
+  @Transient
+  public String registrationSchoolingPeriodAsString;
+
+  @Transient
+  public String registrationSeniorityAsString;
+
+  @Transient
+  public String registrationAssignmentTypeAsString;
+  
+  @Transient
+  public String registrationStudentAsString;
   
   @Transient
   public Long amountValuePaid;
@@ -65,6 +86,7 @@ public class AdjustedFee extends AbstractAmountContainer {
   public static final String FIELD_FEE_IDENTIFIER = "feeIdentifier";
   public static final String FIELD_FEE_OPTIONAL = "feeOptional";
   public static final String FIELD_FEE_AS_STRING = "feeAsString";
+  public static final String FIELD_FEE_CATEGORY_AS_STRING = "feeCategoryAsString";
   public static final String FIELD_REGISTRATION = "registration";
   public static final String FIELD_REGISTRATION_IDENTIFIER = "registrationIdentifier";
   public static final String FIELD_REGISTRATION_AS_STRING = "registrationAsString";
