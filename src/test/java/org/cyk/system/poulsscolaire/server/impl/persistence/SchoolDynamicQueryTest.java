@@ -1,19 +1,12 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
-import io.quarkus.test.junit.QuarkusMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-import org.hibernate.Session;
-import org.hibernate.query.Query;
+import org.cyk.system.poulsscolaire.server.api.configuration.SchoolDto;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 @QuarkusTest
 class SchoolDynamicQueryTest {
@@ -23,19 +16,43 @@ class SchoolDynamicQueryTest {
 
   DynamicQueryParameters<School> parameters = new DynamicQueryParameters<>();
 
-  @SuppressWarnings("unchecked")
   @Test
-  void getMany() {
-    @SuppressWarnings("rawtypes")
-    Query query = Mockito.mock(Query.class);
-    List<Object[]> arrays = new ArrayList<>();
-    arrays.add(new Object[] {"1"});
-    Mockito.when(query.getResultList()).thenReturn(arrays);
-    
-    Session session = Mockito.mock(Session.class);
-    Mockito.when(session.createQuery(anyString(), any())).thenReturn(query);
-    QuarkusMock.installMockForType(session, Session.class);
-    
-    assertEquals(1, dynamicQuery.getMany(parameters).size());
+  void buildQueryString_whenTotalAmount() {
+    parameters.projection().addNames(SchoolDto.JSON_TOTAL_AMOUNT_AS_STRING);
+    assertEquals("SELECT SUM(CASE WHEN a.optional THEN 0 ELSE COALESCE(a.value,0) END) "
+        + "FROM School t " + "LEFT JOIN Schooling s ON s.schoolIdentifier = t.identifier "
+        + "LEFT JOIN Registration r ON r.schooling = s "
+        + "LEFT JOIN AdjustedFee af ON af.registration = r "
+        + "LEFT JOIN Amount a ON a = af.amount " + "GROUP BY t.identifier,t.name "
+        + "ORDER BY t.name ASC", dynamicQuery.buildQueryString(parameters));
+  }
+
+  @Test
+  void buildQueryString_whenPaidAmount() {
+    parameters.projection().addNames(SchoolDto.JSON_PAID_AMOUNT_AS_STRING);
+    assertEquals(
+        "SELECT SUM(COALESCE(paf.amount,0)) FROM School t "
+            + "LEFT JOIN Schooling s ON s.schoolIdentifier = t.identifier "
+            + "LEFT JOIN Registration r ON r.schooling = s "
+            + "LEFT JOIN Payment p ON p.registration = r "
+            + "LEFT JOIN PaymentAdjustedFee paf ON paf.payment = p "
+            + "GROUP BY t.identifier,t.name ORDER BY t.name ASC",
+        dynamicQuery.buildQueryString(parameters));
+  }
+
+  @Test
+  void getSumPaymentQuery_whenHasTotalProjection() {
+    parameters.projection().addNames(SchoolDto.JSON_TOTAL_AMOUNT_AS_STRING);
+    assertEquals(dynamicQuery.querySumPayment,
+        dynamicQuery.getSumPaymentQuery(parameters.projection()));
+  }
+
+  @Test
+  void getSumPaymentQuery_whenHasNoTotalProjection() {
+    parameters.projection().addNames(SchoolDto.JSON_TOTAL_AMOUNT_AS_STRING);
+    assertEquals(
+        "COALESCE((SELECT SUM(v.amount) FROM PaymentAdjustedFee v "
+            + "WHERE v.payment.registration.schooling.schoolIdentifier = t.identifier),0)",
+        dynamicQuery.getSumPaymentQuery(parameters.projection()));
   }
 }

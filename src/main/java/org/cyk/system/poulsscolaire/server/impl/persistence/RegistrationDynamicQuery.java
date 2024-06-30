@@ -56,6 +56,19 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
 
   @PostConstruct
   void postConstruct() {
+    buildProjections();
+
+    // Jointures
+    buildJoins();
+
+    // Prédicats
+    buildPredicates();
+
+    // Ordres par défaut
+    orderBuilder().fieldName(AbstractIdentifiableCodable.FIELD_CODE).build();
+  }
+
+  void buildProjections() {
     projectionBuilder().name(AbstractIdentifiableDto.JSON_IDENTIFIER)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER).build();
 
@@ -85,6 +98,10 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
             fieldName(Registration.FIELD_SENIORITY, AbstractIdentifiableCodableNamable.FIELD_NAME))
         .build();
 
+    buildAmountsProjections();
+  }
+
+  void buildAmountsProjections() {
     projectionBuilder().name(RegistrationDto.JSON_TOTAL_AMOUNT_AS_STRING)
         .tupleVariableName(amountVariableName)
         .expression(amountDynamicQuery.formatValueSum(amountVariableName))
@@ -115,8 +132,9 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
             amountDynamicQuery.formatRegistrationValuePartSum(amountVariableName), querySumPayment))
         .resultConsumer((i, a) -> i.payableRegistrationAmountAsString = a.getNextAsLongFormatted())
         .build();
+  }
 
-    // Jointures
+  void buildJoins() {
     joinBuilder()
         .projectionsNames(RegistrationDto.JSON_TOTAL_AMOUNT_AS_STRING,
             RegistrationDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING)
@@ -147,14 +165,12 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
         .with(PaymentAdjustedFee.class).tupleVariableName(paymentAdjustedFeeVariableName)
         .fieldName(PaymentAdjustedFee.FIELD_PAYMENT).parentTupleVariableName(paymentVariableName)
         .parentFieldName(null).leftInnerOrRight(true).build();
+  }
 
-    // Prédicats
+  void buildPredicates() {
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
         .valueFunction(AbstractIdentifiableFilter::getIdentifier).build();
-
-    // Ordres par défaut
-    orderBuilder().fieldName(AbstractIdentifiableCodable.FIELD_CODE).build();
   }
 
   String getSumPaymentQuery(ProjectionDto projection) {
