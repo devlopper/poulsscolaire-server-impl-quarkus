@@ -1,5 +1,6 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
+import ci.gouv.dgbf.extension.core.Constant;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableNamable;
@@ -10,6 +11,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import java.util.Optional;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.payment.PaymentAdjustedFeeDto;
 
@@ -67,5 +69,23 @@ public class PaymentAdjustedFeeDynamicQuery extends AbstractDynamicQuery<Payment
         .build();
     orderBuilder().fieldName(fieldName(PaymentAdjustedFee.FIELD_ADJUSTED_FEE, AdjustedFee.FIELD_FEE,
         Fee.FIELD_CATEGORY, AbstractIdentifiableCodable.FIELD_CODE)).build();
+  }
+
+  /**
+   * Cette méthode permet de formatter la sous-requête de sommation de montant.
+   *
+   * @param fieldName nom du champ
+   * @param parentFieldName com du champ parent
+   * @return sous-requête
+   */
+  public String formatSumAmountSubQuery(String fieldName, String parentFieldName) {
+    return formatValueOrZeroIfNull(formatSubQuery("SELECT " + formatSum("sqt.amount")
+        + String.format(" FROM PaymentAdjustedFee sqt WHERE sqt.%s = t%s", fieldName,
+            Optional.ofNullable(parentFieldName).map(f -> "." + parentFieldName)
+                .orElse(Constant.EMPTY_STRING))));
+  }
+  
+  public String formatSumAmountSubQuery(String fieldName) {
+    return formatSumAmountSubQuery(fieldName, null);
   }
 }

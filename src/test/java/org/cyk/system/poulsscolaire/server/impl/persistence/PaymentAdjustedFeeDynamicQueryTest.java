@@ -31,11 +31,18 @@ class PaymentAdjustedFeeDynamicQueryTest {
     List<Object[]> arrays = new ArrayList<>();
     arrays.add(new Object[] {"1"});
     Mockito.when(query.getResultList()).thenReturn(arrays);
-    
+
     Session session = Mockito.mock(Session.class);
     Mockito.when(session.createQuery(anyString(), any())).thenReturn(query);
     QuarkusMock.installMockForType(session, Session.class);
-    
+
     assertEquals(1, dynamicQuery.getMany(parameters).size());
+  }
+
+  @Test
+  void formatSumAmountSubQuery() {
+    assertEquals(
+        "COALESCE((SELECT SUM(sqt.amount) FROM PaymentAdjustedFee sqt WHERE sqt.f1 = t),0)",
+        dynamicQuery.formatSumAmountSubQuery("f1"));
   }
 }

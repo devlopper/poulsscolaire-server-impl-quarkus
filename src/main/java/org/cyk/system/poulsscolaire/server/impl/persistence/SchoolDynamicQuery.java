@@ -33,6 +33,9 @@ public class SchoolDynamicQuery extends AbstractDynamicQuery<School> {
   @Inject
   AmountDynamicQuery amountDynamicQuery;
 
+  @Inject
+  PaymentAdjustedFeeDynamicQuery paymentAdjustedFeeDynamicQuery;
+
   String schoolingVariableName;
   String registrationVariableName;
   String adjustedFeeVariableName;
@@ -53,14 +56,15 @@ public class SchoolDynamicQuery extends AbstractDynamicQuery<School> {
     amountVariableName = "a";
     paymentVariableName = "p";
     paymentAdjustedFeeVariableName = "paf";
-
-    querySumPayment = formatValueOrZeroIfNull(formatSubQuery("SELECT " + formatSum("v.amount")
-        + " FROM PaymentAdjustedFee v WHERE v.payment.registration.schooling.schoolIdentifier"
-        + " = t.identifier"));
   }
 
   @PostConstruct
   void postConstruct() {
+    querySumPayment = paymentAdjustedFeeDynamicQuery.formatSumAmountSubQuery(
+        fieldName(PaymentAdjustedFee.FIELD_PAYMENT, Payment.FIELD_REGISTRATION,
+            Registration.FIELD_SCHOOLING, Schooling.FIELD_SCHOOL_IDENTIFIER),
+        AbstractIdentifiable.FIELD_IDENTIFIER);
+
     buildProjections();
 
     buildJoins();

@@ -43,16 +43,16 @@ class SchoolDynamicQueryTest {
   @Test
   void getSumPaymentQuery_whenHasTotalProjection() {
     parameters.projection().addNames(SchoolDto.JSON_TOTAL_AMOUNT_AS_STRING);
-    assertEquals(dynamicQuery.querySumPayment,
+    assertEquals(
+        "COALESCE((SELECT SUM(sqt.amount) FROM PaymentAdjustedFee sqt "
+            + "WHERE sqt.payment.registration.schooling.schoolIdentifier = t.identifier),0)",
         dynamicQuery.getSumPaymentQuery(parameters.projection()));
   }
 
   @Test
   void getSumPaymentQuery_whenHasNoTotalProjection() {
-    parameters.projection().addNames(SchoolDto.JSON_TOTAL_AMOUNT_AS_STRING);
     assertEquals(
-        "COALESCE((SELECT SUM(v.amount) FROM PaymentAdjustedFee v "
-            + "WHERE v.payment.registration.schooling.schoolIdentifier = t.identifier),0)",
+        "SUM(COALESCE(paf.amount,0))",
         dynamicQuery.getSumPaymentQuery(parameters.projection()));
   }
 }
