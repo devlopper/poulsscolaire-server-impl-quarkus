@@ -38,11 +38,19 @@ class PaymentAdjustedFeeDynamicQueryTest {
 
     assertEquals(1, dynamicQuery.getMany(parameters).size());
   }
-
+  
   @Test
   void formatSumAmountSubQuery() {
     assertEquals(
         "COALESCE((SELECT SUM(sqt.amount) FROM PaymentAdjustedFee sqt WHERE sqt.f1 = t),0)",
         dynamicQuery.formatSumAmountSubQuery("f1"));
+  }
+  
+  @Test
+  void formatSumAmountSubQuery_whenFilters() {
+    assertEquals(
+        "COALESCE((SELECT SUM(sqt.amount) FROM PaymentAdjustedFee sqt "
+        + "WHERE sqt.f1 = t AND sqt.f2=v1),0)",
+        dynamicQuery.formatSumAmountSubQuery("f1", null, List.of("sqt.f2=v1")));
   }
 }

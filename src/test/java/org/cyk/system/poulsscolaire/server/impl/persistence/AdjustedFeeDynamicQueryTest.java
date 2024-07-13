@@ -2,6 +2,7 @@ package org.cyk.system.poulsscolaire.server.impl.persistence;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertLinesMatch;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters.ResultMode;
@@ -24,6 +25,16 @@ class AdjustedFeeDynamicQueryTest {
 
   DynamicQueryParameters<AdjustedFee> parameters = new DynamicQueryParameters<>();
 
+  @Test
+  void instanciateAdjustedFeeAmountToPay() {
+    assertNotNull(new AdjustedFeeAmountToPay());
+  }
+  
+  @Test
+  void instanciateAdjustedFeeAmountPaid() {
+    assertNotNull(new AdjustedFeeAmountPaid());
+  }
+  
   @Test
   void formatCaseWhenOptionalFormat() {
     assertEquals("CASE WHEN t.amount.optional THEN IS_OPTIONAL ELSE IS_NOT_OPTIONAL END",
@@ -51,6 +62,44 @@ class AdjustedFeeDynamicQueryTest {
     parameters.filter().addCriteria(AdjustedFeeDto.JSON_IDENTIFIER, "deadlineover");
     AdjustedFee adjustedFee = dynamicQuery.getOne(parameters);
     assertEquals(true, adjustedFee.amountDeadlineOver);
+  }
+  
+  @Test
+  void buildQueryString_whenProjectionAmountValueToPay() {
+    parameters.setResultMode(ResultMode.ONE);
+    parameters.projection().addNames(AdjustedFeeDto.JSON_AMOUNT_VALUE_TO_PAY_AS_STRING);
+    parameters.filter().addCriteria(AdjustedFeeDto.JSON_IDENTIFIER, "amountvaluepayable");
+    assertEquals("SELECT afatp.amount FROM AdjustedFee t "
+        + "LEFT JOIN AdjustedFeeAmountToPay afatp ON afatp.identifier = t.identifier "
+        + "WHERE t.identifier = :identifiant", dynamicQuery.buildQueryString(parameters));
+  }
+  
+  @Test
+  void buildQueryString_whenProjectionAmountValuePaid() {
+    parameters.setResultMode(ResultMode.ONE);
+    parameters.projection().addNames(AdjustedFeeDto.JSON_AMOUNT_VALUE_PAID_AS_STRING);
+    parameters.filter().addCriteria(AdjustedFeeDto.JSON_IDENTIFIER, "amountvaluepayable");
+    assertEquals("SELECT afap.amount FROM AdjustedFee t "
+        + "LEFT JOIN AdjustedFeeAmountPaid afap ON afap.identifier = t.identifier "
+        + "WHERE t.identifier = :identifiant", dynamicQuery.buildQueryString(parameters));
+  }
+  
+  @Test
+  void get_whenProjectionAmountValueToPay() {
+    parameters.setResultMode(ResultMode.ONE);
+    parameters.projection().addNames(AdjustedFeeDto.JSON_AMOUNT_VALUE_TO_PAY_AS_STRING);
+    parameters.filter().addCriteria(AdjustedFeeDto.JSON_IDENTIFIER, "amountvaluepayable");
+    AdjustedFee adjustedFee = dynamicQuery.getOne(parameters);
+    assertEquals("1 000 000", adjustedFee.amountValueToPayAsString);
+  }
+  
+  @Test
+  void get_whenProjectionAmountValuePaid() {
+    parameters.setResultMode(ResultMode.ONE);
+    parameters.projection().addNames(AdjustedFeeDto.JSON_AMOUNT_VALUE_PAID_AS_STRING);
+    parameters.filter().addCriteria(AdjustedFeeDto.JSON_IDENTIFIER, "amountvaluepayable");
+    AdjustedFee adjustedFee = dynamicQuery.getOne(parameters);
+    assertEquals("1", adjustedFee.amountValuePaidAsString);
   }
 
   @Test
