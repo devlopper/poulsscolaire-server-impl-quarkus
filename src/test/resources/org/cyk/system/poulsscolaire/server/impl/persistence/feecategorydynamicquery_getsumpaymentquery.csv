@@ -1,3 +1,0 @@
-Projection, Requête
-a,"SUM(COALESCE(paf.amount,0))"
-montantTotalChaine,"COALESCE((SELECT SUM(sqt.amount) FROM PaymentAdjustedFee sqt WHERE sqt.adjustedFee.fee.category = t),0)"

@@ -13,6 +13,9 @@ import jakarta.persistence.MappedSuperclass;
 @MappedSuperclass
 public abstract class AbstractAdjustedFeeAmount extends AbstractIdentifiable {
 
+  @Column(name = "RUBRIQUE")
+  public String feeCategoryIdentifier;
+  
   @Column(name = "INSCRIPTION")
   public String registrationIdentifier;
 
@@ -28,9 +31,10 @@ public abstract class AbstractAdjustedFeeAmount extends AbstractIdentifiable {
   @Column(name = "MONTANT_INSCRIPTION")
   public long amountRegistration;
   
-  public static final String FIELD_SCHOOL_IDENTIFIER = "schoolIdentifier";
-  public static final String FIELD_SCHOOLING_IDENTIFIER = "schoolingIdentifier";
+  public static final String FIELD_FEE_CATEGORY_IDENTIFIER = "feeCategoryIdentifier";
   public static final String FIELD_REGISTRATION_IDENTIFIER = "registrationIdentifier";
+  public static final String FIELD_SCHOOLING_IDENTIFIER = "schoolingIdentifier";
+  public static final String FIELD_SCHOOL_IDENTIFIER = "schoolIdentifier";
   public static final String FIELD_AMOUNT = "amount";
   public static final String FIELD_AMOUNT_REGISTRATION = "amountRegistration";
 }

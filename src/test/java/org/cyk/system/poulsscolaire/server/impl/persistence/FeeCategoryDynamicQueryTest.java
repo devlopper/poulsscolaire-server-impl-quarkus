@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters.ResultMode;
-import ci.gouv.dgbf.extension.server.service.api.request.ProjectionDto;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.QuarkusTestProfile;
 import io.quarkus.test.junit.TestProfile;
@@ -33,24 +32,63 @@ class FeeCategoryDynamicQueryTest {
   }
 
   @ParameterizedTest
-  @CsvFileSource(resources = {"feecategorydynamicquery_getsumpaymentquery.csv"},
-      useHeadersInDisplayName = true)
-  void getSumPaymentQuery(String name, String expected) {
-    assertEquals(expected, dynamicQuery.getSumPaymentQuery(new ProjectionDto().addNames(name)));
-  }
-
-  @ParameterizedTest
-  @CsvSource({"1,20 000,5,19 995", "2,12 000,12 000,0"})
-  void get(String identifier, String total, String paid, String payable) {
-    parameters.projection().addNames(FeeCategoryDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING,
-        FeeCategoryDto.JSON_PAID_REGISTRATION_AMOUNT_AS_STRING,
-        FeeCategoryDto.JSON_PAYABLE_REGISTRATION_AMOUNT_AS_STRING);
+  @CsvSource({"1,90 000", "2,30 000"})
+  void getToPay(String identifier, String expected) {
+    parameters.projection().addNames(FeeCategoryDto.JSON_TOTAL_AMOUNT_AS_STRING);
     parameters.setResultMode(ResultMode.ONE);
     parameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, identifier);
     FeeCategory feeCategory = dynamicQuery.getOne(parameters);
-    assertEquals(total, feeCategory.getTotalRegistrationAmountAsString());
-    assertEquals(paid, feeCategory.getPaidRegistrationAmountAsString());
-    assertEquals(payable, feeCategory.getPayableRegistrationAmountAsString());
+    assertEquals(expected, feeCategory.getTotalAmountAsString());
+  }
+
+  @ParameterizedTest
+  @CsvSource({"1,20 000", "2,12 000"})
+  void getRegistrationToPay(String identifier, String expected) {
+    parameters.projection().addNames(FeeCategoryDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING);
+    parameters.setResultMode(ResultMode.ONE);
+    parameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, identifier);
+    FeeCategory feeCategory = dynamicQuery.getOne(parameters);
+    assertEquals(expected, feeCategory.getTotalRegistrationAmountAsString());
+  }
+
+  @ParameterizedTest
+  @CsvSource({"1,5", "2,30 000"})
+  void getPaid(String identifier, String expected) {
+    parameters.projection().addNames(FeeCategoryDto.JSON_PAID_AMOUNT_AS_STRING);
+    parameters.setResultMode(ResultMode.ONE);
+    parameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, identifier);
+    FeeCategory feeCategory = dynamicQuery.getOne(parameters);
+    assertEquals(expected, feeCategory.getPaidAmountAsString());
+  }
+
+  @ParameterizedTest
+  @CsvSource({"1,5", "2,12 000"})
+  void getRegistrationPaid(String identifier, String expected) {
+    parameters.projection().addNames(FeeCategoryDto.JSON_PAID_REGISTRATION_AMOUNT_AS_STRING);
+    parameters.setResultMode(ResultMode.ONE);
+    parameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, identifier);
+    FeeCategory feeCategory = dynamicQuery.getOne(parameters);
+    assertEquals(expected, feeCategory.getPaidRegistrationAmountAsString());
+  }
+
+  @ParameterizedTest
+  @CsvSource({"1,89 995", "2,0"})
+  void getPayable(String identifier, String expected) {
+    parameters.projection().addNames(FeeCategoryDto.JSON_PAYABLE_AMOUNT_AS_STRING);
+    parameters.setResultMode(ResultMode.ONE);
+    parameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, identifier);
+    FeeCategory feeCategory = dynamicQuery.getOne(parameters);
+    assertEquals(expected, feeCategory.getPayableAmountAsString());
+  }
+
+  @ParameterizedTest
+  @CsvSource({"1,19 995", "2,0"})
+  void getRegistrationPayable(String identifier, String expected) {
+    parameters.projection().addNames(FeeCategoryDto.JSON_PAYABLE_REGISTRATION_AMOUNT_AS_STRING);
+    parameters.setResultMode(ResultMode.ONE);
+    parameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, identifier);
+    FeeCategory feeCategory = dynamicQuery.getOne(parameters);
+    assertEquals(expected, feeCategory.getPayableRegistrationAmountAsString());
   }
 
   public static class Profile implements QuarkusTestProfile {

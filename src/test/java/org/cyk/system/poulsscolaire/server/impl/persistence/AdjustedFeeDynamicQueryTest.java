@@ -29,23 +29,10 @@ class AdjustedFeeDynamicQueryTest {
   void instanciateAdjustedFeeAmountToPay() {
     assertNotNull(new AdjustedFeeAmountToPay());
   }
-  
+
   @Test
   void instanciateAdjustedFeeAmountPaid() {
     assertNotNull(new AdjustedFeeAmountPaid());
-  }
-  
-  @Test
-  void formatCaseWhenOptionalFormat() {
-    assertEquals("CASE WHEN t.amount.optional THEN IS_OPTIONAL ELSE IS_NOT_OPTIONAL END",
-        dynamicQuery.formatCaseOptional("IS_OPTIONAL", "IS_NOT_OPTIONAL"));
-  }
-
-  @Test
-  void amountPaidSubquery() {
-    assertEquals(
-        "(SELECT COALESCE(SUM(p.amount),0) FROM PaymentAdjustedFee p WHERE p.adjustedFee = t)",
-        dynamicQuery.amountPaidSubquery());
   }
 
   @Test
@@ -63,7 +50,7 @@ class AdjustedFeeDynamicQueryTest {
     AdjustedFee adjustedFee = dynamicQuery.getOne(parameters);
     assertEquals(true, adjustedFee.amountDeadlineOver);
   }
-  
+
   @Test
   void buildQueryString_whenProjectionAmountValueToPay() {
     parameters.setResultMode(ResultMode.ONE);
@@ -73,7 +60,7 @@ class AdjustedFeeDynamicQueryTest {
         + "LEFT JOIN AdjustedFeeAmountToPay afatp ON afatp.identifier = t.identifier "
         + "WHERE t.identifier = :identifiant", dynamicQuery.buildQueryString(parameters));
   }
-  
+
   @Test
   void buildQueryString_whenProjectionAmountValuePaid() {
     parameters.setResultMode(ResultMode.ONE);
@@ -83,7 +70,7 @@ class AdjustedFeeDynamicQueryTest {
         + "LEFT JOIN AdjustedFeeAmountPaid afap ON afap.identifier = t.identifier "
         + "WHERE t.identifier = :identifiant", dynamicQuery.buildQueryString(parameters));
   }
-  
+
   @Test
   void get_whenProjectionAmountValueToPay() {
     parameters.setResultMode(ResultMode.ONE);
@@ -92,7 +79,7 @@ class AdjustedFeeDynamicQueryTest {
     AdjustedFee adjustedFee = dynamicQuery.getOne(parameters);
     assertEquals("1 000 000", adjustedFee.amountValueToPayAsString);
   }
-  
+
   @Test
   void get_whenProjectionAmountValuePaid() {
     parameters.setResultMode(ResultMode.ONE);
@@ -121,7 +108,7 @@ class AdjustedFeeDynamicQueryTest {
     assertLinesMatch(List.of("deadlineover", "payableequalszero"),
         instances.stream().map(i -> i.getIdentifier()).toList());
   }
-  
+
   @Test
   void get_whenFilterAmountValuePayableEqualsZeroFalse() {
     parameters.projection().addNames(AdjustedFeeDto.JSON_IDENTIFIER);

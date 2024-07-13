@@ -3,13 +3,10 @@ package org.cyk.system.poulsscolaire.server.impl.persistence;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableNamable;
-import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
 import ci.gouv.dgbf.extension.server.service.api.AbstractIdentifiableFilter;
 import ci.gouv.dgbf.extension.server.service.api.entity.AbstractIdentifiableDto;
-import ci.gouv.dgbf.extension.server.service.api.request.ProjectionDto;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
-import java.util.Set;
 import org.cyk.system.poulsscolaire.server.api.fee.AbstractAmountContainerDto;
 import org.cyk.system.poulsscolaire.server.api.fee.AbstractAmountContainerFilter;
 import org.cyk.system.poulsscolaire.server.api.fee.AdjustedFeeDto;
@@ -182,26 +179,13 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
   }
 
   ProjectionBuilder projectionBuilderAmountPayable(String name) {
-    return projectionBuilder().name(name).expression(String.format("%s.amount - %s.amount",
-        adjustedFeeAmountToPayVariableName, adjustedFeeAmountPaidVariableName));
+    return projectionBuilder().name(name)
+        .expression(formatAmountPayable(AbstractAdjustedFeeAmount.FIELD_AMOUNT));
   }
 
-  String formatCaseOptional(String whenOptional, String whenNotOptional) {
-    return formatCase(
-        String.format("%s.%s", variableName,
-            fieldName(AbstractAmountContainer.FIELD_AMOUNT, Amount.FIELD_OPTIONAL)),
-        whenOptional, whenNotOptional);
-  }
-
-  String amountPayableSubquery() {
-    return formatSubQuery(String.format("t.amount.value - %s", amountPaidSubquery()));
-  }
-
-  String amountPaidSubquery() {
-    return formatSubQuery(
-        String.format("SELECT COALESCE(SUM(%2$s.%3$s),0) FROM %1$s %2$s WHERE %2$s.%4$s = t",
-            PaymentAdjustedFee.ENTITY_NAME, "p", PaymentAdjustedFee.FIELD_AMOUNT,
-            PaymentAdjustedFee.FIELD_ADJUSTED_FEE));
+  String formatAmountPayable(String fieldName) {
+    return String.format("COALESCE(%1$s.%3$s,0) - COALESCE(%2$s.%3$s,0)",
+        adjustedFeeAmountToPayVariableName, adjustedFeeAmountPaidVariableName, fieldName);
   }
 
   void buildJoins() {
@@ -282,33 +266,7 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
     predicateBuilder().name(AbstractAmountContainerFilter.JSON_AMOUNT_VALUE_PAYABLE_EQUALS_ZERO)
         .expression(String.format("CASE WHEN :%1$s = true THEN %2$s=0 ELSE %2$s<>0 END",
             AbstractAmountContainerFilter.JSON_AMOUNT_VALUE_PAYABLE_EQUALS_ZERO,
-            amountPayableSubquery()))
+            formatAmountPayable(AbstractAdjustedFeeAmount.FIELD_AMOUNT)))
         .valueFunction(AdjustedFeeFilter::getAmountValuePayableEqualsZero).build();
-  }
-
-  @Override
-  protected boolean isGrouped(DynamicQueryParameters<AdjustedFee> parameters) {
-    return ProjectionDto.hasOneOfNames(parameters.getProjection(),
-        AdjustedFeeDto.JSON_AMOUNT_VALUE_PAID, AdjustedFeeDto.JSON_AMOUNT_VALUE_PAID_AS_STRING,
-        AdjustedFeeDto.JSON_AMOUNT_VALUE_PAYABLE,
-        AdjustedFeeDto.JSON_AMOUNT_VALUE_PAYABLE_AS_STRING);
-  }
-
-  @Override
-  protected void buildGroups(DynamicQueryParameters<AdjustedFee> parameters, Set<String> groups) {
-    /*
-     * On ajoute l'identifiant pour l'apsect technique de regroupement
-     */
-    groups.add(fieldName(variableName, AbstractIdentifiable.FIELD_IDENTIFIER));
-    /*
-     * On ajoute les éléments d'ordre
-     */
-    groups.add(fieldName(variableName, AdjustedFee.FIELD_FEE, Fee.FIELD_CATEGORY,
-        AbstractIdentifiableCodableNamable.FIELD_NAME));
-    groups.add(fieldName(variableName, AdjustedFee.FIELD_REGISTRATION,
-        AbstractIdentifiableCodable.FIELD_CODE));
-    /*
-     * On ajoute les autres au besoin
-     */
   }
 }
