@@ -30,20 +30,11 @@ public class SchoolDynamicQuery extends AbstractDynamicQuery<School> {
   @Getter
   EntityManager entityManager;
 
-  @Inject
-  AmountDynamicQuery amountDynamicQuery;
-
-  @Inject
-  PaymentAdjustedFeeDynamicQuery paymentAdjustedFeeDynamicQuery;
-
   String schoolingVariableName;
   String registrationVariableName;
-  String adjustedFeeVariableName;
-  String amountVariableName;
-  String paymentVariableName;
-  String paymentAdjustedFeeVariableName;
 
-  String querySumPayment;
+  String adjustedFeeAmountToPayVariableName;
+  String adjustedFeeAmountPaidVariableName;
 
   /**
    * Cette méthode permet d'instancier un object.
@@ -52,19 +43,13 @@ public class SchoolDynamicQuery extends AbstractDynamicQuery<School> {
     super(School.class);
     schoolingVariableName = "s";
     registrationVariableName = "r";
-    adjustedFeeVariableName = "af";
-    amountVariableName = "a";
-    paymentVariableName = "p";
-    paymentAdjustedFeeVariableName = "paf";
+
+    adjustedFeeAmountToPayVariableName = "afatp";
+    adjustedFeeAmountPaidVariableName = "afap";
   }
 
   @PostConstruct
   void postConstruct() {
-    querySumPayment = paymentAdjustedFeeDynamicQuery.formatSumAmountSubQuery(
-        fieldName(PaymentAdjustedFee.FIELD_PAYMENT, Payment.FIELD_REGISTRATION,
-            Registration.FIELD_SCHOOLING, Schooling.FIELD_SCHOOL_IDENTIFIER),
-        AbstractIdentifiable.FIELD_IDENTIFIER);
-
     buildProjections();
 
     buildJoins();
@@ -87,41 +72,40 @@ public class SchoolDynamicQuery extends AbstractDynamicQuery<School> {
 
   void buildAmountsProjections() {
     projectionBuilder().name(SchoolDto.JSON_TOTAL_AMOUNT_AS_STRING)
-        .tupleVariableName(amountVariableName)
-        .expression(amountDynamicQuery.formatValueSum(amountVariableName))
+        .expression(formatSum(
+            fieldName(adjustedFeeAmountToPayVariableName, AbstractAdjustedFeeAmount.FIELD_AMOUNT)))
         .resultConsumer((i, a) -> i.totalAmountAsString = a.getNextAsLongFormatted()).build();
 
     projectionBuilder().name(SchoolDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING)
-        .expression(amountDynamicQuery.formatRegistrationValuePartSum(amountVariableName))
+        .expression(formatSum(fieldName(adjustedFeeAmountToPayVariableName,
+            AbstractAdjustedFeeAmount.FIELD_AMOUNT_REGISTRATION)))
         .resultConsumer((i, a) -> i.totalRegistrationAmountAsString = a.getNextAsLongFormatted())
         .build();
 
     projectionBuilder().name(SchoolDto.JSON_PAID_AMOUNT_AS_STRING)
-        .expressionFunction(p -> getSumPaymentQuery(p.projection()))
+        .expression(formatSum(
+            fieldName(adjustedFeeAmountPaidVariableName, AbstractAdjustedFeeAmount.FIELD_AMOUNT)))
         .resultConsumer((i, a) -> i.paidAmountAsString = a.getNextAsLongFormatted()).build();
 
     projectionBuilder().name(SchoolDto.JSON_PAID_REGISTRATION_AMOUNT_AS_STRING)
-        .expression(String.format("(CASE WHEN %1$s >= %2$s THEN %2$s ELSE %1$s END)",
-            amountDynamicQuery.formatRegistrationValuePartSum(amountVariableName), querySumPayment))
+        .expression(formatSum(fieldName(adjustedFeeAmountPaidVariableName,
+            AbstractAdjustedFeeAmount.FIELD_AMOUNT_REGISTRATION)))
         .resultConsumer((i, a) -> i.paidRegistrationAmountAsString = a.getNextAsLongFormatted())
         .build();
 
     projectionBuilder().name(SchoolDto.JSON_PAYABLE_AMOUNT_AS_STRING)
-        .expression(String.format("(%s - %s)",
-            amountDynamicQuery.formatValueSum(amountVariableName), querySumPayment))
+        .expression(formatAmountPayable(AbstractAdjustedFeeAmount.FIELD_AMOUNT))
         .resultConsumer((i, a) -> i.payableAmountAsString = a.getNextAsLongFormatted()).build();
 
     projectionBuilder().name(SchoolDto.JSON_PAYABLE_REGISTRATION_AMOUNT_AS_STRING)
-        .expression(String.format("(CASE WHEN %1$s >= %2$s THEN %1$s - %2$s ELSE 0 END)",
-            amountDynamicQuery.formatRegistrationValuePartSum(amountVariableName), querySumPayment))
+        .expression(formatAmountPayable(AbstractAdjustedFeeAmount.FIELD_AMOUNT_REGISTRATION))
         .resultConsumer((i, a) -> i.payableRegistrationAmountAsString = a.getNextAsLongFormatted())
         .build();
   }
 
-  String getSumPaymentQuery(ProjectionDto projection) {
-    return hasTotalProjection(projection) ? querySumPayment
-        : formatSum(formatValueOrZeroIfNull(paymentAdjustedFeeVariableName,
-            PaymentAdjustedFee.FIELD_AMOUNT));
+  String formatAmountPayable(String fieldName) {
+    return String.format("SUM(COALESCE(%1$s.%3$s,0)) - SUM(COALESCE(%2$s.%3$s,0))",
+        adjustedFeeAmountToPayVariableName, adjustedFeeAmountPaidVariableName, fieldName);
   }
 
   void buildJoins() {
@@ -147,35 +131,21 @@ public class SchoolDynamicQuery extends AbstractDynamicQuery<School> {
 
     joinBuilder()
         .projectionsNames(SchoolDto.JSON_TOTAL_AMOUNT_AS_STRING,
-            SchoolDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING)
-        .with(AdjustedFee.class).tupleVariableName(adjustedFeeVariableName)
-        .fieldName(AdjustedFee.FIELD_REGISTRATION).parentTupleVariableName(registrationVariableName)
-        .parentFieldName(null).leftInnerOrRight(true).build();
+            SchoolDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING,
+            SchoolDto.JSON_PAYABLE_AMOUNT_AS_STRING,
+            SchoolDto.JSON_PAYABLE_REGISTRATION_AMOUNT_AS_STRING)
+        .with(AdjustedFeeAmountToPay.class).tupleVariableName(adjustedFeeAmountToPayVariableName)
+        .fieldName(AbstractAdjustedFeeAmount.FIELD_SCHOOL_IDENTIFIER)
+        .parentFieldName(AbstractIdentifiable.FIELD_IDENTIFIER).leftInnerOrRight(true).build();
 
     joinBuilder()
-        .projectionsNames(SchoolDto.JSON_TOTAL_AMOUNT_AS_STRING,
-            SchoolDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING)
-        .with(Amount.class).tupleVariableName(amountVariableName)
-        .parentTupleVariableName(adjustedFeeVariableName)
-        .parentFieldName(AbstractAmountContainer.FIELD_AMOUNT).leftInnerOrRight(true).build();
-
-    joinBuilder().disabledFunction(p -> hasTotalProjection(p.projection()))
         .projectionsNames(SchoolDto.JSON_PAID_AMOUNT_AS_STRING,
-            SchoolDto.JSON_PAYABLE_AMOUNT_AS_STRING,
             SchoolDto.JSON_PAID_REGISTRATION_AMOUNT_AS_STRING,
-            SchoolDto.JSON_PAYABLE_REGISTRATION_AMOUNT_AS_STRING)
-        .with(Payment.class).tupleVariableName(paymentVariableName)
-        .fieldName(Payment.FIELD_REGISTRATION).parentFieldName(null)
-        .parentTupleVariableName(registrationVariableName).leftInnerOrRight(true).build();
-
-    joinBuilder().disabledFunction(p -> hasTotalProjection(p.projection()))
-        .projectionsNames(SchoolDto.JSON_PAID_AMOUNT_AS_STRING,
             SchoolDto.JSON_PAYABLE_AMOUNT_AS_STRING,
-            SchoolDto.JSON_PAID_REGISTRATION_AMOUNT_AS_STRING,
             SchoolDto.JSON_PAYABLE_REGISTRATION_AMOUNT_AS_STRING)
-        .with(PaymentAdjustedFee.class).tupleVariableName(paymentAdjustedFeeVariableName)
-        .fieldName(PaymentAdjustedFee.FIELD_PAYMENT).parentTupleVariableName(paymentVariableName)
-        .parentFieldName(null).leftInnerOrRight(true).build();
+        .with(AdjustedFeeAmountPaid.class).tupleVariableName(adjustedFeeAmountPaidVariableName)
+        .fieldName(AbstractAdjustedFeeAmount.FIELD_SCHOOL_IDENTIFIER)
+        .parentFieldName(AbstractIdentifiable.FIELD_IDENTIFIER).leftInnerOrRight(true).build();
 
   }
 
@@ -207,10 +177,5 @@ public class SchoolDynamicQuery extends AbstractDynamicQuery<School> {
     /*
      * On ajoute les autres au besoin
      */
-  }
-
-  boolean hasTotalProjection(ProjectionDto projection) {
-    return ProjectionDto.hasOneOfNames(projection, SchoolDto.JSON_TOTAL_AMOUNT_AS_STRING,
-        SchoolDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING);
   }
 }

@@ -38,16 +38,4 @@ class AmountDynamicQueryTest {
 
     assertEquals(1, dynamicQuery.getMany(parameters).size());
   }
-
-  @Test
-  void formatValueSum() {
-    assertEquals("SUM(CASE WHEN a.optional THEN 0 ELSE COALESCE(a.value,0) END)",
-        dynamicQuery.formatValueSum("a"));
-  }
-
-  @Test
-  void formatRegistrationValuePartSum() {
-    assertEquals("SUM(CASE WHEN a.optional THEN 0 ELSE COALESCE(a.registrationValuePart,0) END)",
-        dynamicQuery.formatRegistrationValuePartSum("a"));
-  }
 }

@@ -19,24 +19,24 @@ class SchoolDynamicQueryTest {
   @Test
   void buildQueryString_whenTotalAmount() {
     parameters.projection().addNames(SchoolDto.JSON_TOTAL_AMOUNT_AS_STRING);
-    assertEquals("SELECT SUM(CASE WHEN a.optional THEN 0 ELSE COALESCE(a.value,0) END) "
-        + "FROM School t " + "LEFT JOIN Schooling s ON s.schoolIdentifier = t.identifier "
-        + "LEFT JOIN Registration r ON r.schooling = s "
-        + "LEFT JOIN AdjustedFee af ON af.registration = r "
-        + "LEFT JOIN Amount a ON a = af.amount " + "GROUP BY t.identifier,t.name "
-        + "ORDER BY t.name ASC", dynamicQuery.buildQueryString(parameters));
+    assertEquals(
+        "SELECT SUM(afatp.amount) FROM School t "
+            + "LEFT JOIN Schooling s ON s.schoolIdentifier = t.identifier "
+            + "LEFT JOIN Registration r ON r.schooling = s "
+            + "LEFT JOIN AdjustedFeeAmountToPay afatp ON afatp.schoolIdentifier = t.identifier "
+            + "GROUP BY t.identifier,t.name ORDER BY t.name ASC",
+        dynamicQuery.buildQueryString(parameters));
   }
 
   @Test
   void buildQueryString_whenPaidAmount() {
     parameters.projection().addNames(SchoolDto.JSON_PAID_AMOUNT_AS_STRING);
     assertEquals(
-        "SELECT SUM(COALESCE(paf.amount,0)) FROM School t "
-            + "LEFT JOIN Schooling s ON s.schoolIdentifier = t.identifier "
-            + "LEFT JOIN Registration r ON r.schooling = s "
-            + "LEFT JOIN Payment p ON p.registration = r "
-            + "LEFT JOIN PaymentAdjustedFee paf ON paf.payment = p "
-            + "GROUP BY t.identifier,t.name ORDER BY t.name ASC",
+        "SELECT SUM(afap.amount) FROM School t "
+        + "LEFT JOIN Schooling s ON s.schoolIdentifier = t.identifier "
+        + "LEFT JOIN Registration r ON r.schooling = s "
+        + "LEFT JOIN AdjustedFeeAmountPaid afap ON afap.schoolIdentifier = t.identifier "
+        + "GROUP BY t.identifier,t.name ORDER BY t.name ASC",
         dynamicQuery.buildQueryString(parameters));
   }
 
@@ -44,29 +44,12 @@ class SchoolDynamicQueryTest {
   void buildQueryString_whenPayableAmount() {
     parameters.projection().addNames(SchoolDto.JSON_PAYABLE_AMOUNT_AS_STRING);
     assertEquals(
-        "SELECT (SUM(CASE WHEN a.optional THEN 0 ELSE COALESCE(a.value,0) END)"
-            + " - COALESCE((SELECT SUM(sqt.amount) " + "FROM PaymentAdjustedFee sqt "
-            + "WHERE sqt.payment.registration.schooling.schoolIdentifier = t.identifier),0)) "
-            + "FROM School t LEFT JOIN Schooling s ON s.schoolIdentifier = t.identifier "
-            + "LEFT JOIN Registration r ON r.schooling = s "
-            + "LEFT JOIN Payment p ON p.registration = r "
-            + "LEFT JOIN PaymentAdjustedFee paf ON paf.payment = p "
-            + "GROUP BY t.identifier,t.name ORDER BY t.name ASC",
+        "SELECT SUM(COALESCE(afatp.amount,0)) - SUM(COALESCE(afap.amount,0)) "
+        + "FROM School t LEFT JOIN Schooling s ON s.schoolIdentifier = t.identifier "
+        + "LEFT JOIN Registration r ON r.schooling = s "
+        + "LEFT JOIN AdjustedFeeAmountToPay afatp ON afatp.schoolIdentifier = t.identifier "
+        + "LEFT JOIN AdjustedFeeAmountPaid afap ON afap.schoolIdentifier = t.identifier G"
+        + "ROUP BY t.identifier,t.name ORDER BY t.name ASC",
         dynamicQuery.buildQueryString(parameters));
-  }
-
-  @Test
-  void getSumPaymentQuery_whenHasTotalProjection() {
-    parameters.projection().addNames(SchoolDto.JSON_TOTAL_AMOUNT_AS_STRING);
-    assertEquals(
-        "COALESCE((SELECT SUM(sqt.amount) FROM PaymentAdjustedFee sqt "
-            + "WHERE sqt.payment.registration.schooling.schoolIdentifier = t.identifier),0)",
-        dynamicQuery.getSumPaymentQuery(parameters.projection()));
-  }
-
-  @Test
-  void getSumPaymentQuery_whenHasNoTotalProjection() {
-    assertEquals("SUM(COALESCE(paf.amount,0))",
-        dynamicQuery.getSumPaymentQuery(parameters.projection()));
   }
 }

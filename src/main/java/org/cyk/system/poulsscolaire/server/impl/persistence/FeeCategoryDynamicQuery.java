@@ -32,18 +32,10 @@ public class FeeCategoryDynamicQuery extends AbstractDynamicQuery<FeeCategory> {
   @Getter
   EntityManager entityManager;
 
-  @Inject
-  AmountDynamicQuery amountDynamicQuery;
-
-  @Inject
-  PaymentAdjustedFeeDynamicQuery paymentAdjustedFeeDynamicQuery;
-
   String feeVariableName;
   String adjustedFeeVariableName;
   String registrationVariableName;
   String schoolingVariableName;
-
-  String querySumPayment;
 
   String adjustedFeeAmountToPayVariableName;
   String adjustedFeeAmountPaidVariableName;
@@ -64,9 +56,6 @@ public class FeeCategoryDynamicQuery extends AbstractDynamicQuery<FeeCategory> {
 
   @PostConstruct
   void postConstruct() {
-    querySumPayment = paymentAdjustedFeeDynamicQuery.formatSumAmountSubQuery(fieldName(
-        PaymentAdjustedFee.FIELD_ADJUSTED_FEE, AdjustedFee.FIELD_FEE, Fee.FIELD_CATEGORY));
-
     projectionBuilder().name(AbstractIdentifiableDto.JSON_IDENTIFIER)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER).build();
 
@@ -160,7 +149,7 @@ public class FeeCategoryDynamicQuery extends AbstractDynamicQuery<FeeCategory> {
   }
 
   String formatAmountPayable(String fieldName) {
-    return String.format("COALESCE(%1$s.%3$s,0) - COALESCE(%2$s.%3$s,0)",
+    return String.format("SUM(COALESCE(%1$s.%3$s,0)) - SUM(COALESCE(%2$s.%3$s,0))",
         adjustedFeeAmountToPayVariableName, adjustedFeeAmountPaidVariableName, fieldName);
   }
 

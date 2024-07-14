@@ -15,6 +15,7 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import java.util.Set;
 import lombok.Getter;
+import org.cyk.system.poulsscolaire.server.api.configuration.SchoolDto;
 import org.cyk.system.poulsscolaire.server.api.registration.RegistrationDto;
 
 /**
@@ -30,35 +31,20 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
   @Getter
   EntityManager entityManager;
 
-  @Inject
-  AmountDynamicQuery amountDynamicQuery;
-
-  @Inject
-  PaymentAdjustedFeeDynamicQuery paymentAdjustedFeeDynamicQuery;
-
-  String adjustedFeeVariableName;
-  String amountVariableName;
-  String paymentVariableName;
-  String paymentAdjustedFeeVariableName;
-
-  String querySumPayment;
+  String amountToPayVariableName;
+  String amountPaidVariableName;
 
   /**
    * Cette méthode permet d'instancier un object.
    */
   public RegistrationDynamicQuery() {
     super(Registration.class);
-    adjustedFeeVariableName = "af";
-    amountVariableName = "a";
-    paymentVariableName = "p";
-    paymentAdjustedFeeVariableName = "paf";
+    amountPaidVariableName = "atp";
+    amountToPayVariableName = "ap";
   }
 
   @PostConstruct
   void postConstruct() {
-    querySumPayment = paymentAdjustedFeeDynamicQuery.formatSumAmountSubQuery(
-        fieldName(PaymentAdjustedFee.FIELD_PAYMENT, Payment.FIELD_REGISTRATION));
-
     buildProjections();
 
     // Jointures
@@ -105,81 +91,67 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
   }
 
   void buildAmountsProjections() {
-    projectionBuilder().name(RegistrationDto.JSON_TOTAL_AMOUNT_AS_STRING)
-        .tupleVariableName(amountVariableName)
-        .expression(amountDynamicQuery.formatValueSum(amountVariableName))
+    projectionBuilder().name(SchoolDto.JSON_TOTAL_AMOUNT_AS_STRING)
+        .expression(
+            formatSum(fieldName(amountToPayVariableName, AbstractRegistrationAmount.FIELD_AMOUNT)))
         .resultConsumer((i, a) -> i.totalAmountAsString = a.getNextAsLongFormatted()).build();
 
-    projectionBuilder().name(RegistrationDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING)
-        .expression(amountDynamicQuery.formatRegistrationValuePartSum(amountVariableName))
+    projectionBuilder().name(SchoolDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING)
+        .expression(formatSum(fieldName(amountToPayVariableName,
+            AbstractRegistrationAmount.FIELD_AMOUNT_REGISTRATION)))
         .resultConsumer((i, a) -> i.totalRegistrationAmountAsString = a.getNextAsLongFormatted())
         .build();
 
-    projectionBuilder().name(RegistrationDto.JSON_PAID_AMOUNT_AS_STRING)
-        .expressionFunction(p -> getSumPaymentQuery(p.projection()))
+    projectionBuilder().name(SchoolDto.JSON_PAID_AMOUNT_AS_STRING)
+        .expression(
+            formatSum(fieldName(amountPaidVariableName, AbstractRegistrationAmount.FIELD_AMOUNT)))
         .resultConsumer((i, a) -> i.paidAmountAsString = a.getNextAsLongFormatted()).build();
 
-    projectionBuilder().name(RegistrationDto.JSON_PAID_REGISTRATION_AMOUNT_AS_STRING)
-        .expression(String.format("(CASE WHEN %1$s >= %2$s THEN %2$s ELSE %1$s END)",
-            amountDynamicQuery.formatRegistrationValuePartSum(amountVariableName), querySumPayment))
+    projectionBuilder().name(SchoolDto.JSON_PAID_REGISTRATION_AMOUNT_AS_STRING)
+        .expression(formatSum(fieldName(amountPaidVariableName,
+            AbstractRegistrationAmount.FIELD_AMOUNT_REGISTRATION)))
         .resultConsumer((i, a) -> i.paidRegistrationAmountAsString = a.getNextAsLongFormatted())
         .build();
 
-    projectionBuilder().name(RegistrationDto.JSON_PAYABLE_AMOUNT_AS_STRING)
-        .expression(String.format("(%s - %s)",
-            amountDynamicQuery.formatValueSum(amountVariableName), querySumPayment))
+    projectionBuilder().name(SchoolDto.JSON_PAYABLE_AMOUNT_AS_STRING)
+        .expression(formatAmountPayable(AbstractRegistrationAmount.FIELD_AMOUNT))
         .resultConsumer((i, a) -> i.payableAmountAsString = a.getNextAsLongFormatted()).build();
 
-    projectionBuilder().name(RegistrationDto.JSON_PAYABLE_REGISTRATION_AMOUNT_AS_STRING)
-        .expression(String.format("(CASE WHEN %1$s >= %2$s THEN %1$s - %2$s ELSE 0 END)",
-            amountDynamicQuery.formatRegistrationValuePartSum(amountVariableName), querySumPayment))
+    projectionBuilder().name(SchoolDto.JSON_PAYABLE_REGISTRATION_AMOUNT_AS_STRING)
+        .expression(formatAmountPayable(AbstractRegistrationAmount.FIELD_AMOUNT_REGISTRATION))
         .resultConsumer((i, a) -> i.payableRegistrationAmountAsString = a.getNextAsLongFormatted())
         .build();
+  }
+
+  String formatAmountPayable(String fieldName) {
+    return String.format("SUM(COALESCE(%1$s.%3$s,0)) - SUM(COALESCE(%2$s.%3$s,0))",
+        amountToPayVariableName, amountPaidVariableName, fieldName);
   }
 
   void buildJoins() {
     joinBuilder()
         .projectionsNames(RegistrationDto.JSON_TOTAL_AMOUNT_AS_STRING,
-            RegistrationDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING)
-        .with(AdjustedFee.class).tupleVariableName(adjustedFeeVariableName)
-        .fieldName(AdjustedFee.FIELD_REGISTRATION).parentFieldName(null).leftInnerOrRight(true)
-        .build();
+            RegistrationDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING,
+            RegistrationDto.JSON_PAYABLE_AMOUNT_AS_STRING,
+            RegistrationDto.JSON_PAYABLE_REGISTRATION_AMOUNT_AS_STRING)
+        .with(RegistrationAmountToPay.class).tupleVariableName(amountToPayVariableName)
+        .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
+        .parentFieldName(AbstractIdentifiable.FIELD_IDENTIFIER).leftInnerOrRight(true).build();
 
     joinBuilder()
-        .projectionsNames(RegistrationDto.JSON_TOTAL_AMOUNT_AS_STRING,
-            RegistrationDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING)
-        .with(Amount.class).tupleVariableName(amountVariableName)
-        .parentTupleVariableName(adjustedFeeVariableName)
-        .parentFieldName(AbstractAmountContainer.FIELD_AMOUNT).leftInnerOrRight(true).build();
-
-    joinBuilder().disabledFunction(p -> hasTotalProjection(p.projection()))
         .projectionsNames(RegistrationDto.JSON_PAID_AMOUNT_AS_STRING,
-            RegistrationDto.JSON_PAYABLE_AMOUNT_AS_STRING,
             RegistrationDto.JSON_PAID_REGISTRATION_AMOUNT_AS_STRING,
-            RegistrationDto.JSON_PAYABLE_REGISTRATION_AMOUNT_AS_STRING)
-        .with(Payment.class).tupleVariableName(paymentVariableName)
-        .fieldName(Payment.FIELD_REGISTRATION).parentFieldName(null).leftInnerOrRight(true).build();
-
-    joinBuilder().disabledFunction(p -> hasTotalProjection(p.projection()))
-        .projectionsNames(RegistrationDto.JSON_PAID_AMOUNT_AS_STRING,
             RegistrationDto.JSON_PAYABLE_AMOUNT_AS_STRING,
-            RegistrationDto.JSON_PAID_REGISTRATION_AMOUNT_AS_STRING,
             RegistrationDto.JSON_PAYABLE_REGISTRATION_AMOUNT_AS_STRING)
-        .with(PaymentAdjustedFee.class).tupleVariableName(paymentAdjustedFeeVariableName)
-        .fieldName(PaymentAdjustedFee.FIELD_PAYMENT).parentTupleVariableName(paymentVariableName)
-        .parentFieldName(null).leftInnerOrRight(true).build();
+        .with(RegistrationAmountPaid.class).tupleVariableName(amountPaidVariableName)
+        .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
+        .parentFieldName(AbstractIdentifiable.FIELD_IDENTIFIER).leftInnerOrRight(true).build();
   }
 
   void buildPredicates() {
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
         .valueFunction(AbstractIdentifiableFilter::getIdentifier).build();
-  }
-
-  String getSumPaymentQuery(ProjectionDto projection) {
-    return hasTotalProjection(projection) ? querySumPayment
-        : formatSum(formatValueOrZeroIfNull(paymentAdjustedFeeVariableName,
-            PaymentAdjustedFee.FIELD_AMOUNT));
   }
 
   @Override
@@ -205,10 +177,5 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
     /*
      * On ajoute les autres au besoin
      */
-  }
-
-  boolean hasTotalProjection(ProjectionDto projection) {
-    return ProjectionDto.hasOneOfNames(projection, RegistrationDto.JSON_TOTAL_AMOUNT_AS_STRING,
-        RegistrationDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING);
   }
 }

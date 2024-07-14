@@ -1,6 +1,7 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters.ResultMode;
@@ -10,6 +11,7 @@ import io.quarkus.test.junit.TestProfile;
 import jakarta.inject.Inject;
 import java.util.Map;
 import org.cyk.system.poulsscolaire.server.api.registration.RegistrationDto;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -23,6 +25,16 @@ class RegistrationDynamicQueryTest {
 
   DynamicQueryParameters<Registration> parameters = new DynamicQueryParameters<>();
 
+  @Test
+  void instantiateAmountToPay() {
+    assertNotNull(new RegistrationAmountToPay());
+  }
+  
+  @Test
+  void instantiateAmountPaid() {
+    assertNotNull(new RegistrationAmountPaid());
+  }
+  
   @ParameterizedTest
   @CsvFileSource(resources = {"registrationdynamicquery_buildquery_projection.csv"},
       useHeadersInDisplayName = true)
@@ -51,6 +63,27 @@ class RegistrationDynamicQueryTest {
     parameters.filter().addCriteria(RegistrationDto.JSON_IDENTIFIER, identifier);
     Registration registration = dynamicQuery.getOne(parameters);
     assertEquals(value, registration.paidAmountAsString);
+  }
+
+  @ParameterizedTest
+  @CsvSource({"i1,119 995"})
+  void getOne_payableAmountAsString(String identifier, String value) {
+    parameters.setResultMode(ResultMode.ONE);
+    parameters.projection().addNames(RegistrationDto.JSON_IDENTIFIER,
+        RegistrationDto.JSON_PAYABLE_AMOUNT_AS_STRING);
+    parameters.filter().addCriteria(RegistrationDto.JSON_IDENTIFIER, identifier);
+    Registration registration = dynamicQuery.getOne(parameters);
+    assertEquals(value, registration.payableAmountAsString);
+  }
+
+  @ParameterizedTest
+  @CsvSource({"i1,119 995"})
+  void getMany_payableAmountAsString(String identifier, String value) {
+    parameters.projection().addNames(RegistrationDto.JSON_IDENTIFIER,
+        RegistrationDto.JSON_PAYABLE_AMOUNT_AS_STRING);
+    parameters.filter().addCriteria(RegistrationDto.JSON_IDENTIFIER, identifier);
+    Registration registration = dynamicQuery.getMany(parameters).iterator().next();
+    assertEquals(value, registration.payableAmountAsString);
   }
 
   @ParameterizedTest
