@@ -44,8 +44,9 @@ class FeeDynamicQueryTest {
   void buildQuery_whenProjectionSchoolingSchoolAsString() {
     parameters.projection().addNames(FeeDto.JSON_SCHOOLING_SCHOOL_AS_STRING);
     assertEquals(
-        "SELECT school.name FROM Fee t LEFT JOIN School school "
-            + "ON school.identifier = t.schooling.schoolIdentifier",
+        "SELECT school.name FROM Fee t "
+        + "LEFT JOIN School school ON school.identifier = t.schooling.schoolIdentifier "
+        + "ORDER BY t.category.name DESC",
         dynamicQuery.buildQueryString(parameters));
   }
 }

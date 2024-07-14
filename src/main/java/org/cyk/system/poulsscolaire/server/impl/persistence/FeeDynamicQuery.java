@@ -152,8 +152,17 @@ public class FeeDynamicQuery extends AbstractAmountContainerDynamicQuery<Fee> {
         .fieldName(fieldName(Fee.FIELD_SCHOOLING, AbstractIdentifiable.FIELD_IDENTIFIER))
         .valueFunction(FeeFilter::getSchoolingIdentifier).build();
 
+    predicateBuilder().name(FeeFilter.JSON_ASSIGNMENT_TYPE_IDENTIFIER)
+        .fieldName(fieldName(Fee.FIELD_ASSIGNMENT_TYPE, AbstractIdentifiable.FIELD_IDENTIFIER))
+        .valueFunction(FeeFilter::getAssignmentTypeIdentifier).build();
+
+    predicateBuilder().name(FeeFilter.JSON_SENIORITY_IDENTIFIER)
+        .fieldName(fieldName(Fee.FIELD_SENIORITY, AbstractIdentifiable.FIELD_IDENTIFIER))
+        .valueFunction(FeeFilter::getSeniorityIdentifier).build();
+
     // Ordres par défaut
-    // orderBuilder().fieldName(fieldName(Fee.FIELD_DEADLINE, Deadline.FIELD_DATE)).ascending(false)
-    // .build();
+    orderBuilder()
+        .fieldName(fieldName(Fee.FIELD_CATEGORY, AbstractIdentifiableCodableNamable.FIELD_NAME))
+        .ascending(false).build();
   }
 }
