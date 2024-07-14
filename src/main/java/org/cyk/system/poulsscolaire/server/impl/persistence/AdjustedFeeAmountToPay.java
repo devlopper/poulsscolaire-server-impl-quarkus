@@ -13,6 +13,7 @@ import org.hibernate.annotations.Subselect;
 @Entity
 @Immutable
 @Subselect(AdjustedFeeAmountToPay.QUERY)
+@Deprecated
 public class AdjustedFeeAmountToPay extends AbstractAdjustedFeeAmount {
 
   public static final String QUERY = """

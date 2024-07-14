@@ -11,6 +11,7 @@ import jakarta.persistence.MappedSuperclass;
  *
  */
 @MappedSuperclass
+@Deprecated
 public abstract class AbstractAdjustedFeeAmount extends AbstractIdentifiable {
 
   @Column(name = "RUBRIQUE")

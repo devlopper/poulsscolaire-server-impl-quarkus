@@ -33,8 +33,7 @@ public class SchoolDynamicQuery extends AbstractDynamicQuery<School> {
   String schoolingVariableName;
   String registrationVariableName;
 
-  String adjustedFeeAmountToPayVariableName;
-  String adjustedFeeAmountPaidVariableName;
+  String adjustedFeeAmountsVariableName;
 
   /**
    * Cette méthode permet d'instancier un object.
@@ -44,8 +43,7 @@ public class SchoolDynamicQuery extends AbstractDynamicQuery<School> {
     schoolingVariableName = "s";
     registrationVariableName = "r";
 
-    adjustedFeeAmountToPayVariableName = "afatp";
-    adjustedFeeAmountPaidVariableName = "afap";
+    adjustedFeeAmountsVariableName = "afa";
   }
 
   @PostConstruct
@@ -73,39 +71,36 @@ public class SchoolDynamicQuery extends AbstractDynamicQuery<School> {
   void buildAmountsProjections() {
     projectionBuilder().name(SchoolDto.JSON_TOTAL_AMOUNT_AS_STRING)
         .expression(formatSum(
-            fieldName(adjustedFeeAmountToPayVariableName, AbstractAdjustedFeeAmount.FIELD_AMOUNT)))
+            fieldName(adjustedFeeAmountsVariableName, AdjustedFeeAmounts.FIELD_AMOUNT_TO_PAY)))
         .resultConsumer((i, a) -> i.totalAmountAsString = a.getNextAsLongFormatted()).build();
 
     projectionBuilder().name(SchoolDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING)
-        .expression(formatSum(fieldName(adjustedFeeAmountToPayVariableName,
-            AbstractAdjustedFeeAmount.FIELD_AMOUNT_REGISTRATION)))
+        .expression(formatSum(fieldName(adjustedFeeAmountsVariableName,
+            AdjustedFeeAmounts.FIELD_REGISTRATION_AMOUNT_TO_PAY)))
         .resultConsumer((i, a) -> i.totalRegistrationAmountAsString = a.getNextAsLongFormatted())
         .build();
 
     projectionBuilder().name(SchoolDto.JSON_PAID_AMOUNT_AS_STRING)
         .expression(formatSum(
-            fieldName(adjustedFeeAmountPaidVariableName, AbstractAdjustedFeeAmount.FIELD_AMOUNT)))
+            fieldName(adjustedFeeAmountsVariableName, AdjustedFeeAmounts.FIELD_AMOUNT_PAID)))
         .resultConsumer((i, a) -> i.paidAmountAsString = a.getNextAsLongFormatted()).build();
 
     projectionBuilder().name(SchoolDto.JSON_PAID_REGISTRATION_AMOUNT_AS_STRING)
-        .expression(formatSum(fieldName(adjustedFeeAmountPaidVariableName,
-            AbstractAdjustedFeeAmount.FIELD_AMOUNT_REGISTRATION)))
+        .expression(formatSum(fieldName(adjustedFeeAmountsVariableName,
+            AdjustedFeeAmounts.FIELD_REGISTRATION_AMOUNT_PAID)))
         .resultConsumer((i, a) -> i.paidRegistrationAmountAsString = a.getNextAsLongFormatted())
         .build();
 
     projectionBuilder().name(SchoolDto.JSON_PAYABLE_AMOUNT_AS_STRING)
-        .expression(formatAmountPayable(AbstractAdjustedFeeAmount.FIELD_AMOUNT))
+        .expression(formatSum(
+            fieldName(adjustedFeeAmountsVariableName, AdjustedFeeAmounts.FIELD_AMOUNT_LEFT_TO_PAY)))
         .resultConsumer((i, a) -> i.payableAmountAsString = a.getNextAsLongFormatted()).build();
 
     projectionBuilder().name(SchoolDto.JSON_PAYABLE_REGISTRATION_AMOUNT_AS_STRING)
-        .expression(formatAmountPayable(AbstractAdjustedFeeAmount.FIELD_AMOUNT_REGISTRATION))
+        .expression(formatSum(fieldName(adjustedFeeAmountsVariableName,
+            AdjustedFeeAmounts.FIELD_REGISTRATION_AMOUNT_LEFT_TO_PAY)))
         .resultConsumer((i, a) -> i.payableRegistrationAmountAsString = a.getNextAsLongFormatted())
         .build();
-  }
-
-  String formatAmountPayable(String fieldName) {
-    return String.format("SUM(COALESCE(%1$s.%3$s,0)) - SUM(COALESCE(%2$s.%3$s,0))",
-        adjustedFeeAmountToPayVariableName, adjustedFeeAmountPaidVariableName, fieldName);
   }
 
   void buildJoins() {
@@ -132,21 +127,12 @@ public class SchoolDynamicQuery extends AbstractDynamicQuery<School> {
     joinBuilder()
         .projectionsNames(SchoolDto.JSON_TOTAL_AMOUNT_AS_STRING,
             SchoolDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING,
+            SchoolDto.JSON_PAID_AMOUNT_AS_STRING, SchoolDto.JSON_PAID_REGISTRATION_AMOUNT_AS_STRING,
             SchoolDto.JSON_PAYABLE_AMOUNT_AS_STRING,
             SchoolDto.JSON_PAYABLE_REGISTRATION_AMOUNT_AS_STRING)
-        .with(AdjustedFeeAmountToPay.class).tupleVariableName(adjustedFeeAmountToPayVariableName)
-        .fieldName(AbstractAdjustedFeeAmount.FIELD_SCHOOL_IDENTIFIER)
+        .with(AdjustedFeeAmounts.class).tupleVariableName(adjustedFeeAmountsVariableName)
+        .fieldName(AdjustedFeeAmounts.FIELD_SCHOOL_IDENTIFIER)
         .parentFieldName(AbstractIdentifiable.FIELD_IDENTIFIER).leftInnerOrRight(true).build();
-
-    joinBuilder()
-        .projectionsNames(SchoolDto.JSON_PAID_AMOUNT_AS_STRING,
-            SchoolDto.JSON_PAID_REGISTRATION_AMOUNT_AS_STRING,
-            SchoolDto.JSON_PAYABLE_AMOUNT_AS_STRING,
-            SchoolDto.JSON_PAYABLE_REGISTRATION_AMOUNT_AS_STRING)
-        .with(AdjustedFeeAmountPaid.class).tupleVariableName(adjustedFeeAmountPaidVariableName)
-        .fieldName(AbstractAdjustedFeeAmount.FIELD_SCHOOL_IDENTIFIER)
-        .parentFieldName(AbstractIdentifiable.FIELD_IDENTIFIER).leftInnerOrRight(true).build();
-
   }
 
   void buildPredicates() {

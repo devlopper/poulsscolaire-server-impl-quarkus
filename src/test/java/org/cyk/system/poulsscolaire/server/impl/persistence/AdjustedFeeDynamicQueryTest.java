@@ -26,13 +26,8 @@ class AdjustedFeeDynamicQueryTest {
   DynamicQueryParameters<AdjustedFee> parameters = new DynamicQueryParameters<>();
 
   @Test
-  void instanciateAdjustedFeeAmountToPay() {
-    assertNotNull(new AdjustedFeeAmountToPay());
-  }
-
-  @Test
-  void instanciateAdjustedFeeAmountPaid() {
-    assertNotNull(new AdjustedFeeAmountPaid());
+  void instanciateAdjustedFeeAmounts() {
+    assertNotNull(new AdjustedFeeAmounts());
   }
 
   @Test
@@ -56,8 +51,8 @@ class AdjustedFeeDynamicQueryTest {
     parameters.setResultMode(ResultMode.ONE);
     parameters.projection().addNames(AdjustedFeeDto.JSON_AMOUNT_VALUE_TO_PAY_AS_STRING);
     parameters.filter().addCriteria(AdjustedFeeDto.JSON_IDENTIFIER, "amountvaluepayable");
-    assertEquals("SELECT afatp.amount FROM AdjustedFee t "
-        + "LEFT JOIN AdjustedFeeAmountToPay afatp ON afatp.identifier = t.identifier "
+    assertEquals("SELECT afa.amountToPay FROM AdjustedFee t "
+        + "LEFT JOIN AdjustedFeeAmounts afa ON afa.identifier = t.identifier "
         + "WHERE t.identifier = :identifiant", dynamicQuery.buildQueryString(parameters));
   }
 
@@ -66,8 +61,8 @@ class AdjustedFeeDynamicQueryTest {
     parameters.setResultMode(ResultMode.ONE);
     parameters.projection().addNames(AdjustedFeeDto.JSON_AMOUNT_VALUE_PAID_AS_STRING);
     parameters.filter().addCriteria(AdjustedFeeDto.JSON_IDENTIFIER, "amountvaluepayable");
-    assertEquals("SELECT afap.amount FROM AdjustedFee t "
-        + "LEFT JOIN AdjustedFeeAmountPaid afap ON afap.identifier = t.identifier "
+    assertEquals("SELECT afa.amountPaid FROM AdjustedFee t "
+        + "LEFT JOIN AdjustedFeeAmounts afa ON afa.identifier = t.identifier "
         + "WHERE t.identifier = :identifiant", dynamicQuery.buildQueryString(parameters));
   }
 
@@ -101,18 +96,20 @@ class AdjustedFeeDynamicQueryTest {
   }
 
   @Test
-  void get_whenFilterAmountValuePayableEqualsZeroTrue() {
+  void get_whenFilterAmountValuePayableLessThanOrEqualsZeroTrue() {
     parameters.projection().addNames(AdjustedFeeDto.JSON_IDENTIFIER);
-    parameters.filter().addCriteria(AdjustedFeeFilter.JSON_AMOUNT_VALUE_PAYABLE_EQUALS_ZERO, true);
+    parameters.filter()
+        .addCriteria(AdjustedFeeFilter.JSON_AMOUNT_VALUE_PAYABLE_LESS_THAN_OR_EQUALS_ZERO, true);
     List<AdjustedFee> instances = dynamicQuery.getMany(parameters);
     assertLinesMatch(List.of("deadlineover", "payableequalszero"),
         instances.stream().map(i -> i.getIdentifier()).toList());
   }
 
   @Test
-  void get_whenFilterAmountValuePayableEqualsZeroFalse() {
+  void get_whenFilterAmountValuePayableLessThanOrEqualsZeroFalse() {
     parameters.projection().addNames(AdjustedFeeDto.JSON_IDENTIFIER);
-    parameters.filter().addCriteria(AdjustedFeeFilter.JSON_AMOUNT_VALUE_PAYABLE_EQUALS_ZERO, false);
+    parameters.filter()
+        .addCriteria(AdjustedFeeFilter.JSON_AMOUNT_VALUE_PAYABLE_LESS_THAN_OR_EQUALS_ZERO, false);
     List<AdjustedFee> instances = dynamicQuery.getMany(parameters);
     assertLinesMatch(List.of("amountvaluepayable"),
         instances.stream().map(i -> i.getIdentifier()).toList());

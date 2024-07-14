@@ -24,8 +24,7 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
   String schoolVariableName;
   String branchVariableName;
   String periodVariableName;
-  String adjustedFeeAmountToPayVariableName;
-  String adjustedFeeAmountPaidVariableName;
+  String adjustedFeeAmountsVariableName;
 
   /**
    * Cette méthode permet d'instancier un object.
@@ -35,8 +34,7 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
     schoolVariableName = "s";
     branchVariableName = "b";
     periodVariableName = "p";
-    adjustedFeeAmountToPayVariableName = "afatp";
-    adjustedFeeAmountPaidVariableName = "afap";
+    adjustedFeeAmountsVariableName = "afa";
   }
 
   @Override
@@ -125,20 +123,23 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
 
     projectionBuilder().name(AdjustedFeeDto.JSON_AMOUNT_VALUE_TO_PAY_AS_STRING)
         .nameFieldName(AdjustedFee.FIELD_AMOUNT_VALUE_TO_PAY_AS_STRING)
-        .tupleVariableName(adjustedFeeAmountToPayVariableName)
-        .fieldName(AdjustedFeeAmountToPay.FIELD_AMOUNT).build();
+        .tupleVariableName(adjustedFeeAmountsVariableName)
+        .fieldName(AdjustedFeeAmounts.FIELD_AMOUNT_TO_PAY).build();
 
     projectionBuilder().name(AdjustedFeeDto.JSON_AMOUNT_VALUE_PAID_AS_STRING)
         .nameFieldName(AdjustedFee.FIELD_AMOUNT_VALUE_PAID_AS_STRING)
-        .tupleVariableName(adjustedFeeAmountPaidVariableName)
-        .fieldName(AdjustedFeeAmountPaid.FIELD_AMOUNT).build();
+        .tupleVariableName(adjustedFeeAmountsVariableName)
+        .fieldName(AdjustedFeeAmounts.FIELD_AMOUNT_PAID).build();
 
-    projectionBuilderAmountPayable(AdjustedFeeDto.JSON_AMOUNT_VALUE_PAYABLE)
-        .resultConsumer((i, a) -> i.amountValuePayable = a.getNextAsLong()).build();
+    projectionBuilder().name(AdjustedFeeDto.JSON_AMOUNT_VALUE_PAYABLE_AS_STRING)
+        .nameFieldName(AdjustedFee.FIELD_AMOUNT_VALUE_PAYABLE_AS_STRING)
+        .tupleVariableName(adjustedFeeAmountsVariableName)
+        .fieldName(AdjustedFeeAmounts.FIELD_AMOUNT_LEFT_TO_PAY).build();
 
-    projectionBuilderAmountPayable(AdjustedFeeDto.JSON_AMOUNT_VALUE_PAYABLE_AS_STRING)
-        .resultConsumer((i, a) -> i.amountValuePayableAsString = a.getNextAsLongFormatted())
-        .build();
+    projectionBuilder().name(AdjustedFeeDto.JSON_AMOUNT_VALUE_PAYABLE)
+        .nameFieldName(AdjustedFee.FIELD_AMOUNT_VALUE_PAYABLE)
+        .tupleVariableName(adjustedFeeAmountsVariableName)
+        .fieldName(AdjustedFeeAmounts.FIELD_AMOUNT_LEFT_TO_PAY).build();
 
     projectionBuilder().name(AbstractAmountContainerDto.JSON_AMOUNT_REGISTRATION_VALUE_PART)
         .nameFieldName(AbstractAmountContainer.FIELD_AMOUNT_REGISTRATION_VALUE_PART)
@@ -178,16 +179,6 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
         .fieldName(fieldName(AbstractAmountContainer.FIELD_AMOUNT, Amount.FIELD_RENEWABLE)).build();
   }
 
-  ProjectionBuilder projectionBuilderAmountPayable(String name) {
-    return projectionBuilder().name(name)
-        .expression(formatAmountPayable(AbstractAdjustedFeeAmount.FIELD_AMOUNT));
-  }
-
-  String formatAmountPayable(String fieldName) {
-    return String.format("COALESCE(%1$s.%3$s,0) - COALESCE(%2$s.%3$s,0)",
-        adjustedFeeAmountToPayVariableName, adjustedFeeAmountPaidVariableName, fieldName);
-  }
-
   void buildJoins() {
     joinBuilder().projectionsNames(AdjustedFeeDto.JSON_REGISTRATION_SCHOOLING_SCHOOL_AS_STRING)
         .entityName(School.ENTITY_NAME).tupleVariableName(schoolVariableName)
@@ -210,20 +201,12 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
     joinBuilder()
         .projectionsNames(AdjustedFeeDto.JSON_AMOUNT_VALUE_TO_PAY,
             AdjustedFeeDto.JSON_AMOUNT_VALUE_TO_PAY_AS_STRING,
+            AdjustedFeeDto.JSON_AMOUNT_VALUE_PAID, AdjustedFeeDto.JSON_AMOUNT_VALUE_PAID_AS_STRING,
             AdjustedFeeDto.JSON_AMOUNT_VALUE_PAYABLE,
             AdjustedFeeDto.JSON_AMOUNT_VALUE_PAYABLE_AS_STRING)
-        .predicatesNames(AbstractAmountContainerFilter.JSON_AMOUNT_VALUE_PAYABLE_EQUALS_ZERO)
-        .with(AdjustedFeeAmountToPay.class).tupleVariableName(adjustedFeeAmountToPayVariableName)
-        .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
-        .parentFieldName(AbstractIdentifiable.FIELD_IDENTIFIER).leftInnerOrRight(true).build();
-
-    joinBuilder()
-        .projectionsNames(AdjustedFeeDto.JSON_AMOUNT_VALUE_PAID,
-            AdjustedFeeDto.JSON_AMOUNT_VALUE_PAID_AS_STRING,
-            AdjustedFeeDto.JSON_AMOUNT_VALUE_PAYABLE,
-            AdjustedFeeDto.JSON_AMOUNT_VALUE_PAYABLE_AS_STRING)
-        .predicatesNames(AbstractAmountContainerFilter.JSON_AMOUNT_VALUE_PAYABLE_EQUALS_ZERO)
-        .with(AdjustedFeeAmountPaid.class).tupleVariableName(adjustedFeeAmountPaidVariableName)
+        .predicatesNames(
+            AbstractAmountContainerFilter.JSON_AMOUNT_VALUE_PAYABLE_LESS_THAN_OR_EQUALS_ZERO)
+        .with(AdjustedFeeAmounts.class).tupleVariableName(adjustedFeeAmountsVariableName)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
         .parentFieldName(AbstractIdentifiable.FIELD_IDENTIFIER).leftInnerOrRight(true).build();
   }
@@ -263,10 +246,15 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
             AbstractIdentifiable.FIELD_IDENTIFIER))
         .valueFunction(AdjustedFeeFilter::getFeeCategoryIdentifier).build();
 
-    predicateBuilder().name(AbstractAmountContainerFilter.JSON_AMOUNT_VALUE_PAYABLE_EQUALS_ZERO)
-        .expression(String.format("CASE WHEN :%1$s = true THEN %2$s=0 ELSE %2$s<>0 END",
-            AbstractAmountContainerFilter.JSON_AMOUNT_VALUE_PAYABLE_EQUALS_ZERO,
-            formatAmountPayable(AbstractAdjustedFeeAmount.FIELD_AMOUNT)))
+    predicateBuilder()
+        .name(AbstractAmountContainerFilter.JSON_AMOUNT_VALUE_PAYABLE_LESS_THAN_OR_EQUALS_ZERO)
+        .tupleVariableName(adjustedFeeAmountsVariableName)
+        .fieldName(AdjustedFeeAmounts.FIELD_AMOUNT_LEFT_TO_PAY_LESS_THAN_OR_EQUALS_ZERO)
+        .valueFunction(AdjustedFeeFilter::getAmountValuePayableLessThanOrEqualsZero).build();
+
+    predicateBuilder().name(AbstractAmountContainerFilter.JSON_AMOUNT_DEADLINE_DATE_OVER)
+        .tupleVariableName(adjustedFeeAmountsVariableName)
+        .fieldName(AdjustedFeeAmounts.FIELD_DEADLINE_DATE_LESS_THAN_NOW)
         .valueFunction(AdjustedFeeFilter::getAmountValuePayableEqualsZero).build();
   }
 }
