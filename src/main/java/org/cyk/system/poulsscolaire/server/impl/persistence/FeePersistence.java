@@ -32,14 +32,19 @@ public class FeePersistence extends AbstractIdentifiablePersistence<Fee> {
   }
 
   /**
-   * Cette méthode permet d'obtenir les frais par scolarité.
+   * Cette méthode permet d'obtenir les frais par scolarité, type d'affectation et ancienneté.
    *
    * @param schooling scolarité
    * @return les frais
    */
-  public List<Fee> getBySchooling(Schooling schooling) {
-    return entityManager.createNamedQuery(Fee.QUERY_READ_BY_SCHOOLING_IDENTIFIER, Fee.class)
-        .setParameter(Fee.FIELD_SCHOOLING, schooling).getResultList();
+  public List<Fee> getBySchoolingByAssignmentTypeBySeniority(Schooling schooling,
+      AssignmentType assignmentType, Seniority seniority) {
+    return entityManager
+        .createNamedQuery(Fee.QUERY_READ_BY_SCHOOLING_BY_ASSIGNMENT_TYPE_BY_SENIORITY_IDENTIFIER,
+            Fee.class)
+        .setParameter(Fee.FIELD_SCHOOLING, schooling)
+        .setParameter(Fee.FIELD_ASSIGNMENT_TYPE, assignmentType)
+        .setParameter(Fee.FIELD_SENIORITY, seniority).getResultList();
   }
 
   /**

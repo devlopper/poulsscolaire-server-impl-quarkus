@@ -29,9 +29,13 @@ class FeePersistenceTest {
   }
 
   @ParameterizedTest
-  @CsvSource({"feesvalue1,3", "nofeesvalue,0"})
-  void getBySchooling_whenNotEmpty(String identifier, int count) {
-    List<Fee> fees = persistence.getBySchooling(entityManager.find(Schooling.class, identifier));
+  @CsvSource({"feesvalue1,1,1,3", "nofeesvalue,1,1,0"})
+  void getBySchooling_whenNotEmpty(String schoolingIdentifier, String assignmentTypeIdentifier,
+      String seniorityIdentifier, int count) {
+    List<Fee> fees = persistence.getBySchoolingByAssignmentTypeBySeniority(
+        entityManager.find(Schooling.class, schoolingIdentifier),
+        entityManager.find(AssignmentType.class, assignmentTypeIdentifier),
+        entityManager.find(Seniority.class, seniorityIdentifier));
     assertEquals(count, fees.size());
   }
 

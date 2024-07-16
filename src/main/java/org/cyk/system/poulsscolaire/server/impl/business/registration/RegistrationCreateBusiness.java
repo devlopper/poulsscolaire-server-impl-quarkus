@@ -60,10 +60,10 @@ public class RegistrationCreateBusiness extends AbstractIdentifiableCreateBusine
 
   @Inject
   AmountPersistence amountPersistence;
-  
+
   @Inject
   AdjustedFeePersistence adjustedFeePersistence;
-  
+
   @Override
   protected Object[] validate(RegistrationCreateRequestDto request, StringList messages) {
     Student student =
@@ -91,7 +91,8 @@ public class RegistrationCreateBusiness extends AbstractIdentifiableCreateBusine
   @Override
   protected void doTransact(Registration registration) {
     super.doTransact(registration);
-    List<Fee> fees = feePersistence.getBySchooling(registration.schooling);
+    List<Fee> fees = feePersistence.getBySchoolingByAssignmentTypeBySeniority(
+        registration.schooling, registration.assignmentType, registration.seniority);
     if (!Core.isCollectionEmpty(fees)) {
       List<AdjustedFee> adjustedFees = fees.stream().map(fee -> {
         AdjustedFee adjustedFee = new AdjustedFee();
@@ -106,10 +107,10 @@ public class RegistrationCreateBusiness extends AbstractIdentifiableCreateBusine
         return adjustedFee;
       }).toList();
       amountPersistence.create(adjustedFees.stream().map(af -> af.amount).toList());
-      adjustedFeePersistence.create(adjustedFees);  
+      adjustedFeePersistence.create(adjustedFees);
     }
   }
-  
+
   void copy(Amount feeAmount, Amount adjustedAmount) {
     adjustedAmount.value = feeAmount.value;
     adjustedAmount.registrationValuePart = feeAmount.registrationValuePart;
