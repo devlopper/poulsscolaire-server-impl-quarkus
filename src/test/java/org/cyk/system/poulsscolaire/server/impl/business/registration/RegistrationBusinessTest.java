@@ -10,6 +10,7 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import java.util.Map;
 import org.cyk.system.poulsscolaire.server.api.registration.RegistrationService.RegistrationCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.registration.RegistrationService.RegistrationUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AdjustedFee;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Registration;
 import org.junit.jupiter.api.Test;
@@ -67,6 +68,20 @@ class RegistrationBusinessTest extends AbstractTest {
     createBusiness.process(request);
     assertEquals(registrationCount + 1, count(entityManager, Registration.ENTITY_NAME));
     assertEquals(adjustedFeeCount + 3, count(entityManager, AdjustedFee.ENTITY_NAME));
+  }
+  
+  @Test
+  void update() {
+    RegistrationUpdateRequestDto request = new RegistrationUpdateRequestDto();
+    request.setIdentifier("toupdate");
+    request.setSchoolingIdentifier("feesvalue1");
+    request.setStudentIdentifier("1");
+    request.setAssignmnetTypeIdentifier("1");
+    request.setSeniorityIdentifier("1");
+    request.setAuditWho("christian");
+    long count = count(entityManager, Registration.ENTITY_NAME);
+    updateBusiness.process(request);
+    assertEquals(count, count(entityManager, Registration.ENTITY_NAME));
   }
   
   public static class Profile implements QuarkusTestProfile {

@@ -1,6 +1,7 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableAuditable;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -37,7 +38,10 @@ public class Registration extends AbstractIdentifiableCodableAuditable {
   @ManyToOne
   @JoinColumn(name = COLUMN_SENIORITY, nullable = false)
   public Seniority seniority;
-    
+  
+  @Column(name = COLUMN_PRE_REGISTRATION_AMOUNT)
+  public Integer preRegistrationAmount;
+  
   @Transient
   public String studentAsString;
   
@@ -82,6 +86,9 @@ public class Registration extends AbstractIdentifiableCodableAuditable {
   public static final String FIELD_ASSIGNMENT_TYPE_AS_STRING = "assignmentTypeAsString";
   public static final String FIELD_SENIORITY = "seniority";
   public static final String FIELD_SENIORITY_AS_STRING = "seniorityAsString";
+  public static final String FIELD_PRE_REGISTRATION_AMOUNT = "preRegistrationAmount";
+  public static final String FIELD_PRE_REGISTRATION_AMOUNT_AS_STRING =
+      "preRegistrationAmountAsString";
   
   public static final String ENTITY_NAME = "Registration";
   public static final String TABLE_NAME = "TA_INSCRIPTION";
@@ -90,4 +97,5 @@ public class Registration extends AbstractIdentifiableCodableAuditable {
   public static final String COLUMN_SCHOOLING = "SCOLARITE";
   public static final String COLUMN_ASSIGNMENT_TYPE = "TYPE_AFFECTATION";
   public static final String COLUMN_SENIORITY = "ANCIENNETE";
+  public static final String COLUMN_PRE_REGISTRATION_AMOUNT = "MONTANT_PRE_INSCRIPTION";
 }

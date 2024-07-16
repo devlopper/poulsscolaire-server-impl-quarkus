@@ -25,8 +25,7 @@ public class Amount extends AbstractIdentifiableAuditable {
   @Column(name = COLUMN_VALUE, nullable = false)
   public int value;
 
-  @NotNull
-  @Column(name = COLUMN_REGISTRATION_VALUE_PART, nullable = false)
+  @Column(name = COLUMN_REGISTRATION_VALUE_PART)
   public Integer registrationValuePart;
 
   @NotNull

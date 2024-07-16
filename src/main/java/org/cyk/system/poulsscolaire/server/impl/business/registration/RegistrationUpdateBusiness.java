@@ -25,4 +25,10 @@ public class RegistrationUpdateBusiness extends AbstractIdentifiableUpdateBusine
   @Inject
   @Getter
   RegistrationValidator validator;
+  
+  @Override
+  protected void prepare(Registration registration, RegistrationUpdateRequestDto request) {
+    super.prepare(registration, request);
+    registration.preRegistrationAmount = request.getPreRegistrationAmount();
+  }
 }

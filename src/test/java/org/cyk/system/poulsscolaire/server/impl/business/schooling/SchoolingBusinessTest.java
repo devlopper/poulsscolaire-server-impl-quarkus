@@ -9,15 +9,19 @@ import ci.gouv.dgbf.extension.server.persistence.entity.embeddable.Audit;
 import ci.gouv.dgbf.extension.test.AbstractTest;
 import io.quarkus.test.junit.QuarkusMock;
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.junit.QuarkusTestProfile;
+import io.quarkus.test.junit.TestProfile;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolingService.SchoolingCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolingService.SchoolingGenerateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.configuration.SchoolingService.SchoolingUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.business.branch.BranchService;
 import org.cyk.system.poulsscolaire.server.impl.business.period.PeriodService;
 import org.cyk.system.poulsscolaire.server.impl.business.school.SchoolService;
@@ -27,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 @QuarkusTest
+@TestProfile(SchoolingBusinessTest.Profile.class)
 class SchoolingBusinessTest extends AbstractTest {
 
   @Inject
@@ -139,5 +144,26 @@ class SchoolingBusinessTest extends AbstractTest {
     List<Schooling> news = new ArrayList<>();
     generateBusiness.instantiate("1", "1", "1", schoolings, news, new Audit());
     assertEquals(1, news.size());
+  }
+  
+  @Test
+  void update() {
+    SchoolingUpdateRequestDto request = new SchoolingUpdateRequestDto();
+    request.setIdentifier("toupdate");
+    request.setSchoolIdentifier("1");
+    request.setBranchIdentifier("1");
+    request.setPeriodIdentifier("1");
+    request.setAuditWho("christian");
+    long count = count(entityManager, Schooling.ENTITY_NAME);
+    updateBusiness.process(request);
+    assertEquals(count, count(entityManager, Schooling.ENTITY_NAME));
+  }
+  
+  public static class Profile implements QuarkusTestProfile {
+
+    @Override
+    public Map<String, String> getConfigOverrides() {
+      return Map.of("quarkus.hibernate-orm.sql-load-script", "sql/schoolingbusiness.sql");
+    }
   }
 }

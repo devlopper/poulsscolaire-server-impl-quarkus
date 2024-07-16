@@ -283,6 +283,7 @@ CREATE TABLE TA_SCOLARITE (
 	ECOLE VARCHAR(36) NOT NULL COMMENT 'Référence de l''école',
 	BRANCHE VARCHAR(36) NOT NULL COMMENT 'Référence de la branche',
 	PERIODE VARCHAR(36) NOT NULL COMMENT 'Référence de la période',
+	MONTANT_PRE_INSCRIPTION INT NOT NULL COMMENT 'Montant de la pré-inscription',
 	
 	-- Audit
 	 AUDIT_IDENTIFIANT VARCHAR(36) NOT NULL COMMENT 'Identifiant de l''audit',
@@ -360,6 +361,7 @@ CREATE TABLE TA_INSCRIPTION (
 	TYPE_AFFECTATION VARCHAR(36) NOT NULL COMMENT 'Identifiant du type d''affectation',
 	ANCIENNETE VARCHAR(36) NOT NULL COMMENT 'Identifiant de l''ancienneté',
 	SCOLARITE VARCHAR(36) NOT NULL COMMENT 'Identifiant de la scolarité',
+	MONTANT_PRE_INSCRIPTION INT NOT NULL COMMENT 'Montant de la pré-inscription',
 	
 	-- Audit
 	 AUDIT_IDENTIFIANT VARCHAR(36) NOT NULL COMMENT 'Identifiant de l''audit',

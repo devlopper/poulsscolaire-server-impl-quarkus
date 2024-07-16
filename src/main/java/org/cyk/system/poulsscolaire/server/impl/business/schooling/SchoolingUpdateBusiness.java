@@ -25,4 +25,10 @@ public class SchoolingUpdateBusiness extends AbstractIdentifiableUpdateBusiness<
   @Inject
   @Getter
   SchoolingValidator validator;
+
+  @Override
+  protected void prepare(Schooling schooling, SchoolingUpdateRequestDto request) {
+    super.prepare(schooling, request);
+    schooling.preRegistrationAmount = request.getPreRegistrationAmount();
+  }
 }
