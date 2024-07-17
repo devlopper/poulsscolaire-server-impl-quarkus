@@ -16,6 +16,7 @@ import jakarta.persistence.EntityManager;
 import java.util.Set;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.payment.PaymentDto;
+import org.cyk.system.poulsscolaire.server.api.payment.PaymentFilter;
 
 /**
  * Cette classe représente la requête dynamique de {@link Payment}.
@@ -68,6 +69,10 @@ public class PaymentDynamicQuery extends AbstractDynamicQuery<Payment> {
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
         .valueFunction(AbstractIdentifiableFilter::getIdentifier).build();
+
+    predicateBuilder().name(PaymentFilter.JSON_REGISTRATION_IDENTIFIER)
+        .fieldName(fieldName(Payment.FIELD_REGISTRATION, AbstractIdentifiable.FIELD_IDENTIFIER))
+        .valueFunction(PaymentFilter::getRegistrationIdentifier).build();
 
     // Ordres par défaut
     orderBuilder().fieldName(AbstractIdentifiableCodable.FIELD_CODE).build();

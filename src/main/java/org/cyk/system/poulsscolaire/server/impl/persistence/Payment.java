@@ -23,39 +23,39 @@ public class Payment extends AbstractIdentifiableCodableAuditable {
   @ManyToOne
   @JoinColumn(name = COLUMN_REGISTRATION, nullable = false)
   public Registration registration;
-  
+
   @NotNull
   @ManyToOne
   @JoinColumn(name = COLUMN_MODE, nullable = false)
   public PaymentMode mode;
-  
+
   /* Transients */
-  
+
   @Transient
   public int amount;
-    
+
   @Transient
   public String modeAsString;
-  
+
   @Transient
   public String amountAsString;
-  
+
   @Transient
   public String dateAsString;
-  
+
   @Transient
   public List<Object[]> payables;
-  
+
   public static final String FIELD_REGISTRATION = "registration";
   public static final String FIELD_MODE = "mode";
   public static final String FIELD_MODE_AS_STRING = "modeAsString";
   public static final String FIELD_AMOUNT = "amount";
   public static final String FIELD_AMOUNT_AS_STRING = "amountAsString";
   public static final String FIELD_DATE_AS_STRING = "dateAsString";
-  
+
   public static final String ENTITY_NAME = "Payment";
   public static final String TABLE_NAME = "TA_PAIEMENT";
-  
+
   public static final String COLUMN_REGISTRATION = "INSCRIPTION";
   public static final String COLUMN_MODE = "MODE";
 }
