@@ -29,8 +29,9 @@ public class AdjustedFeePaymentDeadline extends AbstractIdentifiableAuditable {
   @JoinColumn(name = COLUMN_DEADLINE, nullable = false)
   public Deadline deadline;
   
+  @NotNull
   @Column(name = COLUMN_AMOUNT, nullable = false)
-  public int amount;
+  public Integer amount;
 
   /* valeurs dérivées */
 
