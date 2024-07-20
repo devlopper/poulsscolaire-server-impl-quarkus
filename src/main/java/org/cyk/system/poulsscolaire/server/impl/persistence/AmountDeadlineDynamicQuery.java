@@ -11,6 +11,7 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.fee.AmountDeadlineDto;
+import org.cyk.system.poulsscolaire.server.api.fee.AmountDeadlineFilter;
 
 /**
  * Cette classe représente la requête dynamique de {@link AmountDeadline}.
@@ -19,14 +20,15 @@ import org.cyk.system.poulsscolaire.server.api.fee.AmountDeadlineDto;
  *
  */
 @ApplicationScoped
-public class AmountDeadlineDynamicQuery
-    extends AbstractDynamicQuery<AmountDeadline> {
+public class AmountDeadlineDynamicQuery extends AbstractDynamicQuery<AmountDeadline> {
 
   @Inject
   @Getter
   EntityManager entityManager;
 
   String branchVariableName;
+  String feeVariableName;
+  String adustedFeeVariableName;
 
   /**
    * Cette méthode permet d'instancier un object.
@@ -34,6 +36,8 @@ public class AmountDeadlineDynamicQuery
   public AmountDeadlineDynamicQuery() {
     super(AmountDeadline.class);
     branchVariableName = "b";
+    feeVariableName = "f";
+    adustedFeeVariableName = "af";
   }
 
   @PostConstruct
@@ -41,10 +45,13 @@ public class AmountDeadlineDynamicQuery
     projectionBuilder().name(AbstractIdentifiableDto.JSON_IDENTIFIER)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER).build();
 
+    projectionBuilder().name(AmountDeadlineDto.JSON_AMOUNT_IDENTIFIER)
+        .expression(fieldName(AmountDeadline.FIELD_AMOUNT, AbstractIdentifiable.FIELD_IDENTIFIER))
+        .resultConsumer((i, a) -> i.amountIdentifier = a.getNextAsString()).build();
+
     projectionBuilder().name(AmountDeadlineDto.JSON_FEE_CATEGORY_AS_STRING)
-        .expression(formatConcatName(
-            fieldName(AmountDeadline.FIELD_ADJUSTED_FEE, AdjustedFee.FIELD_FEE,
-                Fee.FIELD_CATEGORY)))
+        .expression(formatConcatName(fieldName(AmountDeadline.FIELD_ADJUSTED_FEE,
+            AdjustedFee.FIELD_FEE, Fee.FIELD_CATEGORY)))
         .resultConsumer((i, a) -> i.feeCategoryAsString = a.getNextAsString()).build();
 
     projectionBuilder().name(AmountDeadlineDto.JSON_BRANCH_AS_STRING)
@@ -60,10 +67,17 @@ public class AmountDeadlineDynamicQuery
                 Registration.FIELD_STUDENT, Student.FIELD_IDENTITY, Identity.FIELD_LAST_NAMES)))
         .resultConsumer((i, a) -> i.studentAsString = a.getNextAsString()).build();
 
+    projectionBuilder().name(AmountDeadlineDto.JSON_DEADLINE_IDENTIFIER)
+        .expression(fieldName(AmountDeadline.FIELD_DEADLINE, AbstractIdentifiable.FIELD_IDENTIFIER))
+        .resultConsumer((i, a) -> i.deadlineIdentifier = a.getNextAsString()).build();
+
     projectionBuilder().name(AmountDeadlineDto.JSON_DEADLINE_AS_STRING)
-        .expression(fieldName(AmountDeadline.FIELD_DEADLINE,
-            AbstractIdentifiableCodableNamable.FIELD_NAME))
+        .expression(
+            fieldName(AmountDeadline.FIELD_DEADLINE, AbstractIdentifiableCodableNamable.FIELD_NAME))
         .resultConsumer((i, a) -> i.deadlineAsString = a.getNextAsString()).build();
+
+    projectionBuilder().name(AmountDeadlineDto.JSON_PAYMENT).fieldName(AmountDeadline.FIELD_PAYMENT)
+        .build();
 
     projectionBuilder().name(AmountDeadlineDto.JSON_PAYMENT_AS_STRING)
         .nameFieldName(AmountDeadline.FIELD_PAYMENT_AS_STRING)
@@ -77,17 +91,33 @@ public class AmountDeadlineDynamicQuery
                 Registration.FIELD_SCHOOLING, Schooling.FIELD_BRANCH_IDENTIFIER))
         .leftInnerOrRight(true).build();
 
+    joinBuilder().predicatesNames(AmountDeadlineFilter.JSON_FEE_IDENTIFIER).entityClass(Fee.class)
+        .tupleVariableName(feeVariableName)
+        .fieldName(AbstractAmountContainer.FIELD_AMOUNT)
+        .parentFieldName(AmountDeadline.FIELD_AMOUNT)
+        .leftInnerOrRight(true).build();
+
     // Prédicats
     buildPredicates();
 
     // Ordres par défaut
   }
 
-
-
   void buildPredicates() {
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
         .valueFunction(AbstractIdentifiableFilter::getIdentifier).build();
+
+    predicateBuilder().name(AmountDeadlineFilter.JSON_AMOUNT_IDENTIFIER)
+        .fieldName(fieldName(AmountDeadline.FIELD_AMOUNT, AbstractIdentifiable.FIELD_IDENTIFIER))
+        .valueFunction(AmountDeadlineFilter::getAmountIdentifier).build();
+
+    predicateBuilder().name(AmountDeadlineFilter.JSON_DEADLINE_IDENTIFIER)
+        .fieldName(fieldName(AmountDeadline.FIELD_DEADLINE, AbstractIdentifiable.FIELD_IDENTIFIER))
+        .valueFunction(AmountDeadlineFilter::getDeadlineIdentifier).build();
+
+    predicateBuilder().name(AmountDeadlineFilter.JSON_FEE_IDENTIFIER)
+        .tupleVariableName(feeVariableName).fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
+        .valueFunction(AmountDeadlineFilter::getFeeIdentifier).build();
   }
 }

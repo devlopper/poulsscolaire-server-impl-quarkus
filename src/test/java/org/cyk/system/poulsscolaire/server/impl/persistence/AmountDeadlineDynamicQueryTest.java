@@ -9,6 +9,7 @@ import io.quarkus.test.junit.TestProfile;
 import jakarta.inject.Inject;
 import java.util.Map;
 import org.cyk.system.poulsscolaire.server.api.fee.AmountDeadlineDto;
+import org.cyk.system.poulsscolaire.server.api.fee.AmountDeadlineFilter;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest
@@ -24,6 +25,13 @@ class AmountDeadlineDynamicQueryTest {
   void getMany() {
     parameters.projection().addNames(AmountDeadlineDto.JSON_IDENTIFIER);
     assertEquals(true, dynamicQuery.getMany(parameters).size() > 0);
+  }
+  
+  @Test
+  void buildQueryString_whenCriteriaFeeIdentifier() {
+    parameters.projection().addNames(AmountDeadlineDto.JSON_IDENTIFIER);
+    parameters.filter().addCriteria(AmountDeadlineFilter.JSON_FEE_IDENTIFIER, "f1");
+    assertEquals("", dynamicQuery.buildQueryString(parameters));
   }
 
   public static class Profile implements QuarkusTestProfile {

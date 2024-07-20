@@ -24,6 +24,9 @@ public abstract class AbstractAmountContainer extends AbstractIdentifiableAudita
   /* valeurs dérivées */
 
   @Transient
+  public String amountIdentifier;
+  
+  @Transient
   public String amountAsString;
 
   @Transient
@@ -66,6 +69,7 @@ public abstract class AbstractAmountContainer extends AbstractIdentifiableAudita
   public String amountDeadlineAsString;
   
   public static final String FIELD_AMOUNT = "amount";
+  public static final String FIELD_AMOUNT_IDENTIFIER = "amountIdentifier";
   public static final String FIELD_AMOUNT_AS_STRING = "amountAsString";
   public static final String FIELD_AMOUNT_VALUE_AS_STRING = "amountValueAsString";
   public static final String FIELD_AMOUNT_VALUE = "amountValue";

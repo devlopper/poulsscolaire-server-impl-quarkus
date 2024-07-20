@@ -82,6 +82,9 @@ public class Fee extends AbstractAmountContainer {
   @Transient
   public String schoolingBranchAsString;
 
+  @Transient
+  public String amountDeadlineCountAsString;
+  
   public static final String FIELD_CATEGORY = "category";
   public static final String FIELD_SCHOOLING = "schooling";
   public static final String FIELD_ASSIGNMENT_TYPE = "assignmentType";

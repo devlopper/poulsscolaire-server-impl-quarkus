@@ -162,7 +162,11 @@ public class FeeDynamicQuery extends AbstractAmountContainerDynamicQuery<Fee> {
 
     // Ordres par défaut
     orderBuilder()
+        .fieldName(
+            fieldName(AbstractAmountContainer.FIELD_AMOUNT, Amount.FIELD_PAYMENT_ORDER_NUMBER))
+        .ascending(true).build();
+    orderBuilder()
         .fieldName(fieldName(Fee.FIELD_CATEGORY, AbstractIdentifiableCodableNamable.FIELD_NAME))
-        .ascending(false).build();
+        .ascending(true).build();
   }
 }

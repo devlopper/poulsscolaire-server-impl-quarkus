@@ -57,7 +57,13 @@ public class AmountDeadline extends AbstractIdentifiableAuditable {
   public String deadlineAsString;
 
   @Transient
+  public String amountIdentifier;
+  
+  @Transient
   public String amountAsString;
+  
+  @Transient
+  public String paymentAsString;
   
   public static final String FIELD_AMOUNT = "amount";
   public static final String FIELD_AMOUNT_AS_STRING = "amountAsString";

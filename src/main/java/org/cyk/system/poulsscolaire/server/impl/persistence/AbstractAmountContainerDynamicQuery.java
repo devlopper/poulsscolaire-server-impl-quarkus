@@ -31,6 +31,12 @@ public abstract class AbstractAmountContainerDynamicQuery<T extends AbstractAmou
   @PostConstruct
   void postConstruct() {
     // Projections
+    projectionBuilder().name(AbstractAmountContainerDto.JSON_AMOUNT_IDENTIFIER)
+        .nameFieldName(AbstractAmountContainer.FIELD_AMOUNT_IDENTIFIER)
+        .fieldName(
+            fieldName(AbstractAmountContainer.FIELD_AMOUNT, AbstractIdentifiable.FIELD_IDENTIFIER))
+        .build();
+
     projectionBuilder().name(AbstractAmountContainerDto.JSON_AMOUNT_DEADLINE_IDENTIFIER)
         .nameFieldName(AbstractAmountContainer.FIELD_AMOUNT_DEADLINE_IDENTIFIER)
         .fieldName(fieldName(AbstractAmountContainer.FIELD_AMOUNT, Amount.FIELD_DEADLINE,
