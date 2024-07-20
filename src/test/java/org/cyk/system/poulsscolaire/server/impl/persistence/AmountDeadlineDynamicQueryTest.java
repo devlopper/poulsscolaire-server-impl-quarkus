@@ -8,21 +8,21 @@ import io.quarkus.test.junit.QuarkusTestProfile;
 import io.quarkus.test.junit.TestProfile;
 import jakarta.inject.Inject;
 import java.util.Map;
-import org.cyk.system.poulsscolaire.server.api.fee.AdjustedFeePaymentDeadlineDto;
+import org.cyk.system.poulsscolaire.server.api.fee.AmountDeadlineDto;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest
-@TestProfile(AdjustedFeePaymentDeadlineDynamicQueryTest.Profile.class)
-class AdjustedFeePaymentDeadlineDynamicQueryTest {
+@TestProfile(AmountDeadlineDynamicQueryTest.Profile.class)
+class AmountDeadlineDynamicQueryTest {
 
   @Inject
-  AdjustedFeePaymentDeadlineDynamicQuery dynamicQuery;
+  AmountDeadlineDynamicQuery dynamicQuery;
 
-  DynamicQueryParameters<AdjustedFeePaymentDeadline> parameters = new DynamicQueryParameters<>();
+  DynamicQueryParameters<AmountDeadline> parameters = new DynamicQueryParameters<>();
 
   @Test
   void getMany() {
-    parameters.projection().addNames(AdjustedFeePaymentDeadlineDto.JSON_IDENTIFIER);
+    parameters.projection().addNames(AmountDeadlineDto.JSON_IDENTIFIER);
     assertEquals(true, dynamicQuery.getMany(parameters).size() > 0);
   }
 
@@ -30,8 +30,7 @@ class AdjustedFeePaymentDeadlineDynamicQueryTest {
 
     @Override
     public Map<String, String> getConfigOverrides() {
-      return Map.of("quarkus.hibernate-orm.sql-load-script",
-          "sql/adjustedfeepaymentdeadlinedynamicquery.sql");
+      return Map.of("quarkus.hibernate-orm.sql-load-script", "sql/amountdeadlinedynamicquery.sql");
     }
   }
 }

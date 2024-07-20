@@ -4,18 +4,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
-import org.cyk.system.poulsscolaire.server.api.fee.AdjustedFeePaymentDeadlineDto;
+import org.cyk.system.poulsscolaire.server.api.fee.AmountDeadlineDto;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest
-class AdjustedFeePaymentDeadlinePersistenceTest {
+class AmountDeadlinePersistenceTest {
 
   @Inject
-  AdjustedFeePaymentDeadlinePersistence persistence;
+  AmountDeadlinePersistence persistence;
 
   @Test
   void getName() {
-    assertEquals(AdjustedFeePaymentDeadlineDto.NAME, persistence.getName());
+    assertEquals(AmountDeadlineDto.NAME, persistence.getName());
   }
 
 }

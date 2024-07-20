@@ -12,45 +12,45 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
-import org.cyk.system.poulsscolaire.server.api.fee.AdjustedFeePaymentDeadlineDto;
-import org.cyk.system.poulsscolaire.server.api.fee.AdjustedFeePaymentDeadlineService;
-import org.cyk.system.poulsscolaire.server.impl.business.adjustedfeepaymentdeadline.AdjustedFeePaymentDeadlineCreateBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.adjustedfeepaymentdeadline.AdjustedFeePaymentDeadlineDeleteBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.adjustedfeepaymentdeadline.AdjustedFeePaymentDeadlineReadByIdentifierBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.adjustedfeepaymentdeadline.AdjustedFeePaymentDeadlineReadManyBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.adjustedfeepaymentdeadline.AdjustedFeePaymentDeadlineReadOneBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.adjustedfeepaymentdeadline.AdjustedFeePaymentDeadlineUpdateBusiness;
+import org.cyk.system.poulsscolaire.server.api.fee.AmountDeadlineDto;
+import org.cyk.system.poulsscolaire.server.api.fee.AmountDeadlineService;
+import org.cyk.system.poulsscolaire.server.impl.business.amountdeadline.AmountDeadlineCreateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.amountdeadline.AmountDeadlineDeleteBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.amountdeadline.AmountDeadlineReadByIdentifierBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.amountdeadline.AmountDeadlineReadManyBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.amountdeadline.AmountDeadlineReadOneBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.amountdeadline.AmountDeadlineUpdateBusiness;
 
 /**
- * Cette classe représente l'implémentation de {@link AdjustedFeePaymentDeadlineService}.
+ * Cette classe représente l'implémentation de {@link AmountDeadlineService}.
  *
  * @author Christian
  *
  */
 @ApplicationScoped
-public class AdjustedFeePaymentDeadlineServiceImpl extends AbstractServiceImpl
-    implements AdjustedFeePaymentDeadlineService {
+public class AmountDeadlineServiceImpl extends AbstractServiceImpl
+    implements AmountDeadlineService {
 
   @Inject
-  AdjustedFeePaymentDeadlineCreateBusiness createBusiness;
+  AmountDeadlineCreateBusiness createBusiness;
 
   @Inject
-  AdjustedFeePaymentDeadlineReadManyBusiness readManyBusiness;
+  AmountDeadlineReadManyBusiness readManyBusiness;
 
   @Inject
-  AdjustedFeePaymentDeadlineReadOneBusiness readOneBusiness;
+  AmountDeadlineReadOneBusiness readOneBusiness;
 
   @Inject
-  AdjustedFeePaymentDeadlineReadByIdentifierBusiness readByIdentifierBusiness;
+  AmountDeadlineReadByIdentifierBusiness readByIdentifierBusiness;
 
   @Inject
-  AdjustedFeePaymentDeadlineUpdateBusiness updateBusiness;
+  AmountDeadlineUpdateBusiness updateBusiness;
 
   @Inject
-  AdjustedFeePaymentDeadlineDeleteBusiness deleteBusiness;
+  AmountDeadlineDeleteBusiness deleteBusiness;
 
   @Override
-  public Response create(AdjustedFeePaymentDeadlineCreateRequestDto request) {
+  public Response create(AmountDeadlineCreateRequestDto request) {
     CreateResponseDto dto = createBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);
@@ -68,7 +68,7 @@ public class AdjustedFeePaymentDeadlineServiceImpl extends AbstractServiceImpl
 
   @Override
   public Response getOne(GetOneRequestDto request) {
-    AdjustedFeePaymentDeadlineDto dto = readOneBusiness.process(request);
+    AmountDeadlineDto dto = readOneBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);
     return responseBuilder.build();
@@ -76,14 +76,14 @@ public class AdjustedFeePaymentDeadlineServiceImpl extends AbstractServiceImpl
 
   @Override
   public Response getByIdentifier(GetByIdentifierRequestDto request) {
-    AdjustedFeePaymentDeadlineDto dto = readByIdentifierBusiness.process(request);
+    AmountDeadlineDto dto = readByIdentifierBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);
     return responseBuilder.build();
   }
 
   @Override
-  public Response update(AdjustedFeePaymentDeadlineUpdateRequestDto request) {
+  public Response update(AmountDeadlineUpdateRequestDto request) {
     IdentifiableResponseDto dto = updateBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);

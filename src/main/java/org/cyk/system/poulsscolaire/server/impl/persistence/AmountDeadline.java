@@ -10,19 +10,19 @@ import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 
 /**
- * Cette classe représente une échéance de paiement de frais ajusté.
+ * Cette classe représente une échéance de montant.
  *
  * @author Christian
  *
  */
-@Entity(name = AdjustedFeePaymentDeadline.ENTITY_NAME)
-@Table(name = AdjustedFeePaymentDeadline.TABLE_NAME)
-public class AdjustedFeePaymentDeadline extends AbstractIdentifiableAuditable {
+@Entity(name = AmountDeadline.ENTITY_NAME)
+@Table(name = AmountDeadline.TABLE_NAME)
+public class AmountDeadline extends AbstractIdentifiableAuditable {
 
   @NotNull
   @ManyToOne
-  @JoinColumn(name = COLUMN_ADJUSTED_FEE, nullable = false)
-  public AdjustedFee adjustedFee;
+  @JoinColumn(name = COLUMN_AMOUNT, nullable = false)
+  public Amount amount;
 
   @NotNull
   @ManyToOne
@@ -30,8 +30,8 @@ public class AdjustedFeePaymentDeadline extends AbstractIdentifiableAuditable {
   public Deadline deadline;
   
   @NotNull
-  @Column(name = COLUMN_AMOUNT, nullable = false)
-  public Integer amount;
+  @Column(name = COLUMN_PAYMENT, nullable = false)
+  public Integer payment;
 
   /* valeurs dérivées */
 
@@ -40,7 +40,16 @@ public class AdjustedFeePaymentDeadline extends AbstractIdentifiableAuditable {
   
   @Transient
   public String adjustedFeeAsString;
+  
+  @Transient
+  public String feeCategoryAsString;
 
+  @Transient
+  public String branchAsString;
+  
+  @Transient
+  public String studentAsString;
+  
   @Transient
   public String deadlineIdentifier;
 
@@ -50,19 +59,22 @@ public class AdjustedFeePaymentDeadline extends AbstractIdentifiableAuditable {
   @Transient
   public String amountAsString;
   
+  public static final String FIELD_AMOUNT = "amount";
+  public static final String FIELD_AMOUNT_AS_STRING = "amountAsString";
+  public static final String FIELD_AMOUNT_IDENTIFIER = "amountIdentifier";
   public static final String FIELD_ADJUSTED_FEE = "adjustedFee";
   public static final String FIELD_ADJUSTED_FEE_AS_STRING = "adjustedFeeAsString";
   public static final String FIELD_ADJUSTED_FEE_IDENTIFIER = "adjustedFeeIdentifier";
   public static final String FIELD_DEADLINE = "deadline";
   public static final String FIELD_DEADLINE_IDENTIFIER = "deadlineIdentifier";
   public static final String FIELD_DEADLINE_AS_STRING = "deadlineAsString";
-  public static final String FIELD_AMOUNT = "amount";
-  public static final String FIELD_AMOUNT_AS_STRING = "amountAsString";
+  public static final String FIELD_PAYMENT = "payment";
+  public static final String FIELD_PAYMENT_AS_STRING = "paymentAsString";
   
-  public static final String ENTITY_NAME = "AdjustedFeePaymentDeadline";
-  public static final String TABLE_NAME = "TA_ECHEANCE_PAIEMENT_FRAIS_AJUSTE";
+  public static final String ENTITY_NAME = "AmountDeadline";
+  public static final String TABLE_NAME = "TA_ECHEANCE_MONTANT";
 
-  public static final String COLUMN_ADJUSTED_FEE = "FRAIS_AJUSTE";
-  public static final String COLUMN_DEADLINE = "ECHEANCE";
   public static final String COLUMN_AMOUNT = "MONTANT";
+  public static final String COLUMN_DEADLINE = "ECHEANCE";
+  public static final String COLUMN_PAYMENT = "PAIEMENT";
 }
