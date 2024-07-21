@@ -12,6 +12,7 @@ import java.util.Map;
 import org.cyk.system.poulsscolaire.server.api.registration.RegistrationService.RegistrationCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.registration.RegistrationService.RegistrationUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AdjustedFee;
+import org.cyk.system.poulsscolaire.server.impl.persistence.AmountDeadline;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Registration;
 import org.junit.jupiter.api.Test;
 
@@ -27,19 +28,19 @@ class RegistrationBusinessTest extends AbstractTest {
 
   @Inject
   RegistrationReadManyBusiness readManyBusiness;
-  
+
   @Inject
   RegistrationReadOneBusiness readOneBusiness;
-  
+
   @Inject
   RegistrationReadByIdentifierBusiness readByIdentifierBusiness;
-  
+
   @Inject
   RegistrationUpdateBusiness updateBusiness;
-  
+
   @Inject
   RegistrationDeleteBusiness deleteBusiness;
-  
+
   @Test
   void create_whenNoFees() {
     RegistrationCreateRequestDto request = new RegistrationCreateRequestDto();
@@ -54,7 +55,7 @@ class RegistrationBusinessTest extends AbstractTest {
     assertEquals(registrationCount + 1, count(entityManager, Registration.ENTITY_NAME));
     assertEquals(adjustedFeeCount, count(entityManager, AdjustedFee.ENTITY_NAME));
   }
-  
+
   @Test
   void create_whenFees() {
     RegistrationCreateRequestDto request = new RegistrationCreateRequestDto();
@@ -65,11 +66,13 @@ class RegistrationBusinessTest extends AbstractTest {
     request.setAuditWho("christian");
     long registrationCount = count(entityManager, Registration.ENTITY_NAME);
     long adjustedFeeCount = count(entityManager, AdjustedFee.ENTITY_NAME);
+    final long deadlinesCount = count(entityManager, AmountDeadline.ENTITY_NAME);
     createBusiness.process(request);
     assertEquals(registrationCount + 1, count(entityManager, Registration.ENTITY_NAME));
     assertEquals(adjustedFeeCount + 3, count(entityManager, AdjustedFee.ENTITY_NAME));
+    assertEquals(deadlinesCount + 1, count(entityManager, AmountDeadline.ENTITY_NAME));
   }
-  
+
   @Test
   void update() {
     RegistrationUpdateRequestDto request = new RegistrationUpdateRequestDto();
@@ -83,7 +86,7 @@ class RegistrationBusinessTest extends AbstractTest {
     updateBusiness.process(request);
     assertEquals(count, count(entityManager, Registration.ENTITY_NAME));
   }
-  
+
   public static class Profile implements QuarkusTestProfile {
 
     @Override

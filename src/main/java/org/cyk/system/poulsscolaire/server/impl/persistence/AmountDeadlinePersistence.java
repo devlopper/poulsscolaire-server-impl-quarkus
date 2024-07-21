@@ -4,6 +4,8 @@ import ci.gouv.dgbf.extension.server.persistence.AbstractIdentifiablePersistence
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import java.util.Collection;
+import java.util.List;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.fee.AmountDeadlineDto;
 
@@ -14,8 +16,7 @@ import org.cyk.system.poulsscolaire.server.api.fee.AmountDeadlineDto;
  *
  */
 @ApplicationScoped
-public class AmountDeadlinePersistence
-    extends AbstractIdentifiablePersistence<AmountDeadline> {
+public class AmountDeadlinePersistence extends AbstractIdentifiablePersistence<AmountDeadline> {
 
   @Inject
   @Getter
@@ -28,5 +29,17 @@ public class AmountDeadlinePersistence
     super(AmountDeadline.class);
     name = AmountDeadlineDto.NAME;
     pluralName = AmountDeadlineDto.PLURAL_NAME;
+  }
+
+  /**
+   * Cette méthode permet d'obtenir les tableaux de {@link AmountDeadline} et {@link Fee}.
+   *
+   * @param fees {@link Fee}
+   * @return tableaux de {@link AmountDeadline} et {@link Fee}
+   */
+  public List<Object[]> getByFees(Collection<Fee> fees) {
+    return entityManager
+        .createNamedQuery(AmountDeadline.QUERY_READ_BY_FEES_IDENTIFIER, Object[].class)
+        .getResultList();
   }
 }

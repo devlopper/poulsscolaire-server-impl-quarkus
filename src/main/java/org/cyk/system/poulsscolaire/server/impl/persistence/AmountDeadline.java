@@ -5,6 +5,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
@@ -17,6 +19,8 @@ import jakarta.validation.constraints.NotNull;
  */
 @Entity(name = AmountDeadline.ENTITY_NAME)
 @Table(name = AmountDeadline.TABLE_NAME)
+@NamedQueries(value = {@NamedQuery(name = AmountDeadline.QUERY_READ_BY_FEES_IDENTIFIER,
+    query = AmountDeadline.QUERY_READ_BY_FEES_VALUE)})
 public class AmountDeadline extends AbstractIdentifiableAuditable {
 
   @NotNull
@@ -28,7 +32,7 @@ public class AmountDeadline extends AbstractIdentifiableAuditable {
   @ManyToOne
   @JoinColumn(name = COLUMN_DEADLINE, nullable = false)
   public Deadline deadline;
-  
+
   @NotNull
   @Column(name = COLUMN_PAYMENT, nullable = false)
   public Integer payment;
@@ -37,19 +41,19 @@ public class AmountDeadline extends AbstractIdentifiableAuditable {
 
   @Transient
   public String adjustedFeeIdentifier;
-  
+
   @Transient
   public String adjustedFeeAsString;
-  
+
   @Transient
   public String feeCategoryAsString;
 
   @Transient
   public String branchAsString;
-  
+
   @Transient
   public String studentAsString;
-  
+
   @Transient
   public String deadlineIdentifier;
 
@@ -58,19 +62,19 @@ public class AmountDeadline extends AbstractIdentifiableAuditable {
 
   @Transient
   public Boolean deadlinePassed;
-  
+
   @Transient
   public Boolean deadlineRunning;
-  
+
   @Transient
   public String amountIdentifier;
-  
+
   @Transient
   public String amountAsString;
-  
+
   @Transient
   public String paymentAsString;
-  
+
   public static final String FIELD_AMOUNT = "amount";
   public static final String FIELD_AMOUNT_AS_STRING = "amountAsString";
   public static final String FIELD_AMOUNT_IDENTIFIER = "amountIdentifier";
@@ -84,11 +88,15 @@ public class AmountDeadline extends AbstractIdentifiableAuditable {
   public static final String FIELD_DEADLINE_RUNNING = "deadlineRunning";
   public static final String FIELD_PAYMENT = "payment";
   public static final String FIELD_PAYMENT_AS_STRING = "paymentAsString";
-  
+
   public static final String ENTITY_NAME = "AmountDeadline";
   public static final String TABLE_NAME = "TA_ECHEANCE_MONTANT";
 
   public static final String COLUMN_AMOUNT = "MONTANT";
   public static final String COLUMN_DEADLINE = "ECHEANCE";
   public static final String COLUMN_PAYMENT = "PAIEMENT";
+
+  public static final String QUERY_READ_BY_FEES_IDENTIFIER = "AmountDeadline.readByFees";
+  public static final String QUERY_READ_BY_FEES_VALUE =
+      "SELECT t, f FROM AmountDeadline t JOIN Fee f ON f.amount = t.amount";
 }
