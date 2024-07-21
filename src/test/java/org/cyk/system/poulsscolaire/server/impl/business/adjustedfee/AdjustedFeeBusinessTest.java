@@ -45,7 +45,6 @@ class AdjustedFeeBusinessTest extends AbstractTest {
     AdjustedFeeCreateRequestDto request = new AdjustedFeeCreateRequestDto();
     request.setFeeIdentifier("1");
     request.setRegistrationIdentifier("1");
-    request.setDeadlineIdentifier("1");
     request.setOptional(true);
     request.setPaymentOrderNumber(0);
     request.setRegistrationValuePart(0);
@@ -65,7 +64,6 @@ class AdjustedFeeBusinessTest extends AbstractTest {
     request.setIdentifier("toupdate");
     request.setFeeIdentifier("1");
     request.setRegistrationIdentifier("1");
-    request.setDeadlineIdentifier("1");
     request.setOptional(true);
     request.setPaymentOrderNumber(0);
     request.setRegistrationValuePart(0);

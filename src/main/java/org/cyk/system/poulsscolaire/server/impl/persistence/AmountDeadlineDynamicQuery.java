@@ -1,7 +1,6 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
-import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableNamable;
 import ci.gouv.dgbf.extension.server.persistence.query.AbstractDynamicQuery;
 import ci.gouv.dgbf.extension.server.service.api.AbstractIdentifiableFilter;
 import ci.gouv.dgbf.extension.server.service.api.entity.AbstractIdentifiableDto;
@@ -29,6 +28,7 @@ public class AmountDeadlineDynamicQuery extends AbstractDynamicQuery<AmountDeadl
   String branchVariableName;
   String feeVariableName;
   String adustedFeeVariableName;
+  String statusesVariableName;
 
   /**
    * Cette méthode permet d'instancier un object.
@@ -38,6 +38,7 @@ public class AmountDeadlineDynamicQuery extends AbstractDynamicQuery<AmountDeadl
     branchVariableName = "b";
     feeVariableName = "f";
     adustedFeeVariableName = "af";
+    statusesVariableName = "s";
   }
 
   @PostConstruct
@@ -72,9 +73,21 @@ public class AmountDeadlineDynamicQuery extends AbstractDynamicQuery<AmountDeadl
         .resultConsumer((i, a) -> i.deadlineIdentifier = a.getNextAsString()).build();
 
     projectionBuilder().name(AmountDeadlineDto.JSON_DEADLINE_AS_STRING)
-        .expression(
-            fieldName(AmountDeadline.FIELD_DEADLINE, AbstractIdentifiableCodableNamable.FIELD_NAME))
-        .resultConsumer((i, a) -> i.deadlineAsString = a.getNextAsString()).build();
+        .expression(String.format("%s,%s.%s",
+            formatConcatName(fieldName(variableName, AmountDeadline.FIELD_DEADLINE)), variableName,
+            fieldName(AmountDeadline.FIELD_DEADLINE, Deadline.FIELD_DATE)))
+        .resultConsumer((i, a) -> i.deadlineAsString =
+            String.format("%s(%s)", a.getNextAsString(), a.getNextAsLocalDateTimeFormatted()))
+        .build();
+
+    projectionBuilder().name(AmountDeadlineDto.JSON_DEADLINE_PASSED)
+        .nameFieldName(AmountDeadline.FIELD_DEADLINE_PASSED).tupleVariableName(statusesVariableName)
+        .fieldName(AmountDeadlineStatuses.FIELD_PASSED).build();
+
+    projectionBuilder().name(AmountDeadlineDto.JSON_DEADLINE_RUNNING)
+        .nameFieldName(AmountDeadline.FIELD_DEADLINE_RUNNING)
+        .tupleVariableName(statusesVariableName).fieldName(AmountDeadlineStatuses.FIELD_RUNNING)
+        .build();
 
     projectionBuilder().name(AmountDeadlineDto.JSON_PAYMENT).fieldName(AmountDeadline.FIELD_PAYMENT)
         .build();
@@ -92,15 +105,22 @@ public class AmountDeadlineDynamicQuery extends AbstractDynamicQuery<AmountDeadl
         .leftInnerOrRight(true).build();
 
     joinBuilder().predicatesNames(AmountDeadlineFilter.JSON_FEE_IDENTIFIER).entityClass(Fee.class)
-        .tupleVariableName(feeVariableName)
-        .fieldName(AbstractAmountContainer.FIELD_AMOUNT)
-        .parentFieldName(AmountDeadline.FIELD_AMOUNT)
-        .leftInnerOrRight(true).build();
+        .tupleVariableName(feeVariableName).fieldName(AbstractAmountContainer.FIELD_AMOUNT)
+        .parentFieldName(AmountDeadline.FIELD_AMOUNT).leftInnerOrRight(true).build();
+
+    joinBuilder()
+        .projectionsNames(AmountDeadlineDto.JSON_DEADLINE_PASSED,
+            AmountDeadlineDto.JSON_DEADLINE_RUNNING)
+        .entityClass(AmountDeadlineStatuses.class).tupleVariableName(statusesVariableName)
+        .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
+        .parentFieldName(AbstractIdentifiable.FIELD_IDENTIFIER).leftInnerOrRight(true).build();
 
     // Prédicats
     buildPredicates();
 
     // Ordres par défaut
+    orderBuilder().fieldName(fieldName(AmountDeadline.FIELD_DEADLINE, Deadline.FIELD_DATE))
+        .ascending(true).build();
   }
 
   void buildPredicates() {

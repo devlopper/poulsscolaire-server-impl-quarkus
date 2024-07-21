@@ -42,7 +42,6 @@ class AmountBusinessTest extends AbstractTest {
   @Test
   void create() {
     AmountCreateRequestDto request = new AmountCreateRequestDto();
-    request.setDeadlineIdentifier("1");
     request.setOptional(true);
     request.setPaymentOrderNumber(0);
     request.setRegistrationValuePart(0);
@@ -58,7 +57,6 @@ class AmountBusinessTest extends AbstractTest {
   void update() {
     AmountUpdateRequestDto request = new AmountUpdateRequestDto();
     request.setIdentifier("toupdate");
-    request.setDeadlineIdentifier("1");
     request.setOptional(true);
     request.setPaymentOrderNumber(0);
     request.setRegistrationValuePart(0);

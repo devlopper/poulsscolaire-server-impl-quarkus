@@ -1,7 +1,6 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
-import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableNamable;
 import ci.gouv.dgbf.extension.server.persistence.query.AbstractDynamicQuery;
 import ci.gouv.dgbf.extension.server.service.api.AbstractIdentifiableFilter;
 import ci.gouv.dgbf.extension.server.service.api.entity.AbstractIdentifiableDto;
@@ -58,18 +57,9 @@ public class AmountDynamicQuery extends AbstractDynamicQuery<Amount> {
     projectionBuilder().name(AmountDto.JSON_OPTIONAL_AS_STRING)
         .nameFieldName(Amount.FIELD_OPTIONAL_AS_STRING).fieldName(Amount.FIELD_OPTIONAL).build();
 
-    projectionBuilder().name(AmountDto.JSON_RENEWABLE).fieldName(Amount.FIELD_RENEWABLE)
-        .build();
+    projectionBuilder().name(AmountDto.JSON_RENEWABLE).fieldName(Amount.FIELD_RENEWABLE).build();
     projectionBuilder().name(AmountDto.JSON_RENEWABLE_AS_STRING)
         .nameFieldName(Amount.FIELD_RENEWABLE_AS_STRING).fieldName(Amount.FIELD_RENEWABLE).build();
-
-    projectionBuilder().name(AmountDto.JSON_DEADLINE_IDENTIFIER)
-        .nameFieldName(Amount.FIELD_DEADLINE_IDENTIFIER)
-        .fieldName(fieldName(Amount.FIELD_DEADLINE, AbstractIdentifiable.FIELD_IDENTIFIER)).build();
-    projectionBuilder().name(AmountDto.JSON_DEADLINE_AS_STRING)
-        .nameFieldName(Amount.FIELD_DEADLINE_AS_STRING)
-        .fieldName(fieldName(Amount.FIELD_DEADLINE, AbstractIdentifiableCodableNamable.FIELD_NAME))
-        .build();
 
     // Prédicats
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)
@@ -77,7 +67,6 @@ public class AmountDynamicQuery extends AbstractDynamicQuery<Amount> {
         .valueFunction(AbstractIdentifiableFilter::getIdentifier).build();
 
     // Ordres par défaut
-    orderBuilder().fieldName(fieldName(Amount.FIELD_DEADLINE, Deadline.FIELD_DATE)).ascending(false)
-        .build();
+    orderBuilder().fieldName(Amount.FIELD_PAYMENT_ORDER_NUMBER).ascending(true).build();
   }
 }

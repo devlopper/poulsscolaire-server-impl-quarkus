@@ -49,7 +49,6 @@ class FeeBusinessTest extends AbstractTest {
     request.setSeniorityIdentifier("1");
     request.setSchoolingIdentifier("1");
     request.setCategoryIdentifier("2");
-    request.setDeadlineIdentifier("1");
     request.setOptional(true);
     request.setPaymentOrderNumber(2);
     request.setRenewable(true);
@@ -69,7 +68,6 @@ class FeeBusinessTest extends AbstractTest {
     request.setSeniorityIdentifier("1");
     request.setSchoolingIdentifier("1");
     request.setCategoryIdentifier("1");
-    request.setDeadlineIdentifier("1");
     request.setOptional(true);
     request.setPaymentOrderNumber(0);
     request.setRegistrationValuePart(0);
@@ -86,7 +84,6 @@ class FeeBusinessTest extends AbstractTest {
     request.setSeniorityIdentifier("1");
     request.setSchoolingIdentifier("1");
     request.setCategoryIdentifier("1");
-    request.setDeadlineIdentifier("1");
     request.setOptional(true);
     request.setPaymentOrderNumber(0);
     request.setRegistrationValuePart(2);
@@ -103,7 +100,6 @@ class FeeBusinessTest extends AbstractTest {
     request.setSeniorityIdentifier("1");
     request.setSchoolingIdentifier("1");
     request.setCategoryIdentifier("1");
-    request.setDeadlineIdentifier("1");
     request.setOptional(true);
     request.setPaymentOrderNumber(0);
     request.setRenewable(true);
@@ -120,7 +116,6 @@ class FeeBusinessTest extends AbstractTest {
     request.setSeniorityIdentifier("1");
     request.setSchoolingIdentifier("1");
     request.setCategoryIdentifier("1");
-    request.setDeadlineIdentifier("1");
     request.setOptional(true);
     request.setPaymentOrderNumber(0);
     request.setRegistrationValuePart(0);

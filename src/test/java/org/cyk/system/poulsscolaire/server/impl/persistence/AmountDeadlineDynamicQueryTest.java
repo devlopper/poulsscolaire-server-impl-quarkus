@@ -1,6 +1,7 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
 import io.quarkus.test.junit.QuarkusTest;
@@ -21,8 +22,14 @@ class AmountDeadlineDynamicQueryTest {
   DynamicQueryParameters<AmountDeadline> parameters = new DynamicQueryParameters<>();
 
   @Test
+  void instantiateAmountDeadlineStatuses() {
+    assertNotNull(new AmountDeadlineStatuses());
+  }
+
+  @Test
   void getMany() {
-    parameters.projection().addNames(AmountDeadlineDto.JSON_IDENTIFIER);
+    parameters.projection().addNames(AmountDeadlineDto.JSON_IDENTIFIER,
+        AmountDeadlineDto.JSON_DEADLINE_AS_STRING);
     assertEquals(true, dynamicQuery.getMany(parameters).size() > 0);
   }
 
