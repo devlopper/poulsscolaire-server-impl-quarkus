@@ -118,6 +118,5 @@ public class RegistrationCreateBusiness extends AbstractIdentifiableCreateBusine
     adjustedAmount.optional = feeAmount.optional;
     adjustedAmount.paymentOrderNumber = feeAmount.paymentOrderNumber;
     adjustedAmount.renewable = feeAmount.renewable;
-    adjustedAmount.deadline = feeAmount.deadline;
   }
 }

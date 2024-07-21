@@ -7,7 +7,6 @@ import jakarta.inject.Inject;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.fee.FeeService.FeeUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.business.assignmenttype.AssignmentTypeValidator;
-import org.cyk.system.poulsscolaire.server.impl.business.deadline.DeadlineValidator;
 import org.cyk.system.poulsscolaire.server.impl.business.feecategory.FeeCategoryValidator;
 import org.cyk.system.poulsscolaire.server.impl.business.schooling.SchoolingValidator;
 import org.cyk.system.poulsscolaire.server.impl.business.seniority.SeniorityValidator;
@@ -46,16 +45,11 @@ public class FeeUpdateBusiness extends
   SeniorityValidator seniorityValidator;
 
   @Inject
-  DeadlineValidator deadlineValidator;
-
-  @Inject
   AmountPersistence amountPersistence;
 
   @Override
   protected void validate(FeeUpdateRequestDto request, StringList messages, Fee fee) {
     super.validate(request, messages, fee);
-    fee.amount.deadline =
-        deadlineValidator.validateInstanceByIdentifier(request.getDeadlineIdentifier(), messages);
     fee.schooling =
         schoolingValidator.validateInstanceByIdentifier(request.getSchoolingIdentifier(), messages);
     fee.assignmentType = assignmentTypeValidator

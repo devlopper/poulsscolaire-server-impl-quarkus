@@ -252,9 +252,9 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
         .fieldName(AdjustedFeeAmounts.FIELD_AMOUNT_LEFT_TO_PAY_LESS_THAN_OR_EQUALS_ZERO)
         .valueFunction(AdjustedFeeFilter::getAmountValuePayableLessThanOrEqualsZero).build();
 
-    predicateBuilder().name(AbstractAmountContainerFilter.JSON_AMOUNT_DEADLINE_DATE_OVER)
+    predicateBuilder().name(AdjustedFeeFilter.JSON_LATE_PAYMENT)
         .tupleVariableName(adjustedFeeAmountsVariableName)
-        .fieldName(AdjustedFeeAmounts.FIELD_DEADLINE_DATE_LESS_THAN_NOW)
-        .valueFunction(AdjustedFeeFilter::getAmountValuePayableEqualsZero).build();
+        .fieldName(AdjustedFeeAmounts.FIELD_LATE_PAYMENT)
+        .valueFunction(AdjustedFeeFilter::getLatePayment).build();
   }
 }

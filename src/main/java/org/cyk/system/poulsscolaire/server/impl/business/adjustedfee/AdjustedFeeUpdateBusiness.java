@@ -51,8 +51,6 @@ public class AdjustedFeeUpdateBusiness extends AbstractIdentifiableUpdateBusines
         feeValidator.validateInstanceByIdentifier(request.getFeeIdentifier(), messages);
     adjustedFee.registration = registrationValidator
         .validateInstanceByIdentifier(request.getRegistrationIdentifier(), messages);
-    adjustedFee.amount.deadline =
-        deadlineValidator.validateInstanceByIdentifier(request.getDeadlineIdentifier(), messages);
   }
 
   @Override

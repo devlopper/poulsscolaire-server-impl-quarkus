@@ -46,7 +46,7 @@ class FeeDynamicQueryTest {
     assertEquals(
         "SELECT school.name FROM Fee t "
         + "LEFT JOIN School school ON school.identifier = t.schooling.schoolIdentifier "
-        + "ORDER BY t.category.name DESC",
+        + "ORDER BY t.amount.paymentOrderNumber ASC,t.category.name ASC",
         dynamicQuery.buildQueryString(parameters));
   }
 }

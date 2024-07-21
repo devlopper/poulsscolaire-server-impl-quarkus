@@ -6,14 +6,12 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.fee.AdjustedFeeService.AdjustedFeeCreateRequestDto;
-import org.cyk.system.poulsscolaire.server.impl.business.deadline.DeadlineValidator;
 import org.cyk.system.poulsscolaire.server.impl.business.fee.FeeValidator;
 import org.cyk.system.poulsscolaire.server.impl.business.registration.RegistrationValidator;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AdjustedFee;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AdjustedFeePersistence;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Amount;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AmountPersistence;
-import org.cyk.system.poulsscolaire.server.impl.persistence.Deadline;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Fee;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Registration;
 
@@ -36,9 +34,6 @@ public class AdjustedFeeCreateBusiness extends AbstractIdentifiableCreateBusines
   AdjustedFeeValidator validator;
 
   @Inject
-  DeadlineValidator deadlineValidator;
-
-  @Inject
   AmountPersistence amountPersistence;
 
   @Inject
@@ -52,9 +47,7 @@ public class AdjustedFeeCreateBusiness extends AbstractIdentifiableCreateBusines
     Fee fee = feeValidator.validateInstanceByIdentifier(request.getFeeIdentifier(), messages);
     Registration registration = registrationValidator
         .validateInstanceByIdentifier(request.getRegistrationIdentifier(), messages);
-    Deadline deadline =
-        deadlineValidator.validateInstanceByIdentifier(request.getDeadlineIdentifier(), messages);
-    return new Object[] {deadline, fee, registration};
+    return new Object[] {fee, registration};
   }
 
   @Override
@@ -65,8 +58,8 @@ public class AdjustedFeeCreateBusiness extends AbstractIdentifiableCreateBusines
     adjustedFee.amount.generateIdentifier();
     adjustedFee.amount.audit = adjustedFee.audit;
     adjustedFee.amount.set(request, array);
-    adjustedFee.fee = (Fee) array[1];
-    adjustedFee.registration = (Registration) array[2];
+    adjustedFee.fee = (Fee) array[0];
+    adjustedFee.registration = (Registration) array[1];
   }
 
   @Override

@@ -8,14 +8,12 @@ import java.util.Optional;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.fee.FeeService.FeeCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.business.assignmenttype.AssignmentTypeValidator;
-import org.cyk.system.poulsscolaire.server.impl.business.deadline.DeadlineValidator;
 import org.cyk.system.poulsscolaire.server.impl.business.feecategory.FeeCategoryValidator;
 import org.cyk.system.poulsscolaire.server.impl.business.schooling.SchoolingValidator;
 import org.cyk.system.poulsscolaire.server.impl.business.seniority.SeniorityValidator;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Amount;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AmountPersistence;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AssignmentType;
-import org.cyk.system.poulsscolaire.server.impl.persistence.Deadline;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Fee;
 import org.cyk.system.poulsscolaire.server.impl.persistence.FeeCategory;
 import org.cyk.system.poulsscolaire.server.impl.persistence.FeePersistence;
@@ -53,9 +51,6 @@ public class FeeCreateBusiness extends
   SeniorityValidator seniorityValidator;
 
   @Inject
-  DeadlineValidator deadlineValidator;
-
-  @Inject
   AmountPersistence amountPersistence;
 
   @Override
@@ -70,15 +65,13 @@ public class FeeCreateBusiness extends
         request.getPaymentOrderNumber()), "Le numéro d'ordre de paiement existe déja");
     FeeCategory category =
         categoryValidator.validateInstanceByIdentifier(request.getCategoryIdentifier(), messages);
-    Deadline deadline =
-        deadlineValidator.validateInstanceByIdentifier(request.getDeadlineIdentifier(), messages);
     validationHelper.validateLowerThanByName(this, request.getValue(), 1, "montant", "un",
         messages);
     validationHelper.validateGreaterThanByName(this,
         Optional.ofNullable(request.getRegistrationValuePart()).orElse(0), request.getValue(),
         "part inscription", "montant", messages);
 
-    return new Object[] {deadline, schooling, assignmentType, seniority, category};
+    return new Object[] {schooling, assignmentType, seniority, category};
   }
 
   @Override
@@ -89,10 +82,10 @@ public class FeeCreateBusiness extends
     fee.amount.audit = fee.audit;
     fee.amount.set(request, array);
 
-    fee.schooling = (Schooling) array[1];
-    fee.assignmentType = (AssignmentType) array[2];
-    fee.seniority = (Seniority) array[3];
-    fee.category = (FeeCategory) array[4];
+    fee.schooling = (Schooling) array[0];
+    fee.assignmentType = (AssignmentType) array[1];
+    fee.seniority = (Seniority) array[2];
+    fee.category = (FeeCategory) array[3];
   }
 
   @Override

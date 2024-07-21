@@ -37,16 +37,6 @@ class AdjustedFeeDynamicQueryTest {
   }
 
   @Test
-  void get_whenProjectionDeadlineOver() {
-    parameters.setResultMode(ResultMode.ONE);
-    parameters.projection().addNames(AdjustedFeeDto.JSON_AMOUNT_DEADLINE_OVER,
-        AdjustedFeeDto.JSON_AMOUNT_VALUE_PAID_AS_STRING);
-    parameters.filter().addCriteria(AdjustedFeeDto.JSON_IDENTIFIER, "deadlineover");
-    AdjustedFee adjustedFee = dynamicQuery.getOne(parameters);
-    assertEquals(true, adjustedFee.amountDeadlineOver);
-  }
-
-  @Test
   void buildQueryString_whenProjectionAmountValueToPay() {
     parameters.setResultMode(ResultMode.ONE);
     parameters.projection().addNames(AdjustedFeeDto.JSON_AMOUNT_VALUE_TO_PAY_AS_STRING);

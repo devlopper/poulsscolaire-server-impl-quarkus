@@ -3,8 +3,6 @@ package org.cyk.system.poulsscolaire.server.impl.persistence;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableAuditable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
@@ -39,11 +37,6 @@ public class Amount extends AbstractIdentifiableAuditable {
   @NotNull
   @Column(name = COLUMN_RENEWABLE, nullable = false)
   public Boolean renewable;
-
-  @NotNull
-  @ManyToOne
-  @JoinColumn(name = COLUMN_DEADLINE, nullable = false)
-  public Deadline deadline;
 
   /* valeurs dérivées */
 
@@ -86,9 +79,6 @@ public class Amount extends AbstractIdentifiableAuditable {
     optional = request.getOptional();
     paymentOrderNumber = request.getPaymentOrderNumber();
     renewable = request.getRenewable();
-    if (array != null) {
-      deadline = (Deadline) array[0];
-    }
   }
 
   public static final String FIELD_VALUE = "value";
