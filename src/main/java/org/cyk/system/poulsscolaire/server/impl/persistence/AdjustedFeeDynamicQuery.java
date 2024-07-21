@@ -214,7 +214,8 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
             AdjustedFeeDto.JSON_AMOUNT_VALUE_TO_PAY_AS_STRING,
             AdjustedFeeDto.JSON_AMOUNT_VALUE_PAID, AdjustedFeeDto.JSON_AMOUNT_VALUE_PAID_AS_STRING,
             AdjustedFeeDto.JSON_AMOUNT_VALUE_PAYABLE,
-            AdjustedFeeDto.JSON_AMOUNT_VALUE_PAYABLE_AS_STRING)
+            AdjustedFeeDto.JSON_AMOUNT_VALUE_PAYABLE_AS_STRING,
+            AbstractAmountContainerDto.JSON_AMOUNT_DEADLINE_AS_STRING)
         .predicatesNames(
             AbstractAmountContainerFilter.JSON_AMOUNT_VALUE_PAYABLE_LESS_THAN_OR_EQUALS_ZERO)
         .with(AdjustedFeeAmounts.class).tupleVariableName(adjustedFeeAmountsVariableName)
