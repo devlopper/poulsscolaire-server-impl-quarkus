@@ -25,6 +25,7 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
   String branchVariableName;
   String periodVariableName;
   String adjustedFeeAmountsVariableName;
+  String adjustedFeeDeadlineVariableName;
 
   /**
    * Cette méthode permet d'instancier un object.
@@ -35,6 +36,7 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
     branchVariableName = "b";
     periodVariableName = "p";
     adjustedFeeAmountsVariableName = "afa";
+    adjustedFeeDeadlineVariableName = "afad";
   }
 
   @Override
@@ -177,6 +179,15 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
     projectionBuilder().name(AbstractAmountContainerDto.JSON_AMOUNT_RENEWABLE_AS_STRING)
         .nameFieldName(AbstractAmountContainer.FIELD_AMOUNT_RENEWABLE_AS_STRING)
         .fieldName(fieldName(AbstractAmountContainer.FIELD_AMOUNT, Amount.FIELD_RENEWABLE)).build();
+
+    projectionBuilder().name(AbstractAmountContainerDto.JSON_AMOUNT_DEADLINE_AS_STRING)
+        .tupleVariableName(adjustedFeeDeadlineVariableName)
+        .expression(
+            String.format("%s,%s", formatConcatName(fieldName(adjustedFeeDeadlineVariableName)),
+                fieldName(adjustedFeeDeadlineVariableName, Deadline.FIELD_DATE)))
+        .resultConsumer((i, a) -> i.amountDeadlineAsString =
+            Deadline.format(a.getNextAsString(), a.getNextAsLocalDateTimeFormatted()))
+        .build();
   }
 
   void buildJoins() {
@@ -209,6 +220,13 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
         .with(AdjustedFeeAmounts.class).tupleVariableName(adjustedFeeAmountsVariableName)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
         .parentFieldName(AbstractIdentifiable.FIELD_IDENTIFIER).leftInnerOrRight(true).build();
+
+    joinBuilder().projectionsNames(AbstractAmountContainerDto.JSON_AMOUNT_DEADLINE_AS_STRING)
+        .with(Deadline.class).tupleVariableName(adjustedFeeDeadlineVariableName)
+        .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
+        .parentTupleVariableName(adjustedFeeAmountsVariableName)
+        .parentFieldName(AdjustedFeeAmounts.FIELD_DEADLINE_IDENTIFIER).leftInnerOrRight(true)
+        .build();
   }
 
   void buildPredicates() {

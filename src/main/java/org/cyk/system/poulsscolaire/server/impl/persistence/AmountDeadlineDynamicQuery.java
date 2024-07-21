@@ -77,7 +77,7 @@ public class AmountDeadlineDynamicQuery extends AbstractDynamicQuery<AmountDeadl
             formatConcatName(fieldName(variableName, AmountDeadline.FIELD_DEADLINE)), variableName,
             fieldName(AmountDeadline.FIELD_DEADLINE, Deadline.FIELD_DATE)))
         .resultConsumer((i, a) -> i.deadlineAsString =
-            String.format("%s(%s)", a.getNextAsString(), a.getNextAsLocalDateTimeFormatted()))
+            Deadline.format(a.getNextAsString(), a.getNextAsLocalDateTimeFormatted()))
         .build();
 
     projectionBuilder().name(AmountDeadlineDto.JSON_DEADLINE_PASSED)

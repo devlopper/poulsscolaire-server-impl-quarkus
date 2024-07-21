@@ -52,6 +52,9 @@ public class AdjustedFeeAmounts extends AbstractIdentifiable {
 
   @Column(name = "RETARD_DE_PAIEMENT")
   public boolean latePayment;
+  
+  @Column(name = "ECHEANCE")
+  public String deadlineIdentifier;
 
   public static final String QUERY =
       """
@@ -126,8 +129,8 @@ public class AdjustedFeeAmounts extends AbstractIdentifiable {
               JOIN TA_ECHEANCE ON TA_ECHEANCE.IDENTIFIANT = em.ECHEANCE
               WHERE TA_ECHEANCE.DATE_ = (SELECT MIN(e.DATE_)
                 FROM TA_ECHEANCE_MONTANT t
-                JOIN TA_ECHEANCE e ON e.IDENTIFIANT = t.ECHEANCE AND e.IDENTIFIANT = em.ECHEANCE
-                WHERE e.DATE_ >= NOW()))
+                JOIN TA_ECHEANCE e ON e.IDENTIFIANT = t.ECHEANCE
+                WHERE t.MONTANT = em.MONTANT AND e.DATE_ >= NOW()))
                 AS ECHEANCE_EN_COURS ON ECHEANCE_EN_COURS.IDENTIFIANT = TA_FRAIS_AJUSTE.IDENTIFIANT
           LEFT JOIN
             (-- Montant échéances passées
@@ -155,4 +158,5 @@ public class AdjustedFeeAmounts extends AbstractIdentifiable {
   public static final String FIELD_AMOUNT_LEFT_TO_PAY_LESS_THAN_OR_EQUALS_ZERO =
       "amountLeftToPayLessThanOrEqualsZero";
   public static final String FIELD_LATE_PAYMENT = "latePayment";
+  public static final String FIELD_DEADLINE_IDENTIFIER = "deadlineIdentifier";
 }
