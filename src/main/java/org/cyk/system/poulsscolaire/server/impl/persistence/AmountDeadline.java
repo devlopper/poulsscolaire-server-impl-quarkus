@@ -19,8 +19,11 @@ import jakarta.validation.constraints.NotNull;
  */
 @Entity(name = AmountDeadline.ENTITY_NAME)
 @Table(name = AmountDeadline.TABLE_NAME)
-@NamedQueries(value = {@NamedQuery(name = AmountDeadline.QUERY_READ_BY_FEES_IDENTIFIER,
-    query = AmountDeadline.QUERY_READ_BY_FEES_VALUE)})
+@NamedQueries(value = {
+    @NamedQuery(name = AmountDeadline.QUERY_READ_BY_FEES_IDENTIFIER,
+        query = AmountDeadline.QUERY_READ_BY_FEES_VALUE),
+    @NamedQuery(name = AmountDeadline.QUERY_SUM_PAYMENT_BY_AMOUNT_IDENTIFIER,
+        query = AmountDeadline.QUERY_SUM_PAYMENT_BY_AMOUNT_VALUE)})
 public class AmountDeadline extends AbstractIdentifiableAuditable {
 
   @NotNull
@@ -99,4 +102,10 @@ public class AmountDeadline extends AbstractIdentifiableAuditable {
   public static final String QUERY_READ_BY_FEES_IDENTIFIER = "AmountDeadline.readByFees";
   public static final String QUERY_READ_BY_FEES_VALUE =
       "SELECT t, f FROM AmountDeadline t JOIN Fee f ON f.amount = t.amount";
+
+  public static final String QUERY_SUM_PAYMENT_BY_AMOUNT_IDENTIFIER =
+      "AmountDeadline.sumPaymentByAmount";
+  public static final String QUERY_SUM_PAYMENT_BY_AMOUNT_VALUE =
+      "SELECT SUM(t.payment) FROM AmountDeadline t JOIN Amount a ON a = t.amount WHERE t.amount = :"
+          + FIELD_AMOUNT;
 }

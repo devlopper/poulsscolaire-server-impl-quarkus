@@ -1,5 +1,6 @@
 package org.cyk.system.poulsscolaire.server.impl.business.amountdeadline;
 
+import ci.gouv.dgbf.extension.core.Core;
 import ci.gouv.dgbf.extension.core.StringList;
 import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableCreateBusiness;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -43,6 +44,9 @@ public class AmountDeadlineCreateBusiness extends AbstractIdentifiableCreateBusi
         amountValidator.validateInstanceByIdentifier(request.getAmountIdentifier(), messages);
     Deadline deadline =
         deadlineValidator.validateInstanceByIdentifier(request.getDeadlineIdentifier(), messages);
+    Core.runIfNotNull(amount,
+        () -> validator.validatePayment(persistence.getPaymentSumByAmount(amount),
+            request.getPayment(), amount.value, messages));
     return new Object[] {amount, deadline};
   }
 

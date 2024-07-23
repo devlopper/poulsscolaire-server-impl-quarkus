@@ -1,7 +1,10 @@
 package org.cyk.system.poulsscolaire.server.impl.business.amountdeadline;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import ci.gouv.dgbf.extension.core.StringList;
 import ci.gouv.dgbf.extension.test.AbstractTest;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.QuarkusTestProfile;
@@ -22,6 +25,9 @@ class AmountDeadlineBusinessTest extends AbstractTest {
   EntityManager entityManager;
 
   @Inject
+  AmountDeadlineValidator validator;
+
+  @Inject
   AmountDeadlineCreateBusiness createBusiness;
 
   @Inject
@@ -40,9 +46,18 @@ class AmountDeadlineBusinessTest extends AbstractTest {
   AmountDeadlineDeleteBusiness deleteBusiness;
 
   @Test
+  void validatePayment_whenPaymentTooMuch() {
+    assertTrue(validator.validatePayment(0, 1, 0, new StringList()));
+  }
+  
+  @Test
+  void validatePayment_whenPaymentNotTooMuch() {
+    assertFalse(validator.validatePayment(0, 0, 0, new StringList()));
+  }
+
+  @Test
   void create() {
-    AmountDeadlineCreateRequestDto request =
-        new AmountDeadlineCreateRequestDto();
+    AmountDeadlineCreateRequestDto request = new AmountDeadlineCreateRequestDto();
     request.setAmountIdentifier("1");
     request.setDeadlineIdentifier("1");
     request.setPayment(1);
@@ -54,8 +69,7 @@ class AmountDeadlineBusinessTest extends AbstractTest {
 
   @Test
   void update() {
-    AmountDeadlineUpdateRequestDto request =
-        new AmountDeadlineUpdateRequestDto();
+    AmountDeadlineUpdateRequestDto request = new AmountDeadlineUpdateRequestDto();
     request.setIdentifier("toupdate");
     request.setAmountIdentifier("1");
     request.setDeadlineIdentifier("1");
@@ -70,8 +84,7 @@ class AmountDeadlineBusinessTest extends AbstractTest {
 
     @Override
     public Map<String, String> getConfigOverrides() {
-      return Map.of("quarkus.hibernate-orm.sql-load-script",
-          "sql/amountdeadlinebusiness.sql");
+      return Map.of("quarkus.hibernate-orm.sql-load-script", "sql/amountdeadlinebusiness.sql");
     }
   }
 }

@@ -42,4 +42,16 @@ public class AmountDeadlinePersistence extends AbstractIdentifiablePersistence<A
         .createNamedQuery(AmountDeadline.QUERY_READ_BY_FEES_IDENTIFIER, Object[].class)
         .getResultList();
   }
+
+  /**
+   * Cette méthode permet d'obtenir la somme des paiements par montant.
+   *
+   * @param amount montant
+   * @return somme des paiements
+   */
+  public long getPaymentSumByAmount(Amount amount) {
+    return entityManager
+        .createNamedQuery(AmountDeadline.QUERY_SUM_PAYMENT_BY_AMOUNT_IDENTIFIER, Long.class)
+        .setParameter(AmountDeadline.FIELD_AMOUNT, amount).getSingleResult();
+  }
 }
