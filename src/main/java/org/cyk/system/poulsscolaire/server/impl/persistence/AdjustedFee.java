@@ -88,6 +88,12 @@ public class AdjustedFee extends AbstractAmountContainer {
   @Transient
   public String amountValuePayableAsString;
   
+  @Transient
+  public String expectedPaymentAsString;
+
+  @Transient
+  public Boolean latePayment;
+  
   public static final String FIELD_FEE = "fee";
   public static final String FIELD_FEE_IDENTIFIER = "feeIdentifier";
   public static final String FIELD_FEE_OPTIONAL = "feeOptional";
@@ -103,6 +109,8 @@ public class AdjustedFee extends AbstractAmountContainer {
   public static final String FIELD_AMOUNT_VALUE_PAYABLE = "amountValuePayable";
   public static final String FIELD_AMOUNT_VALUE_PAYABLE_AS_STRING =
       "amountValuePayableAsString";
+  public static final String FIELD_EXPECTED_PAYMENT_AS_STRING = "expectedPaymentAsString";
+  public static final String FIELD_LATE_PAYMENT = "latePayment";
   
   public static final String ENTITY_NAME = "AdjustedFee";
   public static final String TABLE_NAME = "TA_FRAIS_AJUSTE";

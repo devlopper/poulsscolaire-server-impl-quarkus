@@ -188,6 +188,16 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
         .resultConsumer((i, a) -> i.amountDeadlineAsString =
             Deadline.format(a.getNextAsString(), a.getNextAsLocalDateTimeFormatted()))
         .build();
+
+    projectionBuilder().name(AdjustedFeeDto.JSON_EXPECTED_PAYMENT_AS_STRING)
+        .nameFieldName(AdjustedFee.FIELD_EXPECTED_PAYMENT_AS_STRING)
+        .tupleVariableName(adjustedFeeAmountsVariableName)
+        .fieldName(AdjustedFeeAmounts.FIELD_EXPECTED_PAYMENT).build();
+
+    projectionBuilder().name(AdjustedFeeDto.JSON_LATE_PAYMENT)
+        .nameFieldName(AdjustedFee.FIELD_LATE_PAYMENT)
+        .tupleVariableName(adjustedFeeAmountsVariableName)
+        .fieldName(AdjustedFeeAmounts.FIELD_LATE_PAYMENT).build();
   }
 
   void buildJoins() {
@@ -215,9 +225,11 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
             AdjustedFeeDto.JSON_AMOUNT_VALUE_PAID, AdjustedFeeDto.JSON_AMOUNT_VALUE_PAID_AS_STRING,
             AdjustedFeeDto.JSON_AMOUNT_VALUE_PAYABLE,
             AdjustedFeeDto.JSON_AMOUNT_VALUE_PAYABLE_AS_STRING,
-            AbstractAmountContainerDto.JSON_AMOUNT_DEADLINE_AS_STRING)
+            AbstractAmountContainerDto.JSON_AMOUNT_DEADLINE_AS_STRING,
+            AdjustedFeeDto.JSON_EXPECTED_PAYMENT_AS_STRING, AdjustedFeeDto.JSON_LATE_PAYMENT)
         .predicatesNames(
-            AbstractAmountContainerFilter.JSON_AMOUNT_VALUE_PAYABLE_LESS_THAN_OR_EQUALS_ZERO)
+            AbstractAmountContainerFilter.JSON_AMOUNT_VALUE_PAYABLE_LESS_THAN_OR_EQUALS_ZERO,
+            AdjustedFeeDto.JSON_LATE_PAYMENT)
         .with(AdjustedFeeAmounts.class).tupleVariableName(adjustedFeeAmountsVariableName)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
         .parentFieldName(AbstractIdentifiable.FIELD_IDENTIFIER).leftInnerOrRight(true).build();

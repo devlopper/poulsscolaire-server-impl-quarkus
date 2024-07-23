@@ -50,6 +50,9 @@ public class AdjustedFeeAmounts extends AbstractIdentifiable {
   @Column(name = "RESTE_A_PAYER_INFERIEUR_OU_EGALE_ZERO")
   public boolean amountLeftToPayLessThanOrEqualsZero;
 
+  @Column(name = "PAIEMENT_ATTENDU")
+  public long expectedPayment;
+  
   @Column(name = "RETARD_DE_PAIEMENT")
   public boolean latePayment;
   
@@ -68,7 +71,7 @@ public class AdjustedFeeAmounts extends AbstractIdentifiable {
             ,CASE WHEN A_PAYER.MONTANT - COALESCE(PAYE.MONTANT,0) <= 0 THEN 1 ELSE 0 END
               AS RESTE_A_PAYER_INFERIEUR_OU_EGALE_ZERO
             ,ECHEANCE_EN_COURS.ECHEANCE AS ECHEANCE
-            ,COALESCE(PAYE.MONTANT,0) - COALESCE(ECHEANCES_PASSEES.A_PAYER,0)
+            ,COALESCE(ECHEANCES_PASSEES.A_PAYER,0) - COALESCE(PAYE.MONTANT,0)
               + COALESCE(ECHEANCE_EN_COURS.A_PAYER,0) AS PAIEMENT_ATTENDU
             ,CASE WHEN COALESCE(PAYE.MONTANT,0) - COALESCE(ECHEANCES_PASSEES.A_PAYER,0) < 0
               THEN 1 ELSE 0 END AS RETARD_DE_PAIEMENT
@@ -157,6 +160,7 @@ public class AdjustedFeeAmounts extends AbstractIdentifiable {
 
   public static final String FIELD_AMOUNT_LEFT_TO_PAY_LESS_THAN_OR_EQUALS_ZERO =
       "amountLeftToPayLessThanOrEqualsZero";
+  public static final String FIELD_EXPECTED_PAYMENT = "expectedPayment";
   public static final String FIELD_LATE_PAYMENT = "latePayment";
   public static final String FIELD_DEADLINE_IDENTIFIER = "deadlineIdentifier";
 }
