@@ -1,11 +1,13 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
 import ci.gouv.dgbf.extension.server.persistence.AbstractIdentifiablePersistence;
+import ci.gouv.dgbf.extension.server.persistence.query.SingleResultGetter;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.fee.AmountDeadlineDto;
 
@@ -50,8 +52,8 @@ public class AmountDeadlinePersistence extends AbstractIdentifiablePersistence<A
    * @return somme des paiements
    */
   public long getPaymentSumByAmount(Amount amount) {
-    return entityManager
+    return Optional.ofNullable(new SingleResultGetter<>(entityManager
         .createNamedQuery(AmountDeadline.QUERY_SUM_PAYMENT_BY_AMOUNT_IDENTIFIER, Long.class)
-        .setParameter(AmountDeadline.FIELD_AMOUNT, amount).getSingleResult();
+        .setParameter(AmountDeadline.FIELD_AMOUNT, amount)).noResultValue(0L).get()).orElse(0L);
   }
 }

@@ -33,6 +33,7 @@ public class AmountDeadlineValidator extends AbstractIdentifiableValidator<Amoun
    */
   public boolean validatePayment(long actual, long payment, long total, StringList messages) {
     return validationHelper.validateGreaterThanByName(this, actual + payment, total,
-        "échéance de paiement", "total échéance de paiement", messages);
+        String.format("total échéance de paiement (%s)", actual + payment), String.valueOf(total),
+        messages);
   }
 }
