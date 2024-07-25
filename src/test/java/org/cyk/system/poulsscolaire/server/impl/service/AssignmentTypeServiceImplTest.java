@@ -11,7 +11,7 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.cyk.system.poulsscolaire.server.api.configuration.AssignmentTypeDto;
 import org.cyk.system.poulsscolaire.server.api.configuration.AssignmentTypeService;
-import org.cyk.system.poulsscolaire.server.api.configuration.AssignmentTypeService.GetManyResponseDto;
+import org.cyk.system.poulsscolaire.server.api.configuration.AssignmentTypeService.AssignmentTypeGetManyResponseDto;
 import org.cyk.system.poulsscolaire.server.impl.business.assignmenttype.AssignmentTypeCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.assignmenttype.AssignmentTypeDeleteBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.assignmenttype.AssignmentTypeReadByIdentifierBusiness;
@@ -45,7 +45,7 @@ class AssignmentTypeServiceImplTest extends AbstractTest {
   void readMany() {
     AssignmentTypeReadManyBusiness business =
         installMockForType(AssignmentTypeReadManyBusiness.class);
-    Mockito.when(business.process(any())).thenReturn(new GetManyResponseDto());
+    Mockito.when(business.process(any())).thenReturn(new AssignmentTypeGetManyResponseDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
         .post(AssignmentTypeService.PATH + "/" + AssignmentTypeService.GET_MANY_PATH).then()

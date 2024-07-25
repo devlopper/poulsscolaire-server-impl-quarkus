@@ -50,6 +50,7 @@ public class StudentCreateBusiness extends AbstractIdentifiableCreateBusiness<St
     student.identity.set(request, array);
     student.registrationNumber = request.getRegistrationNumber();
     student.code = "E" + System.currentTimeMillis();
+    student.schoolIdentifier = request.getSchoolIdentifier();
   }
 
   @Override

@@ -11,8 +11,8 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolingDto;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolingService;
-import org.cyk.system.poulsscolaire.server.api.configuration.SchoolingService.GetManyResponseDto;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolingService.SchoolingGenerateResponseDto;
+import org.cyk.system.poulsscolaire.server.api.configuration.SchoolingService.SchoolingGetManyResponseDto;
 import org.cyk.system.poulsscolaire.server.impl.business.schooling.SchoolingCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.schooling.SchoolingDeleteBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.schooling.SchoolingGenerateBusiness;
@@ -45,7 +45,7 @@ class SchoolingServiceImplTest extends AbstractTest {
   @Test
   void readMany() {
     SchoolingReadManyBusiness business = installMockForType(SchoolingReadManyBusiness.class);
-    Mockito.when(business.process(any())).thenReturn(new GetManyResponseDto());
+    Mockito.when(business.process(any())).thenReturn(new SchoolingGetManyResponseDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
         .post(SchoolingService.PATH + "/" + SchoolingService.GET_MANY_PATH).then().log().ifError()

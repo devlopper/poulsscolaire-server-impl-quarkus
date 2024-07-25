@@ -5,7 +5,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.configuration.AssignmentTypeDto;
-import org.cyk.system.poulsscolaire.server.api.configuration.AssignmentTypeService.GetManyResponseDto;
+import org.cyk.system.poulsscolaire.server.api.configuration.AssignmentTypeService.AssignmentTypeGetManyResponseDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AssignmentType;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AssignmentTypeDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AssignmentTypePersistence;
@@ -17,12 +17,13 @@ import org.cyk.system.poulsscolaire.server.impl.persistence.AssignmentTypePersis
  *
  */
 @ApplicationScoped
-public class AssignmentTypeReadManyBusiness
-    extends AbstractIdentifiableReadManyBusiness<AssignmentType, AssignmentTypePersistence,
-        AssignmentTypeDynamicQuery, AssignmentTypeDto, AssignmentTypeMapper, GetManyResponseDto> {
+public class AssignmentTypeReadManyBusiness extends
+    AbstractIdentifiableReadManyBusiness<AssignmentType, AssignmentTypePersistence,
+        AssignmentTypeDynamicQuery, AssignmentTypeDto, AssignmentTypeMapper,
+        AssignmentTypeGetManyResponseDto> {
 
   protected AssignmentTypeReadManyBusiness() {
-    super(GetManyResponseDto.class);
+    super(AssignmentTypeGetManyResponseDto.class);
   }
 
   @Inject

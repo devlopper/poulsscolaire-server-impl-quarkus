@@ -11,7 +11,7 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.cyk.system.poulsscolaire.server.api.configuration.SeniorityDto;
 import org.cyk.system.poulsscolaire.server.api.configuration.SeniorityService;
-import org.cyk.system.poulsscolaire.server.api.configuration.SeniorityService.GetManyResponseDto;
+import org.cyk.system.poulsscolaire.server.api.configuration.SeniorityService.SeniorityGetManyResponseDto;
 import org.cyk.system.poulsscolaire.server.impl.business.seniority.SeniorityCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.seniority.SeniorityDeleteBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.seniority.SeniorityReadByIdentifierBusiness;
@@ -45,7 +45,7 @@ class SeniorityServiceImplTest extends AbstractTest {
   void readMany() {
     SeniorityReadManyBusiness business =
         installMockForType(SeniorityReadManyBusiness.class);
-    Mockito.when(business.process(any())).thenReturn(new GetManyResponseDto());
+    Mockito.when(business.process(any())).thenReturn(new SeniorityGetManyResponseDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
         .post(SeniorityService.PATH + "/" + SeniorityService.GET_MANY_PATH).then()

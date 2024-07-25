@@ -59,7 +59,7 @@ public class StudentServiceImpl extends AbstractServiceImpl implements StudentSe
 
   @Override
   public Response getMany(GetManyRequestDto request) {
-    GetManyResponseDto dto = readManyBusiness.process(request);
+    StudentGetManyResponseDto dto = readManyBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);
     return responseBuilder.build();

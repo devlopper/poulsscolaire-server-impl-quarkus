@@ -48,6 +48,7 @@ class StudentBusinessTest extends AbstractTest {
     request.setLastNames(UUID.randomUUID().toString());
     request.setEmailAddress("m@m.com");
     request.setGenderIdentifier("M");
+    request.setSchoolIdentifier("1");
     request.setAuditWho("christian");
     long count = count(entityManager, Student.ENTITY_NAME);
     long identityCount = count(entityManager, Identity.ENTITY_NAME);

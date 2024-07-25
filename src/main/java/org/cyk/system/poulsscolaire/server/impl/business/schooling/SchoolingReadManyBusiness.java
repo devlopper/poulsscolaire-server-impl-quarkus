@@ -5,7 +5,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolingDto;
-import org.cyk.system.poulsscolaire.server.api.configuration.SchoolingService.GetManyResponseDto;
+import org.cyk.system.poulsscolaire.server.api.configuration.SchoolingService.SchoolingGetManyResponseDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Schooling;
 import org.cyk.system.poulsscolaire.server.impl.persistence.SchoolingDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.SchoolingPersistence;
@@ -19,10 +19,10 @@ import org.cyk.system.poulsscolaire.server.impl.persistence.SchoolingPersistence
 @ApplicationScoped
 public class SchoolingReadManyBusiness
     extends AbstractIdentifiableReadManyBusiness<Schooling, SchoolingPersistence,
-        SchoolingDynamicQuery, SchoolingDto, SchoolingMapper, GetManyResponseDto> {
+        SchoolingDynamicQuery, SchoolingDto, SchoolingMapper, SchoolingGetManyResponseDto> {
 
   protected SchoolingReadManyBusiness() {
-    super(GetManyResponseDto.class);
+    super(SchoolingGetManyResponseDto.class);
   }
 
   @Inject
