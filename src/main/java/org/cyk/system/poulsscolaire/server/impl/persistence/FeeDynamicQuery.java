@@ -127,6 +127,18 @@ public class FeeDynamicQuery extends AbstractAmountContainerDynamicQuery<Fee> {
         .nameFieldName(AbstractAmountContainer.FIELD_AMOUNT_RENEWABLE_AS_STRING)
         .fieldName(fieldName(AbstractAmountContainer.FIELD_AMOUNT, Amount.FIELD_RENEWABLE)).build();
 
+    projectionBuilder().name(FeeDto.JSON_AMOUNT_VALUE_SUM_AS_STRING)
+        .expression(
+            "COALESCE(SUM(CASE WHEN t.amount.optional IS TRUE THEN 0 "
+            + "ELSE t.amount.value END),0)")
+        .resultConsumer((i, a) -> i.amountValueSumAsString = a.getNextAsLongFormatted()).build();
+
+    projectionBuilder().name(FeeDto.JSON_AMOUNT_REGISTRATION_SUM_AS_STRING)
+    .expression(
+        "COALESCE(SUM(CASE WHEN t.amount.optional IS TRUE THEN 0 "
+        + "ELSE t.amount.registrationValuePart END),0)")
+    .resultConsumer((i, a) -> i.amountRegistrationSumAsString = a.getNextAsLongFormatted()).build();
+    
     // Jointure
     joinBuilder().projectionsNames(FeeDto.JSON_SCHOOLING_SCHOOL_AS_STRING)
         .entityName(School.ENTITY_NAME).tupleVariableName(schoolVariableName)

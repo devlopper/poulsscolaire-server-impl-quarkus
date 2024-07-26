@@ -1,22 +1,22 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
-import io.quarkus.test.junit.QuarkusMock;
+import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters.ResultMode;
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.junit.QuarkusTestProfile;
+import io.quarkus.test.junit.TestProfile;
 import jakarta.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 import org.cyk.system.poulsscolaire.server.api.fee.FeeDto;
-import org.hibernate.Session;
-import org.hibernate.query.Query;
+import org.cyk.system.poulsscolaire.server.api.fee.FeeFilter;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 @QuarkusTest
+@TestProfile(FeeDynamicQueryTest.Profile.class)
 class FeeDynamicQueryTest {
 
   @Inject
@@ -24,29 +24,38 @@ class FeeDynamicQueryTest {
 
   DynamicQueryParameters<Fee> parameters = new DynamicQueryParameters<>();
 
-  @SuppressWarnings("unchecked")
-  @Test
-  void getMany() {
-    @SuppressWarnings("rawtypes")
-    Query query = Mockito.mock(Query.class);
-    List<Object[]> arrays = new ArrayList<>();
-    arrays.add(new Object[] {"1"});
-    Mockito.when(query.getResultList()).thenReturn(arrays);
-
-    Session session = Mockito.mock(Session.class);
-    Mockito.when(session.createQuery(anyString(), any())).thenReturn(query);
-    QuarkusMock.installMockForType(session, Session.class);
-
-    assertEquals(1, dynamicQuery.getMany(parameters).size());
-  }
-
   @Test
   void buildQuery_whenProjectionSchoolingSchoolAsString() {
     parameters.projection().addNames(FeeDto.JSON_SCHOOLING_SCHOOL_AS_STRING);
     assertEquals(
         "SELECT school.name FROM Fee t "
-        + "LEFT JOIN School school ON school.identifier = t.schooling.schoolIdentifier "
-        + "ORDER BY t.amount.paymentOrderNumber ASC,t.category.name ASC",
+            + "LEFT JOIN School school ON school.identifier = t.schooling.schoolIdentifier "
+            + "ORDER BY t.amount.paymentOrderNumber ASC,t.category.name ASC",
         dynamicQuery.buildQueryString(parameters));
+  }
+
+  @ParameterizedTest
+  @CsvSource(value = {"1,1,1,100,0", "2,1,1,500,75"})
+  void getOne_whenSumAmountAndRegistration_whenFilterSchoolingAssignlentTypeSeniority(
+      String schoolingIdentifier, String assignmenttypeIdentifier, String seniorityIdentifier,
+      String expectedAmountSum, String expectedRegistrationSum) {
+    parameters.setResultMode(ResultMode.ONE);
+    parameters.projection().addNames(FeeDto.JSON_AMOUNT_VALUE_SUM_AS_STRING,
+        FeeDto.JSON_AMOUNT_REGISTRATION_SUM_AS_STRING);
+    parameters.filter().addCriteria(FeeFilter.JSON_SCHOOLING_IDENTIFIER, schoolingIdentifier);
+    parameters.filter().addCriteria(FeeFilter.JSON_ASSIGNMENT_TYPE_IDENTIFIER,
+        assignmenttypeIdentifier);
+    parameters.filter().addCriteria(FeeFilter.JSON_SENIORITY_IDENTIFIER, seniorityIdentifier);
+    Fee fee = dynamicQuery.getOne(parameters);
+    assertEquals(expectedAmountSum, fee.amountValueSumAsString);
+    assertEquals(expectedRegistrationSum, fee.amountRegistrationSumAsString);
+  }
+
+  public static class Profile implements QuarkusTestProfile {
+
+    @Override
+    public Map<String, String> getConfigOverrides() {
+      return Map.of("quarkus.hibernate-orm.sql-load-script", "sql/feedynamicquery.sql");
+    }
   }
 }

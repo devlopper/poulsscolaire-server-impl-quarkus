@@ -11,7 +11,7 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.cyk.system.poulsscolaire.server.api.fee.FeeCategoryDto;
 import org.cyk.system.poulsscolaire.server.api.fee.FeeCategoryService;
-import org.cyk.system.poulsscolaire.server.api.fee.FeeCategoryService.GetManyResponseDto;
+import org.cyk.system.poulsscolaire.server.api.fee.FeeCategoryService.FeeCategoryGetManyResponseDto;
 import org.cyk.system.poulsscolaire.server.impl.business.feecategory.FeeCategoryCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.feecategory.FeeCategoryDeleteBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.feecategory.FeeCategoryReadByIdentifierBusiness;
@@ -45,7 +45,7 @@ class FeeCategoryServiceImplTest extends AbstractTest {
   void readMany() {
     FeeCategoryReadManyBusiness business =
         installMockForType(FeeCategoryReadManyBusiness.class);
-    Mockito.when(business.process(any())).thenReturn(new GetManyResponseDto());
+    Mockito.when(business.process(any())).thenReturn(new FeeCategoryGetManyResponseDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
         .post(FeeCategoryService.PATH + "/" + FeeCategoryService.GET_MANY_PATH).then()
