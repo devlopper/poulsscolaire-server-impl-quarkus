@@ -34,4 +34,8 @@ public class PaymentValidator extends AbstractIdentifiableCodableValidator<Payme
     return validationHelper.validateLowerThanByName(this, amount, preRegistrationAmount,
         "montant du premier paiement", "montant de la pré-inscription", messages);
   }
+
+  public boolean validateCanceled(boolean canceled, StringList messages) {
+    return messages.addIfTrue(canceled, "Le paiement a déja été annulé");
+  }
 }

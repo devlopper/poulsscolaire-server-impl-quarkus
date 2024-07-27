@@ -2,8 +2,10 @@ package org.cyk.system.poulsscolaire.server.impl.business.payment;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import ci.gouv.dgbf.extension.server.business.BusinessInputValidationException;
+import ci.gouv.dgbf.extension.server.service.api.request.ByIdentifierRequestDto;
 import ci.gouv.dgbf.extension.test.AbstractTest;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.QuarkusTestProfile;
@@ -14,6 +16,7 @@ import java.util.Map;
 import org.cyk.system.poulsscolaire.server.api.payment.PaymentService.PaymentCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Payment;
 import org.cyk.system.poulsscolaire.server.impl.persistence.PaymentAdjustedFee;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -38,6 +41,9 @@ class PaymentBusinessTest extends AbstractTest {
 
   @Inject
   PaymentUpdateBusiness updateBusiness;
+  
+  @Inject
+  PaymentCancelBusiness cancelBusiness;
 
   @Inject
   PaymentDeleteBusiness deleteBusiness;
@@ -82,6 +88,15 @@ class PaymentBusinessTest extends AbstractTest {
     assertEquals(paymentCount + 1, count(entityManager, Payment.ENTITY_NAME));
     assertEquals(paymentAdjustedFeeCount + numberofAdjustedPayment,
         count(entityManager, PaymentAdjustedFee.ENTITY_NAME));
+  }
+  
+  @Test
+  void cancel() {
+    ByIdentifierRequestDto request = new ByIdentifierRequestDto();
+    request.setIdentifier("cancelable");
+    request.setAuditWho("christian");
+    cancelBusiness.process(request);
+    assertTrue(true);
   }
 
   public static class Profile implements QuarkusTestProfile {

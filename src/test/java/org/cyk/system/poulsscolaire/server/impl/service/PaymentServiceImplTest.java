@@ -12,6 +12,7 @@ import io.restassured.http.ContentType;
 import org.cyk.system.poulsscolaire.server.api.payment.PaymentDto;
 import org.cyk.system.poulsscolaire.server.api.payment.PaymentService;
 import org.cyk.system.poulsscolaire.server.api.payment.PaymentService.GetManyResponseDto;
+import org.cyk.system.poulsscolaire.server.impl.business.payment.PaymentCancelBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.payment.PaymentCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.payment.PaymentDeleteBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.payment.PaymentReadByIdentifierBusiness;
@@ -82,6 +83,17 @@ class PaymentServiceImplTest extends AbstractTest {
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
         .put(PaymentService.PATH + "/" + PaymentService.UPDATE_PATH).then().log()
+        .ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
+  }
+  
+  @Test
+  void cancel() {
+    PaymentCancelBusiness business =
+        installMockForType(PaymentCancelBusiness.class);
+    Mockito.when(business.process(any())).thenReturn(new IdentifiableResponseDto());
+
+    RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
+        .put(PaymentService.PATH + "/" + PaymentService.CANCEL_PATH).then().log()
         .ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
   }
 

@@ -1,6 +1,7 @@
 package org.cyk.system.poulsscolaire.server.impl.service;
 
 import ci.gouv.dgbf.extension.core.ResponseBuilder;
+import ci.gouv.dgbf.extension.server.service.api.request.ByIdentifierRequestDto;
 import ci.gouv.dgbf.extension.server.service.api.request.DeleteOneRequestDto;
 import ci.gouv.dgbf.extension.server.service.api.request.GetByIdentifierRequestDto;
 import ci.gouv.dgbf.extension.server.service.api.request.GetManyRequestDto;
@@ -14,6 +15,7 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 import org.cyk.system.poulsscolaire.server.api.payment.PaymentDto;
 import org.cyk.system.poulsscolaire.server.api.payment.PaymentService;
+import org.cyk.system.poulsscolaire.server.impl.business.payment.PaymentCancelBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.payment.PaymentCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.payment.PaymentDeleteBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.payment.PaymentReadByIdentifierBusiness;
@@ -44,6 +46,9 @@ public class PaymentServiceImpl extends AbstractServiceImpl implements PaymentSe
   
   @Inject
   PaymentUpdateBusiness updateBusiness;
+  
+  @Inject
+  PaymentCancelBusiness cancelBusiness;
   
   @Inject
   PaymentDeleteBusiness deleteBusiness;
@@ -84,6 +89,14 @@ public class PaymentServiceImpl extends AbstractServiceImpl implements PaymentSe
   @Override
   public Response update(PaymentUpdateRequestDto request) {
     IdentifiableResponseDto dto = updateBusiness.process(request);
+    ResponseBuilder responseBuilder = new ResponseBuilder();
+    responseBuilder.setDto(dto);
+    return responseBuilder.build();
+  }
+  
+  @Override
+  public Response cancel(ByIdentifierRequestDto request) {
+    IdentifiableResponseDto dto = cancelBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);
     return responseBuilder.build();
