@@ -47,7 +47,7 @@ public class AmountDeadlineStatuses extends AbstractIdentifiable {
         JOIN TA_ECHEANCE ON TA_ECHEANCE.IDENTIFIANT = t.ECHEANCE)
           AS EN_COURS ON EN_COURS.ECHEANCE_MONTANT = TA_ECHEANCE_MONTANT.IDENTIFIANT
                               """;
-  
+
   public static final String FIELD_PASSED = "passed";
   public static final String FIELD_RUNNING = "running";
 }
