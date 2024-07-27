@@ -59,7 +59,7 @@ public class RegistrationServiceImpl extends AbstractServiceImpl implements Regi
 
   @Override
   public Response getMany(GetManyRequestDto request) {
-    GetManyResponseDto dto = readManyBusiness.process(request);
+    RegistrationGetManyResponseDto dto = readManyBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);
     return responseBuilder.build();

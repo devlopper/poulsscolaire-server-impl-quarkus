@@ -17,6 +17,7 @@ import java.util.Set;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolDto;
 import org.cyk.system.poulsscolaire.server.api.registration.RegistrationDto;
+import org.cyk.system.poulsscolaire.server.api.registration.StudentDto;
 
 /**
  * Cette classe représente la requête dynamique de {@link Registration}.
@@ -63,9 +64,13 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
         .fieldName(AbstractIdentifiableCodable.FIELD_CODE).build();
 
     projectionBuilder().name(RegistrationDto.JSON_STUDENT_AS_STRING)
-        .nameFieldName(Registration.FIELD_STUDENT_AS_STRING)
-        .fieldName(fieldName(Registration.FIELD_STUDENT, Student.FIELD_IDENTITY,
-            Identity.FIELD_FIRST_NAME))
+        .expression(String.format("%1$s.%3$s,%1$s.%4$s,%1$s.%2$s.%5$s,%1$s.%2$s.%6$s",
+            fieldName(variableName, Registration.FIELD_STUDENT), Student.FIELD_IDENTITY,
+            AbstractIdentifiableCodable.FIELD_CODE, Student.FIELD_REGISTRATION_NUMBER,
+            Identity.FIELD_FIRST_NAME, Identity.FIELD_LAST_NAMES))
+        .resultConsumer(
+            (i, a) -> i.studentAsString = StudentDto.computeAsString(a.getNextAsString(),
+                a.getNextAsString(), a.getNextAsString(), a.getNextAsString()))
         .build();
 
     projectionBuilder().name(RegistrationDto.JSON_SCHOOLING_AS_STRING)

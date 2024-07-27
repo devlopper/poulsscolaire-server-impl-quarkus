@@ -5,7 +5,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.registration.RegistrationDto;
-import org.cyk.system.poulsscolaire.server.api.registration.RegistrationService.GetManyResponseDto;
+import org.cyk.system.poulsscolaire.server.api.registration.RegistrationService.RegistrationGetManyResponseDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Registration;
 import org.cyk.system.poulsscolaire.server.impl.persistence.RegistrationDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.RegistrationPersistence;
@@ -17,12 +17,13 @@ import org.cyk.system.poulsscolaire.server.impl.persistence.RegistrationPersiste
  *
  */
 @ApplicationScoped
-public class RegistrationReadManyBusiness
-    extends AbstractIdentifiableReadManyBusiness<Registration, RegistrationPersistence,
-        RegistrationDynamicQuery, RegistrationDto, RegistrationMapper, GetManyResponseDto> {
+public class RegistrationReadManyBusiness extends
+    AbstractIdentifiableReadManyBusiness<Registration, RegistrationPersistence,
+        RegistrationDynamicQuery, RegistrationDto, RegistrationMapper,
+        RegistrationGetManyResponseDto> {
 
   protected RegistrationReadManyBusiness() {
-    super(GetManyResponseDto.class);
+    super(RegistrationGetManyResponseDto.class);
   }
 
   @Inject

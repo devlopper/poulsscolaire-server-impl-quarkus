@@ -10,6 +10,7 @@ import io.quarkus.test.junit.TestProfile;
 import jakarta.inject.Inject;
 import java.util.Map;
 import org.cyk.system.poulsscolaire.server.api.registration.RegistrationDto;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -105,6 +106,15 @@ class RegistrationDynamicQueryTest {
     parameters.filter().addCriteria(RegistrationDto.JSON_IDENTIFIER, identifier);
     Registration registration = dynamicQuery.getOne(parameters);
     assertEquals(amount, registration.totalRegistrationAmountAsString);
+  }
+  
+  @Test
+  void getOne_studentAsString() {
+    parameters.setResultMode(ResultMode.ONE);
+    parameters.projection().addNames(RegistrationDto.JSON_STUDENT_AS_STRING);
+    parameters.filter().addCriteria(RegistrationDto.JSON_IDENTIFIER, "i1");
+    Registration registration = dynamicQuery.getOne(parameters);
+    assertEquals("1 - 1 1", registration.studentAsString);
   }
 
   public static class Profile implements QuarkusTestProfile {
