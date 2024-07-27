@@ -30,7 +30,7 @@ public class PaymentCancelBusiness extends AbstractIdentifiableUpdateBusiness<Pa
   @Override
   protected void validate(ByIdentifierRequestDto request, StringList messages, Payment payment) {
     super.validate(request, messages, payment);
-    validator.validateCanceled(Boolean.TRUE.equals(payment.canceled), messages);
+    validator.validateCanceled(payment.canceled, messages);
   }
 
   @Override

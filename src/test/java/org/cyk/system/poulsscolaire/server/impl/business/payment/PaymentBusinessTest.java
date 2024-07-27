@@ -1,8 +1,8 @@
 package org.cyk.system.poulsscolaire.server.impl.business.payment;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import ci.gouv.dgbf.extension.server.business.BusinessInputValidationException;
 import ci.gouv.dgbf.extension.server.service.api.request.ByIdentifierRequestDto;
@@ -95,8 +95,7 @@ class PaymentBusinessTest extends AbstractTest {
     ByIdentifierRequestDto request = new ByIdentifierRequestDto();
     request.setIdentifier("cancelable");
     request.setAuditWho("christian");
-    cancelBusiness.process(request);
-    assertTrue(true);
+    assertDoesNotThrow(() -> cancelBusiness.process(request));
   }
 
   public static class Profile implements QuarkusTestProfile {
