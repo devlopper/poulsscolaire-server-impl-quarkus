@@ -105,6 +105,7 @@ public class PaymentCreateBusiness extends AbstractIdentifiableCreateBusiness<Pa
     payment.code = String.format("P%s", System.currentTimeMillis());
     payment.amount = request.getAmount();
     payment.payables = (List<Object[]>) array[2];
+    payment.canceled = false;
   }
 
   @Override

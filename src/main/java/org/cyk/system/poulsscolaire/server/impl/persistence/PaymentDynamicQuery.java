@@ -48,6 +48,8 @@ public class PaymentDynamicQuery extends AbstractDynamicQuery<Payment> {
     projectionBuilder().name(AbstractIdentifiableCodableDto.JSON_CODE)
         .fieldName(AbstractIdentifiableCodable.FIELD_CODE).build();
 
+    projectionBuilder().name(PaymentDto.JSON_CANCELED).fieldName(Payment.FIELD_CANCELED).build();
+
     projectionBuilder().name(PaymentDto.JSON_MODE_AS_STRING)
         .nameFieldName(Payment.FIELD_MODE_AS_STRING)
         .fieldName(fieldName(Payment.FIELD_MODE, AbstractIdentifiableCodableNamable.FIELD_NAME))
@@ -73,6 +75,9 @@ public class PaymentDynamicQuery extends AbstractDynamicQuery<Payment> {
     predicateBuilder().name(PaymentFilter.JSON_REGISTRATION_IDENTIFIER)
         .fieldName(fieldName(Payment.FIELD_REGISTRATION, AbstractIdentifiable.FIELD_IDENTIFIER))
         .valueFunction(PaymentFilter::getRegistrationIdentifier).build();
+
+    predicateBuilder().name(PaymentFilter.JSON_CANCELED).fieldName(Payment.FIELD_CANCELED)
+        .valueFunction(PaymentFilter::getCanceled).build();
 
     // Ordres par défaut
     orderBuilder().fieldName(AbstractIdentifiableCodable.FIELD_CODE).build();

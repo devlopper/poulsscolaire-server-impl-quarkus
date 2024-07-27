@@ -436,6 +436,7 @@ CREATE TABLE TA_PAIEMENT (
 	MONTANT INT NOT NULL COMMENT 'Montant du paiement',
 	DATE_ DATE NOT NULL COMMENT 'Date du paiement',
 	MODE VARCHAR(36) NOT NULL COMMENT 'Identifiant du mode de paiement',
+	ANNULE BOOLEAN COMMENT 'Annulé',
 	
 	-- Audit
 	 AUDIT_IDENTIFIANT VARCHAR(36) NOT NULL COMMENT 'Identifiant de l''audit',

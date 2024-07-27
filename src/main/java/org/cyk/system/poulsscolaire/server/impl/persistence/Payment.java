@@ -30,7 +30,8 @@ public class Payment extends AbstractIdentifiableCodableAuditable {
   @JoinColumn(name = COLUMN_MODE, nullable = false)
   public PaymentMode mode;
 
-  @Column(name = COLUMN_CANCELED)
+  @NotNull
+  @Column(name = COLUMN_CANCELED, nullable = false)
   public Boolean canceled;
   
   /* Transients */
@@ -56,6 +57,7 @@ public class Payment extends AbstractIdentifiableCodableAuditable {
   public static final String FIELD_AMOUNT = "amount";
   public static final String FIELD_AMOUNT_AS_STRING = "amountAsString";
   public static final String FIELD_DATE_AS_STRING = "dateAsString";
+  public static final String FIELD_CANCELED = "canceled";
 
   public static final String ENTITY_NAME = "Payment";
   public static final String TABLE_NAME = "TA_PAIEMENT";
