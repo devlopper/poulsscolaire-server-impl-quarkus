@@ -17,6 +17,7 @@ import java.util.Set;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolDto;
 import org.cyk.system.poulsscolaire.server.api.registration.RegistrationDto;
+import org.cyk.system.poulsscolaire.server.api.registration.RegistrationFilter;
 import org.cyk.system.poulsscolaire.server.api.registration.StudentDto;
 
 /**
@@ -32,6 +33,7 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
   @Getter
   EntityManager entityManager;
 
+  String schoolVariableName;
   String adjustedFeeAmountsVariableName;
 
   /**
@@ -39,6 +41,7 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
    */
   public RegistrationDynamicQuery() {
     super(Registration.class);
+    schoolVariableName = "s";
     adjustedFeeAmountsVariableName = "afa";
   }
 
@@ -139,12 +142,21 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
         .with(AdjustedFeeAmounts.class).tupleVariableName(adjustedFeeAmountsVariableName)
         .fieldName(AdjustedFeeAmounts.FIELD_REGISTRATION_IDENTIFIER)
         .parentFieldName(AbstractIdentifiable.FIELD_IDENTIFIER).leftInnerOrRight(true).build();
+
+    joinBuilder().predicatesNames(RegistrationDto.JSON_SCHOOL_IDENTIFIER)
+        .entityName(School.ENTITY_NAME).tupleVariableName(schoolVariableName)
+        .parentFieldName(fieldName(Registration.FIELD_SCHOOLING, Schooling.FIELD_SCHOOL_IDENTIFIER))
+        .leftInnerOrRight(true).build();
   }
 
   void buildPredicates() {
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
         .valueFunction(AbstractIdentifiableFilter::getIdentifier).build();
+
+    predicateBuilder().name(RegistrationFilter.JSON_SCHOOL_IDENTIFIER)
+        .fieldName(fieldName(Registration.FIELD_SCHOOLING, Schooling.FIELD_SCHOOL_IDENTIFIER))
+        .valueFunction(RegistrationFilter::getSchoolIdentifier).build();
   }
 
   @Override

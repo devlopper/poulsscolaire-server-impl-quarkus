@@ -46,7 +46,7 @@ public class SchoolServiceImpl extends AbstractServiceImpl implements SchoolServ
 
   @Override
   public Response getMany(GetManyRequestDto request) {
-    GetManyResponseDto dto = readManyBusiness.process(request);
+    SchoolGetManyResponseDto dto = readManyBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);
     return responseBuilder.build();

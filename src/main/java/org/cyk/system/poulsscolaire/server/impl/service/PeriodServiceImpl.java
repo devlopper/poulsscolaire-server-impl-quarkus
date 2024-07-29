@@ -46,7 +46,7 @@ public class PeriodServiceImpl extends AbstractServiceImpl implements PeriodServ
 
   @Override
   public Response getMany(GetManyRequestDto request) {
-    GetManyResponseDto dto = readManyBusiness.process(request);
+    PeriodGetManyResponseDto dto = readManyBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);
     return responseBuilder.build();

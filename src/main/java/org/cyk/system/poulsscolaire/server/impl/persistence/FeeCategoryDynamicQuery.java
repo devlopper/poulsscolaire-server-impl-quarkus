@@ -136,6 +136,10 @@ public class FeeCategoryDynamicQuery extends AbstractDynamicQuery<FeeCategory> {
         .tupleVariableName(schoolingVariableName).fieldName(Schooling.FIELD_SCHOOL_IDENTIFIER)
         .valueFunction(FeeCategoryFilter::getRegistrationSchoolingSchoolIdentifier).build();
 
+    predicateBuilder().name(FeeCategoryFilter.JSON_REGISTRATION_SCHOOLING_PERIOD_IDENTIFIER)
+        .tupleVariableName(schoolingVariableName).fieldName(Schooling.FIELD_PERIOD_IDENTIFIER)
+        .valueFunction(FeeCategoryFilter::getRegistrationSchoolingPeriodIdentifier).build();
+
     // Ordres par défaut
     orderBuilder().fieldName(AbstractIdentifiableCodableNamable.FIELD_NAME).build();
     orderBuilder().fieldName(AbstractIdentifiableCodable.FIELD_CODE).build();

@@ -9,7 +9,7 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.cyk.system.poulsscolaire.server.api.configuration.PeriodDto;
 import org.cyk.system.poulsscolaire.server.api.configuration.PeriodService;
-import org.cyk.system.poulsscolaire.server.api.configuration.PeriodService.GetManyResponseDto;
+import org.cyk.system.poulsscolaire.server.api.configuration.PeriodService.PeriodGetManyResponseDto;
 import org.cyk.system.poulsscolaire.server.api.configuration.PeriodService.PeriodRepatriateResponseDto;
 import org.cyk.system.poulsscolaire.server.impl.business.period.PeriodReadByIdentifierBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.period.PeriodReadManyBusiness;
@@ -30,7 +30,7 @@ class PeriodServiceImplTest extends AbstractTest {
   @Test
   void readMany() {
     PeriodReadManyBusiness business = installMockForType(PeriodReadManyBusiness.class);
-    Mockito.when(business.process(any())).thenReturn(new GetManyResponseDto());
+    Mockito.when(business.process(any())).thenReturn(new PeriodGetManyResponseDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
         .post(PeriodService.PATH + "/" + PeriodService.GET_MANY_PATH).then().log().ifError()

@@ -13,6 +13,7 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.registration.StudentDto;
+import org.cyk.system.poulsscolaire.server.api.registration.StudentFilter;
 
 /**
  * Cette classe représente la requête dynamique de {@link Student}.
@@ -27,11 +28,14 @@ public class StudentDynamicQuery extends AbstractDynamicQuery<Student> {
   @Getter
   EntityManager entityManager;
 
+  String schoolVariableName;
+
   /**
    * Cette méthode permet d'instancier un object.
    */
   public StudentDynamicQuery() {
     super(Student.class);
+    schoolVariableName = "s";
   }
 
   @PostConstruct
@@ -83,10 +87,20 @@ public class StudentDynamicQuery extends AbstractDynamicQuery<Student> {
             a.getNextAsString(), a.getNextAsString(), a.getNextAsString()))
         .build();
 
+    // Jointures
+    joinBuilder().projectionsNames(StudentDto.JSON_SCHOOL_AS_STRING)
+        .predicatesNames(StudentDto.JSON_SCHOOL_IDENTIFIER).entityName(School.ENTITY_NAME)
+        .tupleVariableName(schoolVariableName).parentFieldName(Student.FIELD_SCHOOL_IDENTIFIER)
+        .leftInnerOrRight(true).build();
+
     // Prédicats
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
         .valueFunction(AbstractIdentifiableFilter::getIdentifier).build();
+
+    predicateBuilder().name(StudentFilter.JSON_SCHOOL_IDENTIFIER)
+        .fieldName(Student.FIELD_SCHOOL_IDENTIFIER)
+        .valueFunction(StudentFilter::getSchoolIdentifier).build();
 
     // Ordres par défaut
     orderBuilder().fieldName(AbstractIdentifiableCodable.FIELD_CODE).build();

@@ -131,21 +131,31 @@ public class SchoolingDynamicQuery extends AbstractDynamicQuery<Schooling> {
         .parentFieldName(AbstractAmountContainer.FIELD_AMOUNT).leftInnerOrRight(true).build();
 
     joinBuilder().projectionsNames(SchoolingDto.JSON_SCHOOL_AS_STRING)
-        .entityName(School.ENTITY_NAME).tupleVariableName(schoolVariableName)
-        .parentFieldName(Schooling.FIELD_SCHOOL_IDENTIFIER).leftInnerOrRight(true).build();
+        .predicatesNames(SchoolingDto.JSON_SCHOOL_IDENTIFIER).entityName(School.ENTITY_NAME)
+        .tupleVariableName(schoolVariableName).parentFieldName(Schooling.FIELD_SCHOOL_IDENTIFIER)
+        .leftInnerOrRight(true).build();
 
     joinBuilder().projectionsNames(SchoolingDto.JSON_BRANCH_AS_STRING)
         .entityName(Branch.ENTITY_NAME).tupleVariableName(branchVariableName)
         .parentFieldName(Schooling.FIELD_BRANCH_IDENTIFIER).leftInnerOrRight(true).build();
 
     joinBuilder().projectionsNames(SchoolingDto.JSON_PERIOD_AS_STRING)
-        .entityName(Period.ENTITY_NAME).tupleVariableName(periodVariableName)
-        .parentFieldName(Schooling.FIELD_PERIOD_IDENTIFIER).leftInnerOrRight(true).build();
+        .predicatesNames(SchoolingDto.JSON_PERIOD_IDENTIFIER).entityName(Period.ENTITY_NAME)
+        .tupleVariableName(periodVariableName).parentFieldName(Schooling.FIELD_PERIOD_IDENTIFIER)
+        .leftInnerOrRight(true).build();
 
     // Prédicats
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
         .valueFunction(AbstractIdentifiableFilter::getIdentifier).build();
+
+    predicateBuilder().name(SchoolingFilter.JSON_SCHOOL_IDENTIFIER)
+        .tupleVariableName(schoolVariableName).fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
+        .valueFunction(SchoolingFilter::getSchoolIdentifier).build();
+
+    predicateBuilder().name(SchoolingFilter.JSON_PERIOD_IDENTIFIER)
+        .tupleVariableName(periodVariableName).fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
+        .valueFunction(SchoolingFilter::getPeriodIdentifier).build();
 
     predicateBuilder().name(SchoolingFilter.JSON_FEE_AMOUNT_OPTIONAL)
         .tupleVariableName(feeVariableName)

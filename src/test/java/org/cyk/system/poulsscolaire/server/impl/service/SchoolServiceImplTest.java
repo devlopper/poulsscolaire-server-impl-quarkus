@@ -9,7 +9,7 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolDto;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolService;
-import org.cyk.system.poulsscolaire.server.api.configuration.SchoolService.GetManyResponseDto;
+import org.cyk.system.poulsscolaire.server.api.configuration.SchoolService.SchoolGetManyResponseDto;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolService.SchoolRepatriateResponseDto;
 import org.cyk.system.poulsscolaire.server.impl.business.school.SchoolReadByIdentifierBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.school.SchoolReadManyBusiness;
@@ -30,7 +30,7 @@ class SchoolServiceImplTest extends AbstractTest {
   @Test
   void readMany() {
     SchoolReadManyBusiness business = installMockForType(SchoolReadManyBusiness.class);
-    Mockito.when(business.process(any())).thenReturn(new GetManyResponseDto());
+    Mockito.when(business.process(any())).thenReturn(new SchoolGetManyResponseDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
         .post(SchoolService.PATH + "/" + SchoolService.GET_MANY_PATH).then().log().ifError()
