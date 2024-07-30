@@ -11,6 +11,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
+import org.cyk.system.poulsscolaire.server.api.configuration.PeriodFilter;
 
 /**
  * Cette classe représente la requête dynamique de {@link Period}.
@@ -44,6 +45,9 @@ public class PeriodDynamicQuery extends AbstractDynamicQuery<Period> {
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
         .valueFunction(AbstractIdentifiableFilter::getIdentifier).build();
+
+    predicateBuilder().name(PeriodFilter.JSON_OPENED).fieldName(Period.FIELD_OPENED)
+        .valueFunction(PeriodFilter::getOpened).build();
 
     // Ordres par défaut
     orderBuilder().fieldName(AbstractIdentifiableCodableNamable.FIELD_NAME).build();

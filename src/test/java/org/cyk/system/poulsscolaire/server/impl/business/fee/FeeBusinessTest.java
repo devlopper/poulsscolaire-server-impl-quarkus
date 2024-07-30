@@ -1,6 +1,8 @@
 package org.cyk.system.poulsscolaire.server.impl.business.fee;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import ci.gouv.dgbf.extension.server.business.BusinessInputValidationException;
@@ -74,7 +76,11 @@ class FeeBusinessTest extends AbstractTest {
     request.setRenewable(true);
     request.setValue(0);
     request.setAuditWho("christian");
+    long feeCount = count(entityManager, Fee.ENTITY_NAME);
+    long amountCount = count(entityManager, Amount.ENTITY_NAME);
     assertThrows(BusinessInputValidationException.class, () -> createBusiness.process(request));
+    assertEquals(feeCount, count(entityManager, Fee.ENTITY_NAME));
+    assertEquals(amountCount, count(entityManager, Amount.ENTITY_NAME));
   }
   
   @Test
@@ -90,22 +96,11 @@ class FeeBusinessTest extends AbstractTest {
     request.setRenewable(true);
     request.setValue(1);
     request.setAuditWho("christian");
+    long feeCount = count(entityManager, Fee.ENTITY_NAME);
+    long amountCount = count(entityManager, Amount.ENTITY_NAME);
     assertThrows(BusinessInputValidationException.class, () -> createBusiness.process(request));
-  }
-  
-  @Test
-  void create_whenPaymentOrderNumberExist() {
-    FeeCreateRequestDto request = new FeeCreateRequestDto();
-    request.setAssignmentTypeIdentifier("1");
-    request.setSeniorityIdentifier("1");
-    request.setSchoolingIdentifier("1");
-    request.setCategoryIdentifier("1");
-    request.setOptional(true);
-    request.setPaymentOrderNumber(0);
-    request.setRenewable(true);
-    request.setValue(1);
-    request.setAuditWho("christian");
-    assertThrows(BusinessInputValidationException.class, () -> createBusiness.process(request));
+    assertEquals(feeCount, count(entityManager, Fee.ENTITY_NAME));
+    assertEquals(amountCount, count(entityManager, Amount.ENTITY_NAME));
   }
   
   @Test
@@ -125,6 +120,26 @@ class FeeBusinessTest extends AbstractTest {
     long count = count(entityManager, Fee.ENTITY_NAME);
     updateBusiness.process(request);
     assertEquals(count, count(entityManager, Fee.ENTITY_NAME));
+  }
+  
+  @Test
+  void updateOptional_whenOptionalTrue() {
+    FeeUpdateRequestDto request = new FeeUpdateRequestDto();
+    request.setIdentifier("toupdatewhenoptionaltrue");
+    request.setAssignmentTypeIdentifier("1");
+    request.setSeniorityIdentifier("1");
+    request.setSchoolingIdentifier("1");
+    request.setCategoryIdentifier("3");
+    request.setOptional(false);
+    request.setRegistrationValuePart(0);
+    request.setRenewable(true);
+    request.setPaymentOrderNumber(0);
+    request.setValue(0);
+    request.setAuditWho("christian");
+    updateBusiness.process(request);
+    Fee fee = entityManager.find(Fee.class, request.getIdentifier());
+    assertFalse(fee.amount.optional);
+    assertNotNull(fee.amount.paymentOrderNumber);
   }
   
   public static class Profile implements QuarkusTestProfile {

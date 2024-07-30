@@ -12,6 +12,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolingService.SchoolingGenerateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolingService.SchoolingGenerateResponseDto;
 import org.cyk.system.poulsscolaire.server.impl.business.branch.BranchService;
@@ -77,7 +78,9 @@ public class SchoolingGenerateBusiness
   void generateBySchool(SchoolService.Dto school, List<Schooling> existings, List<Schooling> news,
       Audit audit) {
     Set<BranchService.Dto> branchs = branchService.getBySchoolIdentifier(school.getIdentifier());
-    Set<PeriodService.Dto> periods = periodService.getBySchoolIdentifier(school.getIdentifier());
+    Set<PeriodService.GetBySchoolIdentifierDto.Item> periods =
+        periodService.getBySchoolIdentifier(school.getIdentifier()).stream()
+            .flatMap(dto -> dto.getItems().stream()).collect(Collectors.toSet());
     branchs.parallelStream().forEach(
         branch -> periods.parallelStream().forEach(period -> instantiate(school.getIdentifier(),
             branch.getIdentifier(), period.getIdentifier(), existings, news, audit)));

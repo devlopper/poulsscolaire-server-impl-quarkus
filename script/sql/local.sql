@@ -57,6 +57,7 @@ CREATE TABLE VMA_PERIODE (
 	IDENTIFIANT VARCHAR(36) NOT NULL COMMENT 'Identifiant de la période',
 
 	LIBELLE VARCHAR(255) NOT NULL COMMENT 'Libellé de la période',
+	ECOLE VARCHAR(36) NOT NULL COMMENT 'Identifiant de l''école',
 	OUVERTE BOOLEAN NOT NULL COMMENT 'Ouverture de la période',
 	
 	-- Constraints

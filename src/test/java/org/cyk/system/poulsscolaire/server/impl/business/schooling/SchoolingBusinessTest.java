@@ -88,10 +88,14 @@ class SchoolingBusinessTest extends AbstractTest {
     Mockito.when(branchService.getBySchoolIdentifier(any())).thenReturn(branchs);
     QuarkusMock.installMockForType(branchService, BranchService.class, RestClient.LITERAL);
 
-    PeriodService periodService = Mockito.mock(PeriodService.class);
-    Set<PeriodService.Dto> periods = new HashSet<>();
-    PeriodService.Dto period = new PeriodService.Dto();
-    period.setIdentifier(UUID.randomUUID().toString());
+    final PeriodService periodService = Mockito.mock(PeriodService.class);
+    final Set<PeriodService.GetBySchoolIdentifierDto> periods = new HashSet<>();
+    PeriodService.GetBySchoolIdentifierDto period = new PeriodService.GetBySchoolIdentifierDto();
+    period.setItems(new ArrayList<>());
+    PeriodService.GetBySchoolIdentifierDto.Item item =
+        new PeriodService.GetBySchoolIdentifierDto.Item();
+    item.setIdentifier(UUID.randomUUID().toString());
+    period.getItems().add(item);
     periods.add(period);
     Mockito.when(periodService.getBySchoolIdentifier(any())).thenReturn(periods);
     QuarkusMock.installMockForType(periodService, PeriodService.class, RestClient.LITERAL);
@@ -113,7 +117,7 @@ class SchoolingBusinessTest extends AbstractTest {
     schoolings.add(schooling);
     assertTrue(generateBusiness.isExist("1", "1", "1", schoolings));
   }
-  
+
   @Test
   void generate_isExist_whenDoesContain() {
     Schooling schooling = new Schooling();
@@ -124,7 +128,7 @@ class SchoolingBusinessTest extends AbstractTest {
     schoolings.add(schooling);
     assertFalse(generateBusiness.isExist("unknown", "1", "1", schoolings));
   }
-  
+
   @Test
   void instantiate_whenExist() {
     Schooling schooling = new Schooling();
@@ -137,7 +141,7 @@ class SchoolingBusinessTest extends AbstractTest {
     generateBusiness.instantiate("1", "1", "1", schoolings, news, new Audit());
     assertEquals(0, news.size());
   }
-  
+
   @Test
   void instantiate_whenDoesNotExist() {
     List<Schooling> schoolings = new ArrayList<>();
@@ -145,7 +149,7 @@ class SchoolingBusinessTest extends AbstractTest {
     generateBusiness.instantiate("1", "1", "1", schoolings, news, new Audit());
     assertEquals(1, news.size());
   }
-  
+
   @Test
   void update() {
     SchoolingUpdateRequestDto request = new SchoolingUpdateRequestDto();
@@ -158,7 +162,7 @@ class SchoolingBusinessTest extends AbstractTest {
     updateBusiness.process(request);
     assertEquals(count, count(entityManager, Schooling.ENTITY_NAME));
   }
-  
+
   public static class Profile implements QuarkusTestProfile {
 
     @Override

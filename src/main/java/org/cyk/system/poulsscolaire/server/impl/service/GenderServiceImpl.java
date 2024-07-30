@@ -59,7 +59,7 @@ public class GenderServiceImpl extends AbstractServiceImpl implements GenderServ
 
   @Override
   public Response getMany(GetManyRequestDto request) {
-    GetManyResponseDto dto = readManyBusiness.process(request);
+    GenderGetManyResponseDto dto = readManyBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);
     return responseBuilder.build();

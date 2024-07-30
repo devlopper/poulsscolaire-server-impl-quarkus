@@ -30,8 +30,7 @@ public class Amount extends AbstractIdentifiableAuditable {
   @Column(name = COLUMN_OPTIONAL, nullable = false)
   public Boolean optional;
 
-  @NotNull
-  @Column(name = COLUMN_PAYMENT_ORDER_NUMBER, nullable = false)
+  @Column(name = COLUMN_PAYMENT_ORDER_NUMBER)
   public Integer paymentOrderNumber;
 
   @NotNull
@@ -77,7 +76,11 @@ public class Amount extends AbstractIdentifiableAuditable {
     value = request.getValue();
     registrationValuePart = Optional.ofNullable(request.getRegistrationValuePart()).orElse(0);
     optional = request.getOptional();
-    paymentOrderNumber = request.getPaymentOrderNumber();
+    if (Optional.ofNullable(optional).orElse(true)) {
+      paymentOrderNumber = null;
+    } else {
+      paymentOrderNumber = request.getPaymentOrderNumber();
+    }
     renewable = request.getRenewable();
   }
 
@@ -106,5 +109,5 @@ public class Amount extends AbstractIdentifiableAuditable {
   public static final String COLUMN_OPTIONAL = "FACULTATIF";
   public static final String COLUMN_PAYMENT_ORDER_NUMBER = "NUMERO_ORDRE_PAIEMENT";
   public static final String COLUMN_RENEWABLE = "RECONDUCTIBLE";
-  public static final String COLUMN_DEADLINE = "ECHEANCE";
+  public static final String COLUMN_DEADLINE = "ECHEANCE";  
 }

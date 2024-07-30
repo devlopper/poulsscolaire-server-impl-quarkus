@@ -4,6 +4,7 @@ import jakarta.json.bind.annotation.JsonbProperty;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;
+import java.util.List;
 import java.util.Set;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -24,12 +25,8 @@ public interface PeriodService {
   @GET
   Set<Dto> getAll();
   
-  @Path("list-opened-or-closed-to-ecole")
-  @GET
-  Set<Dto> getBySchoolIdentifier(@QueryParam("ecole") String identifier);
-
   /**
-   * Cette classe représente une période.
+   * Cette classe représente une période ouverte.
    *
    * @author Christian
    *
@@ -37,11 +34,45 @@ public interface PeriodService {
   @Getter
   @Setter
   @EqualsAndHashCode(of = {"identifier"})
-  class Dto {
+  public static class Dto {
     @JsonbProperty(value = "id")
     String identifier;
     
     @JsonbProperty(value = "libelle")
     String name;
+  }
+  
+  @Path("list-ouverte-to-ecole-dto")
+  @GET
+  Set<GetBySchoolIdentifierDto> getBySchoolIdentifier(@QueryParam("ecole") String identifier);
+
+  /**
+   * Cette classe représente les période ouvertes d'une école.
+   *
+   * @author Christian
+   *
+   */
+  @Getter
+  @Setter
+  class GetBySchoolIdentifierDto {
+    @JsonbProperty(value = "anneeEcoleList")
+    List<Item> items;
+    
+    /**
+     * Cette classe représente une période ouverte.
+     *
+     * @author Christian
+     *
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(of = {"identifier"})
+    public static class Item {
+      @JsonbProperty(value = "anneeId")
+      String identifier;
+      
+      @JsonbProperty(value = "anneeLibelle")
+      String name;
+    }
   }
 }

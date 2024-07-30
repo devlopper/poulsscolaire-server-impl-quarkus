@@ -5,7 +5,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.configuration.GenderDto;
-import org.cyk.system.poulsscolaire.server.api.configuration.GenderService.GetManyResponseDto;
+import org.cyk.system.poulsscolaire.server.api.configuration.GenderService.GenderGetManyResponseDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Gender;
 import org.cyk.system.poulsscolaire.server.impl.persistence.GenderDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.GenderPersistence;
@@ -18,10 +18,10 @@ import org.cyk.system.poulsscolaire.server.impl.persistence.GenderPersistence;
  */
 @ApplicationScoped
 public class GenderReadManyBusiness extends AbstractIdentifiableReadManyBusiness<Gender,
-    GenderPersistence, GenderDynamicQuery, GenderDto, GenderMapper, GetManyResponseDto> {
+    GenderPersistence, GenderDynamicQuery, GenderDto, GenderMapper, GenderGetManyResponseDto> {
 
   protected GenderReadManyBusiness() {
-    super(GetManyResponseDto.class);
+    super(GenderGetManyResponseDto.class);
   }
 
   @Inject

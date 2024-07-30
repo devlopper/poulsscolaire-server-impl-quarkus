@@ -27,6 +27,7 @@ public class Student extends AbstractIdentifiableCodableAuditable {
   @JoinColumn(name = COLUMN_IDENTITY, nullable = false)
   public Identity identity;
   
+  @NotNull
   @Column(name = COLUMN_SCHOOL_IDENTIFIER, nullable = false)
   public String schoolIdentifier;
   
@@ -66,6 +67,9 @@ public class Student extends AbstractIdentifiableCodableAuditable {
   @Transient
   public String tutorAsString;
   
+  @Transient
+  public String schoolAsString;
+  
   public static final String FIELD_REGISTRATION_NUMBER = "registrationNumber";
   public static final String FIELD_IDENTITY = "identity";
   public static final String FIELD_FIRST_NAME = "firstName";
@@ -78,6 +82,7 @@ public class Student extends AbstractIdentifiableCodableAuditable {
   public static final String FIELD_BIRTH_PLACE = "birthPlace";
   public static final String FIELD_IS_MASCULINE = "isMasculine";
   public static final String FIELD_SCHOOL_IDENTIFIER = "schoolIdentifier";
+  public static final String FIELD_SCHOOL_AS_STRING = "schoolAsString";
   
   public static final String ENTITY_NAME = "Student";
   public static final String TABLE_NAME = "TA_ELEVE";

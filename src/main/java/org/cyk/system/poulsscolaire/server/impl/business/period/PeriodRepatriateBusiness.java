@@ -56,6 +56,7 @@ public class PeriodRepatriateBusiness
         .filter(dto -> !existingsIdentifiers.contains(dto.getIdentifier())).map(dto -> {
           Period period = mapper.map(dto);
           // TODO: get info from api
+          period.schoolIdentifier = "to_compute";
           period.opened = false;
           return period;
         }).toList();

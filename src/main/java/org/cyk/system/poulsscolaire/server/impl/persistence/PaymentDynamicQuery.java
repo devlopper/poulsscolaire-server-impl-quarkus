@@ -30,6 +30,8 @@ public class PaymentDynamicQuery extends AbstractDynamicQuery<Payment> {
   @Inject
   @Getter
   EntityManager entityManager;
+
+  String schoolVariableName;
   String paymentAdjustedFeeVariableName;
 
   /**
@@ -37,6 +39,7 @@ public class PaymentDynamicQuery extends AbstractDynamicQuery<Payment> {
    */
   public PaymentDynamicQuery() {
     super(Payment.class);
+    schoolVariableName = "s";
     paymentAdjustedFeeVariableName = "paf";
   }
 
@@ -67,6 +70,11 @@ public class PaymentDynamicQuery extends AbstractDynamicQuery<Payment> {
         .fieldName(PaymentAdjustedFee.FIELD_PAYMENT).parentFieldName(null).leftInnerOrRight(true)
         .build();
 
+    joinBuilder().predicatesNames(PaymentDto.JSON_SCHOOL_IDENTIFIER).entityName(School.ENTITY_NAME)
+        .tupleVariableName(schoolVariableName).parentFieldName(fieldName(Payment.FIELD_REGISTRATION,
+            Registration.FIELD_SCHOOLING, Schooling.FIELD_SCHOOL_IDENTIFIER))
+        .leftInnerOrRight(true).build();
+
     // Prédicats
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
@@ -75,6 +83,11 @@ public class PaymentDynamicQuery extends AbstractDynamicQuery<Payment> {
     predicateBuilder().name(PaymentFilter.JSON_REGISTRATION_IDENTIFIER)
         .fieldName(fieldName(Payment.FIELD_REGISTRATION, AbstractIdentifiable.FIELD_IDENTIFIER))
         .valueFunction(PaymentFilter::getRegistrationIdentifier).build();
+
+    predicateBuilder().name(PaymentFilter.JSON_SCHOOL_IDENTIFIER)
+        .fieldName(fieldName(Payment.FIELD_REGISTRATION, Registration.FIELD_SCHOOLING,
+            Schooling.FIELD_SCHOOL_IDENTIFIER))
+        .valueFunction(PaymentFilter::getSchoolIdentifier).build();
 
     predicateBuilder().name(PaymentFilter.JSON_CANCELED).fieldName(Payment.FIELD_CANCELED)
         .valueFunction(PaymentFilter::getCanceled).build();

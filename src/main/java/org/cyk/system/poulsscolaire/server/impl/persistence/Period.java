@@ -17,14 +17,20 @@ import jakarta.validation.constraints.NotNull;
 public class Period extends AbstractIdentifiableNamable {
 
   @NotNull
+  @Column(name = COLUMN_SCHOOL_IDENTIFIER, nullable = false)
+  public String schoolIdentifier;
+  
+  @NotNull
   @Column(name = COLUMN_OPENED, nullable = false)
   public Boolean opened;
   
+  public static final String FIELD_SCHOOL_IDENTIFIER = "schoolIdentifier";
   public static final String FIELD_OPENED = "opened";
   
   public static final String ENTITY_NAME = "Period";
   public static final String TABLE_NAME = "VMA_PERIODE";
   
+  public static final String COLUMN_SCHOOL_IDENTIFIER = "ECOLE";
   public static final String COLUMN_OPENED = "OUVERTE";
   
 }

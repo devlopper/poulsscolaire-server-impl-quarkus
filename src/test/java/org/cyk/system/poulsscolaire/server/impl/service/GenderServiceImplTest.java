@@ -11,7 +11,7 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.cyk.system.poulsscolaire.server.api.configuration.GenderDto;
 import org.cyk.system.poulsscolaire.server.api.configuration.GenderService;
-import org.cyk.system.poulsscolaire.server.api.configuration.GenderService.GetManyResponseDto;
+import org.cyk.system.poulsscolaire.server.api.configuration.GenderService.GenderGetManyResponseDto;
 import org.cyk.system.poulsscolaire.server.impl.business.gender.GenderCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.gender.GenderDeleteBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.gender.GenderReadByIdentifierBusiness;
@@ -45,7 +45,7 @@ class GenderServiceImplTest extends AbstractTest {
   void readMany() {
     GenderReadManyBusiness business =
         installMockForType(GenderReadManyBusiness.class);
-    Mockito.when(business.process(any())).thenReturn(new GetManyResponseDto());
+    Mockito.when(business.process(any())).thenReturn(new GenderGetManyResponseDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
         .post(GenderService.PATH + "/" + GenderService.GET_MANY_PATH).then()
