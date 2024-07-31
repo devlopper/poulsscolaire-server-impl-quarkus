@@ -21,8 +21,6 @@ class SchoolDynamicQueryTest {
     parameters.projection().addNames(SchoolDto.JSON_TOTAL_AMOUNT_AS_STRING);
     assertEquals(
         "SELECT SUM(afa.amountToPay) FROM School t "
-            + "LEFT JOIN Schooling s ON s.schoolIdentifier = t.identifier "
-            + "LEFT JOIN Registration r ON r.schooling = s "
             + "LEFT JOIN AdjustedFeeAmounts afa ON afa.schoolIdentifier = t.identifier "
             + "GROUP BY t.identifier,t.name ORDER BY t.name ASC",
         dynamicQuery.buildQueryString(parameters));
@@ -33,8 +31,6 @@ class SchoolDynamicQueryTest {
     parameters.projection().addNames(SchoolDto.JSON_PAID_AMOUNT_AS_STRING);
     assertEquals(
         "SELECT SUM(afa.amountPaid) FROM School t "
-        + "LEFT JOIN Schooling s ON s.schoolIdentifier = t.identifier "
-        + "LEFT JOIN Registration r ON r.schooling = s "
         + "LEFT JOIN AdjustedFeeAmounts afa ON afa.schoolIdentifier = t.identifier "
         + "GROUP BY t.identifier,t.name ORDER BY t.name ASC",
         dynamicQuery.buildQueryString(parameters));
@@ -45,8 +41,7 @@ class SchoolDynamicQueryTest {
     parameters.projection().addNames(SchoolDto.JSON_PAYABLE_AMOUNT_AS_STRING);
     assertEquals(
         "SELECT SUM(afa.amountLeftToPay) "
-        + "FROM School t LEFT JOIN Schooling s ON s.schoolIdentifier = t.identifier "
-        + "LEFT JOIN Registration r ON r.schooling = s "
+        + "FROM School t "
         + "LEFT JOIN AdjustedFeeAmounts afa ON afa.schoolIdentifier = t.identifier "
         + "GROUP BY t.identifier,t.name ORDER BY t.name ASC",
         dynamicQuery.buildQueryString(parameters));

@@ -107,26 +107,6 @@ public class SchoolDynamicQuery extends AbstractDynamicQuery<School> {
     joinBuilder()
         .projectionsNames(SchoolDto.JSON_TOTAL_AMOUNT_AS_STRING,
             SchoolDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING,
-            SchoolDto.JSON_PAID_AMOUNT_AS_STRING, SchoolDto.JSON_PAYABLE_AMOUNT_AS_STRING,
-            SchoolDto.JSON_PAID_REGISTRATION_AMOUNT_AS_STRING,
-            SchoolDto.JSON_PAYABLE_REGISTRATION_AMOUNT_AS_STRING)
-        .with(Schooling.class).tupleVariableName(schoolingVariableName)
-        .fieldName(Schooling.FIELD_SCHOOL_IDENTIFIER)
-        .parentFieldName(AbstractIdentifiable.FIELD_IDENTIFIER).leftInnerOrRight(true).build();
-
-    joinBuilder()
-        .projectionsNames(SchoolDto.JSON_TOTAL_AMOUNT_AS_STRING,
-            SchoolDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING,
-            SchoolDto.JSON_PAID_AMOUNT_AS_STRING, SchoolDto.JSON_PAYABLE_AMOUNT_AS_STRING,
-            SchoolDto.JSON_PAID_REGISTRATION_AMOUNT_AS_STRING,
-            SchoolDto.JSON_PAYABLE_REGISTRATION_AMOUNT_AS_STRING)
-        .with(Registration.class).tupleVariableName(registrationVariableName)
-        .fieldName(Registration.FIELD_SCHOOLING).parentTupleVariableName(schoolingVariableName)
-        .parentFieldName(null).leftInnerOrRight(true).build();
-
-    joinBuilder()
-        .projectionsNames(SchoolDto.JSON_TOTAL_AMOUNT_AS_STRING,
-            SchoolDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING,
             SchoolDto.JSON_PAID_AMOUNT_AS_STRING, SchoolDto.JSON_PAID_REGISTRATION_AMOUNT_AS_STRING,
             SchoolDto.JSON_PAYABLE_AMOUNT_AS_STRING,
             SchoolDto.JSON_PAYABLE_REGISTRATION_AMOUNT_AS_STRING)
