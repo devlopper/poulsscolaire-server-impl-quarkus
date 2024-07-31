@@ -154,6 +154,10 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
         .valueFunction(AbstractIdentifiableFilter::getIdentifier).build();
 
+    predicateBuilder().name(RegistrationFilter.JSON_STUDENT_IDENTIFIER)
+        .fieldName(fieldName(Registration.FIELD_STUDENT, AbstractIdentifiable.FIELD_IDENTIFIER))
+        .valueFunction(RegistrationFilter::getStudentIdentifier).build();
+
     predicateBuilder().name(RegistrationFilter.JSON_SCHOOL_IDENTIFIER)
         .fieldName(fieldName(Registration.FIELD_SCHOOLING, Schooling.FIELD_SCHOOL_IDENTIFIER))
         .valueFunction(RegistrationFilter::getSchoolIdentifier).build();
