@@ -1,6 +1,7 @@
 package org.cyk.system.poulsscolaire.server.impl.business.deadline;
 
 import ci.gouv.dgbf.extension.core.StringList;
+import ci.gouv.dgbf.extension.core.TimeHelper;
 import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableCreateBusiness;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -32,6 +33,9 @@ public class DeadlineCreateBusiness extends AbstractIdentifiableCreateBusiness<D
   @Inject
   DeadlineGroupValidator groupValidator;
 
+  @Inject
+  TimeHelper timeHelper;
+
   @Override
   protected Object[] validate(DeadlineCreateRequestDto request, StringList messages) {
     DeadlineGroup group =
@@ -43,6 +47,14 @@ public class DeadlineCreateBusiness extends AbstractIdentifiableCreateBusiness<D
   protected void setFields(Deadline deadline, Object[] array, DeadlineCreateRequestDto request) {
     super.setFields(deadline, array, request);
     deadline.group = (DeadlineGroup) array[0];
+    deadline.schoolIdentifier = request.getSchoolIdentifier();
     deadline.date = request.getDate();
+    deadline.code = String.format("%s_%s_%s", deadline.schoolIdentifier, deadline.group.code,
+        timeHelper.format(deadline.date, "ddMMyyyy"));
+  }
+
+  @Override
+  protected boolean isCodeGenerated() {
+    return true;
   }
 }

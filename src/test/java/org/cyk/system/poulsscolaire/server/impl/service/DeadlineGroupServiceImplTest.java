@@ -11,7 +11,7 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.cyk.system.poulsscolaire.server.api.fee.DeadlineGroupDto;
 import org.cyk.system.poulsscolaire.server.api.fee.DeadlineGroupService;
-import org.cyk.system.poulsscolaire.server.api.fee.DeadlineGroupService.GetManyResponseDto;
+import org.cyk.system.poulsscolaire.server.api.fee.DeadlineGroupService.DeadlineGroupGetManyResponseDto;
 import org.cyk.system.poulsscolaire.server.impl.business.deadlinegroup.DeadlineGroupCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.deadlinegroup.DeadlineGroupDeleteBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.deadlinegroup.DeadlineGroupReadByIdentifierBusiness;
@@ -45,7 +45,7 @@ class DeadlineGroupServiceImplTest extends AbstractTest {
   void readMany() {
     DeadlineGroupReadManyBusiness business =
         installMockForType(DeadlineGroupReadManyBusiness.class);
-    Mockito.when(business.process(any())).thenReturn(new GetManyResponseDto());
+    Mockito.when(business.process(any())).thenReturn(new DeadlineGroupGetManyResponseDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
         .post(DeadlineGroupService.PATH + "/" + DeadlineGroupService.GET_MANY_PATH).then()

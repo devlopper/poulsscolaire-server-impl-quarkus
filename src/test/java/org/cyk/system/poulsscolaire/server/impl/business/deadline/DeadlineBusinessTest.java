@@ -43,9 +43,9 @@ class DeadlineBusinessTest extends AbstractTest {
   @Test
   void create() {
     DeadlineCreateRequestDto request = new DeadlineCreateRequestDto();
-    request.setCode(UUID.randomUUID().toString());
     request.setName(UUID.randomUUID().toString());
     request.setGroupIdentifier("1");
+    request.setSchoolIdentifier("1");
     request.setDate(LocalDateTime.now());
     request.setAuditWho("christian");
     long count = count(entityManager, Deadline.ENTITY_NAME);

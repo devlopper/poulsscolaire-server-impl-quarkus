@@ -87,6 +87,9 @@ public class StudentDynamicQuery extends AbstractDynamicQuery<Student> {
             a.getNextAsString(), a.getNextAsString(), a.getNextAsString()))
         .build();
 
+    projectionBuilder().name(StudentDto.JSON_SCHOOL_IDENTIFIER)
+        .fieldName(Student.FIELD_SCHOOL_IDENTIFIER).build();
+
     projectionBuilder().name(StudentDto.JSON_SCHOOL_AS_STRING)
         .expression(formatConcatName(schoolVariableName))
         .resultConsumer((i, a) -> i.schoolAsString = a.getNextAsString()).build();
