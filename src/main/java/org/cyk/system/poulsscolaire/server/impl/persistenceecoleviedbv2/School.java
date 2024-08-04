@@ -12,7 +12,7 @@ import jakarta.persistence.Table;
  *
  */
 @Entity
-@Table(schema = Constant.SCHEMA_NAME, name = "ECOLE")
+@Table(schema = Constant.SCHEMA_NAME, name = "ecole")
 public class School {
 
   @Id

@@ -12,7 +12,7 @@ import jakarta.persistence.Table;
  *
  */
 @Entity
-@Table(schema = Constant.SCHEMA_NAME, name = "BRANCHE")
+@Table(schema = Constant.SCHEMA_NAME, name = "Branche")
 public class Branch {
 
   @Id

@@ -12,12 +12,12 @@ import jakarta.persistence.Table;
  *
  */
 @Entity
-@Table(schema = Constant.SCHEMA_NAME, name = "PROGRAMME")
+@Table(schema = Constant.SCHEMA_NAME, name = "programme")
 public class Program {
 
   @Id
   @Column(name = "id")
-  public long identifier;
+  public String identifier;
   
   @Column(name = "code")
   public String code;

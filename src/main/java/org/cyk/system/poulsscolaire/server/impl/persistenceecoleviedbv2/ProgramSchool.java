@@ -12,17 +12,17 @@ import jakarta.persistence.Table;
  *
  */
 @Entity
-@Table(schema = Constant.SCHEMA_NAME, name = "PROGRAMME_ECOLE")
+@Table(schema = Constant.SCHEMA_NAME, name = "programme_ecole")
 public class ProgramSchool {
 
   @Id
   @Column(name = "id")
-  public long identifier;
+  public String identifier;
   
-  @Column(name = "fk_program_id")
+  @Column(name = "fk_programme_id")
   public String programIdentifier;
   
   @Column(name = "fk_ecole_id")
-  public String schoolIdentifier;
+  public long schoolIdentifier;
   
 }

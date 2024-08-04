@@ -12,7 +12,7 @@ import jakarta.persistence.Table;
  *
  */
 @Entity
-@Table(schema = Constant.SCHEMA_NAME, name = "ANNEE_SCOLAIRE")
+@Table(schema = Constant.SCHEMA_NAME, name = "annee_scolaire")
 public class AcademicYear {
 
   @Id
@@ -26,7 +26,7 @@ public class AcademicYear {
   public String name;
   
   @Column(name = "ecole_id")
-  public String schoolIdentifier;
+  public long schoolIdentifier;
   
   @Column(name = "statut")
   public String status;

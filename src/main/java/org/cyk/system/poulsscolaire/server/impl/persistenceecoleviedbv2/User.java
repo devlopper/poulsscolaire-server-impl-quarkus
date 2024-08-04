@@ -12,7 +12,7 @@ import jakarta.persistence.Table;
  *
  */
 @Entity
-@Table(schema = Constant.SCHEMA_NAME, name = "UTILISATEUR")
+@Table(schema = Constant.SCHEMA_NAME, name = "utilisateur")
 public class User {
 
   @Id
