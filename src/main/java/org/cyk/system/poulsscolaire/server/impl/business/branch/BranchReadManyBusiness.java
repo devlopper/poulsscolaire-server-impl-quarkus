@@ -5,7 +5,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.configuration.BranchDto;
-import org.cyk.system.poulsscolaire.server.api.configuration.BranchService.GetManyResponseDto;
+import org.cyk.system.poulsscolaire.server.api.configuration.BranchService.BranchGetManyResponseDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Branch;
 import org.cyk.system.poulsscolaire.server.impl.persistence.BranchDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.BranchPersistence;
@@ -18,10 +18,10 @@ import org.cyk.system.poulsscolaire.server.impl.persistence.BranchPersistence;
  */
 @ApplicationScoped
 public class BranchReadManyBusiness extends AbstractIdentifiableReadManyBusiness<Branch,
-    BranchPersistence, BranchDynamicQuery, BranchDto, BranchMapper, GetManyResponseDto> {
+    BranchPersistence, BranchDynamicQuery, BranchDto, BranchMapper, BranchGetManyResponseDto> {
 
   protected BranchReadManyBusiness() {
-    super(GetManyResponseDto.class);
+    super(BranchGetManyResponseDto.class);
   }
 
   @Inject

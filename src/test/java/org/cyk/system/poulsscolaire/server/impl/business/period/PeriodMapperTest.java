@@ -40,18 +40,4 @@ class PeriodMapperTest {
     Period instance = mapper.mapFromDto(dto);
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
   }
-  
-  @Test
-  void map() {
-    PeriodService.Dto dto = new PeriodService.Dto();
-    dto.setIdentifier("1");
-    Period instance = mapper.map(dto);
-    assertEquals(dto.getIdentifier(), instance.getIdentifier());
-  }
-  
-  @Test
-  void map_whenNull() {
-    Period instance = mapper.map(null);
-    assertEquals(null, instance);
-  }
 }

@@ -13,7 +13,6 @@ import org.cyk.system.poulsscolaire.server.api.configuration.PeriodService;
 import org.cyk.system.poulsscolaire.server.impl.business.period.PeriodReadByIdentifierBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.period.PeriodReadManyBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.period.PeriodReadOneBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.period.PeriodRepatriateBusiness;
 
 /**
  * Cette classe représente l'implémentation de {@link PeriodService}.
@@ -25,9 +24,6 @@ import org.cyk.system.poulsscolaire.server.impl.business.period.PeriodRepatriate
 public class PeriodServiceImpl extends AbstractServiceImpl implements PeriodService {
 
   @Inject
-  PeriodRepatriateBusiness repatriateBusiness;
-
-  @Inject
   PeriodReadManyBusiness readManyBusiness;
 
   @Inject
@@ -35,14 +31,6 @@ public class PeriodServiceImpl extends AbstractServiceImpl implements PeriodServ
 
   @Inject
   PeriodReadByIdentifierBusiness readByIdentifierBusiness;
-  
-  @Override
-  public Response repatriate(PeriodRepatriateRequestDto request) {
-    PeriodRepatriateResponseDto dto = repatriateBusiness.process(request);
-    ResponseBuilder responseBuilder = new ResponseBuilder();
-    responseBuilder.setDto(dto);
-    return responseBuilder.build();
-  }
 
   @Override
   public Response getMany(GetManyRequestDto request) {

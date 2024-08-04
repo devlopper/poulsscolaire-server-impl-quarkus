@@ -1,9 +1,11 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
-import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableNamable;
+import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableNamable;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import org.hibernate.annotations.Immutable;
+import org.hibernate.annotations.Subselect;
 
 /**
  * Cette classe représente une école.
@@ -12,9 +14,13 @@ import jakarta.persistence.Transient;
  *
  */
 @Entity(name = School.ENTITY_NAME)
-@Table(name = School.TABLE_NAME)
-public class School extends AbstractIdentifiableNamable {
+@Immutable
+@Subselect(School.QUERY)
+public class School extends AbstractIdentifiableCodableNamable {
 
+  @Column(name = COLUMN_OPENED_PERIOD_IDENTIFIER)
+  public String openedPeriodIdentifier;
+  
   @Transient
   public String totalAmountAsString;
 
@@ -35,8 +41,18 @@ public class School extends AbstractIdentifiableNamable {
 
   @Transient
   public String payableRegistrationAmountAsString;
+
+  public static final String FIELD_OPENED_PERIOD_IDENTIFIER = "openedPeriodIdentifier";
   
   public static final String ENTITY_NAME = "School";
-  public static final String TABLE_NAME = "VMA_ECOLE";
+
+  public static final String COLUMN_OPENED_PERIOD_IDENTIFIER = "ANNEE_OUVERTE";
   
+  public static final String QUERY = """
+      SELECT
+          ecoleid AS IDENTIFIANT
+          ,ecolecode AS CODE
+          ,ecoleclibelle AS LIBELLE
+      FROM ecoleviedbv2.ecole
+                      """;
 }

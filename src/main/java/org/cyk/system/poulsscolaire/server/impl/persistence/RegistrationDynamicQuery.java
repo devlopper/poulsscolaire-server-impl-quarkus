@@ -69,7 +69,8 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
     projectionBuilder().name(RegistrationDto.JSON_STUDENT_AS_STRING)
         .expression(String.format("%1$s.%3$s,%1$s.%4$s,%1$s.%2$s.%5$s,%1$s.%2$s.%6$s",
             fieldName(variableName, Registration.FIELD_STUDENT), Student.FIELD_IDENTITY,
-            AbstractIdentifiableCodable.FIELD_CODE, Student.FIELD_REGISTRATION_NUMBER,
+            AbstractIdentifiableCodable.FIELD_CODE,
+            fieldName(Student.FIELD_IDENTITY, Identity.FIELD_REGISTRATION_NUMBER),
             Identity.FIELD_FIRST_NAME, Identity.FIELD_LAST_NAMES))
         .resultConsumer(
             (i, a) -> i.studentAsString = StudentDto.computeAsString(a.getNextAsString(),

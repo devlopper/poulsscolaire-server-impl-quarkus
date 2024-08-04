@@ -40,18 +40,4 @@ class SchoolMapperTest {
     School instance = mapper.mapFromDto(dto);
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
   }
-  
-  @Test
-  void map() {
-    SchoolService.Dto dto = new SchoolService.Dto();
-    dto.setIdentifier("1");
-    School instance = mapper.map(dto);
-    assertEquals(dto.getIdentifier(), instance.getIdentifier());
-  }
-  
-  @Test
-  void map_whenNull() {
-    School instance = mapper.map(null);
-    assertEquals(null, instance);
-  }
 }

@@ -48,8 +48,8 @@ public class StudentCreateBusiness extends AbstractIdentifiableCreateBusiness<St
     student.identity.generateIdentifier();
     student.identity.audit = student.audit;
     student.identity.set(request, array);
-    student.registrationNumber = request.getRegistrationNumber();
     student.code = "E" + System.currentTimeMillis();
+    student.originSchool = request.getOriginSchool();
     student.schoolIdentifier = request.getSchoolIdentifier();
   }
 

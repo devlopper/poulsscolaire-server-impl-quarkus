@@ -47,7 +47,8 @@ public class StudentUpdateBusiness extends AbstractIdentifiableUpdateBusiness<St
   protected void prepare(Student student, StudentUpdateRequestDto request) {
     super.prepare(student, request);
     student.identity.set(request, null);
-    student.registrationNumber = request.getRegistrationNumber();
+    student.originSchool = request.getOriginSchool();
+    student.schoolIdentifier = request.getSchoolIdentifier();
   }
 
   @Override

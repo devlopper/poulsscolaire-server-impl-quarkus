@@ -1,1 +1,1 @@
-INSERT INTO VMA_ECOLE(IDENTIFIANT,LIBELLE) VALUES ('1','1');
+INSERT INTO ECOLEVIEDBV2.ECOLE(ecoleid,ecolecode,ecoleclibelle) VALUES ('1','1','CSP Cocody');

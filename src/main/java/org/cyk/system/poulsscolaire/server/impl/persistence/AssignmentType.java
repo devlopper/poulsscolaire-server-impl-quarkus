@@ -5,7 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
 /**
- * Cette classe représente un type d'affectation.
+ * Cette classe représente un statut.
  *
  * @author Christian
  *

@@ -9,12 +9,10 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.cyk.system.poulsscolaire.server.api.configuration.BranchDto;
 import org.cyk.system.poulsscolaire.server.api.configuration.BranchService;
-import org.cyk.system.poulsscolaire.server.api.configuration.BranchService.BranchRepatriateResponseDto;
-import org.cyk.system.poulsscolaire.server.api.configuration.BranchService.GetManyResponseDto;
+import org.cyk.system.poulsscolaire.server.api.configuration.BranchService.BranchGetManyResponseDto;
 import org.cyk.system.poulsscolaire.server.impl.business.branch.BranchReadByIdentifierBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.branch.BranchReadManyBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.branch.BranchReadOneBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.branch.BranchRepatriateBusiness;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -30,7 +28,7 @@ class BranchServiceImplTest extends AbstractTest {
   @Test
   void readMany() {
     BranchReadManyBusiness business = installMockForType(BranchReadManyBusiness.class);
-    Mockito.when(business.process(any())).thenReturn(new GetManyResponseDto());
+    Mockito.when(business.process(any())).thenReturn(new BranchGetManyResponseDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
         .post(BranchService.PATH + "/" + BranchService.GET_MANY_PATH).then().log().ifError()
@@ -56,15 +54,5 @@ class BranchServiceImplTest extends AbstractTest {
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
         .post(BranchService.PATH + "/" + BranchService.GET_BY_IDENTIFIER_PATH).then().log()
         .ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
-  }
-  
-  @Test
-  void repatriate() {
-    BranchRepatriateBusiness business = installMockForType(BranchRepatriateBusiness.class);
-    Mockito.when(business.process(any())).thenReturn(new BranchRepatriateResponseDto());
-
-    RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
-        .post(BranchService.PATH + "/" + BranchService.REPATRIATE_PATH).then().log().ifError()
-        .statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
   }
 }

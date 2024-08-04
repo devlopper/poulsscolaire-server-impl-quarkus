@@ -13,7 +13,5 @@ import org.mapstruct.Mapper;
  */
 @Mapper
 public interface BranchMapper extends IdentifiableMapper<Branch, BranchDto> {
-
-  Branch map(BranchService.Dto dto);
   
 }

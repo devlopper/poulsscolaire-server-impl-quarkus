@@ -13,7 +13,6 @@ import org.cyk.system.poulsscolaire.server.api.configuration.SchoolService;
 import org.cyk.system.poulsscolaire.server.impl.business.school.SchoolReadByIdentifierBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.school.SchoolReadManyBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.school.SchoolReadOneBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.school.SchoolRepatriateBusiness;
 
 /**
  * Cette classe représente l'implémentation de {@link SchoolService}.
@@ -25,9 +24,6 @@ import org.cyk.system.poulsscolaire.server.impl.business.school.SchoolRepatriate
 public class SchoolServiceImpl extends AbstractServiceImpl implements SchoolService {
 
   @Inject
-  SchoolRepatriateBusiness repatriateBusiness;
-
-  @Inject
   SchoolReadManyBusiness readManyBusiness;
 
   @Inject
@@ -35,14 +31,6 @@ public class SchoolServiceImpl extends AbstractServiceImpl implements SchoolServ
 
   @Inject
   SchoolReadByIdentifierBusiness readByIdentifierBusiness;
-  
-  @Override
-  public Response repatriate(SchoolRepatriateRequestDto request) {
-    SchoolRepatriateResponseDto dto = repatriateBusiness.process(request);
-    ResponseBuilder responseBuilder = new ResponseBuilder();
-    responseBuilder.setDto(dto);
-    return responseBuilder.build();
-  }
 
   @Override
   public Response getMany(GetManyRequestDto request) {

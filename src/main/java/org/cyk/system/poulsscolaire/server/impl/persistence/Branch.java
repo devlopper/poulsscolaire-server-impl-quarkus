@@ -1,8 +1,9 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
-import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableNamable;
+import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableNamable;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import org.hibernate.annotations.Immutable;
+import org.hibernate.annotations.Subselect;
 
 /**
  * Cette classe représente une branche.
@@ -11,10 +12,17 @@ import jakarta.persistence.Table;
  *
  */
 @Entity(name = Branch.ENTITY_NAME)
-@Table(name = Branch.TABLE_NAME)
-public class Branch extends AbstractIdentifiableNamable {
+@Immutable
+@Subselect(Branch.QUERY)
+public class Branch extends AbstractIdentifiableCodableNamable {
 
   public static final String ENTITY_NAME = "Branch";
-  public static final String TABLE_NAME = "VMA_BRANCHE";
-  
+
+  public static final String QUERY = """
+      SELECT
+          id AS IDENTIFIANT
+          ,code AS CODE
+          ,libelle AS LIBELLE
+      FROM ecoleviedbv2.Branche
+                      """;
 }

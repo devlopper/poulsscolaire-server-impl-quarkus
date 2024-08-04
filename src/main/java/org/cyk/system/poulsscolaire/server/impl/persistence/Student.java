@@ -8,6 +8,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
+import org.cyk.system.poulsscolaire.server.api.registration.BloodGroup;
 
 /**
  * Cette classe représente un élève.
@@ -19,9 +20,6 @@ import jakarta.validation.constraints.NotNull;
 @Table(name = Student.TABLE_NAME)
 public class Student extends AbstractIdentifiableCodableAuditable {
 
-  @Column(name = COLUMN_REGISTRATION_NUMBER)
-  public String registrationNumber;
-  
   @ManyToOne
   @NotNull
   @JoinColumn(name = COLUMN_IDENTITY, nullable = false)
@@ -31,6 +29,9 @@ public class Student extends AbstractIdentifiableCodableAuditable {
   @Column(name = COLUMN_SCHOOL_IDENTIFIER, nullable = false)
   public String schoolIdentifier;
   
+  @Column(name = COLUMN_ORIGIN_SCHOOL)
+  public String originSchool;
+  
   @Transient
   public String firstName;
   
@@ -38,10 +39,7 @@ public class Student extends AbstractIdentifiableCodableAuditable {
   public String lastNames;
   
   @Transient
-  public String emailAddress;
-  
-  @Transient
-  public String phoneNumber;
+  public BloodGroup bloodGroup;
   
   @Transient
   public String genderIdentifier;
@@ -59,6 +57,12 @@ public class Student extends AbstractIdentifiableCodableAuditable {
   public Boolean isMasculine;
   
   @Transient
+  public String emailAddress;
+  
+  @Transient
+  public String phoneNumber;
+  
+  @Transient
   public String fatherAsString;
   
   @Transient
@@ -70,24 +74,26 @@ public class Student extends AbstractIdentifiableCodableAuditable {
   @Transient
   public String schoolAsString;
   
-  public static final String FIELD_REGISTRATION_NUMBER = "registrationNumber";
   public static final String FIELD_IDENTITY = "identity";
   public static final String FIELD_FIRST_NAME = "firstName";
   public static final String FIELD_LAST_NAMES = "lastNames";
-  public static final String FIELD_EMAIL_ADDRESS = "emailAddress";
-  public static final String FIELD_PHONE_NUMBER = "phoneNumber";
+  public static final String FIELD_BLOOD_GROUP = "bloodGroup";
   public static final String FIELD_GENDER_IDENTIFIER = "genderIdentifier";
   public static final String FIELD_GENDER_AS_STRING = "genderAsString";
+  public static final String FIELD_IS_MASCULINE = "isMasculine";
   public static final String FIELD_BIRTH_DATE_AS_STRING = "birthDateAsString";
   public static final String FIELD_BIRTH_PLACE = "birthPlace";
-  public static final String FIELD_IS_MASCULINE = "isMasculine";
+  
+  public static final String FIELD_EMAIL_ADDRESS = "emailAddress";
+  public static final String FIELD_PHONE_NUMBER = "phoneNumber";
   public static final String FIELD_SCHOOL_IDENTIFIER = "schoolIdentifier";
   public static final String FIELD_SCHOOL_AS_STRING = "schoolAsString";
+  public static final String FIELD_ORIGIN_SCHOOL = "originSchool";
   
   public static final String ENTITY_NAME = "Student";
   public static final String TABLE_NAME = "TA_ELEVE";
   
-  public static final String COLUMN_REGISTRATION_NUMBER = "MATRICULE";
   public static final String COLUMN_IDENTITY = "IDENTITE";
   public static final String COLUMN_SCHOOL_IDENTIFIER = "ECOLE";
+  public static final String COLUMN_ORIGIN_SCHOOL = "ECOLE_ORIGINE";
 }

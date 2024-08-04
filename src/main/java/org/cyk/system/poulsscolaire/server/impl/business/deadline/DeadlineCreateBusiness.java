@@ -52,9 +52,4 @@ public class DeadlineCreateBusiness extends AbstractIdentifiableCreateBusiness<D
     deadline.code = String.format("%s_%s_%s", deadline.schoolIdentifier, deadline.group.code,
         timeHelper.format(deadline.date, "ddMMyyyy"));
   }
-
-  @Override
-  protected boolean isCodeGenerated() {
-    return true;
-  }
 }

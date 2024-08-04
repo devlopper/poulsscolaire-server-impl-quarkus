@@ -48,7 +48,7 @@ public class IdentityValidator extends AbstractIdentifiableValidator<Identity> {
    * @param messages messages
    * @return tableau
    */
-  public Object[] validate(IdentityService.IdentityData request, StringList messages) {
+  public Object[] validate(IdentityService.IdentitySaveRequest request, StringList messages) {
     validateFirstName(request.getFirstName(), messages);
     validateLastNames(request.getLastNames(), messages);
     Optional.ofNullable(Core.getOrNullifyIfStringBlank(request.getEmailAddress()))

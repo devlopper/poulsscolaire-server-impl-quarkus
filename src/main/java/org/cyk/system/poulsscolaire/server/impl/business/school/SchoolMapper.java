@@ -13,7 +13,5 @@ import org.mapstruct.Mapper;
  */
 @Mapper
 public interface SchoolMapper extends IdentifiableMapper<School, SchoolDto> {
-
-  School map(SchoolService.Dto dto);
   
 }

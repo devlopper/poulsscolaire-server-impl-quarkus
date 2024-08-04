@@ -40,18 +40,4 @@ class BranchMapperTest {
     Branch instance = mapper.mapFromDto(dto);
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
   }
-  
-  @Test
-  void map() {
-    BranchService.Dto dto = new BranchService.Dto();
-    dto.setIdentifier("1");
-    Branch instance = mapper.map(dto);
-    assertEquals(dto.getIdentifier(), instance.getIdentifier());
-  }
-  
-  @Test
-  void map_whenNull() {
-    Branch instance = mapper.map(null);
-    assertEquals(null, instance);
-  }
 }

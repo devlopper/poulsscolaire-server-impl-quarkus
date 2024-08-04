@@ -63,6 +63,7 @@ class StudentBusinessTest extends AbstractTest {
     request.setIdentifier("toupdate");
     request.setFirstName(UUID.randomUUID().toString());
     request.setLastNames(UUID.randomUUID().toString());
+    request.setSchoolIdentifier("1");
     request.setEmailAddress("m@m.com");
     request.setGenderIdentifier("M");
     request.setAuditWho("christian");

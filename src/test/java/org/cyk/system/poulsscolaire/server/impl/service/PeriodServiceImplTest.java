@@ -10,11 +10,9 @@ import io.restassured.http.ContentType;
 import org.cyk.system.poulsscolaire.server.api.configuration.PeriodDto;
 import org.cyk.system.poulsscolaire.server.api.configuration.PeriodService;
 import org.cyk.system.poulsscolaire.server.api.configuration.PeriodService.PeriodGetManyResponseDto;
-import org.cyk.system.poulsscolaire.server.api.configuration.PeriodService.PeriodRepatriateResponseDto;
 import org.cyk.system.poulsscolaire.server.impl.business.period.PeriodReadByIdentifierBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.period.PeriodReadManyBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.period.PeriodReadOneBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.period.PeriodRepatriateBusiness;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -56,15 +54,5 @@ class PeriodServiceImplTest extends AbstractTest {
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
         .post(PeriodService.PATH + "/" + PeriodService.GET_BY_IDENTIFIER_PATH).then().log()
         .ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
-  }
-  
-  @Test
-  void repatriate() {
-    PeriodRepatriateBusiness business = installMockForType(PeriodRepatriateBusiness.class);
-    Mockito.when(business.process(any())).thenReturn(new PeriodRepatriateResponseDto());
-
-    RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
-        .post(PeriodService.PATH + "/" + PeriodService.REPATRIATE_PATH).then().log().ifError()
-        .statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
   }
 }

@@ -10,11 +10,9 @@ import io.restassured.http.ContentType;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolDto;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolService;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolService.SchoolGetManyResponseDto;
-import org.cyk.system.poulsscolaire.server.api.configuration.SchoolService.SchoolRepatriateResponseDto;
 import org.cyk.system.poulsscolaire.server.impl.business.school.SchoolReadByIdentifierBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.school.SchoolReadManyBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.school.SchoolReadOneBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.school.SchoolRepatriateBusiness;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -56,15 +54,5 @@ class SchoolServiceImplTest extends AbstractTest {
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
         .post(SchoolService.PATH + "/" + SchoolService.GET_BY_IDENTIFIER_PATH).then().log()
         .ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
-  }
-  
-  @Test
-  void repatriate() {
-    SchoolRepatriateBusiness business = installMockForType(SchoolRepatriateBusiness.class);
-    Mockito.when(business.process(any())).thenReturn(new SchoolRepatriateResponseDto());
-
-    RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
-        .post(SchoolService.PATH + "/" + SchoolService.REPATRIATE_PATH).then().log().ifError()
-        .statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
   }
 }

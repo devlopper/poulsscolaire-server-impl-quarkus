@@ -9,6 +9,7 @@ import io.quarkus.test.junit.QuarkusTestProfile;
 import io.quarkus.test.junit.TestProfile;
 import jakarta.inject.Inject;
 import java.util.Map;
+import org.cyk.system.poulsscolaire.server.api.registration.BloodGroup;
 import org.cyk.system.poulsscolaire.server.api.registration.StudentDto;
 import org.junit.jupiter.api.Test;
 
@@ -28,6 +29,15 @@ class StudentDynamicQueryTest {
     parameters.filter().addCriteria(StudentDto.JSON_IDENTIFIER, "1");
     Student student = dynamicQuery.getOne(parameters);
     assertEquals("1 - 1 1", student.asString);
+  }
+  
+  @Test
+  void getOne_bloodGroup() {
+    parameters.setResultMode(ResultMode.ONE);
+    parameters.projection().addNames(StudentDto.JSON_BLOOD_GROUP);
+    parameters.filter().addCriteria(StudentDto.JSON_IDENTIFIER, "1");
+    Student student = dynamicQuery.getOne(parameters);
+    assertEquals(BloodGroup.A_PLUS, student.bloodGroup);
   }
   
   public static class Profile implements QuarkusTestProfile {

@@ -13,7 +13,6 @@ import org.cyk.system.poulsscolaire.server.api.configuration.BranchService;
 import org.cyk.system.poulsscolaire.server.impl.business.branch.BranchReadByIdentifierBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.branch.BranchReadManyBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.branch.BranchReadOneBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.branch.BranchRepatriateBusiness;
 
 /**
  * Cette classe représente l'implémentation de {@link BranchService}.
@@ -25,9 +24,6 @@ import org.cyk.system.poulsscolaire.server.impl.business.branch.BranchRepatriate
 public class BranchServiceImpl extends AbstractServiceImpl implements BranchService {
 
   @Inject
-  BranchRepatriateBusiness repatriateBusiness;
-
-  @Inject
   BranchReadManyBusiness readManyBusiness;
 
   @Inject
@@ -35,18 +31,10 @@ public class BranchServiceImpl extends AbstractServiceImpl implements BranchServ
 
   @Inject
   BranchReadByIdentifierBusiness readByIdentifierBusiness;
-  
-  @Override
-  public Response repatriate(BranchRepatriateRequestDto request) {
-    BranchRepatriateResponseDto dto = repatriateBusiness.process(request);
-    ResponseBuilder responseBuilder = new ResponseBuilder();
-    responseBuilder.setDto(dto);
-    return responseBuilder.build();
-  }
 
   @Override
   public Response getMany(GetManyRequestDto request) {
-    GetManyResponseDto dto = readManyBusiness.process(request);
+    BranchGetManyResponseDto dto = readManyBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);
     return responseBuilder.build();

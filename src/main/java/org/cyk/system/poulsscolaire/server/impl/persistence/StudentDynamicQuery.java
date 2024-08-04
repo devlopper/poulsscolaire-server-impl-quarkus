@@ -47,13 +47,16 @@ public class StudentDynamicQuery extends AbstractDynamicQuery<Student> {
         .fieldName(AbstractIdentifiableCodable.FIELD_CODE).build();
 
     projectionBuilder().name(StudentDto.JSON_REGISTRATION_NUMBER)
-        .fieldName(Student.FIELD_REGISTRATION_NUMBER).build();
+        .fieldName(fieldName(Student.FIELD_IDENTITY, Identity.FIELD_REGISTRATION_NUMBER)).build();
 
     projectionBuilder().name(StudentDto.JSON_FIRST_NAME).nameFieldName(Student.FIELD_FIRST_NAME)
         .fieldName(fieldName(Student.FIELD_IDENTITY, Identity.FIELD_FIRST_NAME)).build();
 
     projectionBuilder().name(StudentDto.JSON_LAST_NAMES).nameFieldName(Student.FIELD_LAST_NAMES)
         .fieldName(fieldName(Student.FIELD_IDENTITY, Identity.FIELD_LAST_NAMES)).build();
+
+    projectionBuilder().name(StudentDto.JSON_BLOOD_GROUP).nameFieldName(Student.FIELD_BLOOD_GROUP)
+        .fieldName(fieldName(Student.FIELD_IDENTITY, Identity.FIELD_BLOOD_GROUP)).build();
 
     projectionBuilder().name(StudentDto.JSON_GENDER_IDENTIFIER)
         .nameFieldName(Student.FIELD_GENDER_IDENTIFIER).fieldName(fieldName(Student.FIELD_IDENTITY,
@@ -81,8 +84,8 @@ public class StudentDynamicQuery extends AbstractDynamicQuery<Student> {
     projectionBuilder().name(AbstractIdentifiableDto.JSON_AS_STRING)
         .expression(String.format("%1$s.%3$s,%1$s.%4$s,%1$s.%2$s.%5$s,%1$s.%2$s.%6$s", variableName,
             Student.FIELD_IDENTITY, AbstractIdentifiableCodable.FIELD_CODE,
-            Student.FIELD_REGISTRATION_NUMBER, Identity.FIELD_FIRST_NAME,
-            Identity.FIELD_LAST_NAMES))
+            fieldName(Student.FIELD_IDENTITY, Identity.FIELD_REGISTRATION_NUMBER),
+            Identity.FIELD_FIRST_NAME, Identity.FIELD_LAST_NAMES))
         .resultConsumer((i, a) -> i.asString = StudentDto.computeAsString(a.getNextAsString(),
             a.getNextAsString(), a.getNextAsString(), a.getNextAsString()))
         .build();

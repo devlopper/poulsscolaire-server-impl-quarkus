@@ -13,7 +13,5 @@ import org.mapstruct.Mapper;
  */
 @Mapper
 public interface PeriodMapper extends IdentifiableMapper<Period, PeriodDto> {
-
-  Period map(PeriodService.Dto dto);
   
 }
