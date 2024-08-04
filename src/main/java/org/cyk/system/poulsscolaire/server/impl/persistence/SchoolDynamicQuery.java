@@ -18,6 +18,7 @@ import jakarta.persistence.EntityManager;
 import java.util.Set;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolDto;
+import org.cyk.system.poulsscolaire.server.api.configuration.SchoolFilter;
 
 /**
  * Cette classe représente la requête dynamique de {@link School}.
@@ -34,6 +35,7 @@ public class SchoolDynamicQuery extends AbstractDynamicQuery<School> {
 
   String schoolingVariableName;
   String registrationVariableName;
+  String schoolUserVariableName;
 
   String adjustedFeeAmountsVariableName;
 
@@ -44,6 +46,7 @@ public class SchoolDynamicQuery extends AbstractDynamicQuery<School> {
     super(School.class);
     schoolingVariableName = "s";
     registrationVariableName = "r";
+    schoolUserVariableName = "su";
 
     adjustedFeeAmountsVariableName = "afa";
   }
@@ -118,12 +121,21 @@ public class SchoolDynamicQuery extends AbstractDynamicQuery<School> {
         .with(AdjustedFeeAmounts.class).tupleVariableName(adjustedFeeAmountsVariableName)
         .fieldName(AdjustedFeeAmounts.FIELD_SCHOOL_IDENTIFIER)
         .parentFieldName(AbstractIdentifiable.FIELD_IDENTIFIER).leftInnerOrRight(true).build();
+
+    // Jointures
+    joinBuilder().predicatesNames(SchoolFilter.JSON_USER_IDENTIFIER).with(SchoolUser.class)
+        .tupleVariableName(schoolUserVariableName).parentFieldName(SchoolUser.FIELD_USER_IDENTIFIER)
+        .leftInnerOrRight(true).build();
   }
 
   void buildPredicates() {
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
         .valueFunction(AbstractIdentifiableFilter::getIdentifier).build();
+
+    predicateBuilder().name(SchoolFilter.JSON_USER_IDENTIFIER)
+        .tupleVariableName(schoolUserVariableName).fieldName(SchoolUser.FIELD_USER_IDENTIFIER)
+        .valueFunction(SchoolFilter::getUserIdentifier).build();
   }
 
   @Override

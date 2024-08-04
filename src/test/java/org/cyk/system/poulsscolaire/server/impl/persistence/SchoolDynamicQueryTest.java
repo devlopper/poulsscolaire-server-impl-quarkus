@@ -52,5 +52,6 @@ class SchoolDynamicQueryTest {
   void instantiate() {
     assertNotNull(new SchoolBranch());
     assertNotNull(new SchoolPeriod());
+    assertNotNull(new SchoolUser());
   }
 }

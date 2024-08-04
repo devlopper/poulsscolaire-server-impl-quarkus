@@ -13,6 +13,7 @@ class EntityTest {
     assertNotNull(new Program());
     assertNotNull(new ProgramSchool());
     assertNotNull(new School());
+    assertNotNull(new User());
   }
   
 }
