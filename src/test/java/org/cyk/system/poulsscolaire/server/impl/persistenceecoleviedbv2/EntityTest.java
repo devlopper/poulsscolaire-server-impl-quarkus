@@ -7,13 +7,12 @@ import org.junit.jupiter.api.Test;
 class EntityTest {
 
   @Test
-  void instantiateSchool() {
-    assertNotNull(new School());
-  }
-  
-  @Test
-  void instantiateBranch() {
+  void instantiate() {
+    assertNotNull(new AcademicYear());
     assertNotNull(new Branch());
+    assertNotNull(new Program());
+    assertNotNull(new ProgramSchool());
+    assertNotNull(new School());
   }
   
 }

@@ -26,11 +26,14 @@ public class PeriodDynamicQuery extends AbstractDynamicQuery<Period> {
   @Getter
   EntityManager entityManager;
 
+  String schoolPeriodVariableName;
+
   /**
    * Cette méthode permet d'instancier un object.
    */
   public PeriodDynamicQuery() {
     super(Period.class);
+    schoolPeriodVariableName = "sp";
   }
 
   @PostConstruct
@@ -41,6 +44,11 @@ public class PeriodDynamicQuery extends AbstractDynamicQuery<Period> {
     projectionBuilder().name(AbstractIdentifiableCodableNamableDto.JSON_NAME)
         .fieldName(AbstractIdentifiableCodableNamable.FIELD_NAME).build();
 
+    // Jointures
+    joinBuilder().predicatesNames(PeriodFilter.JSON_SCHOOL_IDENTIFIER).with(SchoolPeriod.class)
+        .tupleVariableName(schoolPeriodVariableName)
+        .parentFieldName(SchoolPeriod.FIELD_SCHOOL_IDENTIFIER).leftInnerOrRight(true).build();
+
     // Prédicats
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
@@ -48,6 +56,10 @@ public class PeriodDynamicQuery extends AbstractDynamicQuery<Period> {
 
     predicateBuilder().name(PeriodFilter.JSON_OPENED).fieldName(Period.FIELD_OPENED)
         .valueFunction(PeriodFilter::getOpened).build();
+
+    predicateBuilder().name(PeriodFilter.JSON_SCHOOL_IDENTIFIER)
+        .tupleVariableName(schoolPeriodVariableName).fieldName(SchoolPeriod.FIELD_SCHOOL_IDENTIFIER)
+        .valueFunction(PeriodFilter::getSchoolIdentifier).build();
 
     // Ordres par défaut
     orderBuilder().fieldName(AbstractIdentifiableCodableNamable.FIELD_NAME).build();

@@ -25,6 +25,9 @@ public class AcademicYear {
   @Column(name = "annee_scolaire_libelle")
   public String name;
   
+  @Column(name = "ecole_id")
+  public String schoolIdentifier;
+  
   @Column(name = "statut")
   public String status;
   

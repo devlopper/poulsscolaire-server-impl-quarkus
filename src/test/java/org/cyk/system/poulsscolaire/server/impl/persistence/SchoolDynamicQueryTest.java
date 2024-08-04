@@ -1,6 +1,7 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
 import io.quarkus.test.junit.QuarkusTest;
@@ -45,5 +46,11 @@ class SchoolDynamicQueryTest {
         + "LEFT JOIN AdjustedFeeAmounts afa ON afa.schoolIdentifier = t.identifier "
         + "GROUP BY t.identifier,t.name ORDER BY t.name ASC",
         dynamicQuery.buildQueryString(parameters));
+  }
+  
+  @Test
+  void instantiate() {
+    assertNotNull(new SchoolBranch());
+    assertNotNull(new SchoolPeriod());
   }
 }
