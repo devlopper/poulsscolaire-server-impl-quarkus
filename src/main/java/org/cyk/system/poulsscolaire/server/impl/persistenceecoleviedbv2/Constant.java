@@ -4,7 +4,6 @@ class Constant {
 
   private Constant() {}
   
-  static final String SCHEMA_NAME = "ECOLEVIEDBV2";
+  static final String SCHEMA_NAME = "ecoleviedbv2";
   
 }
-

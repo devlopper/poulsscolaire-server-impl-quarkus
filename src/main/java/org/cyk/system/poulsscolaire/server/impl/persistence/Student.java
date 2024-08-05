@@ -33,6 +33,9 @@ public class Student extends AbstractIdentifiableCodableAuditable {
   public String originSchool;
   
   @Transient
+  public String registrationNumber;
+  
+  @Transient
   public String firstName;
   
   @Transient
@@ -75,6 +78,7 @@ public class Student extends AbstractIdentifiableCodableAuditable {
   public String schoolAsString;
   
   public static final String FIELD_IDENTITY = "identity";
+  public static final String FIELD_REGISTRATION_NUMBER = "registrationNumber";
   public static final String FIELD_FIRST_NAME = "firstName";
   public static final String FIELD_LAST_NAMES = "lastNames";
   public static final String FIELD_BLOOD_GROUP = "bloodGroup";
