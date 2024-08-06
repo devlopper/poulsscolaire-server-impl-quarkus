@@ -92,7 +92,7 @@ public class Identity extends AbstractIdentifiableAuditable {
     firstName = request.getFirstName();
     arabicFirstName = request.getArabicFirstName();
     lastNames = request.getLastNames();
-    arabicLastNames = request.getLastNames();
+    arabicLastNames = request.getArabicLastNames();
     if (array != null) {
       gender = (Gender) array[0];
     }

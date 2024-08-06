@@ -53,8 +53,16 @@ public class StudentDynamicQuery extends AbstractDynamicQuery<Student> {
     projectionBuilder().name(StudentDto.JSON_FIRST_NAME).nameFieldName(Student.FIELD_FIRST_NAME)
         .fieldName(fieldName(Student.FIELD_IDENTITY, Identity.FIELD_FIRST_NAME)).build();
 
+    projectionBuilder().name(StudentDto.JSON_ARABIC_FIRST_NAME)
+        .nameFieldName(Student.FIELD_ARABIC_FIRST_NAME)
+        .fieldName(fieldName(Student.FIELD_IDENTITY, Identity.FIELD_ARABIC_FIRST_NAME)).build();
+
     projectionBuilder().name(StudentDto.JSON_LAST_NAMES).nameFieldName(Student.FIELD_LAST_NAMES)
         .fieldName(fieldName(Student.FIELD_IDENTITY, Identity.FIELD_LAST_NAMES)).build();
+
+    projectionBuilder().name(StudentDto.JSON_ARABIC_LAST_NAMES)
+        .nameFieldName(Student.FIELD_ARABIC_LAST_NAMES)
+        .fieldName(fieldName(Student.FIELD_IDENTITY, Identity.FIELD_ARABIC_LAST_NAMES)).build();
 
     projectionBuilder().name(StudentDto.JSON_BLOOD_GROUP).nameFieldName(Student.FIELD_BLOOD_GROUP)
         .fieldName(fieldName(Student.FIELD_IDENTITY, Identity.FIELD_BLOOD_GROUP)).build();
@@ -68,12 +76,24 @@ public class StudentDynamicQuery extends AbstractDynamicQuery<Student> {
             Identity.FIELD_GENDER, AbstractIdentifiableCodableNamable.FIELD_NAME))
         .build();
 
-    projectionBuilder().name(StudentDto.JSON_BIRTH_DATE_AS_STRING)
-        .nameFieldName(Student.FIELD_BIRTH_DATE_AS_STRING)
+    projectionBuilder().name(StudentDto.JSON_BIRTH_DATE)
+        .nameFieldName(Student.FIELD_BIRTH_DATE)
         .fieldName(fieldName(Student.FIELD_IDENTITY, Identity.FIELD_BIRTH_DATE)).build();
 
+    projectionBuilder().name(StudentDto.JSON_BIRTH_DATE_AS_STRING)
+    .nameFieldName(Student.FIELD_BIRTH_DATE_AS_STRING)
+    .fieldName(fieldName(Student.FIELD_IDENTITY, Identity.FIELD_BIRTH_DATE)).build();
+    
     projectionBuilder().name(StudentDto.JSON_BIRTH_PLACE).nameFieldName(Student.FIELD_BIRTH_PLACE)
         .fieldName(fieldName(Student.FIELD_IDENTITY, Identity.FIELD_BIRTH_PLACE)).build();
+
+    projectionBuilder().name(StudentDto.JSON_BIRTH_CERTIFICATE_REFERENCE)
+        .nameFieldName(Student.FIELD_BIRTH_CERTIFICATE_REFERENCE)
+        .fieldName(fieldName(Student.FIELD_IDENTITY, Identity.FIELD_BIRTH_CERTIFICATE_REFERENCE))
+        .build();
+
+    projectionBuilder().name(StudentDto.JSON_NATIONALITY).nameFieldName(Student.FIELD_NATIONALITY)
+        .fieldName(fieldName(Student.FIELD_IDENTITY, Identity.FIELD_NATIONALITY)).build();
 
     projectionBuilder().name(StudentDto.JSON_EMAIL_ADDRESS)
         .nameFieldName(Student.FIELD_EMAIL_ADDRESS)
@@ -81,6 +101,9 @@ public class StudentDynamicQuery extends AbstractDynamicQuery<Student> {
 
     projectionBuilder().name(StudentDto.JSON_PHONE_NUMBER).nameFieldName(Student.FIELD_PHONE_NUMBER)
         .fieldName(fieldName(Student.FIELD_IDENTITY, Identity.FIELD_PHONE_NUMBER)).build();
+
+    projectionBuilder().name(StudentDto.JSON_RESIDENCE).nameFieldName(Student.FIELD_RESIDENCE)
+        .fieldName(fieldName(Student.FIELD_IDENTITY, Identity.FIELD_RESIDENCE)).build();
 
     projectionBuilder().name(AbstractIdentifiableDto.JSON_AS_STRING)
         .expression(String.format("%1$s.%3$s,%1$s.%4$s,%1$s.%2$s.%5$s,%1$s.%2$s.%6$s", variableName,
@@ -97,6 +120,9 @@ public class StudentDynamicQuery extends AbstractDynamicQuery<Student> {
     projectionBuilder().name(StudentDto.JSON_SCHOOL_AS_STRING)
         .expression(formatConcatName(schoolVariableName))
         .resultConsumer((i, a) -> i.schoolAsString = a.getNextAsString()).build();
+
+    projectionBuilder().name(StudentDto.JSON_ORIGIN_SCHOOL).fieldName(Student.FIELD_ORIGIN_SCHOOL)
+        .build();
 
     // Jointures
     joinBuilder().projectionsNames(StudentDto.JSON_SCHOOL_AS_STRING)
