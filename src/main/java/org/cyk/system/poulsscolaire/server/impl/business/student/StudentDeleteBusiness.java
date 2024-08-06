@@ -5,6 +5,7 @@ import ci.gouv.dgbf.extension.server.service.api.request.DeleteOneRequestDto;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
+import org.cyk.system.poulsscolaire.server.impl.persistence.IdentityPersistence;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Student;
 import org.cyk.system.poulsscolaire.server.impl.persistence.StudentPersistence;
 
@@ -15,8 +16,8 @@ import org.cyk.system.poulsscolaire.server.impl.persistence.StudentPersistence;
  *
  */
 @ApplicationScoped
-public class StudentDeleteBusiness extends AbstractIdentifiableDeleteBusiness<
-    Student, StudentPersistence, StudentValidator, DeleteOneRequestDto> {
+public class StudentDeleteBusiness extends AbstractIdentifiableDeleteBusiness<Student,
+    StudentPersistence, StudentValidator, DeleteOneRequestDto> {
 
   @Inject
   @Getter
@@ -25,4 +26,14 @@ public class StudentDeleteBusiness extends AbstractIdentifiableDeleteBusiness<
   @Inject
   @Getter
   StudentValidator validator;
+
+  @Inject
+  IdentityPersistence identityPersistence;
+  
+  @Override
+  protected void doTransact(Student student) {
+    super.doTransact(student);
+    student.identity.setAudit(student.audit);
+    identityPersistence.delete(student.identity);
+  }
 }
