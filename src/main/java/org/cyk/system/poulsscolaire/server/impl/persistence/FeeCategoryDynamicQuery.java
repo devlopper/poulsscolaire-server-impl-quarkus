@@ -1,5 +1,6 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
+import ci.gouv.dgbf.extension.core.Core;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableNamable;
@@ -36,6 +37,7 @@ public class FeeCategoryDynamicQuery extends AbstractDynamicQuery<FeeCategory> {
   String adjustedFeeVariableName;
   String registrationVariableName;
   String schoolingVariableName;
+  String schoolVariableName;
 
   String adjustedFeeAmountsVariableName;
 
@@ -48,6 +50,7 @@ public class FeeCategoryDynamicQuery extends AbstractDynamicQuery<FeeCategory> {
     adjustedFeeVariableName = "af";
     registrationVariableName = "r";
     schoolingVariableName = "s";
+    schoolVariableName = "school";
 
     adjustedFeeAmountsVariableName = "afa";
   }
@@ -62,6 +65,13 @@ public class FeeCategoryDynamicQuery extends AbstractDynamicQuery<FeeCategory> {
 
     projectionBuilder().name(AbstractIdentifiableCodableNamableDto.JSON_NAME)
         .fieldName(AbstractIdentifiableCodableNamable.FIELD_NAME).build();
+
+    projectionBuilder().name(FeeCategoryDto.JSON_SCHOOL_IDENTIFIER)
+        .fieldName(FeeCategory.FIELD_SCHOOL_IDENTIFIER).build();
+
+    projectionBuilder().name(FeeCategoryDto.JSON_SCHOOL_AS_STRING)
+        .tupleVariableName(schoolVariableName).expression(formatConcatName(schoolVariableName))
+        .resultConsumer((i, a) -> i.schoolAsString = a.getNextAsString()).build();
 
     projectionBuilder().name(FeeCategoryDto.JSON_TOTAL_AMOUNT_AS_STRING)
         .expression(formatSum(
@@ -97,6 +107,13 @@ public class FeeCategoryDynamicQuery extends AbstractDynamicQuery<FeeCategory> {
         .build();
 
     // Jointures
+    joinBuilder()
+        .projectionsNames(FeeCategoryDto.JSON_SCHOOL_IDENTIFIER,
+            FeeCategoryDto.JSON_SCHOOL_AS_STRING)
+        .predicatesNames(FeeCategoryFilter.JSON_SCHOOL_IDENTIFIER).with(School.class)
+        .tupleVariableName(schoolVariableName).fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
+        .parentFieldName(FeeCategory.FIELD_SCHOOL_IDENTIFIER).leftInnerOrRight(true).build();
+
     joinBuilder().predicatesNames(FeeCategoryFilter.JSON_REGISTRATION_SCHOOLING_SCHOOL_IDENTIFIER)
         .with(Fee.class).tupleVariableName(feeVariableName).fieldName(Fee.FIELD_CATEGORY)
         .parentFieldName(null).leftInnerOrRight(true).build();
@@ -132,6 +149,10 @@ public class FeeCategoryDynamicQuery extends AbstractDynamicQuery<FeeCategory> {
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
         .valueFunction(AbstractIdentifiableFilter::getIdentifier).build();
 
+    predicateBuilder().name(FeeCategoryFilter.JSON_SCHOOL_IDENTIFIER)
+        .tupleVariableName(schoolVariableName).fieldName(FeeCategory.FIELD_SCHOOL_IDENTIFIER)
+        .valueFunction(FeeCategoryFilter::getSchoolIdentifier).build();
+
     predicateBuilder().name(FeeCategoryFilter.JSON_REGISTRATION_SCHOOLING_SCHOOL_IDENTIFIER)
         .tupleVariableName(schoolingVariableName).fieldName(Schooling.FIELD_SCHOOL_IDENTIFIER)
         .valueFunction(FeeCategoryFilter::getRegistrationSchoolingSchoolIdentifier).build();
@@ -148,6 +169,7 @@ public class FeeCategoryDynamicQuery extends AbstractDynamicQuery<FeeCategory> {
   @Override
   protected boolean isGrouped(DynamicQueryParameters<FeeCategory> parameters) {
     return ProjectionDto.hasOneOfNames(parameters.getProjection(),
+        FeeCategoryDto.JSON_SCHOOL_IDENTIFIER, FeeCategoryDto.JSON_SCHOOL_AS_STRING,
         FeeCategoryDto.JSON_TOTAL_AMOUNT_AS_STRING, FeeCategoryDto.JSON_PAID_AMOUNT_AS_STRING,
         FeeCategoryDto.JSON_PAYABLE_AMOUNT_AS_STRING,
         FeeCategoryDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING,
@@ -169,5 +191,13 @@ public class FeeCategoryDynamicQuery extends AbstractDynamicQuery<FeeCategory> {
     /*
      * On ajoute les autres au besoin
      */
+    Core.runIfTrue(ProjectionDto.hasOneOfNames(parameters.getProjection(),
+        FeeCategoryDto.JSON_SCHOOL_IDENTIFIER), () -> {
+          groups.add(fieldName(schoolVariableName, FeeCategory.FIELD_SCHOOL_IDENTIFIER));
+        });
+    Core.runIfTrue(ProjectionDto.hasOneOfNames(parameters.getProjection(),
+        FeeCategoryDto.JSON_SCHOOL_AS_STRING), () -> {
+          groups.add(fieldName(schoolVariableName, AbstractIdentifiableCodableNamable.FIELD_NAME));
+        });
   }
 }

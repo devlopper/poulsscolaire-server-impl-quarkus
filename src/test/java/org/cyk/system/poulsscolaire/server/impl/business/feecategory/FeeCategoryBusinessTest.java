@@ -13,6 +13,7 @@ import jakarta.persistence.EntityManager;
 import java.util.Map;
 import java.util.UUID;
 import org.cyk.system.poulsscolaire.server.api.fee.FeeCategoryService.FeeCategoryCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.fee.FeeCategoryService.FeeCategoryUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.FeeCategory;
 import org.junit.jupiter.api.Test;
 
@@ -95,6 +96,19 @@ class FeeCategoryBusinessTest extends AbstractTest {
     long count = count(entityManager, FeeCategory.ENTITY_NAME);
     createBusiness.process(request);
     assertEquals(count + 1, count(entityManager, FeeCategory.ENTITY_NAME));
+  }
+  
+  @Test
+  void update() {
+    FeeCategoryUpdateRequestDto request = new FeeCategoryUpdateRequestDto();
+    request.setIdentifier("toupdate");
+    request.setCode(UUID.randomUUID().toString());
+    request.setName(UUID.randomUUID().toString());
+    request.setSchoolIdentifier(UUID.randomUUID().toString());
+    request.setAuditWho("christian");
+    long count = count(entityManager, FeeCategory.ENTITY_NAME);
+    updateBusiness.process(request);
+    assertEquals(count + 0, count(entityManager, FeeCategory.ENTITY_NAME));
   }
   
   public static class Profile implements QuarkusTestProfile {

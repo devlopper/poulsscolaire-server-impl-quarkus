@@ -1,5 +1,6 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
@@ -10,6 +11,7 @@ import io.quarkus.test.junit.TestProfile;
 import jakarta.inject.Inject;
 import java.util.Map;
 import org.cyk.system.poulsscolaire.server.api.fee.FeeCategoryDto;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -89,6 +91,15 @@ class FeeCategoryDynamicQueryTest {
     parameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, identifier);
     FeeCategory feeCategory = dynamicQuery.getOne(parameters);
     assertEquals(expected, feeCategory.payableRegistrationAmountAsString);
+  }
+
+  @Test
+  void projectionsGroup() {
+    parameters.projection().addNames(FeeCategoryDto.JSON_SCHOOL_IDENTIFIER,
+        FeeCategoryDto.JSON_SCHOOL_AS_STRING);
+    parameters.setResultMode(ResultMode.ONE);
+    parameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, "1");
+    assertDoesNotThrow(() -> dynamicQuery.getOne(parameters));
   }
 
   public static class Profile implements QuarkusTestProfile {

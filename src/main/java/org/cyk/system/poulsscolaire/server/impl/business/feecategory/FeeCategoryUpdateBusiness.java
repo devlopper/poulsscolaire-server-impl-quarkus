@@ -1,5 +1,6 @@
 package org.cyk.system.poulsscolaire.server.impl.business.feecategory;
 
+import ci.gouv.dgbf.extension.core.StringList;
 import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableUpdateBusiness;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -25,4 +26,17 @@ public class FeeCategoryUpdateBusiness extends AbstractIdentifiableUpdateBusines
   @Inject
   @Getter
   FeeCategoryValidator validator;
+
+  @Override
+  protected void validate(FeeCategoryUpdateRequestDto request, StringList messages,
+      FeeCategory feeCategory) {
+    super.validate(request, messages, feeCategory);
+    validator.validateSchoolCode(request.getSchoolIdentifier(), request.getCode(), messages);
+  }
+
+  @Override
+  protected void prepare(FeeCategory feeCategory, FeeCategoryUpdateRequestDto request) {
+    super.prepare(feeCategory, request);
+    feeCategory.schoolIdentifier = request.getSchoolIdentifier();
+  }
 }
