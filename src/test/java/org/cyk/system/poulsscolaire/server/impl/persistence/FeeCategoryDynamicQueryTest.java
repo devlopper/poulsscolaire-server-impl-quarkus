@@ -38,7 +38,7 @@ class FeeCategoryDynamicQueryTest {
     parameters.setResultMode(ResultMode.ONE);
     parameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, identifier);
     FeeCategory feeCategory = dynamicQuery.getOne(parameters);
-    assertEquals(expected, feeCategory.getTotalAmountAsString());
+    assertEquals(expected, feeCategory.totalAmountAsString);
   }
 
   @ParameterizedTest
@@ -48,7 +48,7 @@ class FeeCategoryDynamicQueryTest {
     parameters.setResultMode(ResultMode.ONE);
     parameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, identifier);
     FeeCategory feeCategory = dynamicQuery.getOne(parameters);
-    assertEquals(expected, feeCategory.getTotalRegistrationAmountAsString());
+    assertEquals(expected, feeCategory.totalRegistrationAmountAsString);
   }
 
   @ParameterizedTest
@@ -58,7 +58,7 @@ class FeeCategoryDynamicQueryTest {
     parameters.setResultMode(ResultMode.ONE);
     parameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, identifier);
     FeeCategory feeCategory = dynamicQuery.getOne(parameters);
-    assertEquals(expected, feeCategory.getPaidAmountAsString());
+    assertEquals(expected, feeCategory.paidAmountAsString);
   }
 
   @ParameterizedTest
@@ -68,7 +68,7 @@ class FeeCategoryDynamicQueryTest {
     parameters.setResultMode(ResultMode.ONE);
     parameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, identifier);
     FeeCategory feeCategory = dynamicQuery.getOne(parameters);
-    assertEquals(expected, feeCategory.getPaidRegistrationAmountAsString());
+    assertEquals(expected, feeCategory.paidRegistrationAmountAsString);
   }
 
   @ParameterizedTest
@@ -78,7 +78,7 @@ class FeeCategoryDynamicQueryTest {
     parameters.setResultMode(ResultMode.ONE);
     parameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, identifier);
     FeeCategory feeCategory = dynamicQuery.getOne(parameters);
-    assertEquals(expected, feeCategory.getPayableAmountAsString());
+    assertEquals(expected, feeCategory.payableAmountAsString);
   }
 
   @ParameterizedTest
@@ -88,7 +88,7 @@ class FeeCategoryDynamicQueryTest {
     parameters.setResultMode(ResultMode.ONE);
     parameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, identifier);
     FeeCategory feeCategory = dynamicQuery.getOne(parameters);
-    assertEquals(expected, feeCategory.getPayableRegistrationAmountAsString());
+    assertEquals(expected, feeCategory.payableRegistrationAmountAsString);
   }
 
   public static class Profile implements QuarkusTestProfile {

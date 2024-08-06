@@ -1,5 +1,7 @@
 package org.cyk.system.poulsscolaire.server.impl.business.feecategory;
 
+import ci.gouv.dgbf.extension.core.Constant;
+import ci.gouv.dgbf.extension.core.StringList;
 import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableCreateBusiness;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -25,4 +27,19 @@ public class FeeCategoryCreateBusiness extends AbstractIdentifiableCreateBusines
   @Inject
   @Getter
   FeeCategoryValidator validator;
+
+  @Override
+  protected Object[] validate(FeeCategoryCreateRequestDto request, StringList messages) {
+    validator.validateSchoolCode(request.getSchoolIdentifier(), request.getCode(), messages);
+    return Constant.EMPTY_OBJECT_ARRAY;
+  }
+
+  @Override
+  protected void setFields(FeeCategory feeCategory, Object[] array,
+      FeeCategoryCreateRequestDto request) {
+    super.setFields(feeCategory, array, request);
+    feeCategory.schoolIdentifier = request.getSchoolIdentifier();
+  }
+
+
 }
