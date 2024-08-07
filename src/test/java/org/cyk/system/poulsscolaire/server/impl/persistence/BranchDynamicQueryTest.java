@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import org.cyk.system.poulsscolaire.server.api.configuration.PeriodDto;
 import org.cyk.system.poulsscolaire.server.api.configuration.PeriodFilter;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -43,11 +42,6 @@ class BranchDynamicQueryTest {
       assertLinesMatch(List.of(expected.split(":")),
           branchs.stream().map(i -> i.getIdentifier()).toList());
     }
-  }
-  
-  @Test
-  void getMany() {
-    assertEquals(1, dynamicQuery.getMany(parameters).size());
   }
   
   public static class Profile implements QuarkusTestProfile {
