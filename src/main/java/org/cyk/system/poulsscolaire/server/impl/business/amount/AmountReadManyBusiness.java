@@ -5,7 +5,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.fee.AmountDto;
-import org.cyk.system.poulsscolaire.server.api.fee.AmountService.GetManyResponseDto;
+import org.cyk.system.poulsscolaire.server.api.fee.AmountService.AmountGetManyResponseDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Amount;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AmountDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AmountPersistence;
@@ -18,10 +18,10 @@ import org.cyk.system.poulsscolaire.server.impl.persistence.AmountPersistence;
  */
 @ApplicationScoped
 public class AmountReadManyBusiness extends AbstractIdentifiableReadManyBusiness<Amount,
-    AmountPersistence, AmountDynamicQuery, AmountDto, AmountMapper, GetManyResponseDto> {
+    AmountPersistence, AmountDynamicQuery, AmountDto, AmountMapper, AmountGetManyResponseDto> {
 
   protected AmountReadManyBusiness() {
-    super(GetManyResponseDto.class);
+    super(AmountGetManyResponseDto.class);
   }
 
   @Inject

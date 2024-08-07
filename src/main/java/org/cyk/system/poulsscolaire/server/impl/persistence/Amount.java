@@ -72,7 +72,7 @@ public class Amount extends AbstractIdentifiableAuditable {
    * @param request requête
    * @param array tableau
    */
-  public void set(AmountService.AmountSaveData request, Object[] array) {
+  public void set(AmountService.AmountSaveRequestDto request, Object[] array) {
     value = request.getValue();
     registrationValuePart = Optional.ofNullable(request.getRegistrationValuePart()).orElse(0);
     optional = request.getOptional();
