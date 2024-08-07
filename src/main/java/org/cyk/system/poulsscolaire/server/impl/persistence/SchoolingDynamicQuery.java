@@ -173,6 +173,7 @@ public class SchoolingDynamicQuery extends AbstractDynamicQuery<Schooling> {
     return ProjectionDto.hasOneOfNames(parameters.getProjection(),
         SchoolingDto.JSON_SCHOOL_IDENTIFIER, SchoolingDto.JSON_SCHOOL_AS_STRING,
         SchoolingDto.JSON_BRANCH_IDENTIFIER, SchoolingDto.JSON_BRANCH_AS_STRING,
+        SchoolingDto.JSON_PERIOD_IDENTIFIER, SchoolingDto.JSON_PERIOD_AS_STRING,
         SchoolingDto.JSON_FEE_AMOUNT_VALUE_AS_STRING,
         SchoolingDto.JSON_FEE_AMOUNT_REGISTRATION_VALUE_PART_AS_STRING,
         SchoolingDto.JSON_NOT_OPTIONAL_FEE_AMOUNT_VALUE_AS_STRING,

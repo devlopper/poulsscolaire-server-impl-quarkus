@@ -110,38 +110,9 @@ public class FeeCategoryDynamicQuery extends AbstractDynamicQuery<FeeCategory> {
     joinBuilder()
         .projectionsNames(FeeCategoryDto.JSON_SCHOOL_IDENTIFIER,
             FeeCategoryDto.JSON_SCHOOL_AS_STRING)
-        .predicatesNames(FeeCategoryFilter.JSON_SCHOOL_IDENTIFIER,
-            FeeCategoryFilter.JSON_SCHOOLING_IDENTIFIER)
-        .with(School.class).tupleVariableName(schoolVariableName)
-        .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
+        .predicatesNames(FeeCategoryFilter.JSON_SCHOOLING_IDENTIFIER).with(School.class)
+        .tupleVariableName(schoolVariableName).fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
         .parentFieldName(FeeCategory.FIELD_SCHOOL_IDENTIFIER).leftInnerOrRight(true).build();
-
-    joinBuilder()
-        .projectionsNames(FeeCategoryDto.JSON_SCHOOLING_IDENTIFIER,
-            FeeCategoryDto.JSON_SCHOOLING_AS_STRING)
-        .predicatesNames(FeeCategoryFilter.JSON_SCHOOLING_IDENTIFIER).with(Schooling.class)
-        .tupleVariableName(schoolingVariableName).fieldName(Schooling.FIELD_SCHOOL_IDENTIFIER)
-        .parentTupleVariableName(schoolVariableName)
-        .parentFieldName(AbstractIdentifiable.FIELD_IDENTIFIER).leftInnerOrRight(true).build();
-
-    joinBuilder().predicatesNames(FeeCategoryFilter.JSON_REGISTRATION_SCHOOLING_SCHOOL_IDENTIFIER)
-        .with(Fee.class).tupleVariableName(feeVariableName).fieldName(Fee.FIELD_CATEGORY)
-        .parentFieldName(null).leftInnerOrRight(true).build();
-
-    joinBuilder().predicatesNames(FeeCategoryFilter.JSON_REGISTRATION_SCHOOLING_SCHOOL_IDENTIFIER)
-        .with(AdjustedFee.class).tupleVariableName(adjustedFeeVariableName)
-        .fieldName(AdjustedFee.FIELD_FEE).parentTupleVariableName(feeVariableName)
-        .parentFieldName(null).leftInnerOrRight(true).build();
-
-    joinBuilder().predicatesNames(FeeCategoryFilter.JSON_REGISTRATION_SCHOOLING_SCHOOL_IDENTIFIER)
-        .with(Registration.class).tupleVariableName(registrationVariableName).fieldName(null)
-        .parentTupleVariableName(adjustedFeeVariableName)
-        .parentFieldName(AdjustedFee.FIELD_REGISTRATION).leftInnerOrRight(true).build();
-
-    joinBuilder().predicatesNames(FeeCategoryFilter.JSON_REGISTRATION_SCHOOLING_SCHOOL_IDENTIFIER)
-        .with(Schooling.class).tupleVariableName(schoolingVariableName).fieldName(null)
-        .parentTupleVariableName(registrationVariableName)
-        .parentFieldName(Registration.FIELD_SCHOOLING).leftInnerOrRight(true).build();
 
     joinBuilder()
         .projectionsNames(FeeCategoryDto.JSON_TOTAL_AMOUNT_AS_STRING,
@@ -160,7 +131,7 @@ public class FeeCategoryDynamicQuery extends AbstractDynamicQuery<FeeCategory> {
         .valueFunction(AbstractIdentifiableFilter::getIdentifier).build();
 
     predicateBuilder().name(FeeCategoryFilter.JSON_SCHOOL_IDENTIFIER)
-        .tupleVariableName(schoolVariableName).fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
+        .fieldName(FeeCategory.FIELD_SCHOOL_IDENTIFIER)
         .valueFunction(FeeCategoryFilter::getSchoolIdentifier).build();
 
     predicateBuilder().name(FeeCategoryFilter.JSON_SCHOOLING_IDENTIFIER)
@@ -205,10 +176,11 @@ public class FeeCategoryDynamicQuery extends AbstractDynamicQuery<FeeCategory> {
     /*
      * On ajoute les autres au besoin
      */
-    Core.runIfTrue(ProjectionDto.hasOneOfNames(parameters.getProjection(),
-        FeeCategoryDto.JSON_SCHOOL_IDENTIFIER), () -> {
-          groups.add(fieldName(schoolVariableName, FeeCategory.FIELD_SCHOOL_IDENTIFIER));
-        });
+    Core.runIfTrue(
+        ProjectionDto.hasOneOfNames(parameters.getProjection(),
+                FeeCategoryDto.JSON_SCHOOL_IDENTIFIER),
+        () -> groups.add(fieldName(variableName, FeeCategory.FIELD_SCHOOL_IDENTIFIER)));
+    
     Core.runIfTrue(ProjectionDto.hasOneOfNames(parameters.getProjection(),
         FeeCategoryDto.JSON_SCHOOL_AS_STRING), () -> {
           groups.add(fieldName(schoolVariableName, AbstractIdentifiableCodableNamable.FIELD_NAME));

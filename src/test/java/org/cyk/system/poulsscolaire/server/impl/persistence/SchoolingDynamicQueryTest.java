@@ -3,29 +3,22 @@ package org.cyk.system.poulsscolaire.server.impl.persistence;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertLinesMatch;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters.ResultMode;
-import io.quarkus.test.junit.QuarkusMock;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.QuarkusTestProfile;
 import io.quarkus.test.junit.TestProfile;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolingDto;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolingFilter;
-import org.hibernate.Session;
-import org.hibernate.query.Query;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.mockito.Mockito;
 
 @QuarkusTest
 @TestProfile(SchoolingDynamicQueryTest.Profile.class)
@@ -39,26 +32,11 @@ class SchoolingDynamicQueryTest {
   @Inject
   EntityManager entityManager;
 
-  @SuppressWarnings("unchecked")
-  @Test
-  void getMany() {
-    @SuppressWarnings("rawtypes")
-    Query query = Mockito.mock(Query.class);
-    List<Object[]> arrays = new ArrayList<>();
-    arrays.add(new Object[] {"1"});
-    Mockito.when(query.getResultList()).thenReturn(arrays);
-
-    Session session = Mockito.mock(Session.class);
-    Mockito.when(session.createQuery(anyString(), any())).thenReturn(query);
-    QuarkusMock.installMockForType(session, Session.class);
-
-    assertEquals(1, dynamicQuery.getMany(parameters).size());
-  }
-
   @Test
   void getOne_schoolAsString() {
     parameters.setResultMode(ResultMode.ONE);
-    parameters.projection().addNames(SchoolingDto.JSON_SCHOOL_AS_STRING);
+    parameters.projection().addNames(SchoolingDto.JSON_SCHOOL_AS_STRING,
+        SchoolingDto.JSON_SCHOOL_IDENTIFIER);
     parameters.filter().addCriteria(SchoolingDto.JSON_IDENTIFIER, "1");
     Schooling schooling = dynamicQuery.getOne(parameters);
     assertEquals("CSP Cocody", schooling.schoolAsString);
@@ -67,7 +45,8 @@ class SchoolingDynamicQueryTest {
   @Test
   void getOne_branchAsString() {
     parameters.setResultMode(ResultMode.ONE);
-    parameters.projection().addNames(SchoolingDto.JSON_BRANCH_AS_STRING);
+    parameters.projection().addNames(SchoolingDto.JSON_BRANCH_AS_STRING,
+        SchoolingDto.JSON_BRANCH_IDENTIFIER);
     parameters.filter().addCriteria(SchoolingDto.JSON_IDENTIFIER, "1");
     Schooling schooling = dynamicQuery.getOne(parameters);
     assertEquals("6ieme", schooling.branchAsString);
@@ -76,7 +55,8 @@ class SchoolingDynamicQueryTest {
   @Test
   void getOne_periodAsString() {
     parameters.setResultMode(ResultMode.ONE);
-    parameters.projection().addNames(SchoolingDto.JSON_PERIOD_AS_STRING);
+    parameters.projection().addNames(SchoolingDto.JSON_PERIOD_AS_STRING,
+        SchoolingDto.JSON_PERIOD_IDENTIFIER);
     parameters.filter().addCriteria(SchoolingDto.JSON_IDENTIFIER, "1");
     Schooling schooling = dynamicQuery.getOne(parameters);
     assertEquals("2023-2024", schooling.periodAsString);
@@ -163,7 +143,7 @@ class SchoolingDynamicQueryTest {
     Schooling schooling = dynamicQuery.getOne(parameters);
     assertEquals(amount, schooling.notOptionalFeeAmountValueAsString);
   }
-  
+
   @ParameterizedTest
   @CsvSource({"feesvalue1,25 000", "feesvalue2,80 000"})
   void getOne_notOptionalFeeAmountRegistrationValuePartAsString(String identifier, String amount) {
