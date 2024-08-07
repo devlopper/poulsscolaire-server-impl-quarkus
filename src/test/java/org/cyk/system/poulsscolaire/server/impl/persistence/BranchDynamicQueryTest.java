@@ -27,7 +27,7 @@ class BranchDynamicQueryTest {
   DynamicQueryParameters<Branch> parameters = new DynamicQueryParameters<>();
 
   @ParameterizedTest
-  @CsvSource(value = {"1,1:2:3:4:5"})
+  @CsvSource(value = {"1,1:2:3:4:5", "2,", "3,6:7"})
   void getMany_whenSchoolIdentifier(String schoolIdentifier,
       String expected) {
     PeriodFilter filter = new PeriodFilter();
