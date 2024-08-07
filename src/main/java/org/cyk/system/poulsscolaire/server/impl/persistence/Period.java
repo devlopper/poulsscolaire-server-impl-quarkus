@@ -16,18 +16,12 @@ import org.hibernate.annotations.Subselect;
 @Subselect(Period.QUERY)
 public class Period extends AbstractIdentifiableCodableNamable {
 
-  public static final String FIELD_SCHOOL_IDENTIFIER = "schoolIdentifier";
-  public static final String FIELD_OPENED = "opened";
-
   public static final String ENTITY_NAME = "Period";
-
-  public static final String COLUMN_SCHOOL_IDENTIFIER = "ECOLE";
-  public static final String COLUMN_OPENED = "OUVERTE";
 
   public static final String QUERY = """
       SELECT
           annee_scolaireid AS IDENTIFIANT
-          ,annee_scolaire_code AS CODE
+          ,annee_scolaire_code AS CODE 
           ,annee_scolaire_libelle AS LIBELLE
       FROM ecoleviedbv2.annee_scolaire
       WHERE ecole_id IS NULL

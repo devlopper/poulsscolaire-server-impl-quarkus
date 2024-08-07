@@ -20,8 +20,8 @@ RUN microdnf install curl ca-certificates ${JAVA_PACKAGE} \
     && echo "securerandom.source=file:/dev/urandom" >> /etc/alternatives/jre/conf/security/java.security
 
 # -- DATABASE MANAGEMENT SYSTEM : MYSQL --
-ENV DB_USER poulsscolaire
-ENV DB_PASSWORD poulsscolaire
+ENV DB_USER root
+ENV DB_PASSWORD Vie5?ecole9DB7
 
 ENV DATASOURCE_JDBC_URL 'jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}'
 ENV DATASOURCE_USER '${DB_USER}'

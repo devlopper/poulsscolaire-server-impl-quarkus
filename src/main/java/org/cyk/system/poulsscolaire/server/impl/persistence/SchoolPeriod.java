@@ -28,7 +28,7 @@ public class SchoolPeriod extends AbstractIdentifiable {
 
   public static final String FIELD_SCHOOL_IDENTIFIER = "schoolIdentifier";
   public static final String FIELD_PERIOD_IDENTIFIER = "periodIdentifier";
-  public static final String FIELD_PERIOD_OPENED = "opened";
+  public static final String FIELD_OPENED = "opened";
 
   public static final String ENTITY_NAME = "SchoolPeriod";
 
@@ -41,7 +41,7 @@ public class SchoolPeriod extends AbstractIdentifiable {
           SELECT
               CONCAT(ecole.ecoleid,anneeCentral.annee_scolaireid) AS IDENTIFIANT
               ,ecole.ecoleid AS ECOLE
-              ,anneeCentral.annee_scolaireid AS ANNEE_SCOLAIRE
+              ,anneeCentral.annee_scolaireid AS PERIODE
               ,CASE anneeEcole.statut WHEN 'OUVERT' THEN 1 ELSE 0 END AS OUVERTE
           FROM ecoleviedbv2.ecole
           JOIN ecoleviedbv2.annee_scolaire anneeCentral 

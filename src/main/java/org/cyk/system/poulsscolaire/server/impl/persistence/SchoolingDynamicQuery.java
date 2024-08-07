@@ -1,7 +1,9 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
+import ci.gouv.dgbf.extension.core.Core;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodable;
+import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableNamable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableNamable;
 import ci.gouv.dgbf.extension.server.persistence.query.AbstractDynamicQuery;
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
@@ -169,6 +171,8 @@ public class SchoolingDynamicQuery extends AbstractDynamicQuery<Schooling> {
   @Override
   protected boolean isGrouped(DynamicQueryParameters<Schooling> parameters) {
     return ProjectionDto.hasOneOfNames(parameters.getProjection(),
+        SchoolingDto.JSON_SCHOOL_IDENTIFIER, SchoolingDto.JSON_SCHOOL_AS_STRING,
+        SchoolingDto.JSON_BRANCH_IDENTIFIER, SchoolingDto.JSON_BRANCH_AS_STRING,
         SchoolingDto.JSON_FEE_AMOUNT_VALUE_AS_STRING,
         SchoolingDto.JSON_FEE_AMOUNT_REGISTRATION_VALUE_PART_AS_STRING,
         SchoolingDto.JSON_NOT_OPTIONAL_FEE_AMOUNT_VALUE_AS_STRING,
@@ -188,5 +192,29 @@ public class SchoolingDynamicQuery extends AbstractDynamicQuery<Schooling> {
     /*
      * On ajoute les autres au besoin
      */
+    Core.runIfTrue(ProjectionDto.hasOneOfNames(parameters.getProjection(),
+        SchoolingDto.JSON_SCHOOL_IDENTIFIER), () -> {
+          groups.add(fieldName(schoolVariableName, Schooling.FIELD_SCHOOL_IDENTIFIER));
+        });
+    Core.runIfTrue(ProjectionDto.hasOneOfNames(parameters.getProjection(),
+        SchoolingDto.JSON_SCHOOL_AS_STRING), () -> {
+          groups.add(fieldName(schoolVariableName, AbstractIdentifiableCodableNamable.FIELD_NAME));
+        });
+    Core.runIfTrue(ProjectionDto.hasOneOfNames(parameters.getProjection(),
+        SchoolingDto.JSON_BRANCH_IDENTIFIER), () -> {
+          groups.add(fieldName(branchVariableName, Schooling.FIELD_BRANCH_IDENTIFIER));
+        });
+    Core.runIfTrue(ProjectionDto.hasOneOfNames(parameters.getProjection(),
+        SchoolingDto.JSON_BRANCH_AS_STRING), () -> {
+          groups.add(fieldName(branchVariableName, AbstractIdentifiableCodableNamable.FIELD_NAME));
+        });
+    Core.runIfTrue(ProjectionDto.hasOneOfNames(parameters.getProjection(),
+        SchoolingDto.JSON_PERIOD_IDENTIFIER), () -> {
+          groups.add(fieldName(periodVariableName, Schooling.FIELD_PERIOD_IDENTIFIER));
+        });
+    Core.runIfTrue(ProjectionDto.hasOneOfNames(parameters.getProjection(),
+        SchoolingDto.JSON_PERIOD_AS_STRING), () -> {
+          groups.add(fieldName(periodVariableName, AbstractIdentifiableCodableNamable.FIELD_NAME));
+        });
   }
 }

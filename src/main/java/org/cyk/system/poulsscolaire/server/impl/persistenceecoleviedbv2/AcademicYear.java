@@ -28,6 +28,15 @@ public class AcademicYear {
   @Column(name = "ecole_id")
   public long schoolIdentifier;
   
+  @Column(name = "annee")
+  public String year;
+  
+  @Column(name = "niveau")
+  public String level;
+  
+  @Column(name = "niveau_enseignement_id")
+  public int teachingLevelIdentifier;
+  
   @Column(name = "statut")
   public String status;
   

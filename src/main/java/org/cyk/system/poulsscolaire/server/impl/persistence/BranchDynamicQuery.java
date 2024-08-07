@@ -52,7 +52,8 @@ public class BranchDynamicQuery extends AbstractDynamicQuery<Branch> {
     // Jointures
     joinBuilder().predicatesNames(BranchFilter.JSON_SCHOOL_IDENTIFIER).with(SchoolBranch.class)
         .tupleVariableName(schoolBranchVariableName)
-        .parentFieldName(SchoolBranch.FIELD_SCHOOL_IDENTIFIER).leftInnerOrRight(true).build();
+        .fieldName(SchoolBranch.FIELD_SCHOOL_IDENTIFIER)
+        .parentFieldName(AbstractIdentifiable.FIELD_IDENTIFIER).leftInnerOrRight(true).build();
 
     // Prédicats
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)

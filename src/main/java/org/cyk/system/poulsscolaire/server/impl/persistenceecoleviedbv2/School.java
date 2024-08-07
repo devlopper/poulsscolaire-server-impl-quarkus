@@ -25,4 +25,6 @@ public class School {
   @Column(name = "ecoleclibelle")
   public String name;
   
+  @Column(name = "niveau_enseignement_id")
+  public int teachingLevelIdentifier;
 }

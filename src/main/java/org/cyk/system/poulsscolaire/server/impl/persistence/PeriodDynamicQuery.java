@@ -45,17 +45,18 @@ public class PeriodDynamicQuery extends AbstractDynamicQuery<Period> {
         .fieldName(AbstractIdentifiableCodableNamable.FIELD_NAME).build();
 
     // Jointures
-    joinBuilder().predicatesNames(PeriodFilter.JSON_SCHOOL_IDENTIFIER).with(SchoolPeriod.class)
-        .tupleVariableName(schoolPeriodVariableName)
-        .parentFieldName(SchoolPeriod.FIELD_SCHOOL_IDENTIFIER).leftInnerOrRight(true).build();
+    joinBuilder().predicatesNames(PeriodFilter.JSON_SCHOOL_IDENTIFIER, PeriodFilter.JSON_OPENED)
+        .with(SchoolPeriod.class).tupleVariableName(schoolPeriodVariableName)
+        .fieldName(SchoolPeriod.FIELD_PERIOD_IDENTIFIER)
+        .parentFieldName(AbstractIdentifiable.FIELD_IDENTIFIER).leftInnerOrRight(true).build();
 
     // Prédicats
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
         .valueFunction(AbstractIdentifiableFilter::getIdentifier).build();
 
-    predicateBuilder().name(PeriodFilter.JSON_OPENED).fieldName(Period.FIELD_OPENED)
-        .valueFunction(PeriodFilter::getOpened).build();
+    predicateBuilder().name(PeriodFilter.JSON_OPENED).tupleVariableName(schoolPeriodVariableName)
+        .fieldName(SchoolPeriod.FIELD_OPENED).valueFunction(PeriodFilter::getOpened).build();
 
     predicateBuilder().name(PeriodFilter.JSON_SCHOOL_IDENTIFIER)
         .tupleVariableName(schoolPeriodVariableName).fieldName(SchoolPeriod.FIELD_SCHOOL_IDENTIFIER)
