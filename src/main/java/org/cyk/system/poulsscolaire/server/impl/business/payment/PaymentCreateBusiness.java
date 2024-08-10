@@ -102,7 +102,7 @@ public class PaymentCreateBusiness extends AbstractIdentifiableCreateBusiness<Pa
     super.setFields(payment, array, request);
     payment.registration = (Registration) array[0];
     payment.mode = (PaymentMode) array[1];
-    payment.code = String.format("P%s", System.currentTimeMillis());
+    payment.code = String.format("P%s%s", payment.registration.code, persistence.countAll());
     payment.amount = request.getAmount();
     payment.payables = (List<Object[]>) array[2];
     payment.canceled = false;

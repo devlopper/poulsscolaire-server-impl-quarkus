@@ -1,5 +1,8 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
+import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
+import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodable;
+import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableNamable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableNamableAuditable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,6 +13,9 @@ import jakarta.persistence.Transient;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 
 /**
  * Cette classe représente une échéance.
@@ -20,6 +26,12 @@ import java.time.LocalDateTime;
 @Entity(name = Deadline.ENTITY_NAME)
 @Table(name = Deadline.TABLE_NAME, uniqueConstraints = {
     @UniqueConstraint(columnNames = {Deadline.COLUMN_GROUP, Deadline.COLUMN_DATE})})
+@Audited
+@AuditOverrides(
+    value = {@AuditOverride(forClass = AbstractIdentifiableCodableNamableAuditable.class),
+        @AuditOverride(forClass = AbstractIdentifiableCodableNamable.class),
+        @AuditOverride(forClass = AbstractIdentifiableCodable.class),
+        @AuditOverride(forClass = AbstractIdentifiable.class)})
 public class Deadline extends AbstractIdentifiableCodableNamableAuditable {
 
   @NotNull

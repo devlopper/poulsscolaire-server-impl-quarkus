@@ -1,11 +1,16 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
+import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
+import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableAuditable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 
 /**
  * Cette classe représente une scolarité.
@@ -15,6 +20,11 @@ import jakarta.validation.constraints.NotNull;
  */
 @Entity(name = Schooling.ENTITY_NAME)
 @Table(name = Schooling.TABLE_NAME)
+@Audited
+@AuditOverrides(
+    value = {@AuditOverride(forClass = AbstractIdentifiableCodableAuditable.class),
+        @AuditOverride(forClass = AbstractIdentifiableCodable.class),
+        @AuditOverride(forClass = AbstractIdentifiable.class)})
 public class Schooling extends AbstractIdentifiableCodableAuditable {
 
   @NotNull

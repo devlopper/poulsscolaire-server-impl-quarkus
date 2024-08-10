@@ -1,5 +1,7 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
+import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
+import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableAuditable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,6 +12,9 @@ import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import org.cyk.system.poulsscolaire.server.api.registration.BloodGroup;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 
 /**
  * Cette classe représente un élève.
@@ -19,6 +24,11 @@ import org.cyk.system.poulsscolaire.server.api.registration.BloodGroup;
  */
 @Entity(name = Student.ENTITY_NAME)
 @Table(name = Student.TABLE_NAME)
+@Audited
+@AuditOverrides(
+    value = {@AuditOverride(forClass = AbstractIdentifiableCodableAuditable.class),
+        @AuditOverride(forClass = AbstractIdentifiableCodable.class),
+        @AuditOverride(forClass = AbstractIdentifiable.class)})
 public class Student extends AbstractIdentifiableCodableAuditable {
 
   @ManyToOne

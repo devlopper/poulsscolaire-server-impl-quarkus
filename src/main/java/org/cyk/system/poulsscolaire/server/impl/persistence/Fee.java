@@ -1,5 +1,7 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
+import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
+import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableAuditable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -9,6 +11,9 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 
 /**
  * Cette classe représente un frais.
@@ -25,6 +30,11 @@ import jakarta.validation.constraints.NotNull;
         query = Fee.QUERY_READ_BY_SCHOOLING_BY_ASSIGNMENT_TYPE_BY_SENIORITY_VALUE),
     @NamedQuery(name = Fee.QUERY_IS_PAYMENT_ORDER_NUMBER_EXIST_IDENTIFIER,
         query = Fee.QUERY_IS_PAYMENT_ORDER_NUMBER_EXIST_VALUE)})
+@Audited
+@AuditOverrides(
+    value = {@AuditOverride(forClass = AbstractIdentifiableAuditable.class),
+        @AuditOverride(forClass = AbstractIdentifiable.class),
+        @AuditOverride(forClass = AbstractAmountContainer.class)})
 public class Fee extends AbstractAmountContainer {
 
   @NotNull

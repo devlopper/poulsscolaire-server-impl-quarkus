@@ -1,5 +1,6 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
+import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableAuditable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -8,6 +9,9 @@ import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import java.util.Optional;
 import org.cyk.system.poulsscolaire.server.api.fee.AmountService;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 
 /**
  * Cette classe représente un montant.
@@ -17,6 +21,10 @@ import org.cyk.system.poulsscolaire.server.api.fee.AmountService;
  */
 @Entity(name = Amount.ENTITY_NAME)
 @Table(name = Amount.TABLE_NAME)
+@Audited
+@AuditOverrides(
+    value = {@AuditOverride(forClass = AbstractIdentifiableAuditable.class),
+        @AuditOverride(forClass = AbstractIdentifiable.class)})
 public class Amount extends AbstractIdentifiableAuditable {
 
   @NotNull

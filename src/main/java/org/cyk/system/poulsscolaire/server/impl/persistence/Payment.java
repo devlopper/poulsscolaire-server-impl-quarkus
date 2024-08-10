@@ -1,5 +1,7 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
+import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
+import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableAuditable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,6 +11,9 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 
 /**
  * Cette classe représente un paiement.
@@ -18,6 +23,11 @@ import java.util.List;
  */
 @Entity(name = Payment.ENTITY_NAME)
 @Table(name = Payment.TABLE_NAME)
+@Audited
+@AuditOverrides(
+    value = {@AuditOverride(forClass = AbstractIdentifiableCodableAuditable.class),
+        @AuditOverride(forClass = AbstractIdentifiableCodable.class),
+        @AuditOverride(forClass = AbstractIdentifiable.class)})
 public class Payment extends AbstractIdentifiableCodableAuditable {
 
   @NotNull

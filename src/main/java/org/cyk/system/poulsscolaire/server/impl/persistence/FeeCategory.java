@@ -1,6 +1,8 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
+import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodable;
+import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableNamable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableNamableAuditable;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
@@ -14,6 +16,9 @@ import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 
 /**
  * Cette classe représente une rubrique.
@@ -33,6 +38,12 @@ import lombok.Setter;
 @NamedQueries(
     value = {@NamedQuery(name = FeeCategory.QUERY_COUNT_BY_SCHOOL_IDENTIFIER_BY_CODE_IDENTIFIER,
         query = FeeCategory.QUERY_COUNT_BY_SCHOOL_IDENTIFIER_BY_CODE_VALUE)})
+@Audited
+@AuditOverrides(
+    value = {@AuditOverride(forClass = AbstractIdentifiableCodableNamableAuditable.class),
+        @AuditOverride(forClass = AbstractIdentifiableCodableNamable.class),
+        @AuditOverride(forClass = AbstractIdentifiableCodable.class),
+        @AuditOverride(forClass = AbstractIdentifiable.class)})
 public class FeeCategory extends AbstractIdentifiableCodableNamableAuditable {
 
   @NotNull
