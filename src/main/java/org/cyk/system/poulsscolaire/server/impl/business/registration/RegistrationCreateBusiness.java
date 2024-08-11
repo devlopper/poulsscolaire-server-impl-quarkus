@@ -78,7 +78,7 @@ public class RegistrationCreateBusiness extends AbstractIdentifiableCreateBusine
     Schooling schooling =
         schoolingValidator.validateInstanceByIdentifier(request.getSchoolingIdentifier(), messages);
     AssignmentType assignmentType = assignmentTypeValidator
-        .validateInstanceByIdentifier(request.getAssignmnetTypeIdentifier(), messages);
+        .validateInstanceByIdentifier(request.getAssignmentTypeIdentifier(), messages);
     Seniority seniority =
         seniorityValidator.validateInstanceByIdentifier(request.getSeniorityIdentifier(), messages);
     return new Object[] {student, schooling, assignmentType, seniority};
