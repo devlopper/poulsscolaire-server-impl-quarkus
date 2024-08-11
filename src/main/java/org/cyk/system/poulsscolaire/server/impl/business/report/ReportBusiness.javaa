@@ -1,0 +1,116 @@
+package org.cyk.system.poulsscolaire.server.impl.business.report;
+
+import ci.gouv.dgbf.extension.core.ArrayHelper;
+import ci.gouv.dgbf.extension.core.HttpClientHelper;
+import ci.gouv.dgbf.extension.core.StringHelper;
+import ci.gouv.dgbf.extension.core.StringList;
+import ci.gouv.dgbf.extension.server.business.AbstractActionBusiness;
+import ci.gouv.dgbf.extension.server.persistence.entity.embeddable.Audit;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import org.cyk.system.poulsscolaire.server.api.report.ReportService;
+import org.cyk.system.poulsscolaire.server.api.report.ReportService.GetBytesByIdentifierRequestDto;
+import org.cyk.system.poulsscolaire.server.api.report.ReportService.ParameterDto;
+
+/**
+ * Cette classe représente la couche métier des rapports.
+ *
+ * @author Christian
+ *
+ */
+@ApplicationScoped
+public class ReportBusiness extends AbstractActionBusiness<GetBytesByIdentifierRequestDto, byte[]> {
+
+  @Inject
+  private ReportValidator validator;
+
+  @Inject
+  private ArrayHelper arrayHelper;
+
+  @Inject
+  private StringHelper stringHelper;
+
+  @Inject
+  private HttpClientHelper httpClientHelper;
+
+  public ReportBusiness() {
+    super(byte[].class);
+  }
+
+  @Override
+  public byte[] process(GetBytesByIdentifierRequestDto request) {
+    validate(request);
+    Map<String, List<String>> parameters = buildParameters(request.getParameters());
+    String fileType = buildFileType(request.getFileType());
+    byte[] bytes = computeBytes();
+    Audit audit = audit(request);
+    String message = logMessageFormatter.formatDone("octets", "obtention",
+        new Object[] {"parametres", parameters},
+        new Object[] {"#octets", arrayHelper.getSize(bytes)});
+    log(message, audit);
+    return bytes;
+  }
+
+  void validate(GetBytesByIdentifierRequestDto request) {
+    requestValidator.validate(getClass(), request, messages -> validate(request, messages));
+  }
+
+  protected void validate(GetBytesByIdentifierRequestDto request, StringList messages) {
+    validator.validateIdentifier(request.getIdentifier(), messages);
+  }
+
+  protected Audit audit(GetBytesByIdentifierRequestDto request) {
+    Audit audit = Audit.instantiate(functionality, request);
+    audit.whatIsRead();
+    return audit;
+  }
+
+  String buildFileType(String fileType) {
+    if (stringHelper.isBlank(fileType)) {
+      return ReportService.DEFAULT_FILE_TYPE;
+    }
+    return fileType;
+  }
+
+  Map<String, List<String>> buildParameters(List<ParameterDto> parameters) {
+    if (parameters == null) {
+      return Collections.emptyMap();
+    }
+    return parameters.stream()
+        .collect(Collectors.toMap(ParameterDto::getName, ParameterDto::getValues));
+  }
+
+  byte[] computeBytes() {
+    InputStream inputStream =
+        this.getClass().getClassLoader().getResourceAsStream("RECU_PAIEMENT.jrxml");
+
+    try {
+      JasperReport compileReport = JasperCompileManager.compileReport(inputStream);
+      Map<String, Object> map = new HashMap<>();
+      JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(computeDataSource());
+      JasperPrint report = JasperFillManager.fillReport(compileReport, map, dataSource);
+      byte[] data = JasperExportManager.exportReportToPdf(report);
+      return data;
+    } catch (JRException e) {
+      e.printStackTrace();
+      return null;
+    }
+  }
+  
+  List<?> computeDataSource() {
+    return null;
+  }
+}

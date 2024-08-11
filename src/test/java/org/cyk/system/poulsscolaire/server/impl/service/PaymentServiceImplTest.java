@@ -11,7 +11,7 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.cyk.system.poulsscolaire.server.api.payment.PaymentDto;
 import org.cyk.system.poulsscolaire.server.api.payment.PaymentService;
-import org.cyk.system.poulsscolaire.server.api.payment.PaymentService.GetManyResponseDto;
+import org.cyk.system.poulsscolaire.server.api.payment.PaymentService.PaymentGetManyResponseDto;
 import org.cyk.system.poulsscolaire.server.impl.business.payment.PaymentCancelBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.payment.PaymentCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.payment.PaymentDeleteBusiness;
@@ -46,7 +46,7 @@ class PaymentServiceImplTest extends AbstractTest {
   void readMany() {
     PaymentReadManyBusiness business =
         installMockForType(PaymentReadManyBusiness.class);
-    Mockito.when(business.process(any())).thenReturn(new GetManyResponseDto());
+    Mockito.when(business.process(any())).thenReturn(new PaymentGetManyResponseDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
         .post(PaymentService.PATH + "/" + PaymentService.GET_MANY_PATH).then()

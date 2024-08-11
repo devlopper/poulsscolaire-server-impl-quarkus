@@ -1,0 +1,31 @@
+package org.cyk.system.poulsscolaire.server.impl.business.report;
+
+import ci.gouv.dgbf.extension.core.StringList;
+import ci.gouv.dgbf.extension.core.ValidationHelper;
+import ci.gouv.dgbf.extension.server.service.api.entity.AbstractIdentifiableDto;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+/**
+ * Cette classe représente un validateur de requête de rapport.
+ *
+ * @author Christian
+ *
+ */
+@ApplicationScoped
+public class ReportValidator {
+  private static final Logger LOGGER = Logger.getLogger(ReportValidator.class.getName());
+
+  @Inject
+  private ValidationHelper validationHelper;
+
+  boolean validateIdentifier(String identifier, StringList messages) {
+    boolean bad = validationHelper.validateBlankByName(this, identifier,
+        AbstractIdentifiableDto.JSON_IDENTIFIER, messages);
+    LOGGER.log(Level.FINER, "{0} validé. pas bon = {1}",
+        new Object[] {AbstractIdentifiableDto.JSON_IDENTIFIER, bad});
+    return bad;
+  }
+}
