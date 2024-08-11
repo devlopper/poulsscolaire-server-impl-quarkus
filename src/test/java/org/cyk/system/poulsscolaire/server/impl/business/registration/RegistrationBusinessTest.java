@@ -2,6 +2,7 @@ package org.cyk.system.poulsscolaire.server.impl.business.registration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import ci.gouv.dgbf.extension.server.service.api.request.ByIdentifierRequestDto;
 import ci.gouv.dgbf.extension.test.AbstractTest;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.QuarkusTestProfile;
@@ -12,6 +13,7 @@ import java.util.Map;
 import org.cyk.system.poulsscolaire.server.api.registration.RegistrationService.RegistrationCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.registration.RegistrationService.RegistrationUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AdjustedFee;
+import org.cyk.system.poulsscolaire.server.impl.persistence.Amount;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AmountDeadline;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Registration;
 import org.junit.jupiter.api.Test;
@@ -37,6 +39,9 @@ class RegistrationBusinessTest extends AbstractTest {
 
   @Inject
   RegistrationUpdateBusiness updateBusiness;
+
+  @Inject
+  RegistrationUpdateAmountsToZeroBusiness updateAmountsToZeroBusiness;
 
   @Inject
   RegistrationDeleteBusiness deleteBusiness;
@@ -85,6 +90,20 @@ class RegistrationBusinessTest extends AbstractTest {
     long count = count(entityManager, Registration.ENTITY_NAME);
     updateBusiness.process(request);
     assertEquals(count, count(entityManager, Registration.ENTITY_NAME));
+  }
+
+  @Test
+  void updateAmountsToZero() {
+    ByIdentifierRequestDto request = new ByIdentifierRequestDto();
+    request.setIdentifier("toupdateamountstozero");
+    request.setAuditWho("christian");
+    long count = count(entityManager, Registration.ENTITY_NAME);
+    updateAmountsToZeroBusiness.process(request);
+    assertEquals(count, count(entityManager, Registration.ENTITY_NAME));
+    assertEquals(0, entityManager.find(Amount.class, "toupdateamountstozerou").value);
+    assertEquals(null,
+        entityManager.find(Amount.class, "toupdateamountstozerou").registrationValuePart);
+    assertEquals(0, entityManager.find(AmountDeadline.class, "2").payment);
   }
 
   public static class Profile implements QuarkusTestProfile {

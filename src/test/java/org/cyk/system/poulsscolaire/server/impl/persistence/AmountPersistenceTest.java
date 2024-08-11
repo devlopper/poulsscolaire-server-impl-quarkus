@@ -3,18 +3,38 @@ package org.cyk.system.poulsscolaire.server.impl.persistence;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.junit.QuarkusTestProfile;
+import io.quarkus.test.junit.TestProfile;
 import jakarta.inject.Inject;
-import org.junit.jupiter.api.Test;
+import jakarta.persistence.EntityManager;
+import java.util.List;
+import java.util.Map;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 @QuarkusTest
+@TestProfile(AmountPersistenceTest.Profile.class)
 class AmountPersistenceTest {
 
   @Inject
   AmountPersistence persistence;
-  
-  @Test
-  void getName() {
-    assertEquals("montant", persistence.getName());
+
+  @Inject
+  EntityManager entityManager;
+
+  @ParameterizedTest
+  @CsvSource(value = {"inscription1,1", "inscription2,0"})
+  void getWhereValueNotZeroByRegistration(String identifier, int expected) {
+    List<Amount> amounts = persistence
+        .getWhereValueNotZeroByRegistration(entityManager.find(Registration.class, identifier));
+    assertEquals(expected, amounts.size());
   }
-  
+
+  public static class Profile implements QuarkusTestProfile {
+
+    @Override
+    public Map<String, String> getConfigOverrides() {
+      return Map.of("quarkus.hibernate-orm.sql-load-script", "sql/amountpersistence.sql");
+    }
+  }
 }

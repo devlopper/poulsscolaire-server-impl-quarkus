@@ -27,11 +27,12 @@ import org.hibernate.envers.Audited;
     @NamedQuery(name = AmountDeadline.QUERY_READ_BY_FEES_IDENTIFIER,
         query = AmountDeadline.QUERY_READ_BY_FEES_VALUE),
     @NamedQuery(name = AmountDeadline.QUERY_SUM_PAYMENT_BY_AMOUNT_IDENTIFIER,
-        query = AmountDeadline.QUERY_SUM_PAYMENT_BY_AMOUNT_VALUE)})
+        query = AmountDeadline.QUERY_SUM_PAYMENT_BY_AMOUNT_VALUE),
+    @NamedQuery(name = AmountDeadline.QUERY_READ_WHERE_PAYMENT_NOT_ZERO_BY_REGISTRATION_IDENTIFIER,
+        query = AmountDeadline.QUERY_READ_WHERE_PAYMENT_NOT_ZERO_BY_REGISTRATION_VALUE)})
 @Audited
-@AuditOverrides(
-    value = {@AuditOverride(forClass = AbstractIdentifiableAuditable.class),
-        @AuditOverride(forClass = AbstractIdentifiable.class)})
+@AuditOverrides(value = {@AuditOverride(forClass = AbstractIdentifiableAuditable.class),
+    @AuditOverride(forClass = AbstractIdentifiable.class)})
 public class AmountDeadline extends AbstractIdentifiableAuditable {
 
   @NotNull
@@ -116,4 +117,10 @@ public class AmountDeadline extends AbstractIdentifiableAuditable {
   public static final String QUERY_SUM_PAYMENT_BY_AMOUNT_VALUE =
       "SELECT SUM(t.payment) FROM AmountDeadline t JOIN Amount a ON a = t.amount WHERE t.amount = :"
           + FIELD_AMOUNT;
+
+  public static final String QUERY_READ_WHERE_PAYMENT_NOT_ZERO_BY_REGISTRATION_IDENTIFIER =
+      "AmountDeadline.readWherePaymentNotZeroByRegistration";
+  public static final String QUERY_READ_WHERE_PAYMENT_NOT_ZERO_BY_REGISTRATION_VALUE =
+      "SELECT t FROM AmountDeadline t JOIN AdjustedFee af ON af.amount = t.amount "
+          + "WHERE af.registration = :registration AND t.payment <> 0";
 }

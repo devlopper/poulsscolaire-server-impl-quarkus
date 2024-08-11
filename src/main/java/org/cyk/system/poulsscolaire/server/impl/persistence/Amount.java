@@ -4,6 +4,8 @@ import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableAuditable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
@@ -21,10 +23,12 @@ import org.hibernate.envers.Audited;
  */
 @Entity(name = Amount.ENTITY_NAME)
 @Table(name = Amount.TABLE_NAME)
+@NamedQueries(
+    value = {@NamedQuery(name = Amount.QUERY_READ_WHERE_VALUE_NOT_ZERO_BY_REGISTRATION_IDENTIFIER,
+        query = Amount.QUERY_READ_WHERE_VALUE_NOT_ZERO_BY_REGISTRATION_VALUE)})
 @Audited
-@AuditOverrides(
-    value = {@AuditOverride(forClass = AbstractIdentifiableAuditable.class),
-        @AuditOverride(forClass = AbstractIdentifiable.class)})
+@AuditOverrides(value = {@AuditOverride(forClass = AbstractIdentifiableAuditable.class),
+    @AuditOverride(forClass = AbstractIdentifiable.class)})
 public class Amount extends AbstractIdentifiableAuditable {
 
   @NotNull
@@ -117,5 +121,11 @@ public class Amount extends AbstractIdentifiableAuditable {
   public static final String COLUMN_OPTIONAL = "FACULTATIF";
   public static final String COLUMN_PAYMENT_ORDER_NUMBER = "NUMERO_ORDRE_PAIEMENT";
   public static final String COLUMN_RENEWABLE = "RECONDUCTIBLE";
-  public static final String COLUMN_DEADLINE = "ECHEANCE";  
+  public static final String COLUMN_DEADLINE = "ECHEANCE";
+
+  public static final String QUERY_READ_WHERE_VALUE_NOT_ZERO_BY_REGISTRATION_IDENTIFIER =
+      "Amount.readWhereValueNotZeroByRegistration";
+  public static final String QUERY_READ_WHERE_VALUE_NOT_ZERO_BY_REGISTRATION_VALUE =
+      "SELECT t FROM Amount t JOIN AdjustedFee af ON af.amount = t "
+          + "WHERE af.registration = :registration AND t.value <> 0";
 }

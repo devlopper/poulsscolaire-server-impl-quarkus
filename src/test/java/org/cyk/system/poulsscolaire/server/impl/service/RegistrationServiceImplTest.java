@@ -17,6 +17,7 @@ import org.cyk.system.poulsscolaire.server.impl.business.registration.Registrati
 import org.cyk.system.poulsscolaire.server.impl.business.registration.RegistrationReadByIdentifierBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.registration.RegistrationReadManyBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.registration.RegistrationReadOneBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.registration.RegistrationUpdateAmountsToZeroBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.registration.RegistrationUpdateBusiness;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -32,8 +33,7 @@ class RegistrationServiceImplTest extends AbstractTest {
 
   @Test
   void create() {
-    RegistrationCreateBusiness business =
-        installMockForType(RegistrationCreateBusiness.class);
+    RegistrationCreateBusiness business = installMockForType(RegistrationCreateBusiness.class);
     Mockito.when(business.process(any())).thenReturn(new CreateResponseDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
@@ -43,26 +43,24 @@ class RegistrationServiceImplTest extends AbstractTest {
 
   @Test
   void readMany() {
-    RegistrationReadManyBusiness business =
-        installMockForType(RegistrationReadManyBusiness.class);
+    RegistrationReadManyBusiness business = installMockForType(RegistrationReadManyBusiness.class);
     Mockito.when(business.process(any())).thenReturn(new RegistrationGetManyResponseDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
-        .post(RegistrationService.PATH + "/" + RegistrationService.GET_MANY_PATH).then()
-        .log().ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
+        .post(RegistrationService.PATH + "/" + RegistrationService.GET_MANY_PATH).then().log()
+        .ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
   }
 
   @Test
   void readOne() {
-    RegistrationReadOneBusiness business =
-        installMockForType(RegistrationReadOneBusiness.class);
+    RegistrationReadOneBusiness business = installMockForType(RegistrationReadOneBusiness.class);
     Mockito.when(business.process(any())).thenReturn(new RegistrationDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
-        .post(RegistrationService.PATH + "/" + RegistrationService.GET_ONE_PATH).then()
-        .log().ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
+        .post(RegistrationService.PATH + "/" + RegistrationService.GET_ONE_PATH).then().log()
+        .ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
   }
-  
+
   @Test
   void readByIdentifier() {
     RegistrationReadByIdentifierBusiness business =
@@ -70,14 +68,13 @@ class RegistrationServiceImplTest extends AbstractTest {
     Mockito.when(business.process(any())).thenReturn(new RegistrationDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
-        .post(RegistrationService.PATH + "/" + RegistrationService.GET_BY_IDENTIFIER_PATH)
-        .then().log().ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
+        .post(RegistrationService.PATH + "/" + RegistrationService.GET_BY_IDENTIFIER_PATH).then()
+        .log().ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
   }
 
   @Test
   void update() {
-    RegistrationUpdateBusiness business =
-        installMockForType(RegistrationUpdateBusiness.class);
+    RegistrationUpdateBusiness business = installMockForType(RegistrationUpdateBusiness.class);
     Mockito.when(business.process(any())).thenReturn(new IdentifiableResponseDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
@@ -86,14 +83,24 @@ class RegistrationServiceImplTest extends AbstractTest {
   }
 
   @Test
-  void delete() {
-    RegistrationDeleteBusiness business =
-        installMockForType(RegistrationDeleteBusiness.class);
+  void updateAmountsToZero() {
+    RegistrationUpdateAmountsToZeroBusiness business =
+        installMockForType(RegistrationUpdateAmountsToZeroBusiness.class);
     Mockito.when(business.process(any())).thenReturn(new IdentifiableResponseDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
-        .delete(RegistrationService.PATH + "/" + RegistrationService.DELETE_PATH).then()
-        .log().ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
+        .post(RegistrationService.PATH + "/" + RegistrationService.UPDATE_AMOUNTS_TO_ZERO_PATH)
+        .then().log().ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
   }
-  
+
+  @Test
+  void delete() {
+    RegistrationDeleteBusiness business = installMockForType(RegistrationDeleteBusiness.class);
+    Mockito.when(business.process(any())).thenReturn(new IdentifiableResponseDto());
+
+    RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
+        .delete(RegistrationService.PATH + "/" + RegistrationService.DELETE_PATH).then().log()
+        .ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
+  }
+
 }

@@ -1,6 +1,7 @@
 package org.cyk.system.poulsscolaire.server.impl.service;
 
 import ci.gouv.dgbf.extension.core.ResponseBuilder;
+import ci.gouv.dgbf.extension.server.service.api.request.ByIdentifierRequestDto;
 import ci.gouv.dgbf.extension.server.service.api.request.DeleteOneRequestDto;
 import ci.gouv.dgbf.extension.server.service.api.request.GetByIdentifierRequestDto;
 import ci.gouv.dgbf.extension.server.service.api.request.GetManyRequestDto;
@@ -19,6 +20,7 @@ import org.cyk.system.poulsscolaire.server.impl.business.registration.Registrati
 import org.cyk.system.poulsscolaire.server.impl.business.registration.RegistrationReadByIdentifierBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.registration.RegistrationReadManyBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.registration.RegistrationReadOneBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.registration.RegistrationUpdateAmountsToZeroBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.registration.RegistrationUpdateBusiness;
 
 /**
@@ -32,19 +34,22 @@ public class RegistrationServiceImpl extends AbstractServiceImpl implements Regi
 
   @Inject
   RegistrationCreateBusiness createBusiness;
-  
+
   @Inject
   RegistrationReadManyBusiness readManyBusiness;
-  
+
   @Inject
   RegistrationReadOneBusiness readOneBusiness;
-  
+
   @Inject
   RegistrationReadByIdentifierBusiness readByIdentifierBusiness;
-  
+
   @Inject
   RegistrationUpdateBusiness updateBusiness;
-  
+
+  @Inject
+  RegistrationUpdateAmountsToZeroBusiness updateAmountsToZeroBusiness;
+
   @Inject
   RegistrationDeleteBusiness deleteBusiness;
 
@@ -72,7 +77,7 @@ public class RegistrationServiceImpl extends AbstractServiceImpl implements Regi
     responseBuilder.setDto(dto);
     return responseBuilder.build();
   }
-  
+
   @Override
   public Response getByIdentifier(GetByIdentifierRequestDto request) {
     RegistrationDto dto = readByIdentifierBusiness.process(request);
@@ -84,6 +89,14 @@ public class RegistrationServiceImpl extends AbstractServiceImpl implements Regi
   @Override
   public Response update(RegistrationUpdateRequestDto request) {
     IdentifiableResponseDto dto = updateBusiness.process(request);
+    ResponseBuilder responseBuilder = new ResponseBuilder();
+    responseBuilder.setDto(dto);
+    return responseBuilder.build();
+  }
+
+  @Override
+  public Response updateAmountsToZero(ByIdentifierRequestDto request) {
+    IdentifiableResponseDto dto = updateAmountsToZeroBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);
     return responseBuilder.build();

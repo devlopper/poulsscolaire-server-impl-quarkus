@@ -56,4 +56,16 @@ public class AmountDeadlinePersistence extends AbstractIdentifiablePersistence<A
         .createNamedQuery(AmountDeadline.QUERY_SUM_PAYMENT_BY_AMOUNT_IDENTIFIER, Long.class)
         .setParameter(AmountDeadline.FIELD_AMOUNT, amount)).noResultValue(0L).get()).orElse(0L);
   }
+
+  /**
+   * Cette méthode permet d'obtenir les {@link AmountDeadline} ayant paiement différent de zéro.
+   *
+   * @param registration {@link Registration}
+   * @return {@link AmountDeadline} ayant paiement différent de zéro
+   */
+  public List<AmountDeadline> getWherePaymentNotZeroByRegistration(Registration registration) {
+    return entityManager.createNamedQuery(
+        AmountDeadline.QUERY_READ_WHERE_PAYMENT_NOT_ZERO_BY_REGISTRATION_IDENTIFIER,
+        AmountDeadline.class).setParameter("registration", registration).getResultList();
+  }
 }
