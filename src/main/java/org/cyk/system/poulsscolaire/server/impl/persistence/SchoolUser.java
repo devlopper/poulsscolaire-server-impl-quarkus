@@ -41,5 +41,6 @@ public class SchoolUser extends AbstractIdentifiable {
           ON up.ecole_ecoleid = ecole.ecoleid
       JOIN ecoleviedbv2.utilisateur  u
           ON u.utilisateurid = up.utilisateur_utilisateurid
+      GROUP BY ecole.ecoleid,u.utilisateu_login    
                                   """;
 }
