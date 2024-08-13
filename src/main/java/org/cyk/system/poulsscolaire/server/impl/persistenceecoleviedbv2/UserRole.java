@@ -17,7 +17,7 @@ public class UserRole {
 
   @Id
   @Column(name = "utilisateur_has_personnelid")
-  public int identifier;
+  public long identifier;
   
   @Column(name = "utilisateur_utilisateurid")
   public int userIdentifier;

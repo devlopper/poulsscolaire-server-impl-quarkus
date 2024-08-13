@@ -124,7 +124,6 @@ public class PaymentCreateBusiness extends AbstractIdentifiableCreateBusiness<Pa
           } else {
             paymentAdjustedFee.amount = amount.get();
           }
-          System.out.println("PaymentCreateBusiness.doTransact() : " + paymentAdjustedFee.amount);
           amount.addAndGet(-paymentAdjustedFee.amount);
           return paymentAdjustedFee;
         }).toList();

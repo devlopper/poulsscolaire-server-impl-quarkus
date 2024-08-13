@@ -34,7 +34,7 @@ class UserBusinessTest extends AbstractTest {
     request.setAuditWho("christian");
     assertEquals(3, readManyBusiness.process(request).getCount());
   }
-  
+
   public static class Profile implements QuarkusTestProfile {
 
     @Override

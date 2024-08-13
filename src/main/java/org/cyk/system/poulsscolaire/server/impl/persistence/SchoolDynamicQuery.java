@@ -124,8 +124,8 @@ public class SchoolDynamicQuery extends AbstractDynamicQuery<School> {
 
     // Jointures
     joinBuilder().predicatesNames(SchoolFilter.JSON_USER_IDENTIFIER).with(SchoolUser.class)
-        .tupleVariableName(schoolUserVariableName).parentFieldName(SchoolUser.FIELD_USER_IDENTIFIER)
-        .leftInnerOrRight(true).build();
+        .tupleVariableName(schoolUserVariableName).fieldName(SchoolUser.FIELD_SCHOOL_IDENTIFIER)
+        .parentFieldName(AbstractIdentifiable.FIELD_IDENTIFIER).leftInnerOrRight(true).build();
   }
 
   void buildPredicates() {

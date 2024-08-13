@@ -31,16 +31,15 @@ public class SchoolUser extends AbstractIdentifiable {
   public static final String COLUMN_SCHOOL_IDENTIFIER = "ECOLE";
   public static final String COLUMN_USER_IDENTIFIER = "UTILISATEUR";
 
-  public static final String QUERY =
-      """
-          SELECT
-              CONCAT(ecole.ecoleid,utilisateur.utilisateu_login) AS IDENTIFIANT
-              ,ecole.ecoleid AS ECOLE
-              ,utilisateur.utilisateu_login AS UTILISATEUR
-          FROM ecole
-          JOIN utilisateur_has_personnel 
-              ON utilisateur_has_personnel.ecole_ecoleid = ecole.ecoleid
-          JOIN utilisateur 
-              ON utilisateur.utilisateurid = utilisateur_has_personnel.utilisateur_utilisateurid
-                                      """;
+  public static final String QUERY = """
+      SELECT
+          CONCAT(ecole.ecoleid,u.utilisateu_login) AS IDENTIFIANT
+          ,ecole.ecoleid AS ECOLE
+          ,u.utilisateu_login AS UTILISATEUR
+      FROM ecoleviedbv2.ecole ecole
+      JOIN ecoleviedbv2.utilisateur_has_personnel  up
+          ON up.ecole_ecoleid = ecole.ecoleid
+      JOIN ecoleviedbv2.utilisateur  u
+          ON u.utilisateurid = up.utilisateur_utilisateurid
+                                  """;
 }
