@@ -12,7 +12,10 @@ import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import java.util.Optional;
+import java.util.Set;
 import lombok.Getter;
+import org.cyk.system.poulsscolaire.server.api.configuration.UserDto;
 import org.cyk.system.poulsscolaire.server.api.configuration.UserFilter;
 
 /**
@@ -45,6 +48,7 @@ public class UserDynamicQuery extends AbstractDynamicQuery<User> {
     orderBuilder().fieldName(AbstractIdentifiable.FIELD_IDENTIFIER).build();
   }
 
+  @SuppressWarnings("unchecked")
   void buildProjections() {
     projectionBuilder().name(AbstractIdentifiableDto.JSON_IDENTIFIER)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER).build();
@@ -55,6 +59,9 @@ public class UserDynamicQuery extends AbstractDynamicQuery<User> {
     projectionBuilder().name(AbstractIdentifiableCodableNamableDto.JSON_NAME)
         .fieldName(AbstractIdentifiableCodableNamable.FIELD_NAME).build();
 
+    projectionBuilder().name(UserDto.JSON_ROLES).expression("t.roles").resultConsumer((i,
+        a) -> i.roles = Optional.ofNullable(a.getNextAs(Set.class)).orElse(Set.of()))
+        .build();
   }
 
   void buildPredicates() {
