@@ -9,6 +9,7 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -28,6 +29,15 @@ class AmountPersistenceTest {
     List<Amount> amounts = persistence
         .getWhereValueNotZeroByRegistration(entityManager.find(Registration.class, identifier));
     assertEquals(expected, amounts.size());
+  }
+
+  @Test
+  void getValueSumBySchoolingByAssignmentTypeBySeniority() {
+    assertEquals(140000L,
+        persistence.getValueSumBySchoolingByAssignmentTypeBySeniority(
+            entityManager.find(Schooling.class, "scolarite1"),
+            entityManager.find(AssignmentType.class, "1"),
+            entityManager.find(Seniority.class, "1")));
   }
 
   public static class Profile implements QuarkusTestProfile {

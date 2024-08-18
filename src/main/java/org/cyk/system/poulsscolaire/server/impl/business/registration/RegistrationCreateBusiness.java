@@ -8,6 +8,7 @@ import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.registration.RegistrationService.RegistrationCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.business.assignmenttype.AssignmentTypeValidator;
@@ -77,23 +78,57 @@ public class RegistrationCreateBusiness extends AbstractIdentifiableCreateBusine
         studentValidator.validateInstanceByIdentifier(request.getStudentIdentifier(), messages);
     Schooling schooling =
         schoolingValidator.validateInstanceByIdentifier(request.getSchoolingIdentifier(), messages);
+    Schooling schooling2 = Optional
+        .ofNullable(request.getSchooling2Identifier()).map(s -> schoolingValidator
+            .validateInstanceByIdentifier(request.getSchooling2Identifier(), messages))
+        .orElse(null);
+    schoolingValidator.validateInstanceByIdentifier(request.getSchoolingIdentifier(), messages);
     AssignmentType assignmentType = assignmentTypeValidator
         .validateInstanceByIdentifier(request.getAssignmentTypeIdentifier(), messages);
     Seniority seniority =
         seniorityValidator.validateInstanceByIdentifier(request.getSeniorityIdentifier(), messages);
-    return new Object[] {student, schooling, assignmentType, seniority};
+    return new Object[] {student, schooling, assignmentType, seniority, schooling2};
   }
 
   @Override
   protected void setFields(Registration registration, Object[] array,
       RegistrationCreateRequestDto request) {
     super.setFields(registration, array, request);
+    if (array[4] != null) {
+      long amount = amountPersistence.getValueSumBySchoolingByAssignmentTypeBySeniority(
+          (Schooling) array[1], (AssignmentType) array[2], (Seniority) array[3]);
+      long amountOtherRegistration =
+          amountPersistence.getValueSumBySchoolingByAssignmentTypeBySeniority((Schooling) array[4],
+              (AssignmentType) array[2], (Seniority) array[3]);
+
+      if (amountOtherRegistration > amount) {
+        Object temp = array[1];
+        array[1] = array[4];
+        array[4] = temp;
+      }
+    }
+
+    setFields(registration, array, request, (Schooling) array[1]);
+
+    if (array[4] != null) {
+      Registration otherRegistration = new Registration();
+      otherRegistration.generateIdentifier();
+      otherRegistration.audit = registration.audit;
+      setFields(otherRegistration, array, request, (Schooling) array[4]);
+      registration.otheRregistration = otherRegistration;
+    }
+  }
+
+  void setFields(Registration registration, Object[] array, RegistrationCreateRequestDto request,
+      Schooling schooling) {
     registration.student = (Student) array[0];
-    registration.schooling = (Schooling) array[1];
+    registration.schooling = schooling;
     registration.assignmentType = (AssignmentType) array[2];
     registration.seniority = (Seniority) array[3];
     registration.preRegistrationAmount = request.getPreRegistrationAmount();
-    registration.setCode(String.format("I%s", System.currentTimeMillis()));
+    registration.setCode(String.format("I%s%s", registration.schooling.getCode()
+        + registration.assignmentType.getCode() + registration.seniority.getCode(),
+        persistence.countAll()));
   }
 
   @Override
@@ -122,6 +157,10 @@ public class RegistrationCreateBusiness extends AbstractIdentifiableCreateBusine
       adjustedFeePersistence.create(adjustedFees);
       Core.runIfCollectionNotEmpty(amountDeadlines,
           () -> amountDeadlinePersistence.create(amountDeadlines));
+    }
+
+    if (registration.otheRregistration != null) {
+      persistence.create(registration.otheRregistration);
     }
   }
 

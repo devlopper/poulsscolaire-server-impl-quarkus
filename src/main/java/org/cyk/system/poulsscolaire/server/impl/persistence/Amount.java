@@ -23,9 +23,12 @@ import org.hibernate.envers.Audited;
  */
 @Entity(name = Amount.ENTITY_NAME)
 @Table(name = Amount.TABLE_NAME)
-@NamedQueries(
-    value = {@NamedQuery(name = Amount.QUERY_READ_WHERE_VALUE_NOT_ZERO_BY_REGISTRATION_IDENTIFIER,
-        query = Amount.QUERY_READ_WHERE_VALUE_NOT_ZERO_BY_REGISTRATION_VALUE)})
+@NamedQueries(value = {
+    @NamedQuery(name = Amount.QUERY_READ_WHERE_VALUE_NOT_ZERO_BY_REGISTRATION_IDENTIFIER,
+        query = Amount.QUERY_READ_WHERE_VALUE_NOT_ZERO_BY_REGISTRATION_VALUE),
+    @NamedQuery(
+        name = Amount.QUERY_SUM_VALUE_BY_SCHOOLING_BY_ASSIGNMENT_TYPE_BY_SENIORITY_IDENTIFIER,
+        query = Amount.QUERY_SUM_VALUE_BY_SCHOOLING_BY_ASSIGNMENT_TYPE_BY_SENIORITY_VALUE)})
 @Audited
 @AuditOverrides(value = {@AuditOverride(forClass = AbstractIdentifiableAuditable.class),
     @AuditOverride(forClass = AbstractIdentifiable.class)})
@@ -122,6 +125,15 @@ public class Amount extends AbstractIdentifiableAuditable {
   public static final String COLUMN_PAYMENT_ORDER_NUMBER = "NUMERO_ORDRE_PAIEMENT";
   public static final String COLUMN_RENEWABLE = "RECONDUCTIBLE";
   public static final String COLUMN_DEADLINE = "ECHEANCE";
+
+  public static final String 
+      QUERY_SUM_VALUE_BY_SCHOOLING_BY_ASSIGNMENT_TYPE_BY_SENIORITY_IDENTIFIER =
+      "Amount.sumValueBySchoolingByAssignmentTypeBySeniority";
+
+  public static final String QUERY_SUM_VALUE_BY_SCHOOLING_BY_ASSIGNMENT_TYPE_BY_SENIORITY_VALUE =
+      "SELECT COALESCE(SUM(t.value),0) FROM Amount t JOIN Fee f ON f.amount = t "
+          + "WHERE f.schooling = :schooling AND f.assignmentType = :assignmentType "
+          + "AND f.seniority = :seniority";
 
   public static final String QUERY_READ_WHERE_VALUE_NOT_ZERO_BY_REGISTRATION_IDENTIFIER =
       "Amount.readWhereValueNotZeroByRegistration";
