@@ -479,6 +479,9 @@ CREATE TABLE TA_ELEVE (
 	
 	CODE VARCHAR(16) NOT NULL COMMENT 'Code',
 	IDENTITE VARCHAR(36) NOT NULL COMMENT 'Identifiant de l''identité',
+	IDENTITE_PERE VARCHAR(36) COMMENT 'Identifiant de l''identité du père',
+	IDENTITE_MERE VARCHAR(36) COMMENT 'Identifiant de l''identité de la mère',
+	IDENTITE_TUTEUR VARCHAR(36) COMMENT 'Identifiant de l''identité du tuteur',
 	ECOLE VARCHAR(255) NOT NULL COMMENT 'Identifiant de l''école',
 	ECOLE_ORIGINE VARCHAR(255) COMMENT 'Ecole d''origine',
 	
@@ -506,6 +509,9 @@ CREATE TABLE TA_ELEVE_AUD (
 	
 	CODE VARCHAR(16) NOT NULL COMMENT 'Code',
 	IDENTITE VARCHAR(36) NOT NULL COMMENT 'Identifiant de l''identité',
+	IDENTITE_PERE VARCHAR(36) COMMENT 'Identifiant de l''identité du père',
+	IDENTITE_MERE VARCHAR(36) COMMENT 'Identifiant de l''identité de la mère',
+	IDENTITE_TUTEUR VARCHAR(36) COMMENT 'Identifiant de l''identité du tuteur',
 	ECOLE VARCHAR(255) NOT NULL COMMENT 'Identifiant de l''école',
 	ECOLE_ORIGINE VARCHAR(255) COMMENT 'Ecole d''origine',
 	

@@ -20,12 +20,13 @@ RUN microdnf install curl ca-certificates ${JAVA_PACKAGE} \
     && echo "securerandom.source=file:/dev/urandom" >> /etc/alternatives/jre/conf/security/java.security
 
 # -- DATABASE MANAGEMENT SYSTEM : MYSQL --
-ENV DB_USER root
-ENV DB_PASSWORD Vie5?ecole9DB7
+ENV quarkus.datasource.jdbc.url=jdbc:mysql://127.0.0.1:3306/poulspaid
+ENV quarkus.datasource.username=root
+ENV quarkus.datasource.password=Vie5?ecole9DB7
 
-ENV DATASOURCE_JDBC_URL 'jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}'
-ENV DATASOURCE_USER '${DB_USER}'
-ENV DATASOURCE_PASS '${DB_PASSWORD}'
+ENV quarkus.datasource.ecoleviedbv2.username=root
+ENV quarkus.datasource.ecoleviedbv2.password=Vie5?ecole9DB7
+ENV quarkus.hibernate-orm.ecoleviedbv2.datasource=ecoleviedbv2
 
 ENV LANGUAGE='en_US:en'
 
