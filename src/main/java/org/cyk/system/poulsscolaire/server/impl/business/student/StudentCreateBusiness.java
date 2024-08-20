@@ -46,11 +46,12 @@ public class StudentCreateBusiness extends AbstractIdentifiableCreateBusiness<St
     super.setFields(student, array, request);
     student.identity = new Identity();
     student.identity.generateIdentifier();
-    student.identity.audit = student.audit;
     student.identity.set(request, array);
-    student.code = "E" + System.currentTimeMillis();
+    student.identity.audit = student.audit;
+    
     student.originSchool = request.getOriginSchool();
     student.schoolIdentifier = request.getSchoolIdentifier();
+    student.code = "E" + student.schoolIdentifier + persistence.countAll();
   }
 
   @Override

@@ -47,8 +47,7 @@ public class Identity extends AbstractIdentifiableAuditable {
   public String arabicLastNames;
 
   @ManyToOne
-  @NotNull
-  @JoinColumn(name = COLUMN_GENDER, nullable = false)
+  @JoinColumn(name = COLUMN_GENDER)
   public Gender gender;
 
   @Transient

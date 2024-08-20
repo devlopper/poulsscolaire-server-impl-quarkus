@@ -29,6 +29,9 @@ public class StudentDynamicQuery extends AbstractDynamicQuery<Student> {
   EntityManager entityManager;
 
   String schoolVariableName;
+  String fatherVariableName;
+  String motherVariableName;
+  String tutorVariableName;
 
   /**
    * Cette méthode permet d'instancier un object.
@@ -36,6 +39,9 @@ public class StudentDynamicQuery extends AbstractDynamicQuery<Student> {
   public StudentDynamicQuery() {
     super(Student.class);
     schoolVariableName = "s";
+    fatherVariableName = "f";
+    motherVariableName = "m";
+    tutorVariableName = "tt";
   }
 
   @PostConstruct
@@ -76,14 +82,13 @@ public class StudentDynamicQuery extends AbstractDynamicQuery<Student> {
             Identity.FIELD_GENDER, AbstractIdentifiableCodableNamable.FIELD_NAME))
         .build();
 
-    projectionBuilder().name(StudentDto.JSON_BIRTH_DATE)
-        .nameFieldName(Student.FIELD_BIRTH_DATE)
+    projectionBuilder().name(StudentDto.JSON_BIRTH_DATE).nameFieldName(Student.FIELD_BIRTH_DATE)
         .fieldName(fieldName(Student.FIELD_IDENTITY, Identity.FIELD_BIRTH_DATE)).build();
 
     projectionBuilder().name(StudentDto.JSON_BIRTH_DATE_AS_STRING)
-    .nameFieldName(Student.FIELD_BIRTH_DATE_AS_STRING)
-    .fieldName(fieldName(Student.FIELD_IDENTITY, Identity.FIELD_BIRTH_DATE)).build();
-    
+        .nameFieldName(Student.FIELD_BIRTH_DATE_AS_STRING)
+        .fieldName(fieldName(Student.FIELD_IDENTITY, Identity.FIELD_BIRTH_DATE)).build();
+
     projectionBuilder().name(StudentDto.JSON_BIRTH_PLACE).nameFieldName(Student.FIELD_BIRTH_PLACE)
         .fieldName(fieldName(Student.FIELD_IDENTITY, Identity.FIELD_BIRTH_PLACE)).build();
 
@@ -124,11 +129,86 @@ public class StudentDynamicQuery extends AbstractDynamicQuery<Student> {
     projectionBuilder().name(StudentDto.JSON_ORIGIN_SCHOOL).fieldName(Student.FIELD_ORIGIN_SCHOOL)
         .build();
 
+    /* Father */
+
+    projectionBuilder().name(StudentDto.JSON_FATHER_IDENTIFIER)
+        .expression(
+            formatConcat(fieldName(fatherVariableName, AbstractIdentifiable.FIELD_IDENTIFIER)))
+        .resultConsumer((i, a) -> i.fatherIdentifier = a.getNextAsString()).build();
+
+    projectionBuilder().name(StudentDto.JSON_FATHER_FIRST_NAME)
+        .expression(formatConcat(fieldName(fatherVariableName, Identity.FIELD_FIRST_NAME)))
+        .resultConsumer((i, a) -> i.fatherFirstName = a.getNextAsString()).build();
+
+    projectionBuilder().name(StudentDto.JSON_FATHER_LAST_NAMES)
+        .expression(formatConcat(fieldName(fatherVariableName, Identity.FIELD_LAST_NAMES)))
+        .resultConsumer((i, a) -> i.fatherLastNames = a.getNextAsString()).build();
+
+    projectionBuilder().name(StudentDto.JSON_FATHER_PHONE_NUMBER)
+        .expression(formatConcat(fieldName(fatherVariableName, Identity.FIELD_PHONE_NUMBER)))
+        .resultConsumer((i, a) -> i.fatherPhoneNumber = a.getNextAsString()).build();
+
+    /* Mother */
+
+    projectionBuilder().name(StudentDto.JSON_MOTHER_IDENTIFIER)
+        .expression(
+            formatConcat(fieldName(motherVariableName, AbstractIdentifiable.FIELD_IDENTIFIER)))
+        .resultConsumer((i, a) -> i.motherIdentifier = a.getNextAsString()).build();
+
+    projectionBuilder().name(StudentDto.JSON_MOTHER_FIRST_NAME)
+        .expression(formatConcat(fieldName(motherVariableName, Identity.FIELD_FIRST_NAME)))
+        .resultConsumer((i, a) -> i.motherFirstName = a.getNextAsString()).build();
+
+    projectionBuilder().name(StudentDto.JSON_MOTHER_LAST_NAMES)
+        .expression(formatConcat(fieldName(motherVariableName, Identity.FIELD_LAST_NAMES)))
+        .resultConsumer((i, a) -> i.motherLastNames = a.getNextAsString()).build();
+
+    projectionBuilder().name(StudentDto.JSON_MOTHER_PHONE_NUMBER)
+        .expression(formatConcat(fieldName(motherVariableName, Identity.FIELD_PHONE_NUMBER)))
+        .resultConsumer((i, a) -> i.motherPhoneNumber = a.getNextAsString()).build();
+
+    /* Tutor */
+
+    projectionBuilder().name(StudentDto.JSON_TUTOR_IDENTIFIER)
+        .expression(
+            formatConcat(fieldName(tutorVariableName, AbstractIdentifiable.FIELD_IDENTIFIER)))
+        .resultConsumer((i, a) -> i.tutorIdentifier = a.getNextAsString()).build();
+
+    projectionBuilder().name(StudentDto.JSON_TUTOR_FIRST_NAME)
+        .expression(formatConcat(fieldName(tutorVariableName, Identity.FIELD_FIRST_NAME)))
+        .resultConsumer((i, a) -> i.tutorFirstName = a.getNextAsString()).build();
+
+    projectionBuilder().name(StudentDto.JSON_TUTOR_LAST_NAMES)
+        .expression(formatConcat(fieldName(tutorVariableName, Identity.FIELD_LAST_NAMES)))
+        .resultConsumer((i, a) -> i.tutorLastNames = a.getNextAsString()).build();
+
+    projectionBuilder().name(StudentDto.JSON_TUTOR_PHONE_NUMBER)
+        .expression(formatConcat(fieldName(tutorVariableName, Identity.FIELD_PHONE_NUMBER)))
+        .resultConsumer((i, a) -> i.tutorPhoneNumber = a.getNextAsString()).build();
+
     // Jointures
     joinBuilder().projectionsNames(StudentDto.JSON_SCHOOL_AS_STRING)
         .predicatesNames(StudentDto.JSON_SCHOOL_IDENTIFIER).entityName(School.ENTITY_NAME)
         .tupleVariableName(schoolVariableName).parentFieldName(Student.FIELD_SCHOOL_IDENTIFIER)
         .leftInnerOrRight(true).build();
+
+    joinBuilder()
+        .projectionsNames(StudentDto.JSON_FATHER_FIRST_NAME, StudentDto.JSON_FATHER_LAST_NAMES,
+            StudentDto.JSON_FATHER_PHONE_NUMBER)
+        .with(Identity.class).tupleVariableName(fatherVariableName).fieldName(null)
+        .parentFieldName(Student.FIELD_FATHER_IDENTITY).leftInnerOrRight(true).build();
+
+    joinBuilder()
+        .projectionsNames(StudentDto.JSON_MOTHER_FIRST_NAME, StudentDto.JSON_MOTHER_LAST_NAMES,
+            StudentDto.JSON_MOTHER_PHONE_NUMBER)
+        .with(Identity.class).tupleVariableName(motherVariableName).fieldName(null)
+        .parentFieldName(Student.FIELD_MOTHER_IDENTITY).leftInnerOrRight(true).build();
+
+    joinBuilder()
+        .projectionsNames(StudentDto.JSON_TUTOR_FIRST_NAME, StudentDto.JSON_TUTOR_LAST_NAMES,
+            StudentDto.JSON_TUTOR_PHONE_NUMBER)
+        .with(Identity.class).tupleVariableName(tutorVariableName).fieldName(null)
+        .parentFieldName(Student.FIELD_TUTOR_IDENTITY).leftInnerOrRight(true).build();
 
     // Prédicats
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)

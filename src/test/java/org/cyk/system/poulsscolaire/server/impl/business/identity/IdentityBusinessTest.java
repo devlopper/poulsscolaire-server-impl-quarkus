@@ -46,7 +46,6 @@ class IdentityBusinessTest extends AbstractTest {
     request.setFirstName(UUID.randomUUID().toString());
     request.setLastNames(UUID.randomUUID().toString());
     request.setEmailAddress("m@m.com");
-    request.setGenderIdentifier("M");
     request.setAuditWho("christian");
     long count = count(entityManager, Identity.ENTITY_NAME);
     createBusiness.process(request);

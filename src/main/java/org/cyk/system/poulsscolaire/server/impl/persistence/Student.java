@@ -110,16 +110,103 @@ public class Student extends AbstractIdentifiableCodableAuditable {
   public String othersContacts;
   
   @Transient
+  public String schoolAsString;
+  
+  /* Father */
+  
+  @Transient
+  public String fatherFirstName;
+
+  @Transient
+  public String fatherLastNames;
+
+  @Transient
+  public String fatherSituation;
+
+  @Transient
+  public String fatherProfession;
+
+  @Transient
+  public String fatherEmailAddress;
+
+  @Transient
+  public String fatherPhoneNumber;
+
+  @Transient
+  public String fatherOthersContacts;
+
+  @Transient
+  public String fatherResidence;
+  
+  @Transient
   public String fatherAsString;
+  
+  @Transient
+  public String fatherIdentifier;
+  
+  /* Mother */
+
+  @Transient
+  public String motherFirstName;
+
+  @Transient
+  public String motherLastNames;
+
+  @Transient
+  public String motherSituation;
+
+  @Transient
+  public String motherProfession;
+
+  @Transient
+  public String motherEmailAddress;
+
+  @Transient
+  public String motherPhoneNumber;
+
+  @Transient
+  public String motherOthersContacts;
+
+  @Transient
+  public String motherResidence;
   
   @Transient
   public String motherAsString;
   
   @Transient
+  public String motherIdentifier;
+  
+  /* Tutor */
+
+  @Transient
+  public String tutorFirstName;
+
+  @Transient
+  public String tutorLastNames;
+
+  @Transient
+  public String tutorSituation;
+
+  @Transient
+  public String tutorProfession;
+
+  @Transient
+  public String tutorEmailAddress;
+
+  @Transient
+  public String tutorPhoneNumber;
+
+  @Transient
+  public String tutorOthersContacts;
+
+  @Transient
+  public String tutorResidence;
+  
+  @Transient
   public String tutorAsString;
   
   @Transient
-  public String schoolAsString;
+  public String tutorIdentifier;
   
   public static final String FIELD_IDENTITY = "identity";
   public static final String FIELD_FATHER_IDENTITY = "fatherIdentity";

@@ -28,19 +28,19 @@ public class IdentityValidator extends AbstractIdentifiableValidator<Identity> {
 
   @Inject
   GenderValidator genderValidator;
-  
+
   public void validateFirstName(String firstName, StringList messages) {
     validationHelper.validateBlankByName(this, firstName, "nom", messages);
   }
-  
+
   public void validateLastNames(String lastNames, StringList messages) {
     validationHelper.validateBlankByName(this, lastNames, "prénoms", messages);
   }
-  
+
   public void validateEmailAddress(String emailAddress, StringList messages) {
     validationHelper.validateEmailAddressByName(this, emailAddress, "adresse email", messages);
   }
-  
+
   /**
    * Cette méthode permet de valider.
    *
@@ -53,8 +53,11 @@ public class IdentityValidator extends AbstractIdentifiableValidator<Identity> {
     validateLastNames(request.getLastNames(), messages);
     Optional.ofNullable(Core.getOrNullifyIfStringBlank(request.getEmailAddress()))
         .ifPresent(value -> validateEmailAddress(value, messages));
-    Gender gender =
-        genderValidator.validateInstanceByIdentifier(request.getGenderIdentifier(), messages);
+    Gender gender = null;
+    if (!Core.isStringBlank(request.getGenderIdentifier())) {
+      gender =
+          genderValidator.validateInstanceByIdentifier(request.getGenderIdentifier(), messages);
+    }
     return new Object[] {gender};
   }
 }
