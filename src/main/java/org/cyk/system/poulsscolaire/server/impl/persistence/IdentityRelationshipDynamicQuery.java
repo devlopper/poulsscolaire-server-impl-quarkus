@@ -10,6 +10,7 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.registration.IdentityRelationshipDto;
+import org.cyk.system.poulsscolaire.server.api.registration.IdentityRelationshipType;
 
 /**
  * Cette classe représente la requête dynamique de {@link IdentityRelationship}.
@@ -42,14 +43,32 @@ public class IdentityRelationshipDynamicQuery extends AbstractDynamicQuery<Ident
             fieldName(IdentityRelationship.FIELD_PARENT, AbstractIdentifiable.FIELD_IDENTIFIER))
         .build();
 
-    projectionBuilder().name(IdentityRelationshipDto.JSON_CHILD_IDENTIFIER)
-    .nameFieldName(IdentityRelationship.FIELD_CHILD_IDENTIFIER)
-    .fieldName(
-        fieldName(IdentityRelationship.FIELD_CHILD, AbstractIdentifiable.FIELD_IDENTIFIER))
-    .build();
+    projectionBuilder().name(IdentityRelationshipDto.JSON_PARENT_AS_STRING)
+        .nameFieldName(IdentityRelationship.FIELD_PARENT_AS_STRING)
+        .expression(formatConcat(
+            fieldName(variableName, IdentityRelationship.FIELD_PARENT, Identity.FIELD_FIRST_NAME),
+            "' '",
+            fieldName(variableName, IdentityRelationship.FIELD_PARENT, Identity.FIELD_LAST_NAMES)))
+        .resultConsumer((i, a) -> i.parentAsString = a.getNextAsString()).build();
 
-    projectionBuilder().name(IdentityRelationshipDto.JSON_TYPE)
-        .fieldName(IdentityRelationship.FIELD_TYPE).build();
+    projectionBuilder().name(IdentityRelationshipDto.JSON_CHILD_IDENTIFIER)
+        .nameFieldName(IdentityRelationship.FIELD_CHILD_IDENTIFIER)
+        .fieldName(
+            fieldName(IdentityRelationship.FIELD_CHILD, AbstractIdentifiable.FIELD_IDENTIFIER))
+        .build();
+
+    projectionBuilder().name(IdentityRelationshipDto.JSON_CHILD_AS_STRING)
+        .nameFieldName(IdentityRelationship.FIELD_CHILD_AS_STRING)
+        .expression(formatConcat(
+            fieldName(variableName, IdentityRelationship.FIELD_CHILD, Identity.FIELD_FIRST_NAME),
+            "' '",
+            fieldName(variableName, IdentityRelationship.FIELD_CHILD, Identity.FIELD_LAST_NAMES)))
+        .resultConsumer((i, a) -> i.childAsString = a.getNextAsString()).build();
+
+    projectionBuilder().name(IdentityRelationshipDto.JSON_TYPE_AS_STRING).expression("t.type")
+        .resultConsumer(
+            (i, a) -> i.typeAsString = a.getNextAs(IdentityRelationshipType.class).getName())
+        .build();
 
     // Prédicats
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)

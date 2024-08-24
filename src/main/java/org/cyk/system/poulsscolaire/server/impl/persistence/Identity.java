@@ -11,6 +11,7 @@ import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import org.cyk.system.poulsscolaire.server.api.registration.BloodGroup;
+import org.cyk.system.poulsscolaire.server.api.registration.IdentityRelationshipType;
 import org.cyk.system.poulsscolaire.server.api.registration.IdentityService.IdentitySaveRequest;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
@@ -50,6 +51,15 @@ public class Identity extends AbstractIdentifiableAuditable {
   @JoinColumn(name = COLUMN_GENDER)
   public Gender gender;
 
+  @Transient
+  public Identity relationshipParent;
+  
+  @Transient
+  public Identity relationshipChild;
+  
+  @Transient
+  public IdentityRelationshipType relationshipType;
+  
   @Transient
   public Boolean isMasculine;
 
@@ -101,7 +111,10 @@ public class Identity extends AbstractIdentifiableAuditable {
     arabicLastNames = request.getArabicLastNames();
     if (array != null) {
       gender = (Gender) array[0];
+      relationshipParent = (Identity) array[1];
+      relationshipChild = (Identity) array[2];
     }
+    relationshipType = request.getRelationshipType();
     bloodGroup = request.getBloodGroup();
 
     birthDate = request.getBirthDate();

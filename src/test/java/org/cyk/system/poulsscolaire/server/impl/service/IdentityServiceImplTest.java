@@ -11,7 +11,7 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.cyk.system.poulsscolaire.server.api.registration.IdentityDto;
 import org.cyk.system.poulsscolaire.server.api.registration.IdentityService;
-import org.cyk.system.poulsscolaire.server.api.registration.IdentityService.GetManyResponseDto;
+import org.cyk.system.poulsscolaire.server.api.registration.IdentityService.IdentityGetManyResponseDto;
 import org.cyk.system.poulsscolaire.server.impl.business.identity.IdentityCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.identity.IdentityDeleteBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.identity.IdentityReadByIdentifierBusiness;
@@ -45,7 +45,7 @@ class IdentityServiceImplTest extends AbstractTest {
   void readMany() {
     IdentityReadManyBusiness business =
         installMockForType(IdentityReadManyBusiness.class);
-    Mockito.when(business.process(any())).thenReturn(new GetManyResponseDto());
+    Mockito.when(business.process(any())).thenReturn(new IdentityGetManyResponseDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
         .post(IdentityService.PATH + "/" + IdentityService.GET_MANY_PATH).then()

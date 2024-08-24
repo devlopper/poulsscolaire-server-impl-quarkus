@@ -12,44 +12,45 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
-import org.cyk.system.poulsscolaire.server.api.registration.IdentityDto;
-import org.cyk.system.poulsscolaire.server.api.registration.IdentityService;
-import org.cyk.system.poulsscolaire.server.impl.business.identity.IdentityCreateBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.identity.IdentityDeleteBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.identity.IdentityReadByIdentifierBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.identity.IdentityReadManyBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.identity.IdentityReadOneBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.identity.IdentityUpdateBusiness;
+import org.cyk.system.poulsscolaire.server.api.registration.IdentityRelationshipDto;
+import org.cyk.system.poulsscolaire.server.api.registration.IdentityRelationshipService;
+import org.cyk.system.poulsscolaire.server.impl.business.identityrelationship.IdentityRelationshipCreateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.identityrelationship.IdentityRelationshipDeleteBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.identityrelationship.IdentityRelationshipReadByIdentifierBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.identityrelationship.IdentityRelationshipReadManyBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.identityrelationship.IdentityRelationshipReadOneBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.identityrelationship.IdentityRelationshipUpdateBusiness;
 
 /**
- * Cette classe représente l'implémentation de {@link IdentityService}.
+ * Cette classe représente l'implémentation de {@link IdentityRelationshipService}.
  *
  * @author Christian
  *
  */
 @ApplicationScoped
-public class IdentityServiceImpl extends AbstractServiceImpl implements IdentityService {
+public class IdentityRelationshipServiceImpl extends AbstractServiceImpl
+    implements IdentityRelationshipService {
 
   @Inject
-  IdentityCreateBusiness createBusiness;
-  
+  IdentityRelationshipCreateBusiness createBusiness;
+
   @Inject
-  IdentityReadManyBusiness readManyBusiness;
-  
+  IdentityRelationshipReadManyBusiness readManyBusiness;
+
   @Inject
-  IdentityReadOneBusiness readOneBusiness;
-  
+  IdentityRelationshipReadOneBusiness readOneBusiness;
+
   @Inject
-  IdentityReadByIdentifierBusiness readByIdentifierBusiness;
-  
+  IdentityRelationshipReadByIdentifierBusiness readByIdentifierBusiness;
+
   @Inject
-  IdentityUpdateBusiness updateBusiness;
-  
+  IdentityRelationshipUpdateBusiness updateBusiness;
+
   @Inject
-  IdentityDeleteBusiness deleteBusiness;
+  IdentityRelationshipDeleteBusiness deleteBusiness;
 
   @Override
-  public Response create(IdentityCreateRequestDto request) {
+  public Response create(IdentityRelationshipCreateRequestDto request) {
     CreateResponseDto dto = createBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);
@@ -59,7 +60,7 @@ public class IdentityServiceImpl extends AbstractServiceImpl implements Identity
 
   @Override
   public Response getMany(GetManyRequestDto request) {
-    IdentityGetManyResponseDto dto = readManyBusiness.process(request);
+    IdentityRelationshipGetManyResponseDto dto = readManyBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);
     return responseBuilder.build();
@@ -67,22 +68,22 @@ public class IdentityServiceImpl extends AbstractServiceImpl implements Identity
 
   @Override
   public Response getOne(GetOneRequestDto request) {
-    IdentityDto dto = readOneBusiness.process(request);
-    ResponseBuilder responseBuilder = new ResponseBuilder();
-    responseBuilder.setDto(dto);
-    return responseBuilder.build();
-  }
-  
-  @Override
-  public Response getByIdentifier(GetByIdentifierRequestDto request) {
-    IdentityDto dto = readByIdentifierBusiness.process(request);
+    IdentityRelationshipDto dto = readOneBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);
     return responseBuilder.build();
   }
 
   @Override
-  public Response update(IdentityUpdateRequestDto request) {
+  public Response getByIdentifier(GetByIdentifierRequestDto request) {
+    IdentityRelationshipDto dto = readByIdentifierBusiness.process(request);
+    ResponseBuilder responseBuilder = new ResponseBuilder();
+    responseBuilder.setDto(dto);
+    return responseBuilder.build();
+  }
+
+  @Override
+  public Response update(IdentityRelationshipUpdateRequestDto request) {
     IdentifiableResponseDto dto = updateBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);

@@ -10,9 +10,11 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import java.util.Map;
 import java.util.UUID;
+import org.cyk.system.poulsscolaire.server.api.registration.IdentityRelationshipType;
 import org.cyk.system.poulsscolaire.server.api.registration.IdentityService.IdentityCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.registration.IdentityService.IdentityUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Identity;
+import org.cyk.system.poulsscolaire.server.impl.persistence.IdentityRelationship;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest
@@ -50,6 +52,23 @@ class IdentityBusinessTest extends AbstractTest {
     long count = count(entityManager, Identity.ENTITY_NAME);
     createBusiness.process(request);
     assertEquals(count + 1, count(entityManager, Identity.ENTITY_NAME));
+  }
+  
+  @Test
+  void createWithRelationship() {
+    IdentityCreateRequestDto request = new IdentityCreateRequestDto();
+    request.setFirstName(UUID.randomUUID().toString());
+    request.setLastNames(UUID.randomUUID().toString());
+    request.setEmailAddress("m@m.com");
+    request.setRelationshipParentIdentifier("1");
+    request.setRelationshipChildIdentifier("2");
+    request.setRelationshipType(IdentityRelationshipType.FATHER);
+    request.setAuditWho("christian");
+    long count = count(entityManager, Identity.ENTITY_NAME);
+    long relationshipCount = count(entityManager, IdentityRelationship.ENTITY_NAME);
+    createBusiness.process(request);
+    assertEquals(count + 1, count(entityManager, Identity.ENTITY_NAME));
+    assertEquals(relationshipCount + 2, count(entityManager, IdentityRelationship.ENTITY_NAME));
   }
   
   @Test

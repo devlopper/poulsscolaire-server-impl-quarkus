@@ -58,6 +58,10 @@ public class IdentityValidator extends AbstractIdentifiableValidator<Identity> {
       gender =
           genderValidator.validateInstanceByIdentifier(request.getGenderIdentifier(), messages);
     }
-    return new Object[] {gender};
+    Identity relationshipParent = Optional.ofNullable(request.getRelationshipParentIdentifier())
+        .map(identifier -> validateInstanceByIdentifier(identifier, messages)).orElse(null);
+    Identity relationshipChild = Optional.ofNullable(request.getRelationshipChildIdentifier())
+        .map(identifier -> validateInstanceByIdentifier(identifier, messages)).orElse(null);
+    return new Object[] {gender, relationshipParent, relationshipChild};
   }
 }
