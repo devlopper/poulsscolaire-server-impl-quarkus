@@ -56,6 +56,9 @@ public class Student extends AbstractIdentifiableCodableAuditable {
   public String originSchool;
   
   @Transient
+  public String identityIdentifier;
+  
+  @Transient
   public String registrationNumber;
   
   @Transient
@@ -209,6 +212,7 @@ public class Student extends AbstractIdentifiableCodableAuditable {
   public String tutorIdentifier;
   
   public static final String FIELD_IDENTITY = "identity";
+  public static final String FIELD_IDENTITY_IDENTIFIER = "identityIdentifier";
   public static final String FIELD_FATHER_IDENTITY = "fatherIdentity";
   public static final String FIELD_MOTHER_IDENTITY = "motherIdentity";
   public static final String FIELD_TUTOR_IDENTITY = "tutorIdentity";
