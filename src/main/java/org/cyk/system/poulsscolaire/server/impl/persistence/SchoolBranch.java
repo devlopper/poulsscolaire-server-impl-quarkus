@@ -31,13 +31,18 @@ public class SchoolBranch extends AbstractIdentifiable {
   public static final String COLUMN_SCHOOL_IDENTIFIER = "ECOLE";
   public static final String COLUMN_BRANCH_IDENTIFIER = "BRANCHE";
 
-  public static final String QUERY = """
-      SELECT
-          CONCAT(ecole.ecoleid,programme_ecole.id,Branche.id) AS IDENTIFIANT
-          ,ecole.ecoleid AS ECOLE
-          ,Branche.id AS BRANCHE
-      FROM ecoleviedbv2.programme_ecole
-      JOIN ecoleviedbv2.ecole ON ecole.ecoleid = programme_ecole.fk_ecole_id
-      JOIN ecoleviedbv2.Branche ON Branche.fk_programme_id = programme_ecole.fk_programme_id
-                            """;
+  public static final String QUERY =
+      """
+          SELECT
+            CONCAT(ecole.ecoleid,programme_ecole.id,branche.id) AS IDENTIFIANT
+            ,ecole.ecoleid AS ECOLE
+            ,branche.id AS BRANCHE
+          FROM ecoleviedbv2.ecole ecole
+          JOIN ecoleviedbv2.programme_ecole programme_ecole 
+            ON programme_ecole.fk_ecole_id = ecole.ecoleid
+          JOIN ecoleviedbv2.programme programme ON programme_ecole.fk_programme_id = programme.id
+          JOIN ecoleviedbv2.Branche branche 
+            ON programme.id = branche.fk_programme_id 
+            AND branche.niveau_enseignement_id = ecole.Niveau_Enseignement_id
+                                            """;
 }

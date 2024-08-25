@@ -28,4 +28,6 @@ public class Branch {
   @Column(name = "fk_programme_id")
   public String programIdentifier;
   
+  @Column(name = "niveau_enseignement_id")
+  public int teachingLevelIdentifier;
 }

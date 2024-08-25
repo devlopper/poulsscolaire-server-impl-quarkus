@@ -2,6 +2,7 @@ package org.cyk.system.poulsscolaire.server.impl.business.identity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import ci.gouv.dgbf.extension.server.service.api.request.DeleteOneRequestDto;
 import ci.gouv.dgbf.extension.test.AbstractTest;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.QuarkusTestProfile;
@@ -83,6 +84,16 @@ class IdentityBusinessTest extends AbstractTest {
     long count = count(entityManager, Identity.ENTITY_NAME);
     updateBusiness.process(request);
     assertEquals(count, count(entityManager, Identity.ENTITY_NAME));
+  }
+  
+  @Test
+  void delete() {
+    DeleteOneRequestDto request = new DeleteOneRequestDto();
+    request.setIdentifier("todelete");
+    request.setAuditWho("christian");
+    long count = count(entityManager, Identity.ENTITY_NAME);
+    deleteBusiness.process(request);
+    assertEquals(count - 1, count(entityManager, Identity.ENTITY_NAME));
   }
   
   public static class Profile implements QuarkusTestProfile {
