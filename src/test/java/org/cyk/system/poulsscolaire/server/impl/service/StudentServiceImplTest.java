@@ -13,7 +13,6 @@ import org.cyk.system.poulsscolaire.server.api.registration.StudentDto;
 import org.cyk.system.poulsscolaire.server.api.registration.StudentService;
 import org.cyk.system.poulsscolaire.server.api.registration.StudentService.StudentGetManyResponseDto;
 import org.cyk.system.poulsscolaire.server.impl.business.student.StudentCreateBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.student.StudentCreateParentBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.student.StudentDeleteBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.student.StudentReadByIdentifierBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.student.StudentReadManyBusiness;
@@ -83,17 +82,6 @@ class StudentServiceImplTest extends AbstractTest {
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
         .put(StudentService.PATH + "/" + StudentService.UPDATE_PATH).then().log()
-        .ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
-  }
-  
-  @Test
-  void createParent() {
-    StudentCreateParentBusiness business =
-        installMockForType(StudentCreateParentBusiness.class);
-    Mockito.when(business.process(any())).thenReturn(new IdentifiableResponseDto());
-
-    RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
-        .post(StudentService.PATH + "/" + StudentService.CREATE_PARENT_PATH).then().log()
         .ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
   }
 

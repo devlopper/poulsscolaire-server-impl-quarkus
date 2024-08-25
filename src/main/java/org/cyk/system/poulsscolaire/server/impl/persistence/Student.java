@@ -36,18 +36,6 @@ public class Student extends AbstractIdentifiableCodableAuditable {
   @JoinColumn(name = COLUMN_IDENTITY, nullable = false)
   public Identity identity;
   
-  @ManyToOne
-  @JoinColumn(name = COLUMN_FATHER_IDENTITY)
-  public Identity fatherIdentity;
-  
-  @ManyToOne
-  @JoinColumn(name = COLUMN_MOTHER_IDENTITY)
-  public Identity motherIdentity;
-  
-  @ManyToOne
-  @JoinColumn(name = COLUMN_TUTOR_IDENTITY)
-  public Identity tutorIdentity;
-  
   @NotNull
   @Column(name = COLUMN_SCHOOL_IDENTIFIER, nullable = false)
   public String schoolIdentifier;
@@ -213,9 +201,6 @@ public class Student extends AbstractIdentifiableCodableAuditable {
   
   public static final String FIELD_IDENTITY = "identity";
   public static final String FIELD_IDENTITY_IDENTIFIER = "identityIdentifier";
-  public static final String FIELD_FATHER_IDENTITY = "fatherIdentity";
-  public static final String FIELD_MOTHER_IDENTITY = "motherIdentity";
-  public static final String FIELD_TUTOR_IDENTITY = "tutorIdentity";
   public static final String FIELD_REGISTRATION_NUMBER = "registrationNumber";
   public static final String FIELD_FIRST_NAME = "firstName";
   public static final String FIELD_ARABIC_FIRST_NAME = "arabicFirstName";
@@ -244,9 +229,6 @@ public class Student extends AbstractIdentifiableCodableAuditable {
   public static final String TABLE_NAME = "TA_ELEVE";
   
   public static final String COLUMN_IDENTITY = "IDENTITE";
-  public static final String COLUMN_FATHER_IDENTITY = "IDENTITE_PERE";
-  public static final String COLUMN_MOTHER_IDENTITY = "IDENTITE_MERE";
-  public static final String COLUMN_TUTOR_IDENTITY = "IDENTITE_TUTEUR";
   public static final String COLUMN_SCHOOL_IDENTIFIER = "ECOLE";
   public static final String COLUMN_ORIGIN_SCHOOL = "ECOLE_ORIGINE";
 }

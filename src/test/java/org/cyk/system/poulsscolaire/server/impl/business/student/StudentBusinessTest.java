@@ -1,10 +1,7 @@
 package org.cyk.system.poulsscolaire.server.impl.business.student;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import ci.gouv.dgbf.extension.server.business.BusinessInputValidationException;
 import ci.gouv.dgbf.extension.server.service.api.request.DeleteOneRequestDto;
 import ci.gouv.dgbf.extension.test.AbstractTest;
 import io.quarkus.test.junit.QuarkusTest;
@@ -14,15 +11,11 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import java.util.Map;
 import java.util.UUID;
-import org.cyk.system.poulsscolaire.server.api.registration.StudentService.StudentCreateParentRequestDto;
-import org.cyk.system.poulsscolaire.server.api.registration.StudentService.StudentCreateParentRequestDto.ParentalLink;
 import org.cyk.system.poulsscolaire.server.api.registration.StudentService.StudentCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.registration.StudentService.StudentUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Identity;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Student;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 
 @QuarkusTest
 @TestProfile(StudentBusinessTest.Profile.class)
@@ -48,9 +41,6 @@ class StudentBusinessTest extends AbstractTest {
 
   @Inject
   StudentDeleteBusiness deleteBusiness;
-
-  @Inject
-  StudentCreateParentBusiness createParentBusiness;
 
   @Test
   void create() {
@@ -81,52 +71,6 @@ class StudentBusinessTest extends AbstractTest {
     long count = count(entityManager, Identity.ENTITY_NAME);
     updateBusiness.process(request);
     assertEquals(count, count(entityManager, Identity.ENTITY_NAME));
-  }
-
-  @ParameterizedTest
-  @CsvSource(value = {"tocreatefather,FATHER", "tocreatemother,MOTHER", "tocreatetutor,TUTOR"})
-  void createParent(String identifier, ParentalLink link) {
-    StudentCreateParentRequestDto request = new StudentCreateParentRequestDto();
-    request.setIdentifier(identifier);
-    request.setLink(link);
-    request.setFirstName(UUID.randomUUID().toString());
-    request.setLastNames(UUID.randomUUID().toString());
-    request.setAuditWho("christian");
-    long count = count(entityManager, Identity.ENTITY_NAME);
-    createParentBusiness.process(request);
-    assertEquals(count + 1, count(entityManager, Identity.ENTITY_NAME));
-  }
-
-  @Test
-  void createParent_whenParentalLinkNull() {
-    StudentCreateParentRequestDto request = new StudentCreateParentRequestDto();
-    request.setIdentifier("tocreatefather");
-    request.setFirstName(UUID.randomUUID().toString());
-    request.setLastNames(UUID.randomUUID().toString());
-    request.setAuditWho("christian");
-    assertThrows(BusinessInputValidationException.class,
-        () -> createParentBusiness.process(request));
-  }
-
-  @ParameterizedTest
-  @CsvSource(value = {"FATHER", "MOTHER", "TUTOR"})
-  void createParent_getParent(ParentalLink parentalLink) {
-    assertNull(createParentBusiness.getParent(new Student(), parentalLink));
-  }
-
-  @Test
-  void createParent_getParent_whenNull() {
-    assertNull(createParentBusiness.getParent(null, null));
-  }
-
-  @Test
-  void createParent_instantiateIdentity_whenNull() {
-    assertNull(createParentBusiness.instantiateIdentity(null, null));
-  }
-
-  @Test
-  void createParent_getIdentity_whenNull() {
-    assertNull(createParentBusiness.getIdentity(new Student()));
   }
 
   @Test

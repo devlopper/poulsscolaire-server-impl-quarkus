@@ -106,6 +106,7 @@ public class PaymentCreateBusiness extends AbstractIdentifiableCreateBusiness<Pa
     payment.amount = request.getAmount();
     payment.payables = (List<Object[]>) array[2];
     payment.canceled = false;
+    payment.initiator = request.getInitiator();
   }
 
   @Override

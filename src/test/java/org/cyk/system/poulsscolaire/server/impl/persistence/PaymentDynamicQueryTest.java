@@ -1,6 +1,7 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
 import io.quarkus.test.junit.QuarkusTest;
@@ -17,12 +18,18 @@ class PaymentDynamicQueryTest {
   DynamicQueryParameters<Payment> parameters = new DynamicQueryParameters<>();
 
   @Test
+  void instanciate() {
+    assertNotNull(new PaymentAmounts());
+    assertNotNull(new PaymentDates());
+  }
+  
+  @Test
   void buildQueryString() {
     parameters.projection().addNames(PaymentDto.JSON_AMOUNT_AS_STRING);
     assertEquals(
-        "SELECT COALESCE(SUM(paf.amount), 0) FROM Payment t "
-            + "LEFT JOIN PaymentAdjustedFee paf ON paf.payment = t "
-            + "GROUP BY t.identifier,t.code ORDER BY t.code ASC",
+        "SELECT pa.total FROM Payment t "
+            + "LEFT JOIN PaymentAmounts pa ON pa.identifier = t.identifier "
+            + "ORDER BY t.code ASC",
         dynamicQuery.buildQueryString(parameters));
   }
 }

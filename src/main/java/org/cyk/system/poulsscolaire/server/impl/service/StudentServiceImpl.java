@@ -15,7 +15,6 @@ import jakarta.ws.rs.core.Response.Status;
 import org.cyk.system.poulsscolaire.server.api.registration.StudentDto;
 import org.cyk.system.poulsscolaire.server.api.registration.StudentService;
 import org.cyk.system.poulsscolaire.server.impl.business.student.StudentCreateBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.student.StudentCreateParentBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.student.StudentDeleteBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.student.StudentReadByIdentifierBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.student.StudentReadManyBusiness;
@@ -48,9 +47,6 @@ public class StudentServiceImpl extends AbstractServiceImpl implements StudentSe
   
   @Inject
   StudentDeleteBusiness deleteBusiness;
-
-  @Inject
-  StudentCreateParentBusiness createParentBusiness;
   
   @Override
   public Response create(StudentCreateRequestDto request) {
@@ -88,14 +84,6 @@ public class StudentServiceImpl extends AbstractServiceImpl implements StudentSe
   @Override
   public Response update(StudentUpdateRequestDto request) {
     IdentifiableResponseDto dto = updateBusiness.process(request);
-    ResponseBuilder responseBuilder = new ResponseBuilder();
-    responseBuilder.setDto(dto);
-    return responseBuilder.build();
-  }
-  
-  @Override
-  public Response createParent(StudentCreateParentRequestDto request) {
-    IdentifiableResponseDto dto = createParentBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);
     return responseBuilder.build();
