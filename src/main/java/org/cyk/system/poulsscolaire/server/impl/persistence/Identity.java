@@ -61,6 +61,12 @@ public class Identity extends AbstractIdentifiableAuditable {
   public IdentityRelationshipType relationshipType;
   
   @Transient
+  public String relationshipParentTypeAsString;
+  
+  @Transient
+  public String relationshipTypeParentAsString;
+  
+  @Transient
   public Boolean isMasculine;
 
   @Column(name = COLUMN_BLOOD_GROUP)
