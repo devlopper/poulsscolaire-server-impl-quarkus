@@ -6,6 +6,7 @@ import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCoda
 import ci.gouv.dgbf.extension.server.persistence.entity.embeddable.Action;
 import ci.gouv.dgbf.extension.server.persistence.query.AbstractDynamicQuery;
 import ci.gouv.dgbf.extension.server.service.api.AbstractIdentifiableFilter;
+import ci.gouv.dgbf.extension.server.service.api.entity.AbstractIdentifiableCodableAuditableDto;
 import ci.gouv.dgbf.extension.server.service.api.entity.AbstractIdentifiableCodableDto;
 import ci.gouv.dgbf.extension.server.service.api.entity.AbstractIdentifiableDto;
 import jakarta.annotation.PostConstruct;
@@ -31,7 +32,7 @@ public class PaymentDynamicQuery extends AbstractDynamicQuery<Payment> {
 
   String schoolVariableName;
   String paymentAmountsVariableName;
-  String paymentDatesVariableName;
+  String auditVariableName;
 
   /**
    * Cette méthode permet d'instancier un object.
@@ -40,7 +41,7 @@ public class PaymentDynamicQuery extends AbstractDynamicQuery<Payment> {
     super(Payment.class);
     schoolVariableName = "s";
     paymentAmountsVariableName = "pa";
-    paymentDatesVariableName = "pd";
+    auditVariableName = "audit";
   }
 
   @PostConstruct
@@ -62,23 +63,17 @@ public class PaymentDynamicQuery extends AbstractDynamicQuery<Payment> {
         .tupleVariableName(paymentAmountsVariableName).nameFieldName(Payment.FIELD_AMOUNT_AS_STRING)
         .fieldName(PaymentAmounts.FIELD_TOTAL).build();
 
-    projectionBuilder().name(PaymentDto.JSON_CREATION_ACTOR)
-        .tupleVariableName(paymentDatesVariableName).nameFieldName(Payment.FIELD_CREATION_ACTOR)
-        .fieldName(fieldName(PaymentDates.FIELD_CREATION, Action.FIELD_WHO)).build();
+    projectionBuilder().name(AbstractIdentifiableCodableAuditableDto.JSON_AUDIT_CREATION_AS_STRING)
+        .expression(String.format("%s,%s",
+            fieldName(auditVariableName, PaymentAudits.FIELD_CREATION, Action.FIELD_WHEN),
+            fieldName(auditVariableName, PaymentAudits.FIELD_CREATION, Action.FIELD_WHO)))
+        .resultConsumer((i, a) -> i.auditCreationAsString = Action.format(a)).build();
 
-    projectionBuilder().name(PaymentDto.JSON_CREATION_DATE_AS_STRING)
-        .tupleVariableName(paymentDatesVariableName)
-        .nameFieldName(Payment.FIELD_CREATION_DATE_AS_STRING)
-        .fieldName(fieldName(PaymentDates.FIELD_CREATION, Action.FIELD_WHEN)).build();
-
-    projectionBuilder().name(PaymentDto.JSON_CANCELLATION_ACTOR)
-        .tupleVariableName(paymentDatesVariableName).nameFieldName(Payment.FIELD_CANCELLATION_ACTOR)
-        .fieldName(fieldName(PaymentDates.FIELD_CANCELLATION, Action.FIELD_WHO)).build();
-
-    projectionBuilder().name(PaymentDto.JSON_CANCELLATION_DATE_AS_STRING)
-        .tupleVariableName(paymentDatesVariableName)
-        .nameFieldName(Payment.FIELD_CANCELLATION_DATE_AS_STRING)
-        .fieldName(fieldName(PaymentDates.FIELD_CANCELLATION, Action.FIELD_WHEN)).build();
+    projectionBuilder().name(PaymentDto.JSON_AUDIT_CANCELLATION_AS_STRING)
+        .expression(String.format("%s,%s",
+            fieldName(auditVariableName, PaymentAudits.FIELD_CANCELLATION, Action.FIELD_WHEN),
+            fieldName(auditVariableName, PaymentAudits.FIELD_CANCELLATION, Action.FIELD_WHO)))
+        .resultConsumer((i, a) -> i.auditCancellationAsString = Action.format(a)).build();
 
     // Jointures
     joinBuilder().projectionsNames(PaymentDto.JSON_AMOUNT, PaymentDto.JSON_AMOUNT_AS_STRING)
@@ -87,10 +82,10 @@ public class PaymentDynamicQuery extends AbstractDynamicQuery<Payment> {
         .parentFieldName(AbstractIdentifiable.FIELD_IDENTIFIER).leftInnerOrRight(true).build();
 
     joinBuilder()
-        .projectionsNames(PaymentDto.JSON_CREATION_ACTOR, PaymentDto.JSON_CREATION_DATE_AS_STRING,
-            PaymentDto.JSON_CANCELLATION_ACTOR, PaymentDto.JSON_CANCELLATION_DATE_AS_STRING)
+        .projectionsNames(AbstractIdentifiableCodableAuditableDto.JSON_AUDIT_CREATION_AS_STRING,
+            PaymentDto.JSON_AUDIT_CANCELLATION_AS_STRING)
         .predicatesNames(PaymentFilter.JSON_FROM_DATE, PaymentFilter.JSON_TO_DATE)
-        .with(PaymentDates.class).tupleVariableName(paymentDatesVariableName)
+        .with(PaymentAudits.class).tupleVariableName(auditVariableName)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
         .parentFieldName(AbstractIdentifiable.FIELD_IDENTIFIER).leftInnerOrRight(true).build();
 

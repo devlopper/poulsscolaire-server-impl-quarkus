@@ -71,10 +71,7 @@ public class Payment extends AbstractIdentifiableCodableAuditable {
   public String creationActor;
   
   @Transient
-  public String cancellationDateAsString;
-  
-  @Transient
-  public String cancellationActor;
+  public String auditCancellationAsString;
   
   public static final String FIELD_REGISTRATION = "registration";
   public static final String FIELD_MODE = "mode";
@@ -84,10 +81,7 @@ public class Payment extends AbstractIdentifiableCodableAuditable {
   public static final String FIELD_DATE_AS_STRING = "dateAsString";
   public static final String FIELD_CANCELED = "canceled";
   public static final String FIELD_INITIATOR = "initiator";
-  public static final String FIELD_CREATION_DATE_AS_STRING = "creationDateAsString";
-  public static final String FIELD_CREATION_ACTOR = "creationActor";
-  public static final String FIELD_CANCELLATION_DATE_AS_STRING = "cancellationDateAsString";
-  public static final String FIELD_CANCELLATION_ACTOR = "cancellationActor";
+  public static final String FIELD_AUDIT_CANCELLATION_AS_STRING = "auditCancellationAsString";
 
   public static final String ENTITY_NAME = "Payment";
   public static final String TABLE_NAME = "TA_PAIEMENT";

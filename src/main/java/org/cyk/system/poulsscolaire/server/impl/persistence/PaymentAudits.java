@@ -11,15 +11,15 @@ import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Subselect;
 
 /**
- * Cette classe représente les dates de {@link Payment}.
+ * Cette classe représente les audits de {@link Payment}.
  *
  * @author Christian
  *
  */
 @Entity
 @Immutable
-@Subselect(PaymentDates.QUERY)
-public class PaymentDates extends AbstractIdentifiable {
+@Subselect(PaymentAudits.QUERY)
+public class PaymentAudits extends AbstractIdentifiable {
 
   @Embedded
   @AttributeOverrides(value = {
@@ -60,7 +60,7 @@ public class PaymentDates extends AbstractIdentifiable {
         FROM TA_PAIEMENT
         JOIN TA_PAIEMENT_AUD ON TA_PAIEMENT_AUD.IDENTIFIANT = TA_PAIEMENT.IDENTIFIANT
           AND TA_PAIEMENT_AUD.REVTYPE = 1
-        WHERE TA_PAIEMENT_AUD.ANNULE = 1
+        WHERE TA_PAIEMENT_AUD.ANNULE IS TRUE
         ORDER BY TA_PAIEMENT_AUD.AUDIT_DATE DESC
         LIMIT 1
       ) AS annulation ON annulation.IDENTIFIANT = TA_PAIEMENT.IDENTIFIANT
