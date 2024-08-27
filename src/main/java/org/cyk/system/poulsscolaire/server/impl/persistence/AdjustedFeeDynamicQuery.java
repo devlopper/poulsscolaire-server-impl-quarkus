@@ -59,7 +59,7 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
     // Ordres par défaut
     orderBuilder().fieldName(fieldName(AdjustedFee.FIELD_FEE, AbstractAmountContainer.FIELD_AMOUNT,
         Amount.FIELD_PAYMENT_ORDER_NUMBER)).ascending(true).build();
-    
+
     orderBuilder().fieldName(fieldName(AdjustedFee.FIELD_FEE, Fee.FIELD_CATEGORY,
         AbstractIdentifiableCodableNamable.FIELD_NAME)).ascending(false).build();
     orderBuilder()
@@ -232,7 +232,8 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
             AdjustedFeeDto.JSON_EXPECTED_PAYMENT_AS_STRING, AdjustedFeeDto.JSON_LATE_PAYMENT)
         .predicatesNames(
             AbstractAmountContainerFilter.JSON_AMOUNT_VALUE_PAYABLE_LESS_THAN_OR_EQUALS_ZERO,
-            AdjustedFeeDto.JSON_LATE_PAYMENT)
+            AdjustedFeeFilter.JSON_LATE_PAYMENT, AdjustedFeeFilter.JSON_FROM_AMOUNT,
+            AdjustedFeeFilter.JSON_TO_AMOUNT)
         .with(AdjustedFeeAmounts.class).tupleVariableName(adjustedFeeAmountsVariableName)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
         .parentFieldName(AbstractIdentifiable.FIELD_IDENTIFIER).leftInnerOrRight(true).build();

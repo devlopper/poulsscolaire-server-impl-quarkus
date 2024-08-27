@@ -5,7 +5,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.fee.DeadlineDto;
-import org.cyk.system.poulsscolaire.server.api.fee.DeadlineService.GetManyResponseDto;
+import org.cyk.system.poulsscolaire.server.api.fee.DeadlineService.DeadlineGetManyResponseDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Deadline;
 import org.cyk.system.poulsscolaire.server.impl.persistence.DeadlineDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.DeadlinePersistence;
@@ -19,10 +19,10 @@ import org.cyk.system.poulsscolaire.server.impl.persistence.DeadlinePersistence;
 @ApplicationScoped
 public class DeadlineReadManyBusiness
     extends AbstractIdentifiableReadManyBusiness<Deadline, DeadlinePersistence,
-        DeadlineDynamicQuery, DeadlineDto, DeadlineMapper, GetManyResponseDto> {
+        DeadlineDynamicQuery, DeadlineDto, DeadlineMapper, DeadlineGetManyResponseDto> {
 
   protected DeadlineReadManyBusiness() {
-    super(GetManyResponseDto.class);
+    super(DeadlineGetManyResponseDto.class);
   }
 
   @Inject

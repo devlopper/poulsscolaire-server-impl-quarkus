@@ -11,7 +11,7 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.cyk.system.poulsscolaire.server.api.fee.DeadlineDto;
 import org.cyk.system.poulsscolaire.server.api.fee.DeadlineService;
-import org.cyk.system.poulsscolaire.server.api.fee.DeadlineService.GetManyResponseDto;
+import org.cyk.system.poulsscolaire.server.api.fee.DeadlineService.DeadlineGetManyResponseDto;
 import org.cyk.system.poulsscolaire.server.impl.business.deadline.DeadlineCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.deadline.DeadlineDeleteBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.deadline.DeadlineReadByIdentifierBusiness;
@@ -45,7 +45,7 @@ class DeadlineServiceImplTest extends AbstractTest {
   void readMany() {
     DeadlineReadManyBusiness business =
         installMockForType(DeadlineReadManyBusiness.class);
-    Mockito.when(business.process(any())).thenReturn(new GetManyResponseDto());
+    Mockito.when(business.process(any())).thenReturn(new DeadlineGetManyResponseDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
         .post(DeadlineService.PATH + "/" + DeadlineService.GET_MANY_PATH).then()

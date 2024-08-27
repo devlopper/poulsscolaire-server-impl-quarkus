@@ -77,6 +77,7 @@ public class PaymentDynamicQuery extends AbstractDynamicQuery<Payment> {
 
     // Jointures
     joinBuilder().projectionsNames(PaymentDto.JSON_AMOUNT, PaymentDto.JSON_AMOUNT_AS_STRING)
+        .predicatesNames(PaymentFilter.JSON_FROM_AMOUNT, PaymentFilter.JSON_TO_AMOUNT)
         .with(PaymentAmounts.class).tupleVariableName(paymentAmountsVariableName)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
         .parentFieldName(AbstractIdentifiable.FIELD_IDENTIFIER).leftInnerOrRight(true).build();
@@ -112,12 +113,20 @@ public class PaymentDynamicQuery extends AbstractDynamicQuery<Payment> {
         .valueFunction(PaymentFilter::getCanceled).build();
 
     predicateBuilder().name(PaymentFilter.JSON_FROM_DATE)
-        .expression("pd.creation.when >= :" + PaymentFilter.JSON_FROM_DATE)
+        .expression(auditVariableName + ".creation.when >= :" + PaymentFilter.JSON_FROM_DATE)
         .valueFunction(PaymentFilter::getFromDate).build();
 
     predicateBuilder().name(PaymentFilter.JSON_TO_DATE)
-        .expression("pd.creation.when <= :" + PaymentFilter.JSON_TO_DATE)
+        .expression(auditVariableName + ".creation.when <= :" + PaymentFilter.JSON_TO_DATE)
         .valueFunction(PaymentFilter::getToDate).build();
+
+    predicateBuilder().name(PaymentFilter.JSON_FROM_AMOUNT)
+        .expression(paymentAmountsVariableName + ".total >= :" + PaymentFilter.JSON_FROM_AMOUNT)
+        .valueFunction(PaymentFilter::getFromAmount).build();
+
+    predicateBuilder().name(PaymentFilter.JSON_TO_AMOUNT)
+        .expression(paymentAmountsVariableName + ".total <= :" + PaymentFilter.JSON_TO_AMOUNT)
+        .valueFunction(PaymentFilter::getToAmount).build();
 
     // Ordres par défaut
     orderBuilder().fieldName(AbstractIdentifiableCodable.FIELD_CODE).build();
