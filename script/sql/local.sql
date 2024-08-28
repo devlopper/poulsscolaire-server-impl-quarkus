@@ -1090,6 +1090,23 @@ SELECT
 FROM V_MONTANTS_FRAIS_AJUSTE
 GROUP BY INSCRIPTION;
 
+CREATE OR REPLACE VIEW V_MONTANTS_INSCRIPTION_RUBRIQUE AS
+SELECT
+	INSCRIPTION AS IDENTIFIANT
+    ,RUBRIQUE AS RUBRIQUE
+    ,ECHEANCE AS ECHEANCE
+	,SUM(A_PAYER) AS A_PAYER
+	,SUM(A_PAYER_INSCRIPTION) AS A_PAYER_INSCRIPTION
+	,SUM(PAYE) AS PAYE
+	,SUM(PAYE_INSCRIPTION) AS PAYE_INSCRIPTION
+	,SUM(RESTE_A_PAYER) AS RESTE_A_PAYER
+	,SUM(RESTE_A_PAYER_INSCRIPTION) AS RESTE_A_PAYER_INSCRIPTION
+	,MAX(RESTE_A_PAYER_INFERIEUR_OU_EGALE_ZERO) AS RESTE_A_PAYER_INFERIEUR_OU_EGALE_ZERO
+	,SUM(PAIEMENT_ATTENDU) AS PAIEMENT_ATTENDU
+	,MAX(RETARD_DE_PAIEMENT) AS RETARD_DE_PAIEMENT
+FROM V_MONTANTS_FRAIS_AJUSTE
+GROUP BY INSCRIPTION,RUBRIQUE,ECHEANCE;
+
 CREATE OR REPLACE VIEW V_AUDITS_PAIEMENT AS
 SELECT
 	TA_PAIEMENT.IDENTIFIANT   
@@ -1141,8 +1158,8 @@ SELECT
 	paiement.identifiant AS IDENTIFIANT_PAIEMENT
     ,paiement.code AS CODE_PAIEMENT
     ,montantsPaiement.total AS MONTANT_VERSE
-    ,auditsPaiement.acteur_creation AS DATE_VERSEMENT
-    ,auditsPaiement.date_creation AS NOM_ET_PRENOM_CAISSIER
+    ,auditsPaiement.date_creation AS DATE_VERSEMENT
+    ,auditsPaiement.acteur_creation AS NOM_ET_PRENOM_CAISSIER
     -- Inscription
     ,inscription.code AS NUMERO_INSCRIPTION
     ,typeAffectation.LIBELLE AS STATUT
@@ -1174,8 +1191,37 @@ LEFT JOIN TA_GENRE genreEleve ON genreEleve.IDENTIFIANT = identiteEleve.GENRE
 JOIN TA_SCOLARITE scolarite ON scolarite.IDENTIFIANT = inscription.SCOLARITE
 JOIN ecoleviedbv2.ecole ecole ON ecole.ecoleid = scolarite.ECOLE
 JOIN ecoleviedbv2.Branche branche ON branche.id = scolarite.BRANCHE
-JOIN ecoleviedbv2.annee_scolaire annee_scolaire ON annee_scolaire.annee_scolaireid = scolarite.PERIODE
-;
+JOIN ecoleviedbv2.annee_scolaire annee_scolaire ON annee_scolaire.annee_scolaireid = scolarite.PERIODE;
+
+CREATE OR REPLACE VIEW VT_RECU_PAIEMENT_RUBRIQUE AS
+SELECT 
+	paiement.IDENTIFIANT AS IDENTIFIANT_PAIEMENT
+    ,rubrique.LIBELLE AS LIBELLE_RUBRIQUE
+    ,montants.A_PAYER
+    ,montants.A_PAYER_INSCRIPTION
+    ,montants.PAYE
+    ,montants.RESTE_A_PAYER
+    ,montants.RESTE_A_PAYER_INSCRIPTION
+    ,montants.ECHEANCE AS ECHEANCE_EN_COURS
+    ,montants.PAIEMENT_ATTENDU
+FROM TA_PAIEMENT paiement
+JOIN V_MONTANTS_INSCRIPTION_RUBRIQUE montants ON montants.IDENTIFIANT = paiement.INSCRIPTION
+JOIN TA_RUBRIQUE rubrique ON rubrique.IDENTIFIANT = montants.RUBRIQUE;
+
+CREATE OR REPLACE VIEW VT_RECU_PAIEMENT_AUTRE_BRANCHE AS
+SELECT 
+	paiement.IDENTIFIANT AS IDENTIFIANT_PAIEMENT
+    ,branche.libelle AS AUTRE_BRANCHE
+FROM TA_PAIEMENT paiement
+-- Inscription payé
+JOIN TA_INSCRIPTION inscriptionPaye ON inscriptionPaye.IDENTIFIANT = paiement.INSCRIPTION
+JOIN TA_SCOLARITE scolaritePaye ON scolaritePaye.IDENTIFIANT = inscriptionPaye.SCOLARITE
+-- AUtre inscription de la même période
+JOIN TA_INSCRIPTION inscriptionAutre ON inscriptionAutre.TYPE_AFFECTATION = inscriptionPaye.TYPE_AFFECTATION
+	AND inscriptionAutre.ANCIENNETE = inscriptionPaye.ANCIENNETE AND inscriptionAutre.ELEVE = inscriptionPaye.ELEVE
+JOIN TA_SCOLARITE scolariteAutre ON scolariteAutre.IDENTIFIANT = inscriptionAutre.SCOLARITE 
+	AND scolariteAutre.PERIODE = scolaritePaye.PERIODE
+JOIN ecoleviedbv2.Branche branche ON branche.id = scolariteAutre.BRANCHE;
 
 CREATE OR REPLACE VIEW VE_RECU_PAIEMENT AS
 SELECT *
