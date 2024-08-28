@@ -8,6 +8,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import java.util.Optional;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.registration.IdentityDto;
 import org.cyk.system.poulsscolaire.server.api.registration.IdentityFilter;
@@ -53,7 +54,8 @@ public class IdentityDynamicQuery extends AbstractDynamicQuery<Identity> {
     projectionBuilder().name(IdentityDto.JSON_RELATIONSHIP_TYPE_PARENT_AS_STRING)
         .expression("(SELECT ir.type FROM IdentityRelationship ir WHERE ir.parent = t)")
         .resultConsumer((i, a) -> i.relationshipTypeParentAsString =
-            a.getNextAs(IdentityRelationshipType.class).getName())
+            Optional.ofNullable(a.getNextAs(IdentityRelationshipType.class)).map(e -> e.getName())
+                .orElse(null))
         .build();
 
     projectionBuilder().name(AbstractIdentifiableDto.JSON_AS_STRING)
