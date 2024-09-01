@@ -50,6 +50,11 @@ public class DeadlineDynamicQuery extends AbstractDynamicQuery<Deadline> {
     projectionBuilder().name(AbstractIdentifiableCodableNamableDto.JSON_NAME)
         .fieldName(AbstractIdentifiableCodableNamable.FIELD_NAME).build();
 
+    projectionBuilder().name(AbstractIdentifiableDto.JSON_AS_STRING).expression("t.name,t.date")
+        .resultConsumer((i, a) -> i.asString =
+            String.format("%s(%s)", a.getNextAsString(), a.getNextAsLocalDateTimeFormatted()))
+        .build();
+
     projectionBuilder().name(DeadlineDto.JSON_GROUP_AS_STRING)
         .nameFieldName(Deadline.FIELD_GROUP_AS_STRING)
         .fieldName(fieldName(Deadline.FIELD_GROUP, AbstractIdentifiableCodableNamable.FIELD_NAME))

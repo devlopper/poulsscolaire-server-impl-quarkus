@@ -51,6 +51,12 @@ public class IdentityDynamicQuery extends AbstractDynamicQuery<Identity> {
     projectionBuilder().name(IdentityDto.JSON_EMAIL_ADDRESS).fieldName(Identity.FIELD_EMAIL_ADDRESS)
         .build();
 
+    projectionBuilder().name(IdentityDto.JSON_PROFESSION).fieldName(Identity.FIELD_PROFESSION)
+        .build();
+
+    projectionBuilder().name(IdentityDto.JSON_RESIDENCE).fieldName(Identity.FIELD_RESIDENCE)
+        .build();
+
     projectionBuilder().name(IdentityDto.JSON_RELATIONSHIP_TYPE_PARENT_AS_STRING)
         .expression("(SELECT ir.type FROM IdentityRelationship ir WHERE ir.parent = t)")
         .resultConsumer((i, a) -> i.relationshipTypeParentAsString =
