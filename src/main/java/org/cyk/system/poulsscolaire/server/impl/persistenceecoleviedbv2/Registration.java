@@ -23,7 +23,7 @@ public class Registration {
   public long schoolIdentifier;
   
   @Column(name = "annee_scolaire_annee_scolaireid")
-  public long periodIdentifier;
+  public int periodIdentifier;
   
   @Column(name = "branche_id")
   public long branchIdentifier;

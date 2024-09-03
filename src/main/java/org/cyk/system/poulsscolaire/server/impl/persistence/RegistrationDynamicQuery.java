@@ -1,5 +1,7 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
+import ci.gouv.dgbf.extension.core.ArrayContainer;
+import ci.gouv.dgbf.extension.core.Core;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableNamable;
@@ -68,8 +70,8 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
     projectionBuilder().name(AbstractIdentifiableCodableDto.JSON_CODE)
         .fieldName(AbstractIdentifiableCodable.FIELD_CODE).build();
 
-    projectionBuilder().name(RegistrationDto.JSON_CLASS_NAME).tupleVariableName(viewVariableName)
-        .fieldName(RegistrationView.FIELD_CLASS_NAME).build();
+    projectionBuilder().name(RegistrationDto.JSON_BRANCH_INSTANCE_AS_STRING)
+        .tupleVariableName(viewVariableName).fieldName(RegistrationView.FIELD_CLASS_NAME).build();
 
     projectionBuilder().name(RegistrationDto.JSON_STUDENT_AS_STRING)
         .expression(String.format("%1$s.%3$s,%1$s.%4$s,%1$s.%2$s.%5$s,%1$s.%2$s.%6$s",
@@ -81,6 +83,10 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
             (i, a) -> i.studentAsString = StudentDto.computeAsString(a.getNextAsString(),
                 a.getNextAsString(), a.getNextAsString(), a.getNextAsString()))
         .build();
+
+    projectionBuilder().name(AbstractIdentifiableDto.JSON_AS_STRING)
+        .expression(buildAsStringProjectionExpression(variableName, viewVariableName))
+        .resultConsumer((i, a) -> i.asString = computeAsString(a)).build();
 
     projectionBuilder().name(RegistrationDto.JSON_SCHOOLING_AS_STRING)
         .nameFieldName(Registration.FIELD_SCHOOLING_AS_STRING)
@@ -149,7 +155,9 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
         .fieldName(AdjustedFeeAmounts.FIELD_REGISTRATION_IDENTIFIER)
         .parentFieldName(AbstractIdentifiable.FIELD_IDENTIFIER).leftInnerOrRight(true).build();
 
-    joinBuilder().projectionsNames(RegistrationDto.JSON_CLASS_NAME)
+    joinBuilder()
+        .projectionsNames(RegistrationDto.JSON_BRANCH_INSTANCE_AS_STRING,
+            RegistrationDto.JSON_AS_STRING)
         .entityName(RegistrationView.ENTITY_NAME).tupleVariableName(viewVariableName)
         .leftInnerOrRight(true).build();
 
@@ -173,6 +181,23 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
         .valueFunction(RegistrationFilter::getSchoolIdentifier).build();
   }
 
+  String buildAsStringProjectionExpression(String variableName, String viewVariableName) {
+    return String.format("%s.code,%s.branchInstanceAsString,", variableName, viewVariableName)
+        + String.format("%1$s.%3$s,%1$s.%4$s,%1$s.%2$s.%5$s,%1$s.%2$s.%6$s",
+            fieldName(variableName, Registration.FIELD_STUDENT), Student.FIELD_IDENTITY,
+            AbstractIdentifiableCodable.FIELD_CODE,
+            fieldName(Student.FIELD_IDENTITY, Identity.FIELD_REGISTRATION_NUMBER),
+            Identity.FIELD_FIRST_NAME, Identity.FIELD_LAST_NAMES);
+  }
+
+  static String computeAsString(ArrayContainer arrayContainer) {
+    return arrayContainer.getNextAsString() + " | ("
+        + Core.getOrDefaultIfBlank(arrayContainer.getNextAsString(), "Classe à définir") + ") | "
+        + StudentDto.computeAsString(arrayContainer.getNextAsString(),
+            arrayContainer.getNextAsString(), arrayContainer.getNextAsString(),
+            arrayContainer.getNextAsString());
+  }
+
   @Override
   protected boolean isGrouped(DynamicQueryParameters<Registration> parameters) {
     return ProjectionDto.hasOneOfNames(parameters.getProjection(),
@@ -180,7 +205,8 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
         RegistrationDto.JSON_PAYABLE_AMOUNT_AS_STRING,
         RegistrationDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING,
         RegistrationDto.JSON_PAID_REGISTRATION_AMOUNT_AS_STRING,
-        RegistrationDto.JSON_PAYABLE_REGISTRATION_AMOUNT_AS_STRING);
+        RegistrationDto.JSON_PAYABLE_REGISTRATION_AMOUNT_AS_STRING,
+        RegistrationDto.JSON_BRANCH_INSTANCE_AS_STRING, AbstractIdentifiableDto.JSON_AS_STRING);
   }
 
   @Override
@@ -196,5 +222,23 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
     /*
      * On ajoute les autres au besoin
      */
+    Core.runIfTrue(
+        ProjectionDto.hasName(parameters.projection(),
+            RegistrationDto.JSON_BRANCH_INSTANCE_AS_STRING),
+        () -> groups.add(fieldName(viewVariableName, RegistrationView.FIELD_CLASS_NAME)));
+
+    Core.runIfTrue(
+        ProjectionDto.hasName(parameters.projection(), AbstractIdentifiableDto.JSON_AS_STRING),
+        () -> {
+          groups.add(fieldName(variableName, Registration.FIELD_STUDENT,
+              AbstractIdentifiableCodable.FIELD_CODE));
+          groups.add(fieldName(variableName, Registration.FIELD_STUDENT, Student.FIELD_IDENTITY,
+              Identity.FIELD_REGISTRATION_NUMBER));
+          groups.add(fieldName(variableName, Registration.FIELD_STUDENT, Student.FIELD_IDENTITY,
+              Identity.FIELD_FIRST_NAME));
+          groups.add(fieldName(variableName, Registration.FIELD_STUDENT, Student.FIELD_IDENTITY,
+              Identity.FIELD_LAST_NAMES));
+          groups.add(fieldName(viewVariableName, RegistrationView.FIELD_CLASS_NAME));
+        });
   }
 }

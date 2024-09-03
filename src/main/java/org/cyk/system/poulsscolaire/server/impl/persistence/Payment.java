@@ -50,6 +50,9 @@ public class Payment extends AbstractIdentifiableCodableAuditable {
   /* Transients */
 
   @Transient
+  public String registrationAsString;
+  
+  @Transient
   public int amount;
 
   @Transient
@@ -74,6 +77,7 @@ public class Payment extends AbstractIdentifiableCodableAuditable {
   public String auditCancellationAsString;
   
   public static final String FIELD_REGISTRATION = "registration";
+  public static final String FIELD_REGISTRATION_AS_STRING = "registrationAsString";
   public static final String FIELD_MODE = "mode";
   public static final String FIELD_MODE_AS_STRING = "modeAsString";
   public static final String FIELD_AMOUNT = "amount";

@@ -33,6 +33,10 @@ public class PaymentDynamicQuery extends AbstractDynamicQuery<Payment> {
   String schoolVariableName;
   String paymentAmountsVariableName;
   String auditVariableName;
+  String registrationViewVariableName;
+
+  @Inject
+  RegistrationDynamicQuery registrationDynamicQuery;
 
   /**
    * Cette méthode permet d'instancier un object.
@@ -42,6 +46,7 @@ public class PaymentDynamicQuery extends AbstractDynamicQuery<Payment> {
     schoolVariableName = "s";
     paymentAmountsVariableName = "pa";
     auditVariableName = "audit";
+    registrationViewVariableName = "rv";
   }
 
   @PostConstruct
@@ -51,6 +56,13 @@ public class PaymentDynamicQuery extends AbstractDynamicQuery<Payment> {
 
     projectionBuilder().name(AbstractIdentifiableCodableDto.JSON_CODE)
         .fieldName(AbstractIdentifiableCodable.FIELD_CODE).build();
+
+    projectionBuilder().name(PaymentDto.JSON_REGISTRATION_AS_STRING)
+        .expression(registrationDynamicQuery.buildAsStringProjectionExpression(
+            fieldName(variableName, Payment.FIELD_REGISTRATION), registrationViewVariableName))
+        .resultConsumer(
+            (i, a) -> i.registrationAsString = RegistrationDynamicQuery.computeAsString(a))
+        .build();
 
     projectionBuilder().name(PaymentDto.JSON_CANCELED).fieldName(Payment.FIELD_CANCELED).build();
 
@@ -93,6 +105,12 @@ public class PaymentDynamicQuery extends AbstractDynamicQuery<Payment> {
     joinBuilder().predicatesNames(PaymentDto.JSON_SCHOOL_IDENTIFIER).entityName(School.ENTITY_NAME)
         .tupleVariableName(schoolVariableName).parentFieldName(fieldName(Payment.FIELD_REGISTRATION,
             Registration.FIELD_SCHOOLING, Schooling.FIELD_SCHOOL_IDENTIFIER))
+        .leftInnerOrRight(true).build();
+
+    joinBuilder().projectionsNames(PaymentDto.JSON_REGISTRATION_AS_STRING)
+        .entityName(RegistrationView.ENTITY_NAME).tupleVariableName(registrationViewVariableName)
+        .parentFieldName(
+            fieldName(Payment.FIELD_REGISTRATION, AbstractIdentifiable.FIELD_IDENTIFIER))
         .leftInnerOrRight(true).build();
 
     // Prédicats

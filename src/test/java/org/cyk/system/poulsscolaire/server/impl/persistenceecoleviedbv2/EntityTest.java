@@ -18,7 +18,7 @@ class EntityTest {
     assertNotNull(new Student());
     assertNotNull(new BranchInstance());
     assertNotNull(new Registration());
-    assertNotNull(new RegistrationClass());
+    assertNotNull(new RegistrationBranchInstance());
   }
   
 }

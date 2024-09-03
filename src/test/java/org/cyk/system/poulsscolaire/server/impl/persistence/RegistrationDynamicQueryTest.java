@@ -119,12 +119,21 @@ class RegistrationDynamicQueryTest {
   }
   
   @Test
-  void getOne_className() {
+  void getOne_branchInstanceAsString() {
     parameters.setResultMode(ResultMode.ONE);
-    parameters.projection().addNames(RegistrationDto.JSON_CLASS_NAME);
+    parameters.projection().addNames(RegistrationDto.JSON_BRANCH_INSTANCE_AS_STRING);
     parameters.filter().addCriteria(RegistrationDto.JSON_IDENTIFIER, "i1");
     Registration registration = dynamicQuery.getOne(parameters);
-    assertEquals("CP1 A", registration.className);
+    assertEquals("CP1 A", registration.branchInstanceAsString);
+  }
+  
+  @Test
+  void getOne_asString() {
+    parameters.setResultMode(ResultMode.ONE);
+    parameters.projection().addNames(RegistrationDto.JSON_AS_STRING);
+    parameters.filter().addCriteria(RegistrationDto.JSON_IDENTIFIER, "i1");
+    Registration registration = dynamicQuery.getOne(parameters);
+    assertEquals("1 | (CP1 A) | m01 - 1 1", registration.asString);
   }
 
   @Test

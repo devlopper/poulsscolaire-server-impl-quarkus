@@ -30,7 +30,7 @@ class PaymentDynamicQueryTest {
   @Test
   void getMany() {
     parameters.projection().addNames(PaymentDto.JSON_IDENTIFIER,
-        PaymentDto.JSON_AUDIT_CREATION_AS_STRING);
+        PaymentDto.JSON_REGISTRATION_AS_STRING, PaymentDto.JSON_AUDIT_CREATION_AS_STRING);
     assertEquals(1, dynamicQuery.getMany(parameters).size());
   }
 

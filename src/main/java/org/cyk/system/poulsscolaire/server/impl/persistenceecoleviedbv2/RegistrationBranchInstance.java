@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
  */
 @Entity
 @Table(schema = Constant.SCHEMA_NAME, name = "inscriptions_has_classe")
-public class RegistrationClass {
+public class RegistrationBranchInstance {
 
   @Id
   @Column(name = "id")
@@ -23,5 +23,5 @@ public class RegistrationClass {
   public long registrationIdentifier;
   
   @Column(name = "classe_classeid")
-  public long classIdentifier;
+  public int classIdentifier;
 }

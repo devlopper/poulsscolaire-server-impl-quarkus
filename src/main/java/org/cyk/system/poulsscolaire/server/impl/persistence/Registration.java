@@ -68,7 +68,7 @@ public class Registration extends AbstractIdentifiableCodableAuditable {
   public String seniorityAsString;
 
   @Transient
-  public String className;
+  public String branchInstanceAsString;
   
   /*
    * Amount

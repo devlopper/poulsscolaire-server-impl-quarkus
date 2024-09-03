@@ -17,7 +17,7 @@ public class BranchInstance {
 
   @Id
   @Column(name = "classeid")
-  public long identifier;
+  public int identifier;
   
   @Column(name = "classelibelle")
   public String name;

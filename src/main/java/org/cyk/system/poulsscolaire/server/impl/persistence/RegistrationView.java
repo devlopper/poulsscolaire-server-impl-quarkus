@@ -18,7 +18,7 @@ import org.hibernate.annotations.Subselect;
 public class RegistrationView extends AbstractIdentifiable {
 
   @Column(name = "CLASSE")
-  public String className;
+  public String branchInstanceAsString;
 
   public static final String ENTITY_NAME = "RegistrationView";
   
@@ -43,5 +43,5 @@ public class RegistrationView extends AbstractIdentifiable {
         JOIN ecoleviedbv2.classe classe ON classe.classeid = ihc.classe_classeid
       ) classe ON classe.identifiant = inscription.identifiant
                       """;
-  public static final String FIELD_CLASS_NAME = "className";
+  public static final String FIELD_CLASS_NAME = "branchInstanceAsString";
 }
