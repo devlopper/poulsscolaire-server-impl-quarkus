@@ -109,6 +109,10 @@ public class StudentDynamicQuery extends AbstractDynamicQuery<Student> {
     projectionBuilder().name(StudentDto.JSON_RESIDENCE).nameFieldName(Student.FIELD_RESIDENCE)
         .fieldName(fieldName(Student.FIELD_IDENTITY, Identity.FIELD_RESIDENCE)).build();
 
+    projectionBuilder().name(StudentDto.JSON_HEALTH_STATUS)
+        .nameFieldName(Student.FIELD_HEALTH_STATUS)
+        .fieldName(fieldName(Student.FIELD_IDENTITY, Identity.FIELD_HEALTH_STATUS)).build();
+
     projectionBuilder().name(AbstractIdentifiableDto.JSON_AS_STRING)
         .expression(String.format("%1$s.%3$s,%1$s.%4$s,%1$s.%2$s.%5$s,%1$s.%2$s.%6$s", variableName,
             Student.FIELD_IDENTITY, AbstractIdentifiableCodable.FIELD_CODE,

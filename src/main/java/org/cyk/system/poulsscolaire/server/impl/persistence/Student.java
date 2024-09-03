@@ -103,6 +103,9 @@ public class Student extends AbstractIdentifiableCodableAuditable {
   @Transient
   public String schoolAsString;
   
+  @Transient
+  public String healthStatus;
+  
   /* Father */
   
   @Transient
@@ -224,6 +227,7 @@ public class Student extends AbstractIdentifiableCodableAuditable {
   public static final String FIELD_PHONE_NUMBER = "phoneNumber";
   public static final String FIELD_RESIDENCE = "residence";
   public static final String FIELD_OTHERS_CONTACTS = "othersContacts";
+  public static final String FIELD_HEALTH_STATUS = "healthStatus";
   
   public static final String ENTITY_NAME = "Student";
   public static final String TABLE_NAME = "TA_ELEVE";

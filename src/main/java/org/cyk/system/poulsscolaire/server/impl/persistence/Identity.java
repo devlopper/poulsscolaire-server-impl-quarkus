@@ -102,6 +102,9 @@ public class Identity extends AbstractIdentifiableAuditable {
   @Column(name = COLUMN_OTHERS_CONTACTS)
   public String othersContacts;
 
+  @Column(name = COLUMN_HEALTH_STATUS)
+  public String healthStatus;
+  
   /**
    * Cette méthode permet d'assigner les attributs.
    *
@@ -135,6 +138,7 @@ public class Identity extends AbstractIdentifiableAuditable {
     emailAddress = request.getEmailAddress();
     phoneNumber = request.getPhoneNumber();
     othersContacts = request.getOthersContacts();
+    healthStatus = request.getHealthStatus();
   }
 
   public static final String FIELD_REGISTRATION_NUMBER = "registrationNumber";
@@ -155,7 +159,8 @@ public class Identity extends AbstractIdentifiableAuditable {
   public static final String FIELD_SITUATION = "situation";
   public static final String FIELD_PROFESSION = "profession";
   public static final String FIELD_OTHERS_CONTACTS = "othersContacts";
-
+  public static final String FIELD_HEALTH_STATUS = "healthStatus";
+  
   public static final String ENTITY_NAME = "Identity";
   public static final String TABLE_NAME = "TA_IDENTITE";
 
@@ -178,4 +183,5 @@ public class Identity extends AbstractIdentifiableAuditable {
   public static final String COLUMN_PHONE_NUMBER = "NUMERO_TELEPHONE";
   public static final String COLUMN_RESIDENCE = "LIEU_RESIDENCE";
   public static final String COLUMN_OTHERS_CONTACTS = "AUTRES_CONTACTS";
+  public static final String COLUMN_HEALTH_STATUS = "ETAT_SANTE";
 }

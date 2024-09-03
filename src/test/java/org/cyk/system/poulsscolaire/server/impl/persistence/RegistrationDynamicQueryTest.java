@@ -1,6 +1,7 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters.ResultMode;
@@ -114,9 +115,23 @@ class RegistrationDynamicQueryTest {
     parameters.projection().addNames(RegistrationDto.JSON_STUDENT_AS_STRING);
     parameters.filter().addCriteria(RegistrationDto.JSON_IDENTIFIER, "i1");
     Registration registration = dynamicQuery.getOne(parameters);
-    assertEquals("1 - 1 1", registration.studentAsString);
+    assertEquals("m01 - 1 1", registration.studentAsString);
+  }
+  
+  @Test
+  void getOne_className() {
+    parameters.setResultMode(ResultMode.ONE);
+    parameters.projection().addNames(RegistrationDto.JSON_CLASS_NAME);
+    parameters.filter().addCriteria(RegistrationDto.JSON_IDENTIFIER, "i1");
+    Registration registration = dynamicQuery.getOne(parameters);
+    assertEquals("CP1 A", registration.className);
   }
 
+  @Test
+  void instantiate() {
+    assertNotNull(new RegistrationView());
+  }
+  
   public static class Profile implements QuarkusTestProfile {
 
     @Override

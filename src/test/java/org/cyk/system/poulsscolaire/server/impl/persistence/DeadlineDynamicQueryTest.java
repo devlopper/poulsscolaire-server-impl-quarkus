@@ -31,7 +31,7 @@ class DeadlineDynamicQueryTest {
 
   @Test
   void getMany() {
-    parameters.projection().addNames(Deadline.FIELD_AS_STRING);
+    parameters.projection().addNames(DeadlineDto.JSON_AS_STRING);
     assertEquals(1, dynamicQuery.getMany(parameters).size());
   }
 

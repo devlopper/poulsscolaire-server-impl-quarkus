@@ -35,6 +35,7 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
 
   String schoolVariableName;
   String adjustedFeeAmountsVariableName;
+  String viewVariableName;
 
   /**
    * Cette méthode permet d'instancier un object.
@@ -43,6 +44,7 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
     super(Registration.class);
     schoolVariableName = "s";
     adjustedFeeAmountsVariableName = "afa";
+    viewVariableName = "v";
   }
 
   @PostConstruct
@@ -65,6 +67,9 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
 
     projectionBuilder().name(AbstractIdentifiableCodableDto.JSON_CODE)
         .fieldName(AbstractIdentifiableCodable.FIELD_CODE).build();
+
+    projectionBuilder().name(RegistrationDto.JSON_CLASS_NAME).tupleVariableName(viewVariableName)
+        .fieldName(RegistrationView.FIELD_CLASS_NAME).build();
 
     projectionBuilder().name(RegistrationDto.JSON_STUDENT_AS_STRING)
         .expression(String.format("%1$s.%3$s,%1$s.%4$s,%1$s.%2$s.%5$s,%1$s.%2$s.%6$s",
@@ -143,6 +148,10 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
         .with(AdjustedFeeAmounts.class).tupleVariableName(adjustedFeeAmountsVariableName)
         .fieldName(AdjustedFeeAmounts.FIELD_REGISTRATION_IDENTIFIER)
         .parentFieldName(AbstractIdentifiable.FIELD_IDENTIFIER).leftInnerOrRight(true).build();
+
+    joinBuilder().projectionsNames(RegistrationDto.JSON_CLASS_NAME)
+        .entityName(RegistrationView.ENTITY_NAME).tupleVariableName(viewVariableName)
+        .leftInnerOrRight(true).build();
 
     joinBuilder().predicatesNames(RegistrationDto.JSON_SCHOOL_IDENTIFIER)
         .entityName(School.ENTITY_NAME).tupleVariableName(schoolVariableName)

@@ -12,7 +12,7 @@ import org.hibernate.annotations.Subselect;
  * @author Christian
  *
  */
-@Entity
+@Entity(name = AdjustedFeeAmounts.ENTITY_NAME)
 @Immutable
 @Subselect(AdjustedFeeAmounts.QUERY)
 public class AdjustedFeeAmounts extends AbstractIdentifiable {
@@ -163,4 +163,6 @@ public class AdjustedFeeAmounts extends AbstractIdentifiable {
   public static final String FIELD_EXPECTED_PAYMENT = "expectedPayment";
   public static final String FIELD_LATE_PAYMENT = "latePayment";
   public static final String FIELD_DEADLINE_IDENTIFIER = "deadlineIdentifier";
+  
+  public static final String ENTITY_NAME = "AdjustedFeeAmounts";
 }
