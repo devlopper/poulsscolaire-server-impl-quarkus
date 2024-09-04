@@ -84,7 +84,7 @@ class AdjustedFeeDynamicQueryTest {
     assertEquals(999999, adjustedFee.amountValuePayable);
     assertEquals("999 999", adjustedFee.amountValuePayableAsString);
   }
-  
+
   @Test
   void get_whenProjectionDeadline() {
     parameters.setResultMode(ResultMode.ONE);
@@ -106,7 +106,8 @@ class AdjustedFeeDynamicQueryTest {
 
   @Test
   void get_whenFilterAmountValuePayableLessThanOrEqualsZeroFalse() {
-    parameters.projection().addNames(AdjustedFeeDto.JSON_IDENTIFIER);
+    parameters.projection().addNames(AdjustedFeeDto.JSON_IDENTIFIER,
+        AdjustedFeeDto.JSON_REGISTRATION_AS_STRING);
     parameters.filter()
         .addCriteria(AdjustedFeeFilter.JSON_AMOUNT_VALUE_PAYABLE_LESS_THAN_OR_EQUALS_ZERO, false);
     List<AdjustedFee> instances = dynamicQuery.getMany(parameters);

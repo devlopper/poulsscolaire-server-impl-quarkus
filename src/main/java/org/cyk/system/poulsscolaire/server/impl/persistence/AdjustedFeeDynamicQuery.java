@@ -7,6 +7,7 @@ import ci.gouv.dgbf.extension.server.service.api.AbstractIdentifiableFilter;
 import ci.gouv.dgbf.extension.server.service.api.entity.AbstractIdentifiableDto;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.cyk.system.poulsscolaire.server.api.fee.AbstractAmountContainerDto;
 import org.cyk.system.poulsscolaire.server.api.fee.AbstractAmountContainerFilter;
 import org.cyk.system.poulsscolaire.server.api.fee.AdjustedFeeDto;
@@ -26,6 +27,10 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
   String periodVariableName;
   String adjustedFeeAmountsVariableName;
   String adjustedFeeDeadlineVariableName;
+  String registrationViewVariableName;
+
+  @Inject
+  RegistrationDynamicQuery registrationDynamicQuery;
 
   /**
    * Cette méthode permet d'instancier un object.
@@ -37,6 +42,7 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
     periodVariableName = "p";
     adjustedFeeAmountsVariableName = "afa";
     adjustedFeeDeadlineVariableName = "afad";
+    registrationViewVariableName = "rv";
   }
 
   @Override
@@ -94,9 +100,12 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
         .fieldName(fieldName(AdjustedFee.FIELD_REGISTRATION, AbstractIdentifiable.FIELD_IDENTIFIER))
         .build();
     projectionBuilder().name(AdjustedFeeDto.JSON_REGISTRATION_AS_STRING)
-        .expression("CONCAT(t.registration.code,' (',t.registration.student.identity.firstName"
-            + ",' ',t.registration.student.identity.lastNames,')')")
-        .resultConsumer((i, a) -> i.registrationAsString = a.getNextAsString()).build();
+        .expression(registrationDynamicQuery.buildAsStringProjectionExpression(
+            fieldName(variableName, AdjustedFee.FIELD_REGISTRATION), registrationViewVariableName))
+        .resultConsumer(
+            (i, a) -> i.registrationAsString = RegistrationDynamicQuery.computeAsString(a))
+        .build();
+
     projectionBuilder().name(AdjustedFeeDto.JSON_REGISTRATION_STUDENT_AS_STRING)
         .expression(formatConcat("t.registration.student.identity.firstName", "' '",
             "t.registration.student.identity.lastNames"))
@@ -220,6 +229,12 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
         .entityName(Branch.ENTITY_NAME).tupleVariableName(branchVariableName)
         .parentFieldName(fieldName(AdjustedFee.FIELD_FEE, Fee.FIELD_SCHOOLING,
             Schooling.FIELD_BRANCH_IDENTIFIER))
+        .leftInnerOrRight(true).build();
+
+    joinBuilder().projectionsNames(AdjustedFeeDto.JSON_REGISTRATION_AS_STRING)
+        .entityName(RegistrationView.ENTITY_NAME).tupleVariableName(registrationViewVariableName)
+        .parentFieldName(
+            fieldName(AdjustedFee.FIELD_REGISTRATION, AbstractIdentifiable.FIELD_IDENTIFIER))
         .leftInnerOrRight(true).build();
 
     joinBuilder()

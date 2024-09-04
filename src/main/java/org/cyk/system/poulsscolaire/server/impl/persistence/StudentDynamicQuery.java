@@ -1,5 +1,6 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
+import ci.gouv.dgbf.extension.core.ArrayContainer;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableNamable;
@@ -114,13 +115,8 @@ public class StudentDynamicQuery extends AbstractDynamicQuery<Student> {
         .fieldName(fieldName(Student.FIELD_IDENTITY, Identity.FIELD_HEALTH_STATUS)).build();
 
     projectionBuilder().name(AbstractIdentifiableDto.JSON_AS_STRING)
-        .expression(String.format("%1$s.%3$s,%1$s.%4$s,%1$s.%2$s.%5$s,%1$s.%2$s.%6$s", variableName,
-            Student.FIELD_IDENTITY, AbstractIdentifiableCodable.FIELD_CODE,
-            fieldName(Student.FIELD_IDENTITY, Identity.FIELD_REGISTRATION_NUMBER),
-            Identity.FIELD_FIRST_NAME, Identity.FIELD_LAST_NAMES))
-        .resultConsumer((i, a) -> i.asString = StudentDto.computeAsString(a.getNextAsString(),
-            a.getNextAsString(), a.getNextAsString(), a.getNextAsString()))
-        .build();
+        .expression(buildAsStringProjectionExpression(variableName))
+        .resultConsumer((i, a) -> i.asString = computeAsString(a)).build();
 
     projectionBuilder().name(StudentDto.JSON_SCHOOL_IDENTIFIER)
         .fieldName(Student.FIELD_SCHOOL_IDENTIFIER).build();
@@ -149,5 +145,18 @@ public class StudentDynamicQuery extends AbstractDynamicQuery<Student> {
 
     // Ordres par défaut
     orderBuilder().fieldName(AbstractIdentifiableCodable.FIELD_CODE).build();
+  }
+
+  String buildAsStringProjectionExpression(String variableName) {
+    return String.format("%1$s.%3$s,%1$s.%4$s,%1$s.%2$s.%5$s,%1$s.%2$s.%6$s", variableName,
+        Student.FIELD_IDENTITY, AbstractIdentifiableCodable.FIELD_CODE,
+        fieldName(Student.FIELD_IDENTITY, Identity.FIELD_REGISTRATION_NUMBER),
+        Identity.FIELD_FIRST_NAME, Identity.FIELD_LAST_NAMES);
+  }
+
+  static String computeAsString(ArrayContainer arrayContainer) {
+    return StudentDto.computeAsString(arrayContainer.getNextAsString(),
+        arrayContainer.getNextAsString(), arrayContainer.getNextAsString(),
+        arrayContainer.getNextAsString());
   }
 }
