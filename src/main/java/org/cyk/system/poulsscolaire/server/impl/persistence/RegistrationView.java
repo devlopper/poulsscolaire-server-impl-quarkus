@@ -43,5 +43,5 @@ public class RegistrationView extends AbstractIdentifiable {
         JOIN ecoleviedbv2.classe classe ON classe.classeid = ihc.classe_classeid
       ) classe ON classe.identifiant = inscription.identifiant
                       """;
-  public static final String FIELD_CLASS_NAME = "branchInstanceAsString";
+  public static final String FIELD_BRANCH_INSTANCE_AS_STRING = "branchInstanceAsString";
 }

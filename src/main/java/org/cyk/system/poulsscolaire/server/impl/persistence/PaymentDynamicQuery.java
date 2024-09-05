@@ -71,6 +71,11 @@ public class PaymentDynamicQuery extends AbstractDynamicQuery<Payment> {
         .fieldName(fieldName(Payment.FIELD_MODE, AbstractIdentifiableCodableNamable.FIELD_NAME))
         .build();
 
+    projectionBuilder().name(PaymentDto.JSON_BRANCH_INSTANCE_AS_STRING)
+        .nameFieldName(Payment.FIELD_BRANCH_INSTANCE_AS_STRING)
+        .tupleVariableName(registrationViewVariableName)
+        .fieldName(RegistrationView.FIELD_BRANCH_INSTANCE_AS_STRING).build();
+
     projectionBuilder().name(PaymentDto.JSON_AMOUNT_AS_STRING)
         .tupleVariableName(paymentAmountsVariableName).nameFieldName(Payment.FIELD_AMOUNT_AS_STRING)
         .fieldName(PaymentAmounts.FIELD_TOTAL).build();
@@ -107,7 +112,9 @@ public class PaymentDynamicQuery extends AbstractDynamicQuery<Payment> {
             Registration.FIELD_SCHOOLING, Schooling.FIELD_SCHOOL_IDENTIFIER))
         .leftInnerOrRight(true).build();
 
-    joinBuilder().projectionsNames(PaymentDto.JSON_REGISTRATION_AS_STRING)
+    joinBuilder()
+        .projectionsNames(PaymentDto.JSON_BRANCH_INSTANCE_AS_STRING,
+            PaymentDto.JSON_REGISTRATION_AS_STRING)
         .entityName(RegistrationView.ENTITY_NAME).tupleVariableName(registrationViewVariableName)
         .parentFieldName(
             fieldName(Payment.FIELD_REGISTRATION, AbstractIdentifiable.FIELD_IDENTIFIER))

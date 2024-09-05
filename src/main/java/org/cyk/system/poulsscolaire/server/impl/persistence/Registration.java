@@ -69,7 +69,7 @@ public class Registration extends AbstractIdentifiableCodableAuditable {
 
   @Transient
   public String branchInstanceAsString;
-  
+
   /*
    * Amount
    */
@@ -112,6 +112,7 @@ public class Registration extends AbstractIdentifiableCodableAuditable {
   public static final String FIELD_PRE_REGISTRATION_AMOUNT = "preRegistrationAmount";
   public static final String FIELD_PRE_REGISTRATION_AMOUNT_AS_STRING =
       "preRegistrationAmountAsString";
+  public static final String FIELD_BRANCH_INSTANCE_AS_STRING = "branchInstanceAsString";
 
   public static final String ENTITY_NAME = "Registration";
   public static final String TABLE_NAME = "TA_INSCRIPTION";

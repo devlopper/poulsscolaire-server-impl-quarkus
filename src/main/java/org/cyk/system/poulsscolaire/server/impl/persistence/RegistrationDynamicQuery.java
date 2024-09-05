@@ -71,7 +71,8 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
         .fieldName(AbstractIdentifiableCodable.FIELD_CODE).build();
 
     projectionBuilder().name(RegistrationDto.JSON_BRANCH_INSTANCE_AS_STRING)
-        .tupleVariableName(viewVariableName).fieldName(RegistrationView.FIELD_CLASS_NAME).build();
+        .tupleVariableName(viewVariableName)
+        .fieldName(RegistrationView.FIELD_BRANCH_INSTANCE_AS_STRING).build();
 
     projectionBuilder().name(RegistrationDto.JSON_STUDENT_AS_STRING)
         .expression(String.format("%1$s.%3$s,%1$s.%4$s,%1$s.%2$s.%5$s,%1$s.%2$s.%6$s",
@@ -157,7 +158,7 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
 
     joinBuilder()
         .projectionsNames(RegistrationDto.JSON_BRANCH_INSTANCE_AS_STRING,
-            RegistrationDto.JSON_AS_STRING)
+            AbstractIdentifiableDto.JSON_AS_STRING)
         .entityName(RegistrationView.ENTITY_NAME).tupleVariableName(viewVariableName)
         .leftInnerOrRight(true).build();
 
@@ -225,7 +226,8 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
     Core.runIfTrue(
         ProjectionDto.hasName(parameters.projection(),
             RegistrationDto.JSON_BRANCH_INSTANCE_AS_STRING),
-        () -> groups.add(fieldName(viewVariableName, RegistrationView.FIELD_CLASS_NAME)));
+        () -> groups
+            .add(fieldName(viewVariableName, RegistrationView.FIELD_BRANCH_INSTANCE_AS_STRING)));
 
     Core.runIfTrue(
         ProjectionDto.hasName(parameters.projection(), AbstractIdentifiableDto.JSON_AS_STRING),
@@ -238,7 +240,7 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
               Identity.FIELD_FIRST_NAME));
           groups.add(fieldName(variableName, Registration.FIELD_STUDENT, Student.FIELD_IDENTITY,
               Identity.FIELD_LAST_NAMES));
-          groups.add(fieldName(viewVariableName, RegistrationView.FIELD_CLASS_NAME));
+          groups.add(fieldName(viewVariableName, RegistrationView.FIELD_BRANCH_INSTANCE_AS_STRING));
         });
   }
 }

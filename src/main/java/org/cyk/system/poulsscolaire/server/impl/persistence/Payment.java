@@ -76,6 +76,9 @@ public class Payment extends AbstractIdentifiableCodableAuditable {
   @Transient
   public String auditCancellationAsString;
   
+  @Transient
+  public String branchInstanceAsString;
+  
   public static final String FIELD_REGISTRATION = "registration";
   public static final String FIELD_REGISTRATION_AS_STRING = "registrationAsString";
   public static final String FIELD_MODE = "mode";
@@ -86,7 +89,8 @@ public class Payment extends AbstractIdentifiableCodableAuditable {
   public static final String FIELD_CANCELED = "canceled";
   public static final String FIELD_INITIATOR = "initiator";
   public static final String FIELD_AUDIT_CANCELLATION_AS_STRING = "auditCancellationAsString";
-
+  public static final String FIELD_BRANCH_INSTANCE_AS_STRING = "branchInstanceAsString";
+  
   public static final String ENTITY_NAME = "Payment";
   public static final String TABLE_NAME = "TA_PAIEMENT";
 

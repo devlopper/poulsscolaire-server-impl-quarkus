@@ -99,6 +99,12 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
         .nameFieldName(AdjustedFee.FIELD_REGISTRATION_IDENTIFIER)
         .fieldName(fieldName(AdjustedFee.FIELD_REGISTRATION, AbstractIdentifiable.FIELD_IDENTIFIER))
         .build();
+
+    projectionBuilder().name(AdjustedFeeDto.JSON_BRANCH_INSTANCE_AS_STRING)
+        .nameFieldName(AdjustedFee.FIELD_BRANCH_INSTANCE_AS_STRING)
+        .tupleVariableName(registrationViewVariableName)
+        .fieldName(RegistrationView.FIELD_BRANCH_INSTANCE_AS_STRING).build();
+
     projectionBuilder().name(AdjustedFeeDto.JSON_REGISTRATION_AS_STRING)
         .expression(registrationDynamicQuery.buildAsStringProjectionExpression(
             fieldName(variableName, AdjustedFee.FIELD_REGISTRATION), registrationViewVariableName))
@@ -231,7 +237,9 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
             Schooling.FIELD_BRANCH_IDENTIFIER))
         .leftInnerOrRight(true).build();
 
-    joinBuilder().projectionsNames(AdjustedFeeDto.JSON_REGISTRATION_AS_STRING)
+    joinBuilder()
+        .projectionsNames(AdjustedFeeDto.JSON_BRANCH_INSTANCE_AS_STRING,
+            AdjustedFeeDto.JSON_REGISTRATION_AS_STRING)
         .entityName(RegistrationView.ENTITY_NAME).tupleVariableName(registrationViewVariableName)
         .parentFieldName(
             fieldName(AdjustedFee.FIELD_REGISTRATION, AbstractIdentifiable.FIELD_IDENTIFIER))
