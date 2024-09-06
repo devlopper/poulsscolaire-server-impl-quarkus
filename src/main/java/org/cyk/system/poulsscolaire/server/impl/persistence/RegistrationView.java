@@ -27,7 +27,7 @@ public class RegistrationView extends AbstractIdentifiable {
       FROM TA_INSCRIPTION inscription
       JOIN (
         -- Classe dans pouls scolaire
-        SELECT inscription.identifiant AS IDENTIFIANT,classe.classelibelle AS LIBELLE
+        SELECT inscription.identifiant AS INSCRIPTION,classe.classelibelle AS LIBELLE
         FROM TA_INSCRIPTION inscription
         JOIN TA_ELEVE eleve ON eleve.identifiant = inscription.eleve
         JOIN TA_IDENTITE identite ON identite.identifiant = eleve.identite
@@ -41,7 +41,9 @@ public class RegistrationView extends AbstractIdentifiable {
         JOIN ecoleviedbv2.inscriptions_has_classe ihc
           ON ihc.inscriptions_inscriptionsid = i.inscriptionsid
         JOIN ecoleviedbv2.classe classe ON classe.classeid = ihc.classe_classeid
-      ) classe ON classe.identifiant = inscription.identifiant
+      ) classe ON classe.inscription = inscription.identifiant
                       """;
+  
+  public static final String FIELD_BRANCH_INSTANCE_IDENTIFIER = "branchInstanceIdentifier";
   public static final String FIELD_BRANCH_INSTANCE_AS_STRING = "branchInstanceAsString";
 }

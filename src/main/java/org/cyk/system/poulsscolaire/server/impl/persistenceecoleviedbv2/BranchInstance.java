@@ -21,4 +21,7 @@ public class BranchInstance {
   
   @Column(name = "classelibelle")
   public String name;
+  
+  @Column(name = "ecole_ecoleid")
+  public long schoolIdentifier;
 }

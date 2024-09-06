@@ -8,15 +8,16 @@ class EntityTest {
 
   @Test
   void instantiate() {
-    assertNotNull(new AcademicYear());
+    assertNotNull(new School());
     assertNotNull(new Branch());
+    assertNotNull(new BranchInstance());
+    assertNotNull(new AcademicYear());
     assertNotNull(new Program());
     assertNotNull(new ProgramSchool());
-    assertNotNull(new School());
+    
     assertNotNull(new User());
     
     assertNotNull(new Student());
-    assertNotNull(new BranchInstance());
     assertNotNull(new Registration());
     assertNotNull(new RegistrationBranchInstance());
   }

@@ -180,6 +180,11 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
     predicateBuilder().name(RegistrationFilter.JSON_SCHOOL_IDENTIFIER)
         .fieldName(fieldName(Registration.FIELD_SCHOOLING, Schooling.FIELD_SCHOOL_IDENTIFIER))
         .valueFunction(RegistrationFilter::getSchoolIdentifier).build();
+
+    predicateBuilder().name(RegistrationFilter.JSON_BRANCH_INSTANCE_IDENTIFIER)
+        .tupleVariableName(viewVariableName)
+        .fieldName(RegistrationView.FIELD_BRANCH_INSTANCE_AS_STRING)
+        .valueFunction(RegistrationFilter::getBranchInstanceIdentifier).build();
   }
 
   String buildAsStringProjectionExpression(String variableName, String viewVariableName) {
