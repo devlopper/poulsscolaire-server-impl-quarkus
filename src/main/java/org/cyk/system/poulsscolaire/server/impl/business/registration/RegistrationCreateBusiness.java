@@ -125,6 +125,7 @@ public class RegistrationCreateBusiness extends AbstractIdentifiableCreateBusine
     registration.schooling = schooling;
     registration.assignmentType = (AssignmentType) array[2];
     registration.seniority = (Seniority) array[3];
+    registration.branchInstanceIdentifier = request.getBranchInstanceIdentifier();
     registration.preRegistrationAmount = request.getPreRegistrationAmount();
     registration.setCode(String.format("I%s%s", registration.schooling.getCode()
         + registration.assignmentType.getCode() + registration.seniority.getCode(),

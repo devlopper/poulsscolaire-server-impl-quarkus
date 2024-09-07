@@ -52,6 +52,10 @@ public class Registration extends AbstractIdentifiableCodableAuditable {
   @JoinColumn(name = COLUMN_SENIORITY, nullable = false)
   public Seniority seniority;
 
+  @NotNull
+  @Column(name = COLUMN_BRANCH_INSTANCE_IDENTIFIER, nullable = false)
+  public String branchInstanceIdentifier;
+  
   @Column(name = COLUMN_PRE_REGISTRATION_AMOUNT)
   public Integer preRegistrationAmount;
 
@@ -112,6 +116,7 @@ public class Registration extends AbstractIdentifiableCodableAuditable {
   public static final String FIELD_PRE_REGISTRATION_AMOUNT = "preRegistrationAmount";
   public static final String FIELD_PRE_REGISTRATION_AMOUNT_AS_STRING =
       "preRegistrationAmountAsString";
+  public static final String FIELD_BRANCH_INSTANCE_IDENTIFIER = "branchInstanceIdentifier";
   public static final String FIELD_BRANCH_INSTANCE_AS_STRING = "branchInstanceAsString";
 
   public static final String ENTITY_NAME = "Registration";
@@ -121,5 +126,6 @@ public class Registration extends AbstractIdentifiableCodableAuditable {
   public static final String COLUMN_SCHOOLING = "SCOLARITE";
   public static final String COLUMN_ASSIGNMENT_TYPE = "TYPE_AFFECTATION";
   public static final String COLUMN_SENIORITY = "ANCIENNETE";
+  public static final String COLUMN_BRANCH_INSTANCE_IDENTIFIER = "CLASSE";
   public static final String COLUMN_PRE_REGISTRATION_AMOUNT = "MONTANT_PRE_INSCRIPTION";
 }

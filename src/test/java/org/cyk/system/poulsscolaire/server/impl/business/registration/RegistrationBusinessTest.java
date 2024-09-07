@@ -53,6 +53,7 @@ class RegistrationBusinessTest extends AbstractTest {
     request.setStudentIdentifier("nofees");
     request.setAssignmentTypeIdentifier("1");
     request.setSeniorityIdentifier("1");
+    request.setBranchInstanceIdentifier("1");
     request.setAuditWho("christian");
     long registrationCount = count(entityManager, Registration.ENTITY_NAME);
     long adjustedFeeCount = count(entityManager, AdjustedFee.ENTITY_NAME);
@@ -68,6 +69,7 @@ class RegistrationBusinessTest extends AbstractTest {
     request.setStudentIdentifier("1");
     request.setAssignmentTypeIdentifier("1");
     request.setSeniorityIdentifier("1");
+    request.setBranchInstanceIdentifier("1");
     request.setAuditWho("christian");
     long registrationCount = count(entityManager, Registration.ENTITY_NAME);
     long adjustedFeeCount = count(entityManager, AdjustedFee.ENTITY_NAME);
@@ -86,6 +88,7 @@ class RegistrationBusinessTest extends AbstractTest {
     request.setStudentIdentifier("schooling2");
     request.setAssignmentTypeIdentifier("1");
     request.setSeniorityIdentifier("1");
+    request.setBranchInstanceIdentifier("1");
     request.setAuditWho("christian");
     long registrationCount = count(entityManager, Registration.ENTITY_NAME);
     long adjustedFeeCount = count(entityManager, AdjustedFee.ENTITY_NAME);
@@ -104,6 +107,7 @@ class RegistrationBusinessTest extends AbstractTest {
     request.setStudentIdentifier("schooling2greater");
     request.setAssignmentTypeIdentifier("1");
     request.setSeniorityIdentifier("1");
+    request.setBranchInstanceIdentifier("1");
     request.setAuditWho("christian");
     long registrationCount = count(entityManager, Registration.ENTITY_NAME);
     long adjustedFeeCount = count(entityManager, AdjustedFee.ENTITY_NAME);
@@ -122,6 +126,7 @@ class RegistrationBusinessTest extends AbstractTest {
     request.setStudentIdentifier("1");
     request.setAssignmentTypeIdentifier("1");
     request.setSeniorityIdentifier("1");
+    request.setBranchInstanceIdentifier("1");
     request.setAuditWho("christian");
     long count = count(entityManager, Registration.ENTITY_NAME);
     updateBusiness.process(request);
