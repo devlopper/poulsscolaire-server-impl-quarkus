@@ -781,6 +781,7 @@ CREATE TABLE TA_INSCRIPTION (
 	TYPE_AFFECTATION VARCHAR(36) NOT NULL COMMENT 'Identifiant du type d''affectation',
 	ANCIENNETE VARCHAR(36) NOT NULL COMMENT 'Identifiant de l''ancienneté',
 	SCOLARITE VARCHAR(36) NOT NULL COMMENT 'Identifiant de la scolarité',
+	CLASSE VARCHAR(36) NOT NULL COMMENT 'Identifiant de la classe',
 	MONTANT_PRE_INSCRIPTION INT NOT NULL COMMENT 'Montant de la pré-inscription',
 	
 	-- Audit
@@ -815,6 +816,7 @@ CREATE TABLE TA_INSCRIPTION_AUD (
 	TYPE_AFFECTATION VARCHAR(36) NOT NULL COMMENT 'Identifiant du type d''affectation',
 	ANCIENNETE VARCHAR(36) NOT NULL COMMENT 'Identifiant de l''ancienneté',
 	SCOLARITE VARCHAR(36) NOT NULL COMMENT 'Identifiant de la scolarité',
+	CLASSE VARCHAR(36) NOT NULL COMMENT 'Identifiant de la classe',
 	MONTANT_PRE_INSCRIPTION INT NOT NULL COMMENT 'Montant de la pré-inscription',
 	
 	-- Audit

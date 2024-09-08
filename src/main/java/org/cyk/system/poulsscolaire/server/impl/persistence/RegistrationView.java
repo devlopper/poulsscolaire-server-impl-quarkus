@@ -15,6 +15,7 @@ import org.hibernate.annotations.Subselect;
 @Entity(name = RegistrationView.ENTITY_NAME)
 @Immutable
 @Subselect(RegistrationView.QUERY)
+@Deprecated
 public class RegistrationView extends AbstractIdentifiable {
 
   @Column(name = "CLASSE")

@@ -32,7 +32,7 @@ class BranchInstanceBusinessTest extends AbstractTest {
   void readMany() {
     GetManyRequestDto request = new GetManyRequestDto();
     request.setAuditWho("christian");
-    assertEquals(3, readManyBusiness.process(request).getCount());
+    assertEquals(5, readManyBusiness.process(request).getCount());
   }
 
   public static class Profile implements QuarkusTestProfile {

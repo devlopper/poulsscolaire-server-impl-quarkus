@@ -20,15 +20,26 @@ public class BranchInstance extends AbstractIdentifiableNamable {
   @Column(name = COLUMN_SCHOOL_IDENTIFIER)
   public String schoolIdentifier;
   
+  @Column(name = COLUMN_BRANCH_IDENTIFIER)
+  public String branchIdentifier;
+
   public static final String FIELD_SCHOOL_IDENTIFIER = "schoolIdentifier";
-  
+  public static final String FIELD_BRANCH_IDENTIFIER = "branchIdentifier";
+
   public static final String ENTITY_NAME = "BranchInstance";
 
   public static final String COLUMN_SCHOOL_IDENTIFIER = "ECOLE";
-  
+  public static final String COLUMN_BRANCH_IDENTIFIER = "BRANCHE";
+
   public static final String QUERY = """
-      SELECT c.classeid AS IDENTIFIANT, c.classelibelle AS LIBELLE,e.ecoleid AS ECOLE
-      FROM ecoleviedbv2.ecole e
-      JOIN ecoleviedbv2.classe c ON c.ecole_ecoleid= e.ecoleid
-                            """;
+      SELECT
+        c.classeid AS IDENTIFIANT
+        ,c.classelibelle AS LIBELLE
+        ,e.ecoleid AS ECOLE
+        ,b.id AS BRANCHE
+      FROM ecoleviedbv2.classe c
+      JOIN ecoleviedbv2.ecole e ON e.ecoleid = c.ecole_ecoleid
+      JOIN ecoleviedbv2.Branche b ON b.id = c.branche_id
+      WHERE c.visible=1
+                                  """;
 }

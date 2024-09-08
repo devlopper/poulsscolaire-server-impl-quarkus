@@ -1,11 +1,19 @@
 -- École
-INSERT INTO ECOLEVIEDBV2.ECOLE(ecoleid,niveau_enseignement_id) VALUES (1,1);
-INSERT INTO ECOLEVIEDBV2.ECOLE(ecoleid,niveau_enseignement_id) VALUES (2,1);
-INSERT INTO ECOLEVIEDBV2.ECOLE(ecoleid,niveau_enseignement_id) VALUES (3,1);
-INSERT INTO ECOLEVIEDBV2.ECOLE(ecoleid,niveau_enseignement_id) VALUES (4,1);
+INSERT INTO ECOLEVIEDBV2.ECOLE(ecoleid) VALUES (1);
+INSERT INTO ECOLEVIEDBV2.ECOLE(ecoleid) VALUES (2);
+INSERT INTO ECOLEVIEDBV2.ECOLE(ecoleid) VALUES (3);
+INSERT INTO ECOLEVIEDBV2.ECOLE(ecoleid) VALUES (4);
+
+-- Branche
+INSERT INTO ECOLEVIEDBV2.BRANCHE(id) VALUES (1);
+INSERT INTO ECOLEVIEDBV2.BRANCHE(id) VALUES (2);
+INSERT INTO ECOLEVIEDBV2.BRANCHE(id) VALUES (3);
+INSERT INTO ECOLEVIEDBV2.BRANCHE(id) VALUES (4);
 
 -- Classe
-INSERT INTO ECOLEVIEDBV2.CLASSE(classeid,ecole_ecoleid) VALUES (1,1);
-INSERT INTO ECOLEVIEDBV2.CLASSE(classeid,ecole_ecoleid) VALUES (2,2);
-INSERT INTO ECOLEVIEDBV2.CLASSE(classeid,ecole_ecoleid) VALUES (3,2);
+INSERT INTO ECOLEVIEDBV2.CLASSE(classeid,ecole_ecoleid,branche_id,visible) VALUES (1,1,1,1);
+INSERT INTO ECOLEVIEDBV2.CLASSE(classeid,ecole_ecoleid,branche_id,visible) VALUES (2,2,1,1);
+INSERT INTO ECOLEVIEDBV2.CLASSE(classeid,ecole_ecoleid,branche_id,visible) VALUES (3,2,2,1);
+INSERT INTO ECOLEVIEDBV2.CLASSE(classeid,ecole_ecoleid,branche_id,visible) VALUES (4,2,2,1);
+INSERT INTO ECOLEVIEDBV2.CLASSE(classeid,ecole_ecoleid,branche_id,visible) VALUES (5,2,2,1);
 

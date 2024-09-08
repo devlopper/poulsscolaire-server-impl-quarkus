@@ -12,7 +12,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
-import org.cyk.system.poulsscolaire.server.api.configuration.BranchFilter;
 import org.cyk.system.poulsscolaire.server.api.configuration.BranchInstanceFilter;
 
 /**
@@ -28,11 +27,14 @@ public class BranchInstanceDynamicQuery extends AbstractDynamicQuery<BranchInsta
   @Getter
   EntityManager entityManager;
 
+  String schoolingVariableName;
+
   /**
    * Cette méthode permet d'instancier un object.
    */
   public BranchInstanceDynamicQuery() {
     super(BranchInstance.class);
+    schoolingVariableName = "s";
   }
 
   @PostConstruct
@@ -44,16 +46,28 @@ public class BranchInstanceDynamicQuery extends AbstractDynamicQuery<BranchInsta
         .fieldName(AbstractIdentifiableNamable.FIELD_NAME).build();
 
     // Jointures
-    
+    joinBuilder().predicatesNames(BranchInstanceFilter.JSON_SCHOOLING_IDENTIFIER)
+        .entityClass(Schooling.class)
+        .expression("JOIN Schooling s ON s.schoolIdentifier = t.schoolIdentifier "
+            + "AND s.branchIdentifier = t.branchIdentifier")
+        .build();
 
     // Prédicats
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
         .valueFunction(AbstractIdentifiableFilter::getIdentifier).build();
 
-    predicateBuilder().name(BranchFilter.JSON_SCHOOL_IDENTIFIER)
+    predicateBuilder().name(BranchInstanceFilter.JSON_SCHOOL_IDENTIFIER)
         .fieldName(BranchInstance.FIELD_SCHOOL_IDENTIFIER)
         .valueFunction(BranchInstanceFilter::getSchoolIdentifier).build();
+
+    predicateBuilder().name(BranchInstanceFilter.JSON_BRANCH_IDENTIFIER)
+        .fieldName(BranchInstance.FIELD_BRANCH_IDENTIFIER)
+        .valueFunction(BranchInstanceFilter::getBranchIdentifier).build();
+
+    predicateBuilder().name(BranchInstanceFilter.JSON_SCHOOLING_IDENTIFIER)
+        .tupleVariableName(schoolingVariableName).fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
+        .valueFunction(BranchInstanceFilter::getSchoolingIdentifier).build();
 
     // Ordres par défaut
     orderBuilder().fieldName(AbstractIdentifiableCodableNamable.FIELD_NAME).build();

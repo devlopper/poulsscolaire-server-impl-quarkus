@@ -24,4 +24,10 @@ public class BranchInstance {
   
   @Column(name = "ecole_ecoleid")
   public long schoolIdentifier;
+  
+  @Column(name = "branche_id")
+  public int branchIdentifier;
+  
+  @Column(name = "visible")
+  public int visible;
 }

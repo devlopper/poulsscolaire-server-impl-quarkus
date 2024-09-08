@@ -13,7 +13,7 @@ import jakarta.inject.Inject;
 import java.util.List;
 import java.util.Map;
 import org.cyk.system.poulsscolaire.server.api.configuration.BranchInstanceDto;
-import org.cyk.system.poulsscolaire.server.api.configuration.PeriodFilter;
+import org.cyk.system.poulsscolaire.server.api.configuration.BranchInstanceFilter;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -27,11 +27,12 @@ class BranchInstanceDynamicQueryTest {
   DynamicQueryParameters<BranchInstance> parameters = new DynamicQueryParameters<>();
 
   @ParameterizedTest
-  @CsvSource(value = {"1,1", "2,2:3", "3,"})
-  void getMany_whenSchoolIdentifier(String schoolIdentifier,
-      String expected) {
-    PeriodFilter filter = new PeriodFilter();
+  @CsvSource(value = {"1,1,1", "2,2,3:4:5", "3,3,"})
+  void getMany_whenSchoolIdentifierWhenBranchIdentifier(String schoolIdentifier,
+      String branchIdentifier, String expected) {
+    BranchInstanceFilter filter = new BranchInstanceFilter();
     filter.setSchoolIdentifier(schoolIdentifier);
+    filter.setBranchIdentifier(branchIdentifier);
     parameters.setFilter(filter.toDto());
     parameters.projection().addNames(BranchInstanceDto.JSON_IDENTIFIER);
     List<BranchInstance> instances = dynamicQuery.getMany(parameters);
@@ -43,7 +44,24 @@ class BranchInstanceDynamicQueryTest {
           instances.stream().map(i -> i.getIdentifier()).toList());
     }
   }
-  
+
+  @ParameterizedTest
+  @CsvSource(value = {"1,6", "2,7:8", "3,"})
+  void getMany_whenSchoolingIdentifier(String schoolingIdentifier, String expected) {
+    BranchInstanceFilter filter = new BranchInstanceFilter();
+    filter.setSchoolingIdentifier(schoolingIdentifier);
+    parameters.setFilter(filter.toDto());
+    parameters.projection().addNames(BranchInstanceDto.JSON_IDENTIFIER);
+    List<BranchInstance> instances = dynamicQuery.getMany(parameters);
+    assertNotNull(instances);
+    if (Core.isStringBlank(expected)) {
+      assertEquals(0, instances.size());
+    } else {
+      assertLinesMatch(List.of(expected.split(":")),
+          instances.stream().map(i -> i.getIdentifier()).toList());
+    }
+  }
+
   public static class Profile implements QuarkusTestProfile {
 
     @Override
