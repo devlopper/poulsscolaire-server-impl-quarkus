@@ -27,7 +27,7 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
   String periodVariableName;
   String adjustedFeeAmountsVariableName;
   String adjustedFeeDeadlineVariableName;
-  String registrationViewVariableName;
+  String branchInstanceVariableName;
 
   @Inject
   RegistrationDynamicQuery registrationDynamicQuery;
@@ -42,7 +42,7 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
     periodVariableName = "p";
     adjustedFeeAmountsVariableName = "afa";
     adjustedFeeDeadlineVariableName = "afad";
-    registrationViewVariableName = "rv";
+    branchInstanceVariableName = "bi";
   }
 
   @Override
@@ -101,13 +101,12 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
         .build();
 
     projectionBuilder().name(AdjustedFeeDto.JSON_BRANCH_INSTANCE_AS_STRING)
-        .nameFieldName(AdjustedFee.FIELD_BRANCH_INSTANCE_AS_STRING)
-        .tupleVariableName(registrationViewVariableName)
-        .fieldName(RegistrationView.FIELD_BRANCH_INSTANCE_AS_STRING).build();
+        .expression(formatConcatName(branchInstanceVariableName))
+        .resultConsumer((i, a) -> i.branchInstanceAsString = a.getNextAsString()).build();
 
     projectionBuilder().name(AdjustedFeeDto.JSON_REGISTRATION_AS_STRING)
         .expression(registrationDynamicQuery.buildAsStringProjectionExpression(
-            fieldName(variableName, AdjustedFee.FIELD_REGISTRATION), registrationViewVariableName))
+            fieldName(variableName, AdjustedFee.FIELD_REGISTRATION), branchInstanceVariableName))
         .resultConsumer(
             (i, a) -> i.registrationAsString = RegistrationDynamicQuery.computeAsString(a))
         .build();
@@ -240,9 +239,9 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
     joinBuilder()
         .projectionsNames(AdjustedFeeDto.JSON_BRANCH_INSTANCE_AS_STRING,
             AdjustedFeeDto.JSON_REGISTRATION_AS_STRING)
-        .entityName(RegistrationView.ENTITY_NAME).tupleVariableName(registrationViewVariableName)
-        .parentFieldName(
-            fieldName(AdjustedFee.FIELD_REGISTRATION, AbstractIdentifiable.FIELD_IDENTIFIER))
+        .entityName(BranchInstance.ENTITY_NAME).tupleVariableName(branchInstanceVariableName)
+        .parentFieldName(fieldName(AdjustedFee.FIELD_REGISTRATION,
+            Registration.FIELD_BRANCH_INSTANCE_IDENTIFIER))
         .leftInnerOrRight(true).build();
 
     joinBuilder()
@@ -303,6 +302,11 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
         .fieldName(fieldName(AdjustedFee.FIELD_FEE, Fee.FIELD_CATEGORY,
             AbstractIdentifiable.FIELD_IDENTIFIER))
         .valueFunction(AdjustedFeeFilter::getFeeCategoryIdentifier).build();
+
+    predicateBuilder().name(AdjustedFeeFilter.JSON_BRANCH_INSTANCE_IDENTIFIER)
+        .fieldName(fieldName(AdjustedFee.FIELD_REGISTRATION,
+            Registration.FIELD_BRANCH_INSTANCE_IDENTIFIER))
+        .valueFunction(AdjustedFeeFilter::getBranchInstanceIdentifier).build();
 
     predicateBuilder()
         .name(AbstractAmountContainerFilter.JSON_AMOUNT_VALUE_PAYABLE_LESS_THAN_OR_EQUALS_ZERO)

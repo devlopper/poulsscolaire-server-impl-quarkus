@@ -1,5 +1,7 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
+import ci.gouv.dgbf.extension.core.Constant;
+import ci.gouv.dgbf.extension.core.Core;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableNamable;
@@ -13,6 +15,7 @@ import jakarta.persistence.Transient;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
@@ -24,8 +27,9 @@ import org.hibernate.envers.Audited;
  *
  */
 @Entity(name = Deadline.ENTITY_NAME)
-@Table(name = Deadline.TABLE_NAME, uniqueConstraints = {
-    @UniqueConstraint(columnNames = {Deadline.COLUMN_GROUP, Deadline.COLUMN_DATE})})
+@Table(name = Deadline.TABLE_NAME,
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {Deadline.COLUMN_GROUP, Deadline.COLUMN_DATE})})
 @Audited
 @AuditOverrides(
     value = {@AuditOverride(forClass = AbstractIdentifiableCodableNamableAuditable.class),
@@ -46,12 +50,12 @@ public class Deadline extends AbstractIdentifiableCodableNamableAuditable {
   @NotNull
   @Column(name = COLUMN_SCHOOL_IDENTIFIER, nullable = false)
   public String schoolIdentifier;
-  
+
   /* Champs calculés */
 
   @Transient
   public String schoolAsString;
-  
+
   @Transient
   public String groupAsString;
 
@@ -59,7 +63,8 @@ public class Deadline extends AbstractIdentifiableCodableNamableAuditable {
   public String dateAsString;
 
   public static String format(String name, String date) {
-    return String.format("%s(%s)", name, date);
+    return Optional.ofNullable(Core.getOrNullifyIfStringBlank(name))
+        .map(n -> String.format("%s(%s)", n, date)).orElse(Constant.EMPTY_STRING);
   }
 
   public static final String FIELD_GROUP = "group";
@@ -68,7 +73,7 @@ public class Deadline extends AbstractIdentifiableCodableNamableAuditable {
   public static final String FIELD_DATE_AS_STRING = "dateAsString";
   public static final String FIELD_SCHOOL_IDENTIFIER = "schoolIdentifier";
   public static final String FIELD_SCHOOL_AS_STRING = "schoolAsString";
-  
+
   public static final String ENTITY_NAME = "Deadline";
   public static final String TABLE_NAME = "TA_ECHEANCE";
 

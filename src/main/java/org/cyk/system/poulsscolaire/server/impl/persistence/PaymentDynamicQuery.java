@@ -33,7 +33,7 @@ public class PaymentDynamicQuery extends AbstractDynamicQuery<Payment> {
   String schoolVariableName;
   String paymentAmountsVariableName;
   String auditVariableName;
-  String registrationViewVariableName;
+  String branchInstanceVariableName;
 
   @Inject
   RegistrationDynamicQuery registrationDynamicQuery;
@@ -46,7 +46,7 @@ public class PaymentDynamicQuery extends AbstractDynamicQuery<Payment> {
     schoolVariableName = "s";
     paymentAmountsVariableName = "pa";
     auditVariableName = "audit";
-    registrationViewVariableName = "rv";
+    branchInstanceVariableName = "bi";
   }
 
   @PostConstruct
@@ -59,7 +59,7 @@ public class PaymentDynamicQuery extends AbstractDynamicQuery<Payment> {
 
     projectionBuilder().name(PaymentDto.JSON_REGISTRATION_AS_STRING)
         .expression(registrationDynamicQuery.buildAsStringProjectionExpression(
-            fieldName(variableName, Payment.FIELD_REGISTRATION), registrationViewVariableName))
+            fieldName(variableName, Payment.FIELD_REGISTRATION), branchInstanceVariableName))
         .resultConsumer(
             (i, a) -> i.registrationAsString = RegistrationDynamicQuery.computeAsString(a))
         .build();
@@ -72,9 +72,8 @@ public class PaymentDynamicQuery extends AbstractDynamicQuery<Payment> {
         .build();
 
     projectionBuilder().name(PaymentDto.JSON_BRANCH_INSTANCE_AS_STRING)
-        .nameFieldName(Payment.FIELD_BRANCH_INSTANCE_AS_STRING)
-        .tupleVariableName(registrationViewVariableName)
-        .fieldName(RegistrationView.FIELD_BRANCH_INSTANCE_AS_STRING).build();
+        .expression(formatConcatName(branchInstanceVariableName))
+        .resultConsumer((i, a) -> i.branchInstanceAsString = a.getNextAsString()).build();
 
     projectionBuilder().name(PaymentDto.JSON_AMOUNT_AS_STRING)
         .tupleVariableName(paymentAmountsVariableName).nameFieldName(Payment.FIELD_AMOUNT_AS_STRING)
@@ -115,9 +114,9 @@ public class PaymentDynamicQuery extends AbstractDynamicQuery<Payment> {
     joinBuilder()
         .projectionsNames(PaymentDto.JSON_BRANCH_INSTANCE_AS_STRING,
             PaymentDto.JSON_REGISTRATION_AS_STRING)
-        .entityName(RegistrationView.ENTITY_NAME).tupleVariableName(registrationViewVariableName)
+        .entityName(BranchInstance.ENTITY_NAME).tupleVariableName(branchInstanceVariableName)
         .parentFieldName(
-            fieldName(Payment.FIELD_REGISTRATION, AbstractIdentifiable.FIELD_IDENTIFIER))
+            fieldName(Payment.FIELD_REGISTRATION, Registration.FIELD_BRANCH_INSTANCE_IDENTIFIER))
         .leftInnerOrRight(true).build();
 
     // Prédicats
@@ -133,6 +132,11 @@ public class PaymentDynamicQuery extends AbstractDynamicQuery<Payment> {
         .fieldName(fieldName(Payment.FIELD_REGISTRATION, Registration.FIELD_SCHOOLING,
             Schooling.FIELD_SCHOOL_IDENTIFIER))
         .valueFunction(PaymentFilter::getSchoolIdentifier).build();
+
+    predicateBuilder().name(PaymentFilter.JSON_BRANCH_INSTANCE_IDENTIFIER)
+        .tupleVariableName(branchInstanceVariableName)
+        .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
+        .valueFunction(PaymentFilter::getBranchInstanceIdentifier).build();
 
     predicateBuilder().name(PaymentFilter.JSON_CANCELED).fieldName(Payment.FIELD_CANCELED)
         .valueFunction(PaymentFilter::getCanceled).build();

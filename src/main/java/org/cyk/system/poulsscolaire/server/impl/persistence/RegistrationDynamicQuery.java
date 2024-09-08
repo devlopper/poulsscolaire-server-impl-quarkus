@@ -5,6 +5,7 @@ import ci.gouv.dgbf.extension.core.Core;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableNamable;
+import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableNamable;
 import ci.gouv.dgbf.extension.server.persistence.query.AbstractDynamicQuery;
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
 import ci.gouv.dgbf.extension.server.service.api.AbstractIdentifiableFilter;
@@ -37,7 +38,7 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
 
   String schoolVariableName;
   String adjustedFeeAmountsVariableName;
-  String viewVariableName;
+  String branchInstanceVariableName;
 
   /**
    * Cette méthode permet d'instancier un object.
@@ -46,7 +47,7 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
     super(Registration.class);
     schoolVariableName = "s";
     adjustedFeeAmountsVariableName = "afa";
-    viewVariableName = "v";
+    branchInstanceVariableName = "bi";
   }
 
   @PostConstruct
@@ -71,8 +72,8 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
         .fieldName(AbstractIdentifiableCodable.FIELD_CODE).build();
 
     projectionBuilder().name(RegistrationDto.JSON_BRANCH_INSTANCE_AS_STRING)
-        .tupleVariableName(viewVariableName)
-        .fieldName(RegistrationView.FIELD_BRANCH_INSTANCE_AS_STRING).build();
+        .expression(formatConcatName(branchInstanceVariableName))
+        .resultConsumer((i, a) -> i.branchInstanceAsString = a.getNextAsString()).build();
 
     projectionBuilder().name(RegistrationDto.JSON_STUDENT_AS_STRING)
         .expression(String.format("%1$s.%3$s,%1$s.%4$s,%1$s.%2$s.%5$s,%1$s.%2$s.%6$s",
@@ -86,7 +87,7 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
         .build();
 
     projectionBuilder().name(AbstractIdentifiableDto.JSON_AS_STRING)
-        .expression(buildAsStringProjectionExpression(variableName, viewVariableName))
+        .expression(buildAsStringProjectionExpression(variableName, branchInstanceVariableName))
         .resultConsumer((i, a) -> i.asString = computeAsString(a)).build();
 
     projectionBuilder().name(RegistrationDto.JSON_SCHOOLING_AS_STRING)
@@ -159,8 +160,9 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
     joinBuilder()
         .projectionsNames(RegistrationDto.JSON_BRANCH_INSTANCE_AS_STRING,
             AbstractIdentifiableDto.JSON_AS_STRING)
-        .entityName(RegistrationView.ENTITY_NAME).tupleVariableName(viewVariableName)
-        .leftInnerOrRight(true).build();
+        .entityName(BranchInstance.ENTITY_NAME).tupleVariableName(branchInstanceVariableName)
+        .parentFieldName(Registration.FIELD_BRANCH_INSTANCE_IDENTIFIER).leftInnerOrRight(true)
+        .build();
 
     joinBuilder().predicatesNames(RegistrationDto.JSON_SCHOOL_IDENTIFIER)
         .entityName(School.ENTITY_NAME).tupleVariableName(schoolVariableName)
@@ -182,13 +184,13 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
         .valueFunction(RegistrationFilter::getSchoolIdentifier).build();
 
     predicateBuilder().name(RegistrationFilter.JSON_BRANCH_INSTANCE_IDENTIFIER)
-        .tupleVariableName(viewVariableName)
-        .fieldName(RegistrationView.FIELD_BRANCH_INSTANCE_AS_STRING)
+        .tupleVariableName(branchInstanceVariableName)
+        .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
         .valueFunction(RegistrationFilter::getBranchInstanceIdentifier).build();
   }
 
-  String buildAsStringProjectionExpression(String variableName, String viewVariableName) {
-    return String.format("%s.code,%s.branchInstanceAsString,", variableName, viewVariableName)
+  String buildAsStringProjectionExpression(String variableName, String branchInstanceVariableName) {
+    return String.format("%s.code,%s.name,", variableName, branchInstanceVariableName)
         + String.format("%1$s.%3$s,%1$s.%4$s,%1$s.%2$s.%5$s,%1$s.%2$s.%6$s",
             fieldName(variableName, Registration.FIELD_STUDENT), Student.FIELD_IDENTITY,
             AbstractIdentifiableCodable.FIELD_CODE,
@@ -197,8 +199,7 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
   }
 
   static String computeAsString(ArrayContainer arrayContainer) {
-    return arrayContainer.getNextAsString() + " | ("
-        + Core.getOrDefaultIfBlank(arrayContainer.getNextAsString(), "Classe à définir") + ") | "
+    return arrayContainer.getNextAsString() + " | (" + arrayContainer.getNextAsString() + ") | "
         + StudentDto.computeAsString(arrayContainer.getNextAsString(),
             arrayContainer.getNextAsString(), arrayContainer.getNextAsString(),
             arrayContainer.getNextAsString());
@@ -232,7 +233,7 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
         ProjectionDto.hasName(parameters.projection(),
             RegistrationDto.JSON_BRANCH_INSTANCE_AS_STRING),
         () -> groups
-            .add(fieldName(viewVariableName, RegistrationView.FIELD_BRANCH_INSTANCE_AS_STRING)));
+            .add(fieldName(branchInstanceVariableName, AbstractIdentifiableNamable.FIELD_NAME)));
 
     Core.runIfTrue(
         ProjectionDto.hasName(parameters.projection(), AbstractIdentifiableDto.JSON_AS_STRING),
@@ -245,7 +246,7 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
               Identity.FIELD_FIRST_NAME));
           groups.add(fieldName(variableName, Registration.FIELD_STUDENT, Student.FIELD_IDENTITY,
               Identity.FIELD_LAST_NAMES));
-          groups.add(fieldName(viewVariableName, RegistrationView.FIELD_BRANCH_INSTANCE_AS_STRING));
+          groups.add(fieldName(branchInstanceVariableName, AbstractIdentifiableNamable.FIELD_NAME));
         });
   }
 }

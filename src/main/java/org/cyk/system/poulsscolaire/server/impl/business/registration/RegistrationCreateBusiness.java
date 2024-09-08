@@ -82,7 +82,6 @@ public class RegistrationCreateBusiness extends AbstractIdentifiableCreateBusine
         .ofNullable(request.getSchooling2Identifier()).map(s -> schoolingValidator
             .validateInstanceByIdentifier(request.getSchooling2Identifier(), messages))
         .orElse(null);
-    schoolingValidator.validateInstanceByIdentifier(request.getSchoolingIdentifier(), messages);
     AssignmentType assignmentType = assignmentTypeValidator
         .validateInstanceByIdentifier(request.getAssignmentTypeIdentifier(), messages);
     Seniority seniority =
@@ -105,27 +104,33 @@ public class RegistrationCreateBusiness extends AbstractIdentifiableCreateBusine
         Object temp = array[1];
         array[1] = array[4];
         array[4] = temp;
+
+        temp = request.getBranchInstanceIdentifier();
+        request.setBranchInstanceIdentifier(request.getBranchInstance2Identifier());
+        request.setBranchInstanceIdentifier((String) temp);
       }
     }
 
-    setFields(registration, array, request, (Schooling) array[1]);
+    setFields(registration, array, request, (Schooling) array[1],
+        request.getBranchInstanceIdentifier());
 
     if (array[4] != null) {
       Registration otherRegistration = new Registration();
       otherRegistration.generateIdentifier();
       otherRegistration.audit = registration.audit;
-      setFields(otherRegistration, array, request, (Schooling) array[4]);
+      setFields(otherRegistration, array, request, (Schooling) array[4],
+          request.getBranchInstance2Identifier());
       registration.otheRregistration = otherRegistration;
     }
   }
 
   void setFields(Registration registration, Object[] array, RegistrationCreateRequestDto request,
-      Schooling schooling) {
+      Schooling schooling, String branchInstanceIdentifier) {
     registration.student = (Student) array[0];
     registration.schooling = schooling;
     registration.assignmentType = (AssignmentType) array[2];
     registration.seniority = (Seniority) array[3];
-    registration.branchInstanceIdentifier = request.getBranchInstanceIdentifier();
+    registration.branchInstanceIdentifier = branchInstanceIdentifier;
     registration.preRegistrationAmount = request.getPreRegistrationAmount();
     registration.setCode(String.format("I%s%s", registration.schooling.getCode()
         + registration.assignmentType.getCode() + registration.seniority.getCode(),

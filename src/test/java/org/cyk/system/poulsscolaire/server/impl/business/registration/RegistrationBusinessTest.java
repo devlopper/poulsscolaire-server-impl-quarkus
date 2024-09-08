@@ -84,11 +84,12 @@ class RegistrationBusinessTest extends AbstractTest {
   void create_whenSchooling2() {
     RegistrationCreateRequestDto request = new RegistrationCreateRequestDto();
     request.setSchoolingIdentifier("feesvalue1");
+    request.setBranchInstanceIdentifier("1");
     request.setSchooling2Identifier("1");
+    request.setBranchInstance2Identifier("1");
     request.setStudentIdentifier("schooling2");
     request.setAssignmentTypeIdentifier("1");
     request.setSeniorityIdentifier("1");
-    request.setBranchInstanceIdentifier("1");
     request.setAuditWho("christian");
     long registrationCount = count(entityManager, Registration.ENTITY_NAME);
     long adjustedFeeCount = count(entityManager, AdjustedFee.ENTITY_NAME);
@@ -103,11 +104,12 @@ class RegistrationBusinessTest extends AbstractTest {
   void create_whenSchooling2AmountGreater() {
     RegistrationCreateRequestDto request = new RegistrationCreateRequestDto();
     request.setSchoolingIdentifier("feesvalue1");
+    request.setBranchInstanceIdentifier("1");
     request.setSchooling2Identifier("schooling2");
+    request.setBranchInstance2Identifier("1");
     request.setStudentIdentifier("schooling2greater");
     request.setAssignmentTypeIdentifier("1");
     request.setSeniorityIdentifier("1");
-    request.setBranchInstanceIdentifier("1");
     request.setAuditWho("christian");
     long registrationCount = count(entityManager, Registration.ENTITY_NAME);
     long adjustedFeeCount = count(entityManager, AdjustedFee.ENTITY_NAME);
