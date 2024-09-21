@@ -3,6 +3,7 @@ package org.cyk.system.poulsscolaire.server.impl.persistence;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Subselect;
 
@@ -15,6 +16,7 @@ import org.hibernate.annotations.Subselect;
 @Entity(name = AdjustedFeeAmounts.ENTITY_NAME)
 @Immutable
 @Subselect(AdjustedFeeAmounts.QUERY)
+@EqualsAndHashCode(callSuper = true)
 public class AdjustedFeeAmounts extends AbstractIdentifiable {
 
   @Column(name = "RUBRIQUE")
@@ -29,12 +31,24 @@ public class AdjustedFeeAmounts extends AbstractIdentifiable {
   @Column(name = "ECOLE")
   public String schoolIdentifier;
 
+  @Column(name = "INITIAL_A_PAYER")
+  public long initialAmountToPay;
+
+  @Column(name = "INITIAL_A_PAYER_INSCRIPTION")
+  public long initialRegistrationAmountToPay;
+  
   @Column(name = "A_PAYER")
   public long amountToPay;
 
   @Column(name = "A_PAYER_INSCRIPTION")
   public long registrationAmountToPay;
 
+  @Column(name = "REDUCTION")
+  public long reducedAmount;
+
+  @Column(name = "REDUCTION_INSCRIPTION")
+  public long reducedRegistrationAmount;
+  
   @Column(name = "PAYE")
   public long amountPaid;
 
@@ -61,8 +75,13 @@ public class AdjustedFeeAmounts extends AbstractIdentifiable {
 
   public static final String QUERY = """
       SELECT TA_FRAIS_AJUSTE.IDENTIFIANT
+        ,INITIAL_A_PAYER.MONTANT AS INITIAL_A_PAYER
+        ,INITIAL_A_PAYER.INSCRIPTION AS INITIAL_A_PAYER_INSCRIPTION
         ,A_PAYER.MONTANT AS A_PAYER
         ,A_PAYER.INSCRIPTION AS A_PAYER_INSCRIPTION
+        ,COALESCE(INITIAL_A_PAYER.MONTANT,0) - COALESCE(A_PAYER.MONTANT,0) AS REDUCTION
+        ,COALESCE(INITIAL_A_PAYER.INSCRIPTION,0) - COALESCE(A_PAYER.INSCRIPTION,0)
+          AS REDUCTION_INSCRIPTION
         ,COALESCE(PAYE.MONTANT,0) AS PAYE
         ,COALESCE(PAYE.INSCRIPTION,0) AS PAYE_INSCRIPTION
         ,A_PAYER.MONTANT - COALESCE(PAYE.MONTANT,0) AS RESTE_A_PAYER
@@ -85,6 +104,16 @@ public class AdjustedFeeAmounts extends AbstractIdentifiable {
       JOIN TA_SCOLARITE ON TA_SCOLARITE.IDENTIFIANT =TA_INSCRIPTION.SCOLARITE
       JOIN TA_FRAIS ON TA_FRAIS.IDENTIFIANT = TA_FRAIS_AJUSTE.FRAIS
       JOIN TA_RUBRIQUE ON TA_RUBRIQUE.IDENTIFIANT = TA_FRAIS.RUBRIQUE
+      LEFT JOIN
+        (-- Montant initial à payer
+        SELECT TA_FRAIS_AJUSTE.IDENTIFIANT AS IDENTIFIANT
+          ,montantfrais.VALEUR AS MONTANT
+          ,montantfrais.VALEUR_INSCRIPTION AS INSCRIPTION
+        FROM TA_FRAIS_AJUSTE
+        JOIN TA_MONTANT ON TA_MONTANT.IDENTIFIANT = TA_FRAIS_AJUSTE.MONTANT
+        JOIN TA_FRAIS ON TA_FRAIS.IDENTIFIANT = TA_FRAIS_AJUSTE.FRAIS
+        JOIN TA_MONTANT montantfrais ON montantfrais.IDENTIFIANT = TA_FRAIS.MONTANT)
+          AS INITIAL_A_PAYER ON INITIAL_A_PAYER.IDENTIFIANT = TA_FRAIS_AJUSTE.IDENTIFIANT
       LEFT JOIN
         (-- Montant à payer
         SELECT TA_FRAIS_AJUSTE.IDENTIFIANT AS IDENTIFIANT
