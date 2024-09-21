@@ -151,6 +151,10 @@ public class SchoolingDynamicQuery extends AbstractDynamicQuery<Schooling> {
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
         .valueFunction(AbstractIdentifiableFilter::getIdentifier).build();
 
+    predicateBuilder().name(AbstractIdentifiableFilter.JSON_EXCLUDED_IDENTIFIERS)
+        .expression("t.identifier NOT IN :" + AbstractIdentifiableFilter.JSON_EXCLUDED_IDENTIFIERS)
+        .valueFunction(AbstractIdentifiableFilter::getExcludedIdentifiers).build();
+
     predicateBuilder().name(SchoolingFilter.JSON_SCHOOL_IDENTIFIER)
         .tupleVariableName(schoolVariableName).fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
         .valueFunction(SchoolingFilter::getSchoolIdentifier).build();
@@ -197,24 +201,27 @@ public class SchoolingDynamicQuery extends AbstractDynamicQuery<Schooling> {
         SchoolingDto.JSON_SCHOOL_IDENTIFIER), () -> {
           groups.add(fieldName(schoolVariableName, Schooling.FIELD_SCHOOL_IDENTIFIER));
         });
-    Core.runIfTrue(ProjectionDto.hasOneOfNames(parameters.getProjection(),
-        SchoolingDto.JSON_SCHOOL_AS_STRING), () -> {
+    Core.runIfTrue(
+        ProjectionDto.hasOneOfNames(parameters.getProjection(), SchoolingDto.JSON_SCHOOL_AS_STRING),
+        () -> {
           groups.add(fieldName(schoolVariableName, AbstractIdentifiableCodableNamable.FIELD_NAME));
         });
     Core.runIfTrue(ProjectionDto.hasOneOfNames(parameters.getProjection(),
         SchoolingDto.JSON_BRANCH_IDENTIFIER), () -> {
           groups.add(fieldName(branchVariableName, Schooling.FIELD_BRANCH_IDENTIFIER));
         });
-    Core.runIfTrue(ProjectionDto.hasOneOfNames(parameters.getProjection(),
-        SchoolingDto.JSON_BRANCH_AS_STRING), () -> {
+    Core.runIfTrue(
+        ProjectionDto.hasOneOfNames(parameters.getProjection(), SchoolingDto.JSON_BRANCH_AS_STRING),
+        () -> {
           groups.add(fieldName(branchVariableName, AbstractIdentifiableCodableNamable.FIELD_NAME));
         });
     Core.runIfTrue(ProjectionDto.hasOneOfNames(parameters.getProjection(),
         SchoolingDto.JSON_PERIOD_IDENTIFIER), () -> {
           groups.add(fieldName(periodVariableName, Schooling.FIELD_PERIOD_IDENTIFIER));
         });
-    Core.runIfTrue(ProjectionDto.hasOneOfNames(parameters.getProjection(),
-        SchoolingDto.JSON_PERIOD_AS_STRING), () -> {
+    Core.runIfTrue(
+        ProjectionDto.hasOneOfNames(parameters.getProjection(), SchoolingDto.JSON_PERIOD_AS_STRING),
+        () -> {
           groups.add(fieldName(periodVariableName, AbstractIdentifiableCodableNamable.FIELD_NAME));
         });
   }

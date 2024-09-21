@@ -36,7 +36,7 @@ public class AdjustedFeeAmounts extends AbstractIdentifiable {
 
   @Column(name = "INITIAL_A_PAYER_INSCRIPTION")
   public long initialRegistrationAmountToPay;
-  
+
   @Column(name = "A_PAYER")
   public long amountToPay;
 
@@ -48,7 +48,13 @@ public class AdjustedFeeAmounts extends AbstractIdentifiable {
 
   @Column(name = "REDUCTION_INSCRIPTION")
   public long reducedRegistrationAmount;
-  
+
+  @Column(name = "REDUCTION_EST_ZERO")
+  public boolean reducedAmountIsZero;
+
+  @Column(name = "REDUCTION_INSCRIPTION_EST_ZERO")
+  public boolean reducedRegistrationAmountIsZero;
+
   @Column(name = "PAYE")
   public long amountPaid;
 
@@ -82,6 +88,8 @@ public class AdjustedFeeAmounts extends AbstractIdentifiable {
         ,COALESCE(INITIAL_A_PAYER.MONTANT,0) - COALESCE(A_PAYER.MONTANT,0) AS REDUCTION
         ,COALESCE(INITIAL_A_PAYER.INSCRIPTION,0) - COALESCE(A_PAYER.INSCRIPTION,0)
           AS REDUCTION_INSCRIPTION
+        ,CASE WHEN COALESCE(INITIAL_A_PAYER.MONTANT,0) - COALESCE(A_PAYER.MONTANT,0) = 0
+          THEN 1 ELSE 0 END AS REDUCTION_EST_ZERO
         ,COALESCE(PAYE.MONTANT,0) AS PAYE
         ,COALESCE(PAYE.INSCRIPTION,0) AS PAYE_INSCRIPTION
         ,A_PAYER.MONTANT - COALESCE(PAYE.MONTANT,0) AS RESTE_A_PAYER
@@ -133,7 +141,7 @@ public class AdjustedFeeAmounts extends AbstractIdentifiable {
         JOIN TA_MONTANT ON TA_MONTANT.IDENTIFIANT = TA_FRAIS_AJUSTE.MONTANT
         JOIN TA_FRAIS ON TA_FRAIS.IDENTIFIANT = TA_FRAIS_AJUSTE.FRAIS
         JOIN TA_INSCRIPTION ON TA_INSCRIPTION.IDENTIFIANT = TA_FRAIS_AJUSTE.INSCRIPTION
-        JOIN TA_PAIEMENT ON TA_PAIEMENT.INSCRIPTION = TA_INSCRIPTION.IDENTIFIANT 
+        JOIN TA_PAIEMENT ON TA_PAIEMENT.INSCRIPTION = TA_INSCRIPTION.IDENTIFIANT
             AND TA_PAIEMENT.ANNULE IS FALSE
         JOIN TA_PAIEMENT_FRAIS_AJUSTE ON
           TA_PAIEMENT_FRAIS_AJUSTE.PAIEMENT = TA_PAIEMENT.IDENTIFIANT
@@ -180,6 +188,11 @@ public class AdjustedFeeAmounts extends AbstractIdentifiable {
   public static final String FIELD_SCHOOLING_IDENTIFIER = "schoolingIdentifier";
   public static final String FIELD_SCHOOL_IDENTIFIER = "schoolIdentifier";
 
+  public static final String FIELD_INITIAL_AMOUNT_TO_PAY = "initialAmountToPay";
+  public static final String FIELD_INITIAL_REGISTRATION_AMOUNT_TO_PAY =
+      "initialRegistrationAmountToPay";
+  public static final String FIELD_REDUCED_AMOUNT = "reducedAmount";
+  public static final String FIELD_REDUCED_REGISTRATION_AMOUNT = "reducedRegistrationAmount";
   public static final String FIELD_AMOUNT_TO_PAY = "amountToPay";
   public static final String FIELD_REGISTRATION_AMOUNT_TO_PAY = "registrationAmountToPay";
   public static final String FIELD_AMOUNT_PAID = "amountPaid";
@@ -191,7 +204,10 @@ public class AdjustedFeeAmounts extends AbstractIdentifiable {
       "amountLeftToPayLessThanOrEqualsZero";
   public static final String FIELD_EXPECTED_PAYMENT = "expectedPayment";
   public static final String FIELD_LATE_PAYMENT = "latePayment";
+  public static final String FIELD_REDUCED_AMOUNT_IS_ZERO = "reducedAmountIsZero";
+  public static final String FIELD_REDUCED_REGISTRATION_AMOUNT_IS_ZERO =
+      "reducedRegistrationAmountIsZero";
   public static final String FIELD_DEADLINE_IDENTIFIER = "deadlineIdentifier";
-  
+
   public static final String ENTITY_NAME = "AdjustedFeeAmounts";
 }
