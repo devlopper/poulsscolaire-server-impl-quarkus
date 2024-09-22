@@ -44,6 +44,7 @@ class AccountingOperationBusinessTest extends AbstractTest {
   @Test
   void create() {
     AccountingOperationCreateRequestDto request = new AccountingOperationCreateRequestDto();
+    request.setSchoolIdentifier(UUID.randomUUID().toString());
     request.setBeneficiary(UUID.randomUUID().toString());
     request.setAccountType(AccountingAccountType.EXPENDITURE);
     request.setAuditWho("christian");
@@ -56,6 +57,7 @@ class AccountingOperationBusinessTest extends AbstractTest {
   void update() {
     AccountingOperationUpdateRequestDto request = new AccountingOperationUpdateRequestDto();
     request.setIdentifier("toupdate");
+    request.setSchoolIdentifier(UUID.randomUUID().toString());
     request.setBeneficiary(UUID.randomUUID().toString());
     request.setAccountType(AccountingAccountType.EXPENDITURE);
     request.setAuditWho("christian");
