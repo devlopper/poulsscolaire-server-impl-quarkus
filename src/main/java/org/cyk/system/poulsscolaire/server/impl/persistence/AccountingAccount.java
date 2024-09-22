@@ -43,11 +43,11 @@ public class AccountingAccount extends AbstractIdentifiableCodableNamableAuditab
 
   @NotNull
   @ManyToOne
-  @JoinColumn(name = COLUMN_PLAN)
+  @JoinColumn(name = COLUMN_PLAN, nullable = false)
   public AccountingPlan plan;
 
   @NotNull
-  @Column(name = COLUMN_TYPE)
+  @Column(name = COLUMN_TYPE, nullable = false)
   public AccountingAccountType type;
 
   @Transient
