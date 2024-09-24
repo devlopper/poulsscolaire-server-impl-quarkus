@@ -48,7 +48,9 @@ public class AccountingOperationAccountDynamicQuery
         .fieldName(AbstractIdentifiableCodableNamable.FIELD_NAME).build();
 
     projectionBuilder().name(AccountingOperationAccountDto.JSON_OPERATION_IDENTIFIER)
-        .fieldName(AccountingOperationAccount.FIELD_OPERATION_IDENTIFIER).build();
+        .fieldName(fieldName(AccountingOperationAccount.FIELD_OPERATION,
+            AbstractIdentifiable.FIELD_IDENTIFIER))
+        .nameFieldName(AccountingOperationAccount.FIELD_OPERATION_IDENTIFIER).build();
 
     projectionBuilder().name(AccountingOperationAccountDto.JSON_OPERATION_AS_STRING)
         .fieldName(fieldName(AccountingOperationAccount.FIELD_OPERATION,

@@ -6,6 +6,7 @@ import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCoda
 import ci.gouv.dgbf.extension.server.persistence.query.AbstractDynamicQuery;
 import ci.gouv.dgbf.extension.server.service.api.AbstractIdentifiableFilter;
 import ci.gouv.dgbf.extension.server.service.api.entity.AbstractIdentifiableCodableDto;
+import ci.gouv.dgbf.extension.server.service.api.entity.AbstractIdentifiableCodableNamableDto;
 import ci.gouv.dgbf.extension.server.service.api.entity.AbstractIdentifiableDto;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -44,6 +45,9 @@ public class AccountingOperationDynamicQuery extends AbstractDynamicQuery<Accoun
 
     projectionBuilder().name(AbstractIdentifiableCodableDto.JSON_CODE)
         .fieldName(AbstractIdentifiableCodable.FIELD_CODE).build();
+
+    projectionBuilder().name(AbstractIdentifiableCodableNamableDto.JSON_NAME)
+        .fieldName(AbstractIdentifiableCodableNamable.FIELD_NAME).build();
 
     projectionBuilder().name(AccountingOperationDto.JSON_SCHOOL_IDENTIFIER)
         .fieldName(AccountingOperation.FIELD_SCHOOL_IDENTIFIER).build();
