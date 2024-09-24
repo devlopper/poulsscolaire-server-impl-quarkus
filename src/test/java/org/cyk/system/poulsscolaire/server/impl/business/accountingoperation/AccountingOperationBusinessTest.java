@@ -47,6 +47,7 @@ class AccountingOperationBusinessTest extends AbstractTest {
     request.setSchoolIdentifier(UUID.randomUUID().toString());
     request.setBeneficiary(UUID.randomUUID().toString());
     request.setAccountType(AccountingAccountType.EXPENDITURE);
+    request.setName(UUID.randomUUID().toString());
     request.setAuditWho("christian");
     long count = count(entityManager, AccountingOperation.ENTITY_NAME);
     createBusiness.process(request);
@@ -60,6 +61,7 @@ class AccountingOperationBusinessTest extends AbstractTest {
     request.setSchoolIdentifier(UUID.randomUUID().toString());
     request.setBeneficiary(UUID.randomUUID().toString());
     request.setAccountType(AccountingAccountType.EXPENDITURE);
+    request.setName(UUID.randomUUID().toString());
     request.setAuditWho("christian");
     long count = count(entityManager, AccountingOperation.ENTITY_NAME);
     updateBusiness.process(request);

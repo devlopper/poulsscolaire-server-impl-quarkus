@@ -60,8 +60,17 @@ public class AccountingOperationAccountDynamicQuery
             AbstractIdentifiable.FIELD_IDENTIFIER))
         .nameFieldName(AccountingOperationAccount.FIELD_ACCOUNT_IDENTIFIER).build();
 
+    projectionBuilder().name(AccountingOperationAccountDto.JSON_ACCOUNT_AS_STRING)
+        .expression(
+            formatConcatCodeName(fieldName(variableName, AccountingOperationAccount.FIELD_ACCOUNT)))
+        .resultConsumer((i, a) -> i.accountAsString = a.getNextAsString()).build();
+
     projectionBuilder().name(AccountingOperationAccountDto.JSON_AMOUNT)
-        .fieldName(AccountingOperationAccount.FIELD_AMOUNT_AS_STRING).build();
+        .fieldName(AccountingOperationAccount.FIELD_AMOUNT).build();
+
+    projectionBuilder().name(AccountingOperationAccountDto.JSON_AMOUNT_AS_STRING)
+        .fieldName(AccountingOperationAccount.FIELD_AMOUNT)
+        .nameFieldName(AccountingOperationAccount.FIELD_AMOUNT_AS_STRING).build();
 
     // Jointures
 
