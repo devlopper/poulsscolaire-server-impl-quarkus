@@ -42,12 +42,49 @@ class AccountingOperationBusinessTest extends AbstractTest {
   AccountingOperationDeleteBusiness deleteBusiness;
 
   @Test
+  void computeName_whenBlank() {
+    AccountingOperation accountingOperation = new AccountingOperation();
+    accountingOperation.accountType = AccountingAccountType.EXPENDITURE;
+    createBusiness.computeName(accountingOperation, 0);
+    assertEquals("Dépense 0", accountingOperation.name);
+  }
+  
+  @Test
+  void computeName_whenNotBlank() {
+    AccountingOperation accountingOperation = new AccountingOperation();
+    accountingOperation.name = "myname";
+    accountingOperation.accountType = AccountingAccountType.EXPENDITURE;
+    createBusiness.computeName(accountingOperation, 0);
+    assertEquals("myname", accountingOperation.name);
+  }
+  
+  @Test
+  void computeBeneficiary_whenBlank() {
+    AccountingOperationCreateRequestDto request = new AccountingOperationCreateRequestDto();
+    
+    AccountingOperation accountingOperation = new AccountingOperation();
+    accountingOperation.schoolIdentifier = "1";
+    accountingOperation.accountType = AccountingAccountType.INCOME;
+    createBusiness.computeBeneficiary(accountingOperation, request);
+    assertEquals("CSP Cocody", accountingOperation.beneficiary);
+  }
+  
+  @Test
+  void computeBeneficiary_whenNotBlank() {
+    AccountingOperationCreateRequestDto request = new AccountingOperationCreateRequestDto();
+    request.setBeneficiary("b");
+    AccountingOperation accountingOperation = new AccountingOperation();
+    accountingOperation.accountType = AccountingAccountType.INCOME;
+    createBusiness.computeBeneficiary(accountingOperation, request);
+    assertEquals("b", accountingOperation.beneficiary);
+  }
+  
+  @Test
   void create() {
     AccountingOperationCreateRequestDto request = new AccountingOperationCreateRequestDto();
     request.setSchoolIdentifier(UUID.randomUUID().toString());
     request.setBeneficiary(UUID.randomUUID().toString());
     request.setAccountType(AccountingAccountType.EXPENDITURE);
-    request.setName(UUID.randomUUID().toString());
     request.setAuditWho("christian");
     long count = count(entityManager, AccountingOperation.ENTITY_NAME);
     createBusiness.process(request);

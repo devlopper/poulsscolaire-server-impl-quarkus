@@ -27,7 +27,10 @@ public class AccountingOperationUpdateBusiness
   @Inject
   @Getter
   AccountingOperationValidator validator;
-  
+
+  @Inject
+  AccountingOperationCreateBusiness createBusiness;
+
   @Override
   protected void validate(AccountingOperationUpdateRequestDto request, StringList messages,
       AccountingOperation accountingOperation) {
@@ -35,5 +38,13 @@ public class AccountingOperationUpdateBusiness
     accountingOperation.schoolIdentifier = request.getSchoolIdentifier();
     accountingOperation.beneficiary = request.getBeneficiary();
     accountingOperation.accountType = request.getAccountType();
+  }
+
+  @Override
+  protected void prepare(AccountingOperation accountingOperation,
+      AccountingOperationUpdateRequestDto request) {
+    super.prepare(accountingOperation, request);
+    createBusiness.computeName(accountingOperation, persistence.countAll());
+    createBusiness.computeBeneficiary(accountingOperation, request);
   }
 }

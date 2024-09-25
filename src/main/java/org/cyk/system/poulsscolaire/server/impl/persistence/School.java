@@ -1,7 +1,6 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableNamable;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Transient;
 import org.hibernate.annotations.Immutable;
@@ -18,7 +17,7 @@ import org.hibernate.annotations.Subselect;
 @Subselect(School.QUERY)
 public class School extends AbstractIdentifiableCodableNamable {
 
-  @Column(name = COLUMN_OPENED_PERIOD_IDENTIFIER)
+  @Transient
   public String openedPeriodIdentifier;
   
   @Transient
