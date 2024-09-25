@@ -1,6 +1,7 @@
 package org.cyk.system.poulsscolaire.server.impl.business.accountingoperation;
 
 import ci.gouv.dgbf.extension.core.Core;
+import ci.gouv.dgbf.extension.core.StringList;
 import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableCreateBusiness;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -33,6 +34,13 @@ public class AccountingOperationCreateBusiness
 
   @Inject
   SchoolPersistence schoolPersistence;
+
+  @Override
+  protected Object[] validate(AccountingOperationCreateRequestDto request, StringList messages) {
+    validator.validateAccountType(request.getAccountType(), messages);
+    validator.validateBeneficiary(request.getBeneficiary(), request.getAccountType(), messages);
+    return new Object[] {};
+  }
 
   @Override
   protected void setFields(AccountingOperation accountingOperation, Object[] array,

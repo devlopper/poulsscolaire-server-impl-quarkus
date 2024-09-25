@@ -30,6 +30,7 @@ public class AccountingOperationDynamicQuery extends AbstractDynamicQuery<Accoun
   EntityManager entityManager;
 
   String schoolVariableName;
+  String amountVariableName;
 
   /**
    * Cette méthode permet d'instancier un object.
@@ -37,6 +38,7 @@ public class AccountingOperationDynamicQuery extends AbstractDynamicQuery<Accoun
   public AccountingOperationDynamicQuery() {
     super(AccountingOperation.class);
     schoolVariableName = "s";
+    amountVariableName = "a";
   }
 
   @PostConstruct
@@ -68,11 +70,19 @@ public class AccountingOperationDynamicQuery extends AbstractDynamicQuery<Accoun
         .fieldName(AccountingOperation.FIELD_ACCOUNT_TYPE)
         .nameFieldName(AccountingOperation.FIELD_ACCOUNT_TYPE_AS_STRING).build();
 
+    projectionBuilder().name(AccountingOperationDto.JSON_AMOUNT_AS_STRING)
+        .tupleVariableName(amountVariableName).fieldName(AccountingOperationAmount.FIELD_VALUE)
+        .nameFieldName(AccountingOperation.FIELD_AMOUNT_AS_STRING).build();
+
     // Jointures
     joinBuilder().projectionsNames(AccountingOperationDto.JSON_SCHOOL_AS_STRING)
         .entityClass(School.class).tupleVariableName(schoolVariableName)
         .parentFieldName(AccountingOperation.FIELD_SCHOOL_IDENTIFIER).leftInnerOrRight(true)
         .build();
+
+    joinBuilder().projectionsNames(AccountingOperationDto.JSON_AMOUNT_AS_STRING)
+        .entityClass(AccountingOperationAmount.class).tupleVariableName(amountVariableName)
+        .leftInnerOrRight(true).build();
 
     // Prédicats
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)

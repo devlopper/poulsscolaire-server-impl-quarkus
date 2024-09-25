@@ -50,12 +50,16 @@ public class AccountingOperation extends AbstractIdentifiableCodableNamableAudit
   @Transient
   public String accountTypeAsString;
 
+  @Transient
+  public String amountAsString;
+  
   public static final String FIELD_SCHOOL_IDENTIFIER = "schoolIdentifier";
   public static final String FIELD_SCHOOL_AS_STRING = "schoolAsString";
   public static final String FIELD_ACCOUNT_TYPE = "accountType";
   public static final String FIELD_ACCOUNT_TYPE_AS_STRING = "accountTypeAsString";
   public static final String FIELD_BENEFICIARY = "beneficiary";
-
+  public static final String FIELD_AMOUNT_AS_STRING = "amountAsString";
+  
   public static final String ENTITY_NAME = "AccountingOperation";
   public static final String TABLE_NAME = "TA_OPERATION_COMPTABLE";
 

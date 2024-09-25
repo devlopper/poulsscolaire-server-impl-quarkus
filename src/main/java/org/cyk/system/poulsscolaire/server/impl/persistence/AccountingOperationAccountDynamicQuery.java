@@ -14,6 +14,7 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.accounting.AccountingOperationAccountDto;
+import org.cyk.system.poulsscolaire.server.api.accounting.AccountingOperationAccountFilter;
 
 /**
  * Cette classe représente la requête dynamique de {@link AccountingOperationAccount}.
@@ -80,6 +81,11 @@ public class AccountingOperationAccountDynamicQuery
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
         .valueFunction(AbstractIdentifiableFilter::getIdentifier).build();
+
+    predicateBuilder().name(AccountingOperationAccountFilter.JSON_OPERATION_IDENTIFIER)
+        .fieldName(fieldName(AccountingOperationAccount.FIELD_OPERATION,
+            AbstractIdentifiable.FIELD_IDENTIFIER))
+        .valueFunction(AccountingOperationAccountFilter::getOperationIdentifier).build();
 
     // Ordres par défaut
     orderBuilder().fieldName(AbstractIdentifiableCodableNamable.FIELD_NAME).build();

@@ -35,15 +35,19 @@ public class AccountingOperationUpdateBusiness
   protected void validate(AccountingOperationUpdateRequestDto request, StringList messages,
       AccountingOperation accountingOperation) {
     super.validate(request, messages, accountingOperation);
-    accountingOperation.schoolIdentifier = request.getSchoolIdentifier();
-    accountingOperation.beneficiary = request.getBeneficiary();
-    accountingOperation.accountType = request.getAccountType();
+    validator.validateAccountType(request.getAccountType(), messages);
+    validator.validateBeneficiary(request.getBeneficiary(), request.getAccountType(), messages);
   }
 
   @Override
   protected void prepare(AccountingOperation accountingOperation,
       AccountingOperationUpdateRequestDto request) {
     super.prepare(accountingOperation, request);
+    
+    accountingOperation.schoolIdentifier = request.getSchoolIdentifier();
+    accountingOperation.beneficiary = request.getBeneficiary();
+    accountingOperation.accountType = request.getAccountType();
+    
     createBusiness.computeName(accountingOperation, persistence.countAll());
     createBusiness.computeBeneficiary(accountingOperation, request);
   }

@@ -1,5 +1,6 @@
 package org.cyk.system.poulsscolaire.server.impl.business.accountingaccountoperation;
 
+import ci.gouv.dgbf.extension.core.Core;
 import ci.gouv.dgbf.extension.core.StringList;
 import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableCreateBusiness;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -46,6 +47,7 @@ public class AccountingOperationAccountCreateBusiness extends
         operationValidator.validateInstanceByIdentifier(request.getOperationIdentifier(), messages);
     AccountingAccount account =
         accountValidator.validateInstanceByIdentifier(request.getAccountIdentifier(), messages);
+    validator.validateAmount(request.getAmount(), messages);
     return new Object[] {operation, account};
   }
 
@@ -53,9 +55,21 @@ public class AccountingOperationAccountCreateBusiness extends
   protected void setFields(AccountingOperationAccount accountingOperationAccount, Object[] array,
       AccountingOperationAccountCreateRequestDto request) {
     super.setFields(accountingOperationAccount, array, request);
-    accountingOperationAccount.setCode("CO" + persistence.countAll());
     accountingOperationAccount.operation = (AccountingOperation) array[0];
     accountingOperationAccount.account = (AccountingAccount) array[1];
     accountingOperationAccount.amount = request.getAmount();
+    accountingOperationAccount.setCode(computeCode(accountingOperationAccount));
+    accountingOperationAccount.setName(computeName(accountingOperationAccount));
+  }
+
+  String computeCode(AccountingOperationAccount accountingOperationAccount) {
+    return "CO" + accountingOperationAccount.operation.schoolIdentifier + persistence.countAll();
+  }
+
+  String computeName(AccountingOperationAccount accountingOperationAccount) {
+    if (Core.isStringBlank(accountingOperationAccount.name)) {
+      return accountingOperationAccount.account.name;
+    }
+    return accountingOperationAccount.name;
   }
 }
