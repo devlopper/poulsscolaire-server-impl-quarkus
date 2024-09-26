@@ -14,12 +14,12 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 import org.cyk.system.poulsscolaire.server.api.accounting.AccountingOperationAccountDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.AccountingOperationAccountService;
-import org.cyk.system.poulsscolaire.server.impl.business.accountingaccountoperation.AccountingOperationAccountCreateBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.accountingaccountoperation.AccountingOperationAccountDeleteBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.accountingaccountoperation.AccountingOperationAccountReadByIdentifierBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.accountingaccountoperation.AccountingOperationAccountReadManyBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.accountingaccountoperation.AccountingOperationAccountReadOneBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.accountingaccountoperation.AccountingOperationAccountUpdateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.accountingoperationaccount.AccountingOperationAccountCreateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.accountingoperationaccount.AccountingOperationAccountDeleteBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.accountingoperationaccount.AccountingOperationAccountReadByIdentifierBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.accountingoperationaccount.AccountingOperationAccountReadManyBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.accountingoperationaccount.AccountingOperationAccountReadOneBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.accountingoperationaccount.AccountingOperationAccountUpdateBusiness;
 
 /**
  * Cette classe représente l'implémentation de {@link AccountingOperationAccountService}.

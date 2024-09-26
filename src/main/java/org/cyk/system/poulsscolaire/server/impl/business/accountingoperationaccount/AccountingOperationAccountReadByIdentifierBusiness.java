@@ -1,6 +1,6 @@
-package org.cyk.system.poulsscolaire.server.impl.business.accountingaccountoperation;
+package org.cyk.system.poulsscolaire.server.impl.business.accountingoperationaccount;
 
-import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableReadOneBusiness;
+import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableReadByIdentifierBusiness;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
@@ -10,18 +10,18 @@ import org.cyk.system.poulsscolaire.server.impl.persistence.AccountingOperationA
 import org.cyk.system.poulsscolaire.server.impl.persistence.AccountingOperationAccountPersistence;
 
 /**
- * Cette classe représente l'obtention de {@link AccountingOperationAccount}.
+ * Cette classe représente l'obtention par identifiant de {@link AccountingOperationAccount}.
  *
  * @author Christian
  *
  */
 @ApplicationScoped
-public class AccountingOperationAccountReadOneBusiness extends
-    AbstractIdentifiableReadOneBusiness<AccountingOperationAccount,
+public class AccountingOperationAccountReadByIdentifierBusiness extends
+    AbstractIdentifiableReadByIdentifierBusiness<AccountingOperationAccount,
         AccountingOperationAccountPersistence, AccountingOperationAccountDynamicQuery,
         AccountingOperationAccountDto, AccountingOperationAccountMapper> {
 
-  protected AccountingOperationAccountReadOneBusiness() {
+  protected AccountingOperationAccountReadByIdentifierBusiness() {
     super(AccountingOperationAccountDto.class);
   }
 

@@ -1,28 +1,30 @@
-package org.cyk.system.poulsscolaire.server.impl.business.accountingaccountoperation;
+package org.cyk.system.poulsscolaire.server.impl.business.accountingoperationaccount;
 
-import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableReadByIdentifierBusiness;
+import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableReadManyBusiness;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.accounting.AccountingOperationAccountDto;
+import org.cyk.system.poulsscolaire.server.api.accounting.AccountingOperationAccountService.AccountingOperationAccountGetManyResponseDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AccountingOperationAccount;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AccountingOperationAccountDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AccountingOperationAccountPersistence;
 
 /**
- * Cette classe représente l'obtention par identifiant de {@link AccountingOperationAccount}.
+ * Cette classe représente l'obtention de {@link AccountingOperationAccount}.
  *
  * @author Christian
  *
  */
 @ApplicationScoped
-public class AccountingOperationAccountReadByIdentifierBusiness extends
-    AbstractIdentifiableReadByIdentifierBusiness<AccountingOperationAccount,
+public class AccountingOperationAccountReadManyBusiness extends
+    AbstractIdentifiableReadManyBusiness<AccountingOperationAccount,
         AccountingOperationAccountPersistence, AccountingOperationAccountDynamicQuery,
-        AccountingOperationAccountDto, AccountingOperationAccountMapper> {
+        AccountingOperationAccountDto, AccountingOperationAccountMapper,
+        AccountingOperationAccountGetManyResponseDto> {
 
-  protected AccountingOperationAccountReadByIdentifierBusiness() {
-    super(AccountingOperationAccountDto.class);
+  protected AccountingOperationAccountReadManyBusiness() {
+    super(AccountingOperationAccountGetManyResponseDto.class);
   }
 
   @Inject

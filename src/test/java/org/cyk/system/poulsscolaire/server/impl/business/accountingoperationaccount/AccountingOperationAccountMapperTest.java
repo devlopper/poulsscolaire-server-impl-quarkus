@@ -8,7 +8,6 @@ import ci.gouv.dgbf.extension.server.service.api.entity.AuditDto;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import org.cyk.system.poulsscolaire.server.api.accounting.AccountingOperationAccountDto;
-import org.cyk.system.poulsscolaire.server.impl.business.accountingaccountoperation.AccountingOperationAccountMapper;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AccountingOperationAccount;
 import org.junit.jupiter.api.Test;
 

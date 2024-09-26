@@ -1,4 +1,4 @@
-package org.cyk.system.poulsscolaire.server.impl.business.accountingaccountoperation;
+package org.cyk.system.poulsscolaire.server.impl.business.accountingoperationaccount;
 
 import ci.gouv.dgbf.extension.core.StringList;
 import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableUpdateBusiness;
@@ -45,6 +45,8 @@ public class AccountingOperationAccountUpdateBusiness extends
         operationValidator.validateInstanceByIdentifier(request.getOperationIdentifier(), messages);
     accountingOperationAccount.account =
         accountValidator.validateInstanceByIdentifier(request.getAccountIdentifier(), messages);
+    validator.validateAccount(accountingOperationAccount.operation,
+        accountingOperationAccount.account, messages);
     accountingOperationAccount.amount = request.getAmount();
   }
 }

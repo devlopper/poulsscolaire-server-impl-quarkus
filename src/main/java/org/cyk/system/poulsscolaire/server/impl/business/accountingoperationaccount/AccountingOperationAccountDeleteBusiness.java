@@ -1,4 +1,4 @@
-package org.cyk.system.poulsscolaire.server.impl.business.accountingaccountoperation;
+package org.cyk.system.poulsscolaire.server.impl.business.accountingoperationaccount;
 
 import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableDeleteBusiness;
 import ci.gouv.dgbf.extension.server.service.api.request.DeleteOneRequestDto;
