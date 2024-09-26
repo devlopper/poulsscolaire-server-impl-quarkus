@@ -74,6 +74,10 @@ public class AccountingOperationDynamicQuery extends AbstractDynamicQuery<Accoun
         .tupleVariableName(amountVariableName).fieldName(AccountingOperationAmount.FIELD_VALUE)
         .nameFieldName(AccountingOperation.FIELD_AMOUNT_AS_STRING).build();
 
+    projectionBuilder().name(AccountingOperationDto.JSON_PLAN_IDENTIFIER)
+        .fieldName(fieldName(AccountingOperation.FIELD_PLAN, AbstractIdentifiable.FIELD_IDENTIFIER))
+        .nameFieldName(AccountingOperation.FIELD_PLAN_IDENTIFIER).build();
+
     // Jointures
     joinBuilder().projectionsNames(AccountingOperationDto.JSON_SCHOOL_AS_STRING)
         .entityClass(School.class).tupleVariableName(schoolVariableName)

@@ -75,6 +75,10 @@ public class AccountingAccountDynamicQuery extends AbstractDynamicQuery<Accounti
         .fieldName(AccountingAccount.FIELD_TYPE).valueFunction(AccountingAccountFilter::getType)
         .build();
 
+    predicateBuilder().name(AccountingAccountFilter.JSON_PLAN_IDENTIFIER)
+        .fieldName(fieldName(AccountingAccount.FIELD_PLAN, AbstractIdentifiable.FIELD_IDENTIFIER))
+        .valueFunction(AccountingAccountFilter::getPlanIdentifier).build();
+
     // Ordres par défaut
     orderBuilder().fieldName(AbstractIdentifiableCodableNamable.FIELD_NAME).build();
     orderBuilder().fieldName(AbstractIdentifiableCodable.FIELD_CODE).build();

@@ -59,6 +59,9 @@ public class AccountingOperation extends AbstractIdentifiableCodableNamableAudit
   public String schoolAsString;
 
   @Transient
+  public String planIdentifier;
+  
+  @Transient
   public String planAsString;
   
   @Transient
