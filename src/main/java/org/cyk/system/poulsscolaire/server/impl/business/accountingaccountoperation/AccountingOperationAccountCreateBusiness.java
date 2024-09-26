@@ -67,9 +67,7 @@ public class AccountingOperationAccountCreateBusiness extends
   }
 
   String computeName(AccountingOperationAccount accountingOperationAccount) {
-    if (Core.isStringBlank(accountingOperationAccount.name)) {
-      return accountingOperationAccount.account.name;
-    }
-    return accountingOperationAccount.name;
+    return Core.getOrDefaultIfBlank(accountingOperationAccount.name,
+        accountingOperationAccount.account.name);
   }
 }

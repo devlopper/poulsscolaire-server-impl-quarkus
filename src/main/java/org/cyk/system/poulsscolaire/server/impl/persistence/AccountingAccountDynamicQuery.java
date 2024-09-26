@@ -14,6 +14,7 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.accounting.AccountingAccountDto;
+import org.cyk.system.poulsscolaire.server.api.accounting.AccountingAccountFilter;
 
 /**
  * Cette classe représente la requête dynamique de {@link AccountingAccount}.
@@ -47,10 +48,9 @@ public class AccountingAccountDynamicQuery extends AbstractDynamicQuery<Accounti
         .fieldName(AbstractIdentifiableCodableNamable.FIELD_NAME).build();
 
     projectionBuilder().name(AccountingAccountDto.JSON_PLAN_IDENTIFIER)
-    .fieldName(
-        fieldName(AccountingAccount.FIELD_PLAN, AbstractIdentifiable.FIELD_IDENTIFIER))
-    .nameFieldName(AccountingAccount.FIELD_PLAN_IDENTIFIER).build();
-    
+        .fieldName(fieldName(AccountingAccount.FIELD_PLAN, AbstractIdentifiable.FIELD_IDENTIFIER))
+        .nameFieldName(AccountingAccount.FIELD_PLAN_IDENTIFIER).build();
+
     projectionBuilder().name(AccountingAccountDto.JSON_PLAN_AS_STRING)
         .fieldName(
             fieldName(AccountingAccount.FIELD_PLAN, AbstractIdentifiableCodableNamable.FIELD_NAME))
@@ -70,6 +70,10 @@ public class AccountingAccountDynamicQuery extends AbstractDynamicQuery<Accounti
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
         .valueFunction(AbstractIdentifiableFilter::getIdentifier).build();
+
+    predicateBuilder().name(AccountingAccountFilter.JSON_TYPE)
+        .fieldName(AccountingAccount.FIELD_TYPE).valueFunction(AccountingAccountFilter::getType)
+        .build();
 
     // Ordres par défaut
     orderBuilder().fieldName(AbstractIdentifiableCodableNamable.FIELD_NAME).build();

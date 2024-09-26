@@ -8,8 +8,10 @@ import jakarta.inject.Inject;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.accounting.AccountingOperationService.AccountingOperationCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.AccountingOperationService.AccountingOperationSaveRequestDto;
+import org.cyk.system.poulsscolaire.server.impl.business.accountingplan.AccountingPlanValidator;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AccountingOperation;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AccountingOperationPersistence;
+import org.cyk.system.poulsscolaire.server.impl.persistence.AccountingPlan;
 import org.cyk.system.poulsscolaire.server.impl.persistence.School;
 import org.cyk.system.poulsscolaire.server.impl.persistence.SchoolPersistence;
 
@@ -33,13 +35,18 @@ public class AccountingOperationCreateBusiness
   AccountingOperationValidator validator;
 
   @Inject
+  AccountingPlanValidator planValidator;
+
+  @Inject
   SchoolPersistence schoolPersistence;
 
   @Override
   protected Object[] validate(AccountingOperationCreateRequestDto request, StringList messages) {
+    AccountingPlan plan =
+        planValidator.validateInstanceByIdentifier(request.getPlanIdentifier(), messages);
     validator.validateAccountType(request.getAccountType(), messages);
     validator.validateBeneficiary(request.getBeneficiary(), request.getAccountType(), messages);
-    return new Object[] {};
+    return new Object[] {plan};
   }
 
   @Override
@@ -47,6 +54,7 @@ public class AccountingOperationCreateBusiness
       AccountingOperationCreateRequestDto request) {
     super.setFields(accountingOperation, array, request);
     long count = persistence.countAll();
+    accountingOperation.plan = (AccountingPlan) array[0];
     accountingOperation.accountType = request.getAccountType();
     accountingOperation.setCode(request.getAccountType().getCode() + count);
 

@@ -6,6 +6,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.accounting.AccountingOperationService.AccountingOperationUpdateRequestDto;
+import org.cyk.system.poulsscolaire.server.impl.business.accountingplan.AccountingPlanValidator;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AccountingOperation;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AccountingOperationPersistence;
 
@@ -29,12 +30,17 @@ public class AccountingOperationUpdateBusiness
   AccountingOperationValidator validator;
 
   @Inject
+  AccountingPlanValidator planValidator;
+
+  @Inject
   AccountingOperationCreateBusiness createBusiness;
 
   @Override
   protected void validate(AccountingOperationUpdateRequestDto request, StringList messages,
       AccountingOperation accountingOperation) {
     super.validate(request, messages, accountingOperation);
+    accountingOperation.plan =
+        planValidator.validateInstanceByIdentifier(request.getPlanIdentifier(), messages);
     validator.validateAccountType(request.getAccountType(), messages);
     validator.validateBeneficiary(request.getBeneficiary(), request.getAccountType(), messages);
   }
@@ -43,11 +49,10 @@ public class AccountingOperationUpdateBusiness
   protected void prepare(AccountingOperation accountingOperation,
       AccountingOperationUpdateRequestDto request) {
     super.prepare(accountingOperation, request);
-    
     accountingOperation.schoolIdentifier = request.getSchoolIdentifier();
     accountingOperation.beneficiary = request.getBeneficiary();
     accountingOperation.accountType = request.getAccountType();
-    
+
     createBusiness.computeName(accountingOperation, persistence.countAll());
     createBusiness.computeBeneficiary(accountingOperation, request);
   }
