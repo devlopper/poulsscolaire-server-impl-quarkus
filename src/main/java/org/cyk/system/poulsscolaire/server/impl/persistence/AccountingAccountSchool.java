@@ -53,8 +53,8 @@ public class AccountingAccountSchool extends AbstractIdentifiableAuditable {
   public static final String FIELD_ACCOUNT_IDENTIFIER = "accountIdentifier";
   public static final String FIELD_ACCOUNT_AS_STRING = "accountAsString";
 
-  public static final String FIELD_SCHOOL_IDENTIFIER = "accountIdentifier";
-  public static final String FIELD_SCHOOL_AS_STRING = "accountAsString";
+  public static final String FIELD_SCHOOL_IDENTIFIER = "schoolIdentifier";
+  public static final String FIELD_SCHOOL_AS_STRING = "schoolAsString";
 
   public static final String ENTITY_NAME = "AccountingAccountSchool";
   public static final String TABLE_NAME = "TA_COMPTE_COMPTABLE_ECOLE";

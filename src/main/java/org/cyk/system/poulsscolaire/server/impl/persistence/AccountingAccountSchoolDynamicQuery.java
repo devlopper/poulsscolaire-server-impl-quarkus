@@ -30,11 +30,14 @@ public class AccountingAccountSchoolDynamicQuery
   @Getter
   EntityManager entityManager;
 
+  String schoolVariableName;
+
   /**
    * Cette méthode permet d'instancier un object.
    */
   public AccountingAccountSchoolDynamicQuery() {
     super(AccountingAccountSchool.class);
+    schoolVariableName = "s";
   }
 
   @PostConstruct
@@ -61,8 +64,16 @@ public class AccountingAccountSchoolDynamicQuery
     projectionBuilder().name(AccountingAccountSchoolDto.JSON_SCHOOL_IDENTIFIER)
         .fieldName(AccountingAccountSchool.FIELD_SCHOOL_IDENTIFIER).build();
 
-    // Jointures
+    projectionBuilder().name(AccountingAccountSchoolDto.JSON_SCHOOL_AS_STRING)
+        .tupleVariableName(schoolVariableName)
+        .fieldName(AbstractIdentifiableCodableNamable.FIELD_NAME)
+        .nameFieldName(AccountingAccountSchool.FIELD_SCHOOL_AS_STRING).build();
 
+    // Jointures
+    joinBuilder().projectionsNames(AccountingAccountSchoolDto.JSON_SCHOOL_AS_STRING)
+        .entityClass(School.class).tupleVariableName(schoolVariableName)
+        .parentFieldName(AccountingAccountSchool.FIELD_SCHOOL_IDENTIFIER).leftInnerOrRight(true)
+        .build();
 
     // Prédicats
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)
