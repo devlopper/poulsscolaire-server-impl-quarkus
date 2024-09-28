@@ -45,6 +45,9 @@ public class AccountingAccountSchool extends AbstractIdentifiableAuditable {
 
   @Transient
   public String accountAsString;
+  
+  @Transient
+  public String planAsString;
 
   @Transient
   public String schoolAsString;
@@ -52,7 +55,8 @@ public class AccountingAccountSchool extends AbstractIdentifiableAuditable {
   public static final String FIELD_ACCOUNT = "account";
   public static final String FIELD_ACCOUNT_IDENTIFIER = "accountIdentifier";
   public static final String FIELD_ACCOUNT_AS_STRING = "accountAsString";
-
+  public static final String FIELD_PLAN_AS_STRING = "planAsString";
+  
   public static final String FIELD_SCHOOL_IDENTIFIER = "schoolIdentifier";
   public static final String FIELD_SCHOOL_AS_STRING = "schoolAsString";
 

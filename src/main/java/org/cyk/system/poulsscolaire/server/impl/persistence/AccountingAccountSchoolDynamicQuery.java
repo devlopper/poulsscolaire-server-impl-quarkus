@@ -61,6 +61,11 @@ public class AccountingAccountSchoolDynamicQuery
             AbstractIdentifiableCodableNamable.FIELD_NAME))
         .nameFieldName(AccountingAccountSchool.FIELD_ACCOUNT_AS_STRING).build();
 
+    projectionBuilder().name(AccountingAccountSchoolDto.JSON_PLAN_AS_STRING)
+        .fieldName(fieldName(AccountingAccountSchool.FIELD_ACCOUNT, AccountingAccount.FIELD_PLAN,
+            AbstractIdentifiableCodableNamable.FIELD_NAME))
+        .nameFieldName(AccountingAccountSchool.FIELD_PLAN_AS_STRING).build();
+
     projectionBuilder().name(AccountingAccountSchoolDto.JSON_SCHOOL_IDENTIFIER)
         .fieldName(AccountingAccountSchool.FIELD_SCHOOL_IDENTIFIER).build();
 
