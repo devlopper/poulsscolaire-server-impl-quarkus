@@ -1,6 +1,7 @@
 package org.cyk.system.poulsscolaire.server.impl.service;
 
 import ci.gouv.dgbf.extension.core.ResponseBuilder;
+import ci.gouv.dgbf.extension.server.service.api.request.ByIdentifierRequestDto;
 import ci.gouv.dgbf.extension.server.service.api.request.DeleteOneRequestDto;
 import ci.gouv.dgbf.extension.server.service.api.request.GetByIdentifierRequestDto;
 import ci.gouv.dgbf.extension.server.service.api.request.GetManyRequestDto;
@@ -14,6 +15,7 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 import org.cyk.system.poulsscolaire.server.api.accounting.AccountingOperationDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.AccountingOperationService;
+import org.cyk.system.poulsscolaire.server.impl.business.accountingoperation.AccountingOperationCancelBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.accountingoperation.AccountingOperationCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.accountingoperation.AccountingOperationDeleteBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.accountingoperation.AccountingOperationReadByIdentifierBusiness;
@@ -46,6 +48,9 @@ public class AccountingOperationServiceImpl extends AbstractServiceImpl
   @Inject
   AccountingOperationUpdateBusiness updateBusiness;
 
+  @Inject
+  AccountingOperationCancelBusiness cancelBusiness;
+  
   @Inject
   AccountingOperationDeleteBusiness deleteBusiness;
 
@@ -85,6 +90,14 @@ public class AccountingOperationServiceImpl extends AbstractServiceImpl
   @Override
   public Response update(AccountingOperationUpdateRequestDto request) {
     IdentifiableResponseDto dto = updateBusiness.process(request);
+    ResponseBuilder responseBuilder = new ResponseBuilder();
+    responseBuilder.setDto(dto);
+    return responseBuilder.build();
+  }
+  
+  @Override
+  public Response cancel(ByIdentifierRequestDto request) {
+    IdentifiableResponseDto dto = cancelBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);
     return responseBuilder.build();

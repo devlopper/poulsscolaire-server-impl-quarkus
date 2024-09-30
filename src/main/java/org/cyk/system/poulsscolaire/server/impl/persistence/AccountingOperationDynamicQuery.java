@@ -101,6 +101,10 @@ public class AccountingOperationDynamicQuery extends AbstractDynamicQuery<Accoun
         .fieldName(AccountingOperation.FIELD_ACCOUNT_TYPE)
         .valueFunction(AccountingOperationFilter::getAccountType).build();
 
+    predicateBuilder().name(AccountingOperationFilter.JSON_CANCELED)
+        .fieldName(AccountingOperation.FIELD_CANCELED)
+        .valueFunction(AccountingOperationFilter::getCanceled).build();
+
     // Ordres par défaut
     orderBuilder().fieldName(AbstractIdentifiableCodable.FIELD_CODE).build();
   }

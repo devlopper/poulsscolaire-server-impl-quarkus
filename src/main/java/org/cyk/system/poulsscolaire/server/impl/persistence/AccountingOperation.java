@@ -55,6 +55,10 @@ public class AccountingOperation extends AbstractIdentifiableCodableNamableAudit
   @Column(name = COLUMN_BENEFICIARY, nullable = false)
   public String beneficiary;
 
+  @NotNull
+  @Column(name = COLUMN_CANCELED, nullable = false)
+  public Boolean canceled;
+  
   @Transient
   public String schoolAsString;
 
@@ -79,6 +83,7 @@ public class AccountingOperation extends AbstractIdentifiableCodableNamableAudit
   public static final String FIELD_ACCOUNT_TYPE_AS_STRING = "accountTypeAsString";
   public static final String FIELD_BENEFICIARY = "beneficiary";
   public static final String FIELD_AMOUNT_AS_STRING = "amountAsString";
+  public static final String FIELD_CANCELED = "canceled";
   
   public static final String ENTITY_NAME = "AccountingOperation";
   public static final String TABLE_NAME = "TA_OPERATION_COMPTABLE";
@@ -87,4 +92,5 @@ public class AccountingOperation extends AbstractIdentifiableCodableNamableAudit
   public static final String COLUMN_PLAN_IDENTIFIER = "PLAN";
   public static final String COLUMN_ACCOUNT_TYPE = "TYPE_COMPTE";
   public static final String COLUMN_BENEFICIARY = "BENEFICIAIRE";
+  public static final String COLUMN_CANCELED = "ANNULEE";
 }

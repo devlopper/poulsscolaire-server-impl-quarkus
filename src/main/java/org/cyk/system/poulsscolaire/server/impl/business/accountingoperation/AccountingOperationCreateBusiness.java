@@ -61,6 +61,8 @@ public class AccountingOperationCreateBusiness
     computeName(accountingOperation, count);
     accountingOperation.schoolIdentifier = request.getSchoolIdentifier();
     computeBeneficiary(accountingOperation, request);
+    
+    accountingOperation.canceled = false;
   }
 
   void computeName(AccountingOperation accountingOperation, long count) {
