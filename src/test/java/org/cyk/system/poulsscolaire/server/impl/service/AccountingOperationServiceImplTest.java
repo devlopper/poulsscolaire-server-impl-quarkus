@@ -12,6 +12,7 @@ import io.restassured.http.ContentType;
 import org.cyk.system.poulsscolaire.server.api.accounting.AccountingOperationDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.AccountingOperationService;
 import org.cyk.system.poulsscolaire.server.api.accounting.AccountingOperationService.AccountingOperationGetManyResponseDto;
+import org.cyk.system.poulsscolaire.server.impl.business.accountingoperation.AccountingOperationCancelBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.accountingoperation.AccountingOperationCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.accountingoperation.AccountingOperationDeleteBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.accountingoperation.AccountingOperationReadByIdentifierBusiness;
@@ -86,6 +87,17 @@ class AccountingOperationServiceImplTest extends AbstractTest {
         .log().ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
   }
 
+  @Test
+  void cancel() {
+    AccountingOperationCancelBusiness business =
+        installMockForType(AccountingOperationCancelBusiness.class);
+    Mockito.when(business.process(any())).thenReturn(new IdentifiableResponseDto());
+
+    RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
+        .put(AccountingOperationService.PATH + "/" + AccountingOperationService.CANCEL_PATH).then()
+        .log().ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
+  }
+  
   @Test
   void delete() {
     AccountingOperationDeleteBusiness business =

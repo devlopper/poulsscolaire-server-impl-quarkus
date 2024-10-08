@@ -143,6 +143,26 @@ public class StudentDynamicQuery extends AbstractDynamicQuery<Student> {
         .fieldName(Student.FIELD_SCHOOL_IDENTIFIER)
         .valueFunction(StudentFilter::getSchoolIdentifier).build();
 
+    predicateBuilder().name(StudentFilter.JSON_REGISTRATION_NUMBER)
+        .fieldName(fieldName(Student.FIELD_IDENTITY, Identity.FIELD_REGISTRATION_NUMBER))
+        .valueFunction(StudentFilter::getRegistrationNumber).build();
+
+    predicateBuilder().name(StudentFilter.JSON_FIRST_NAME)
+        .fieldName(fieldName(Student.FIELD_IDENTITY, Identity.FIELD_FIRST_NAME))
+        .valueFunction(StudentFilter::getFirstName).build();
+
+    predicateBuilder().name(StudentFilter.JSON_LAST_NAMES)
+        .fieldName(fieldName(Student.FIELD_IDENTITY, Identity.FIELD_LAST_NAMES))
+        .valueFunction(StudentFilter::getLastNames).build();
+
+    predicateBuilder().name(StudentFilter.JSON_ARABIC_FIRST_NAME)
+        .fieldName(fieldName(Student.FIELD_IDENTITY, Identity.FIELD_ARABIC_FIRST_NAME))
+        .valueFunction(StudentFilter::getArabicFirstName).build();
+
+    predicateBuilder().name(StudentFilter.JSON_ARABIC_LAST_NAMES)
+        .fieldName(fieldName(Student.FIELD_IDENTITY, Identity.FIELD_ARABIC_LAST_NAMES))
+        .valueFunction(StudentFilter::getArabicLastNames).build();
+
     // Ordres par défaut
     orderBuilder().fieldName(AbstractIdentifiableCodable.FIELD_CODE).build();
   }

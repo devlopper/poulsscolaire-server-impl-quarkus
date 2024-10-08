@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import ci.gouv.dgbf.extension.core.StringList;
 import ci.gouv.dgbf.extension.server.persistence.entity.embeddable.Audit;
 import ci.gouv.dgbf.extension.server.service.api.entity.AuditDto;
+import ci.gouv.dgbf.extension.server.service.api.request.ByIdentifierRequestDto;
 import ci.gouv.dgbf.extension.test.AbstractTest;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.QuarkusTestProfile;
@@ -46,8 +47,11 @@ class AccountingOperationBusinessTest extends AbstractTest {
   AccountingOperationUpdateBusiness updateBusiness;
 
   @Inject
-  AccountingOperationDeleteBusiness deleteBusiness;
+  AccountingOperationCancelBusiness cancelBusiness;
 
+  @Inject
+  AccountingOperationDeleteBusiness deleteBusiness;
+  
   @Inject
   AccountingOperationValidator validator;
 
@@ -129,6 +133,16 @@ class AccountingOperationBusinessTest extends AbstractTest {
     request.setAuditWho("christian");
     long count = count(entityManager, AccountingOperation.ENTITY_NAME);
     updateBusiness.process(request);
+    assertEquals(count, count(entityManager, AccountingOperation.ENTITY_NAME));
+  }
+  
+  @Test
+  void cancel() {
+    ByIdentifierRequestDto request = new ByIdentifierRequestDto();
+    request.setIdentifier("tocancel");
+    request.setAuditWho("christian");
+    long count = count(entityManager, AccountingOperation.ENTITY_NAME);
+    cancelBusiness.process(request);
     assertEquals(count, count(entityManager, AccountingOperation.ENTITY_NAME));
   }
 

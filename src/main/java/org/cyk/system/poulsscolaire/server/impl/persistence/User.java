@@ -6,6 +6,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import java.util.Set;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Subselect;
 
@@ -18,6 +19,7 @@ import org.hibernate.annotations.Subselect;
 @Entity(name = User.ENTITY_NAME)
 @Immutable
 @Subselect(User.QUERY)
+@EqualsAndHashCode(callSuper = true)
 public class User extends AbstractIdentifiable {
 
   @Column(name = COLUMN_PASS)
