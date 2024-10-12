@@ -38,7 +38,8 @@ class PaymentDynamicQueryTest {
 
     @Override
     public Map<String, String> getConfigOverrides() {
-      return Map.of("quarkus.hibernate-orm.sql-load-script", "sql/paymentdynamicquery.sql");
+      return Map.of("quarkus.hibernate-orm.sql-load-script", "sql/paymentdynamicquery.sql",
+          "quarkus.hibernate-envers.enabled", "true");
     }
   }
 }
