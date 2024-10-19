@@ -11,6 +11,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
+import lombok.EqualsAndHashCode;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
@@ -28,6 +29,7 @@ import org.hibernate.envers.Audited;
     value = {@AuditOverride(forClass = AbstractIdentifiableCodableAuditable.class),
         @AuditOverride(forClass = AbstractIdentifiableCodable.class),
         @AuditOverride(forClass = AbstractIdentifiable.class)})
+@EqualsAndHashCode(callSuper = true)
 public class Payment extends AbstractIdentifiableCodableAuditable {
 
   @NotNull
@@ -39,6 +41,11 @@ public class Payment extends AbstractIdentifiableCodableAuditable {
   @ManyToOne
   @JoinColumn(name = COLUMN_MODE, nullable = false)
   public PaymentMode mode;
+  
+  //@NotNull
+  @ManyToOne
+  @JoinColumn(name = COLUMN_ACCOUNTING_OPERATION/*, nullable = false*/)
+  public AccountingOperation accountingOperation;
 
   @NotNull
   @Column(name = COLUMN_CANCELED, nullable = false)
@@ -79,6 +86,9 @@ public class Payment extends AbstractIdentifiableCodableAuditable {
   @Transient
   public String branchInstanceAsString;
   
+  @Transient
+  public String accountingOperationAsString;
+  
   public static final String FIELD_REGISTRATION = "registration";
   public static final String FIELD_REGISTRATION_AS_STRING = "registrationAsString";
   public static final String FIELD_MODE = "mode";
@@ -90,12 +100,14 @@ public class Payment extends AbstractIdentifiableCodableAuditable {
   public static final String FIELD_INITIATOR = "initiator";
   public static final String FIELD_AUDIT_CANCELLATION_AS_STRING = "auditCancellationAsString";
   public static final String FIELD_BRANCH_INSTANCE_AS_STRING = "branchInstanceAsString";
+  public static final String FIELD_ACCOUNTING_OPERATION_AS_STRING = "accountingOperationAsString";
   
   public static final String ENTITY_NAME = "Payment";
   public static final String TABLE_NAME = "TA_PAIEMENT";
 
   public static final String COLUMN_REGISTRATION = "INSCRIPTION";
   public static final String COLUMN_MODE = "MODE";
+  public static final String COLUMN_ACCOUNTING_OPERATION = "OPERATION_COMPTABLE";
   public static final String COLUMN_CANCELED = "ANNULE";
   public static final String COLUMN_INITIATOR = "INITIATEUR";
 }

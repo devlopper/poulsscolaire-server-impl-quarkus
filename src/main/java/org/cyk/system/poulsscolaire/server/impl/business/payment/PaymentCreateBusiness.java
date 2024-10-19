@@ -15,6 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.payment.PaymentFilter;
 import org.cyk.system.poulsscolaire.server.api.payment.PaymentService.PaymentCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.impl.business.accountingoperation.AccountingOperationCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.paymentmode.PaymentModeValidator;
 import org.cyk.system.poulsscolaire.server.impl.business.registration.RegistrationValidator;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AdjustedFee;
@@ -26,6 +27,8 @@ import org.cyk.system.poulsscolaire.server.impl.persistence.PaymentDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.PaymentMode;
 import org.cyk.system.poulsscolaire.server.impl.persistence.PaymentPersistence;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Registration;
+import org.cyk.system.poulsscolaire.server.impl.persistence.SchoolConfiguration;
+import org.cyk.system.poulsscolaire.server.impl.persistence.SchoolConfigurationPersistence;
 
 /**
  * Cette classe représente la création de {@link Payment}.
@@ -60,12 +63,23 @@ public class PaymentCreateBusiness extends AbstractIdentifiableCreateBusiness<Pa
   @Inject
   PaymentDynamicQuery dynamicQuery;
 
+  @Inject
+  AccountingOperationCreateBusiness accountingOperationCreateBusiness;
+
+  @Inject
+  SchoolConfigurationPersistence schoolConfigurationPersistence;
+
   @Override
   protected Object[] validate(PaymentCreateRequestDto request, StringList messages) {
     Registration registration = registrationValidator
         .validateInstanceByIdentifier(request.getRegistrationIdentifier(), messages);
+    SchoolConfiguration schoolConfiguration = Optional.ofNullable(registration)
+        .map(
+            r -> schoolConfigurationPersistence.getBySchoolIdentifier(r.schooling.schoolIdentifier))
+        .orElse(null);
     PaymentMode mode =
         modeValidator.validateInstanceByIdentifier(request.getModeIdentifier(), messages);
+
     validationHelper.validateLowerThanByName(this, request.getAmount(), 0L, "montant", "zéro",
         messages);
     List<Object[]> payables = null;
@@ -93,7 +107,7 @@ public class PaymentCreateBusiness extends AbstractIdentifiableCreateBusiness<Pa
         }
       }
     }
-    return new Object[] {registration, mode, payables};
+    return new Object[] {registration, mode, payables, schoolConfiguration};
   }
 
   @SuppressWarnings("unchecked")

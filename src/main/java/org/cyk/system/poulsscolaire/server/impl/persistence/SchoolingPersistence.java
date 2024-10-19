@@ -5,6 +5,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
+import org.cyk.system.poulsscolaire.server.api.configuration.SchoolingDto;
 
 /**
  * Cette classe représente les fonctionnalités de persistance de {@link Schooling}.
@@ -24,7 +25,7 @@ public class SchoolingPersistence extends AbstractIdentifiablePersistence<School
    */
   public SchoolingPersistence() {
     super(Schooling.class);
-    name = "scolarité";
-    pluralName = "scolarités";
+    name = SchoolingDto.NAME;
+    pluralName = SchoolingDto.PLURAL_NAME;
   }
 }

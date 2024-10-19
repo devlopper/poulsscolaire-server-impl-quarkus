@@ -8,6 +8,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
+import lombok.EqualsAndHashCode;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
@@ -25,6 +26,7 @@ import org.hibernate.envers.Audited;
     value = {@AuditOverride(forClass = AbstractIdentifiableCodableAuditable.class),
         @AuditOverride(forClass = AbstractIdentifiableCodable.class),
         @AuditOverride(forClass = AbstractIdentifiable.class)})
+@EqualsAndHashCode(callSuper = true)
 public class Schooling extends AbstractIdentifiableCodableAuditable {
 
   @NotNull
