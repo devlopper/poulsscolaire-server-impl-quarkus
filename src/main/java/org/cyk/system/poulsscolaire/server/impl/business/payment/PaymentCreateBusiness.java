@@ -13,11 +13,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.Getter;
+import org.cyk.system.poulsscolaire.server.api.accounting.AccountingAccountType;
 import org.cyk.system.poulsscolaire.server.api.payment.PaymentFilter;
 import org.cyk.system.poulsscolaire.server.api.payment.PaymentService.PaymentCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.business.accountingoperation.AccountingOperationCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.paymentmode.PaymentModeValidator;
 import org.cyk.system.poulsscolaire.server.impl.business.registration.RegistrationValidator;
+import org.cyk.system.poulsscolaire.server.impl.persistence.AccountingAccount;
+import org.cyk.system.poulsscolaire.server.impl.persistence.AccountingAccountPersistence;
+import org.cyk.system.poulsscolaire.server.impl.persistence.AccountingOperation;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AdjustedFee;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AdjustedFeePersistence;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Payment;
@@ -27,8 +31,6 @@ import org.cyk.system.poulsscolaire.server.impl.persistence.PaymentDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.PaymentMode;
 import org.cyk.system.poulsscolaire.server.impl.persistence.PaymentPersistence;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Registration;
-import org.cyk.system.poulsscolaire.server.impl.persistence.SchoolConfiguration;
-import org.cyk.system.poulsscolaire.server.impl.persistence.SchoolConfigurationPersistence;
 
 /**
  * Cette classe représente la création de {@link Payment}.
@@ -67,16 +69,20 @@ public class PaymentCreateBusiness extends AbstractIdentifiableCreateBusiness<Pa
   AccountingOperationCreateBusiness accountingOperationCreateBusiness;
 
   @Inject
-  SchoolConfigurationPersistence schoolConfigurationPersistence;
+  AccountingAccountPersistence accountingAccountPersistence;
 
   @Override
   protected Object[] validate(PaymentCreateRequestDto request, StringList messages) {
     Registration registration = registrationValidator
         .validateInstanceByIdentifier(request.getRegistrationIdentifier(), messages);
-    SchoolConfiguration schoolConfiguration = Optional.ofNullable(registration)
-        .map(
-            r -> schoolConfigurationPersistence.getBySchoolIdentifier(r.schooling.schoolIdentifier))
-        .orElse(null);
+
+    AccountingAccount accountingAccount =
+        Optional.ofNullable(registration).map(r -> accountingAccountPersistence
+            .getPaymentBySchoolIdentifier(r.schooling.schoolIdentifier)).orElse(null);
+
+    validationHelper.validateNullByName(this, accountingAccount, "compte comptable de paiement",
+        messages);
+
     PaymentMode mode =
         modeValidator.validateInstanceByIdentifier(request.getModeIdentifier(), messages);
 
@@ -107,7 +113,7 @@ public class PaymentCreateBusiness extends AbstractIdentifiableCreateBusiness<Pa
         }
       }
     }
-    return new Object[] {registration, mode, payables, schoolConfiguration};
+    return new Object[] {registration, mode, payables, accountingAccount};
   }
 
   @SuppressWarnings("unchecked")
@@ -121,10 +127,18 @@ public class PaymentCreateBusiness extends AbstractIdentifiableCreateBusiness<Pa
     payment.payables = (List<Object[]>) array[2];
     payment.canceled = false;
     payment.initiator = request.getInitiator();
+
+    payment.accountingOperation = new AccountingOperation();
+    payment.accountingOperation.generateIdentifier();
+    payment.accountingOperation.audit = payment.audit;
+    AccountingAccount accountingAccount = (AccountingAccount) array[3];
+    accountingOperationCreateBusiness.setFields(payment.accountingOperation, accountingAccount.plan,
+        AccountingAccountType.INCOME, payment.registration.schooling.schoolIdentifier, null);
   }
 
   @Override
   protected void doTransact(Payment payment) {
+    accountingOperationCreateBusiness.create(payment.accountingOperation);
     super.doTransact(payment);
     AtomicInteger amount = new AtomicInteger(payment.amount);
     Collection<PaymentAdjustedFee> paymentAdjustedFees =

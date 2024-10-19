@@ -6,8 +6,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.NamedQueries;
-import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
@@ -28,9 +26,6 @@ import org.hibernate.envers.Audited;
 @AuditOverrides(value = {@AuditOverride(forClass = AbstractIdentifiableAuditable.class),
     @AuditOverride(forClass = AbstractIdentifiable.class)})
 @EqualsAndHashCode(callSuper = true)
-@NamedQueries(
-    value = {@NamedQuery(name = SchoolConfiguration.QUERY_READ_BY_SCHOOL_IDENTIFIER_IDENTIFIER,
-        query = SchoolConfiguration.QUERY_READ_BY_SCHOOL_IDENTIFIER_VALUE)})
 public class SchoolConfiguration extends AbstractIdentifiableAuditable {
 
   @NotNull
@@ -67,9 +62,4 @@ public class SchoolConfiguration extends AbstractIdentifiableAuditable {
   public static final String COLUMN_SCHOOL_IDENTIFIER = "ECOLE";
   public static final String COLUMN_PAYMENT_ACCOUNTING_ACCOUNT_IDENTIFIER =
       "COMPTE_COMPTABLE_PAIEMENT";
-
-  public static final String QUERY_READ_BY_SCHOOL_IDENTIFIER_IDENTIFIER =
-      "SchoolConfiguration.readBySchoolIdentifier";
-  public static final String QUERY_READ_BY_SCHOOL_IDENTIFIER_VALUE =
-      "SELECT t FROM SchoolConfiguration t WHERE t.schoolIdentifier = :schoolIdentifier";
 }

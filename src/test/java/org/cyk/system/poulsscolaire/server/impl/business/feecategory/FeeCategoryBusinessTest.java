@@ -1,11 +1,14 @@
 package org.cyk.system.poulsscolaire.server.impl.business.feecategory;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import ci.gouv.dgbf.extension.server.business.BusinessInputValidationException;
 import ci.gouv.dgbf.extension.server.persistence.entity.embeddable.Audit;
+import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
+import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters.ResultMode;
 import ci.gouv.dgbf.extension.server.service.api.entity.AuditDto;
 import ci.gouv.dgbf.extension.test.AbstractTest;
 import io.quarkus.test.junit.QuarkusTest;
@@ -19,7 +22,11 @@ import org.cyk.system.poulsscolaire.server.api.fee.FeeCategoryDto;
 import org.cyk.system.poulsscolaire.server.api.fee.FeeCategoryService.FeeCategoryCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.fee.FeeCategoryService.FeeCategoryUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.FeeCategory;
+import org.cyk.system.poulsscolaire.server.impl.persistence.FeeCategoryDynamicQuery;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
+import org.junit.jupiter.params.provider.CsvSource;
 
 @QuarkusTest
 @TestProfile(FeeCategoryBusinessTest.Profile.class)
@@ -48,6 +55,11 @@ class FeeCategoryBusinessTest extends AbstractTest {
   
   @Inject
   FeeCategoryMapper mapper;
+  
+  @Inject
+  FeeCategoryDynamicQuery dynamicQuery;
+
+  DynamicQueryParameters<FeeCategory> parameters = new DynamicQueryParameters<>();
   
   @Test
   void create() {
@@ -166,6 +178,83 @@ class FeeCategoryBusinessTest extends AbstractTest {
     FeeCategory instance = mapper.mapFromDto(dto);
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
     assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
+  }
+  
+  @ParameterizedTest
+  @CsvFileSource(resources = {"feecategorydynamicquery_buildquery_projection.csv"},
+      useHeadersInDisplayName = true)
+  void buildQuery_amount(String amount, String expected) {
+    parameters.projection().addNames(amount);
+    assertEquals(expected, dynamicQuery.buildQueryString(parameters));
+  }
+
+  @ParameterizedTest
+  @CsvSource({"1,90 000", "2,30 000"})
+  void getToPay(String identifier, String expected) {
+    parameters.projection().addNames(FeeCategoryDto.JSON_TOTAL_AMOUNT_AS_STRING);
+    parameters.setResultMode(ResultMode.ONE);
+    parameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, identifier);
+    FeeCategory feeCategory = dynamicQuery.getOne(parameters);
+    assertEquals(expected, feeCategory.totalAmountAsString);
+  }
+
+  @ParameterizedTest
+  @CsvSource({"1,20 000", "2,12 000"})
+  void getRegistrationToPay(String identifier, String expected) {
+    parameters.projection().addNames(FeeCategoryDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING);
+    parameters.setResultMode(ResultMode.ONE);
+    parameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, identifier);
+    FeeCategory feeCategory = dynamicQuery.getOne(parameters);
+    assertEquals(expected, feeCategory.totalRegistrationAmountAsString);
+  }
+
+  @ParameterizedTest
+  @CsvSource({"1,5", "2,30 000"})
+  void getPaid(String identifier, String expected) {
+    parameters.projection().addNames(FeeCategoryDto.JSON_PAID_AMOUNT_AS_STRING);
+    parameters.setResultMode(ResultMode.ONE);
+    parameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, identifier);
+    FeeCategory feeCategory = dynamicQuery.getOne(parameters);
+    assertEquals(expected, feeCategory.paidAmountAsString);
+  }
+
+  @ParameterizedTest
+  @CsvSource({"1,5", "2,12 000"})
+  void getRegistrationPaid(String identifier, String expected) {
+    parameters.projection().addNames(FeeCategoryDto.JSON_PAID_REGISTRATION_AMOUNT_AS_STRING);
+    parameters.setResultMode(ResultMode.ONE);
+    parameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, identifier);
+    FeeCategory feeCategory = dynamicQuery.getOne(parameters);
+    assertEquals(expected, feeCategory.paidRegistrationAmountAsString);
+  }
+
+  @ParameterizedTest
+  @CsvSource({"1,89 995", "2,0"})
+  void getPayable(String identifier, String expected) {
+    parameters.projection().addNames(FeeCategoryDto.JSON_PAYABLE_AMOUNT_AS_STRING);
+    parameters.setResultMode(ResultMode.ONE);
+    parameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, identifier);
+    FeeCategory feeCategory = dynamicQuery.getOne(parameters);
+    assertEquals(expected, feeCategory.payableAmountAsString);
+  }
+
+  @ParameterizedTest
+  @CsvSource({"1,19 995", "2,0"})
+  void getRegistrationPayable(String identifier, String expected) {
+    parameters.projection().addNames(FeeCategoryDto.JSON_PAYABLE_REGISTRATION_AMOUNT_AS_STRING);
+    parameters.setResultMode(ResultMode.ONE);
+    parameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, identifier);
+    FeeCategory feeCategory = dynamicQuery.getOne(parameters);
+    assertEquals(expected, feeCategory.payableRegistrationAmountAsString);
+  }
+
+  @Test
+  void projectionsGroup() {
+    parameters.projection().addNames(FeeCategoryDto.JSON_SCHOOL_IDENTIFIER,
+        FeeCategoryDto.JSON_SCHOOL_AS_STRING);
+    parameters.setResultMode(ResultMode.ONE);
+    parameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, "1");
+    assertDoesNotThrow(() -> dynamicQuery.getOne(parameters));
   }
   
   public static class Profile implements QuarkusTestProfile {

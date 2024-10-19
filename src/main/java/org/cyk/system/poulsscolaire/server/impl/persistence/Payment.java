@@ -42,9 +42,9 @@ public class Payment extends AbstractIdentifiableCodableAuditable {
   @JoinColumn(name = COLUMN_MODE, nullable = false)
   public PaymentMode mode;
   
-  //@NotNull
+  @NotNull
   @ManyToOne
-  @JoinColumn(name = COLUMN_ACCOUNTING_OPERATION/*, nullable = false*/)
+  @JoinColumn(name = COLUMN_ACCOUNTING_OPERATION, nullable = false)
   public AccountingOperation accountingOperation;
 
   @NotNull

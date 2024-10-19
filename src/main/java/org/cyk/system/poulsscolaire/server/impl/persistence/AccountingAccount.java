@@ -10,6 +10,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.persistence.UniqueConstraint;
@@ -38,6 +40,9 @@ import org.hibernate.envers.Audited;
         @AuditOverride(forClass = AbstractIdentifiableCodableNamable.class),
         @AuditOverride(forClass = AbstractIdentifiableCodable.class),
         @AuditOverride(forClass = AbstractIdentifiable.class)})
+@NamedQueries(value = {
+    @NamedQuery(name = AccountingAccount.QUERY_READ_PAYMENT_BY_SCHOOL_IDENTIFIER_IDENTIFIER,
+        query = AccountingAccount.QUERY_READ_PAYMENT_BY_SCHOOL_IDENTIFIER_VALUE)})
 @EqualsAndHashCode(callSuper = true)
 public class AccountingAccount extends AbstractIdentifiableCodableNamableAuditable {
 
@@ -70,4 +75,11 @@ public class AccountingAccount extends AbstractIdentifiableCodableNamableAuditab
 
   public static final String COLUMN_PLAN = "PLAN_COMPTABLE";
   public static final String COLUMN_TYPE = "TYPE";
+
+  public static final String QUERY_READ_PAYMENT_BY_SCHOOL_IDENTIFIER_IDENTIFIER =
+      "AccountingAccount.readPaymentBySchoolIdentifier";
+  public static final String QUERY_READ_PAYMENT_BY_SCHOOL_IDENTIFIER_VALUE =
+      "SELECT t FROM AccountingAccount t "
+          + "JOIN SchoolConfiguration s ON s.paymentAccountingAccount = t "
+          + "WHERE s.schoolIdentifier = :schoolIdentifier";
 }

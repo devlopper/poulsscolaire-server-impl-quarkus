@@ -82,7 +82,7 @@ class AccountingOperationBusinessTest extends AbstractTest {
     AccountingOperation accountingOperation = new AccountingOperation();
     accountingOperation.schoolIdentifier = "1";
     accountingOperation.accountType = AccountingAccountType.INCOME;
-    createBusiness.computeBeneficiary(accountingOperation, request);
+    createBusiness.computeBeneficiary(accountingOperation, request.getBeneficiary());
     assertEquals("CSP Cocody", accountingOperation.beneficiary);
   }
 
@@ -92,7 +92,7 @@ class AccountingOperationBusinessTest extends AbstractTest {
     request.setBeneficiary("b");
     AccountingOperation accountingOperation = new AccountingOperation();
     accountingOperation.accountType = AccountingAccountType.INCOME;
-    createBusiness.computeBeneficiary(accountingOperation, request);
+    createBusiness.computeBeneficiary(accountingOperation, request.getBeneficiary());
     assertEquals("b", accountingOperation.beneficiary);
   }
 

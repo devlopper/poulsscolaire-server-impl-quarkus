@@ -6,8 +6,8 @@ import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableCreateBusiness
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
+import org.cyk.system.poulsscolaire.server.api.accounting.AccountingAccountType;
 import org.cyk.system.poulsscolaire.server.api.accounting.AccountingOperationService.AccountingOperationCreateRequestDto;
-import org.cyk.system.poulsscolaire.server.api.accounting.AccountingOperationService.AccountingOperationSaveRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.business.accountingplan.AccountingPlanValidator;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AccountingOperation;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AccountingOperationPersistence;
@@ -53,15 +53,30 @@ public class AccountingOperationCreateBusiness
   protected void setFields(AccountingOperation accountingOperation, Object[] array,
       AccountingOperationCreateRequestDto request) {
     super.setFields(accountingOperation, array, request);
+    setFields(accountingOperation, (AccountingPlan) array[0], request.getAccountType(),
+        request.getSchoolIdentifier(), request.getBeneficiary());
+  }
+
+  /**
+   * Cette méthode permet d'aasigner les champs.
+   *
+   * @param accountingOperation {@link AccountingOperation}
+   * @param plan {@link AccountingPlan}
+   * @param accountingAccountType {@link Accountingtype}
+   * @param schoolIdentifier identifiant {@link School}
+   * @param beneficiary bénéficiare
+   */
+  public void setFields(AccountingOperation accountingOperation, AccountingPlan plan,
+      AccountingAccountType accountingAccountType, String schoolIdentifier, String beneficiary) {
     long count = persistence.countAll();
-    accountingOperation.plan = (AccountingPlan) array[0];
-    accountingOperation.accountType = request.getAccountType();
-    accountingOperation.setCode(request.getAccountType().getCode() + count);
+    accountingOperation.plan = plan;
+    accountingOperation.accountType = accountingAccountType;
+    accountingOperation.setCode(accountingAccountType.getCode() + count);
 
     computeName(accountingOperation, count);
-    accountingOperation.schoolIdentifier = request.getSchoolIdentifier();
-    computeBeneficiary(accountingOperation, request);
-    
+    accountingOperation.schoolIdentifier = schoolIdentifier;
+    computeBeneficiary(accountingOperation, beneficiary);
+
     accountingOperation.canceled = false;
   }
 
@@ -70,14 +85,15 @@ public class AccountingOperationCreateBusiness
         () -> accountingOperation.name = accountingOperation.accountType + " " + count);
   }
 
-  void computeBeneficiary(AccountingOperation accountingOperation,
-      AccountingOperationSaveRequestDto request) {
-    accountingOperation.beneficiary = request.getBeneficiary();
+  void computeBeneficiary(AccountingOperation accountingOperation, String beneficiary) {
+    accountingOperation.beneficiary = beneficiary;
     Core.runIfStringBlank(accountingOperation.beneficiary, () -> {
       School school = schoolPersistence.getByIdentifier(accountingOperation.schoolIdentifier);
       accountingOperation.beneficiary = school.name;
     });
-
-
+  }
+  
+  public void create(AccountingOperation accountingOperation) {
+    persistence.create(accountingOperation);
   }
 }

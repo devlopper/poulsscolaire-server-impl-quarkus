@@ -54,6 +54,6 @@ public class AccountingOperationUpdateBusiness
     accountingOperation.accountType = request.getAccountType();
 
     createBusiness.computeName(accountingOperation, persistence.countAll());
-    createBusiness.computeBeneficiary(accountingOperation, request);
+    createBusiness.computeBeneficiary(accountingOperation, request.getBeneficiary());
   }
 }
