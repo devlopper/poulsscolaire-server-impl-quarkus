@@ -56,9 +56,23 @@ public class AccountingOperationAccountCreateBusiness extends
   protected void setFields(AccountingOperationAccount accountingOperationAccount, Object[] array,
       AccountingOperationAccountCreateRequestDto request) {
     super.setFields(accountingOperationAccount, array, request);
-    accountingOperationAccount.operation = (AccountingOperation) array[0];
-    accountingOperationAccount.account = (AccountingAccount) array[1];
-    accountingOperationAccount.amount = request.getAmount();
+    setFields(accountingOperationAccount, (AccountingOperation) array[0],
+        (AccountingAccount) array[1], request.getAmount());
+  }
+
+  /**
+   * Cette léthode permet d'assigner les champs.
+   *
+   * @param accountingOperationAccount {@link AccountingOperationAccount}
+   * @param operation {@link AccountingOperation}
+   * @param account {@link AccountingAccount}
+   * @param amount montant
+   */
+  public void setFields(AccountingOperationAccount accountingOperationAccount,
+      AccountingOperation operation, AccountingAccount account, Integer amount) {
+    accountingOperationAccount.operation = operation;
+    accountingOperationAccount.account = account;
+    accountingOperationAccount.amount = amount;
     accountingOperationAccount.setCode(computeCode(accountingOperationAccount));
     accountingOperationAccount.setName(computeName(accountingOperationAccount));
   }
@@ -70,5 +84,9 @@ public class AccountingOperationAccountCreateBusiness extends
   String computeName(AccountingOperationAccount accountingOperationAccount) {
     return Core.getOrDefaultIfBlank(accountingOperationAccount.name,
         accountingOperationAccount.account.name);
+  }
+  
+  public void create(AccountingOperationAccount accountingOperationAccount) {
+    persistence.create(accountingOperationAccount);
   }
 }

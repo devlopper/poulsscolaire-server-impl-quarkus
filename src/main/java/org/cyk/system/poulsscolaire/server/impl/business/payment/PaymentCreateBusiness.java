@@ -17,11 +17,13 @@ import org.cyk.system.poulsscolaire.server.api.accounting.AccountingAccountType;
 import org.cyk.system.poulsscolaire.server.api.payment.PaymentFilter;
 import org.cyk.system.poulsscolaire.server.api.payment.PaymentService.PaymentCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.business.accountingoperation.AccountingOperationCreateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.accountingoperationaccount.AccountingOperationAccountCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.paymentmode.PaymentModeValidator;
 import org.cyk.system.poulsscolaire.server.impl.business.registration.RegistrationValidator;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AccountingAccount;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AccountingAccountPersistence;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AccountingOperation;
+import org.cyk.system.poulsscolaire.server.impl.persistence.AccountingOperationAccount;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AdjustedFee;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AdjustedFeePersistence;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Payment;
@@ -70,6 +72,9 @@ public class PaymentCreateBusiness extends AbstractIdentifiableCreateBusiness<Pa
 
   @Inject
   AccountingAccountPersistence accountingAccountPersistence;
+
+  @Inject
+  AccountingOperationAccountCreateBusiness accountingOperationAccountCreateBusiness;
 
   @Override
   protected Object[] validate(PaymentCreateRequestDto request, StringList messages) {
@@ -131,14 +136,22 @@ public class PaymentCreateBusiness extends AbstractIdentifiableCreateBusiness<Pa
     payment.accountingOperation = new AccountingOperation();
     payment.accountingOperation.generateIdentifier();
     payment.accountingOperation.audit = payment.audit;
-    AccountingAccount accountingAccount = (AccountingAccount) array[3];
-    accountingOperationCreateBusiness.setFields(payment.accountingOperation, accountingAccount.plan,
-        AccountingAccountType.INCOME, payment.registration.schooling.schoolIdentifier, null);
+    payment.accountingAccount = (AccountingAccount) array[3];
+    accountingOperationCreateBusiness.setFields(payment.accountingOperation,
+        payment.accountingAccount.plan, AccountingAccountType.INCOME,
+        payment.registration.schooling.schoolIdentifier, null);
   }
 
   @Override
   protected void doTransact(Payment payment) {
     accountingOperationCreateBusiness.create(payment.accountingOperation);
+    AccountingOperationAccount accountingOperationAccount = new AccountingOperationAccount();
+    accountingOperationAccount.generateIdentifier();
+    accountingOperationAccount.audit = payment.audit;
+    accountingOperationAccountCreateBusiness.setFields(accountingOperationAccount,
+        payment.accountingOperation, payment.accountingAccount, payment.amount);
+    accountingOperationAccountCreateBusiness.create(accountingOperationAccount);
+
     super.doTransact(payment);
     AtomicInteger amount = new AtomicInteger(payment.amount);
     Collection<PaymentAdjustedFee> paymentAdjustedFees =

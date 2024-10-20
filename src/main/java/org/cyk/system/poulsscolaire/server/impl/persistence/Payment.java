@@ -57,6 +57,9 @@ public class Payment extends AbstractIdentifiableCodableAuditable {
   /* Transients */
 
   @Transient
+  public AccountingAccount accountingAccount;
+  
+  @Transient
   public String registrationAsString;
   
   @Transient
