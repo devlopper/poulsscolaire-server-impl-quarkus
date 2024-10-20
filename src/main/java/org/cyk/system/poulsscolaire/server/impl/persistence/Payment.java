@@ -7,6 +7,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
@@ -25,10 +27,12 @@ import org.hibernate.envers.Audited;
 @Entity(name = Payment.ENTITY_NAME)
 @Table(name = Payment.TABLE_NAME)
 @Audited
-@AuditOverrides(
-    value = {@AuditOverride(forClass = AbstractIdentifiableCodableAuditable.class),
-        @AuditOverride(forClass = AbstractIdentifiableCodable.class),
-        @AuditOverride(forClass = AbstractIdentifiable.class)})
+@AuditOverrides(value = {@AuditOverride(forClass = AbstractIdentifiableCodableAuditable.class),
+    @AuditOverride(forClass = AbstractIdentifiableCodable.class),
+    @AuditOverride(forClass = AbstractIdentifiable.class)})
+@NamedQueries(
+    value = {@NamedQuery(name = Payment.QUERY_READ_BY_ACCOUNTING_OPERATION_IDENTIFIER,
+        query = Payment.QUERY_READ_BY_ACCOUNTING_OPERATION_VALUE)})
 @EqualsAndHashCode(callSuper = true)
 public class Payment extends AbstractIdentifiableCodableAuditable {
 
@@ -41,7 +45,7 @@ public class Payment extends AbstractIdentifiableCodableAuditable {
   @ManyToOne
   @JoinColumn(name = COLUMN_MODE, nullable = false)
   public PaymentMode mode;
-  
+
   @NotNull
   @ManyToOne
   @JoinColumn(name = COLUMN_ACCOUNTING_OPERATION, nullable = false)
@@ -50,18 +54,18 @@ public class Payment extends AbstractIdentifiableCodableAuditable {
   @NotNull
   @Column(name = COLUMN_CANCELED, nullable = false)
   public Boolean canceled;
-  
+
   @Column(name = COLUMN_INITIATOR)
   public String initiator;
-  
+
   /* Transients */
 
   @Transient
   public AccountingAccount accountingAccount;
-  
+
   @Transient
   public String registrationAsString;
-  
+
   @Transient
   public int amount;
 
@@ -79,19 +83,19 @@ public class Payment extends AbstractIdentifiableCodableAuditable {
 
   @Transient
   public String creationDateAsString;
-  
+
   @Transient
   public String creationActor;
-  
+
   @Transient
   public String auditCancellationAsString;
-  
+
   @Transient
   public String branchInstanceAsString;
-  
+
   @Transient
   public String accountingOperationAsString;
-  
+
   public static final String FIELD_REGISTRATION = "registration";
   public static final String FIELD_REGISTRATION_AS_STRING = "registrationAsString";
   public static final String FIELD_MODE = "mode";
@@ -104,7 +108,7 @@ public class Payment extends AbstractIdentifiableCodableAuditable {
   public static final String FIELD_AUDIT_CANCELLATION_AS_STRING = "auditCancellationAsString";
   public static final String FIELD_BRANCH_INSTANCE_AS_STRING = "branchInstanceAsString";
   public static final String FIELD_ACCOUNTING_OPERATION_AS_STRING = "accountingOperationAsString";
-  
+
   public static final String ENTITY_NAME = "Payment";
   public static final String TABLE_NAME = "TA_PAIEMENT";
 
@@ -113,4 +117,9 @@ public class Payment extends AbstractIdentifiableCodableAuditable {
   public static final String COLUMN_ACCOUNTING_OPERATION = "OPERATION_COMPTABLE";
   public static final String COLUMN_CANCELED = "ANNULE";
   public static final String COLUMN_INITIATOR = "INITIATEUR";
+
+  public static final String QUERY_READ_BY_ACCOUNTING_OPERATION_IDENTIFIER =
+      "Payment.readByAccountingOperation";
+  public static final String QUERY_READ_BY_ACCOUNTING_OPERATION_VALUE =
+      "SELECT t FROM Payment t WHERE t.accountingOperation = :accountingOperation";
 }

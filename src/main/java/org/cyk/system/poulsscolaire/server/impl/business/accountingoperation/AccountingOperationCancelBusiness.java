@@ -8,6 +8,7 @@ import jakarta.inject.Inject;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AccountingOperation;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AccountingOperationPersistence;
+import org.cyk.system.poulsscolaire.server.impl.persistence.PaymentPersistence;
 
 /**
  * Cette classe représente l'annulation de {@link AccountingOperation}.
@@ -28,11 +29,15 @@ public class AccountingOperationCancelBusiness
   @Getter
   AccountingOperationValidator validator;
 
+  @Inject
+  PaymentPersistence paymentPersistence;
+
   @Override
   protected void validate(ByIdentifierRequestDto request, StringList messages,
       AccountingOperation operation) {
     super.validate(request, messages, operation);
-    messages.addIfTrue(operation.canceled, "L'opération comptable a déja été annulée");
+    validator.validateCanceled(operation.canceled,
+        paymentPersistence.getByAccountingOperation(operation), messages);
   }
 
   @Override

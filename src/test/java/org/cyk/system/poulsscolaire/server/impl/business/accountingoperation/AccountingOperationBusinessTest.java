@@ -22,6 +22,7 @@ import org.cyk.system.poulsscolaire.server.api.accounting.AccountingOperationDto
 import org.cyk.system.poulsscolaire.server.api.accounting.AccountingOperationService.AccountingOperationCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.AccountingOperationService.AccountingOperationUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AccountingOperation;
+import org.cyk.system.poulsscolaire.server.impl.persistence.Payment;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest
@@ -144,6 +145,26 @@ class AccountingOperationBusinessTest extends AbstractTest {
     long count = count(entityManager, AccountingOperation.ENTITY_NAME);
     cancelBusiness.process(request);
     assertEquals(count, count(entityManager, AccountingOperation.ENTITY_NAME));
+  }
+  
+  @Test
+  void validator_validateCanceled_whenNull() {
+    assertFalse(validator.validateCanceled(null, null, new StringList()));
+  }
+  
+  @Test
+  void validator_validateCanceled_whenFalse() {
+    assertFalse(validator.validateCanceled(false, null, new StringList()));
+  }
+  
+  @Test
+  void validator_validateCanceled_whenTrue() {
+    assertTrue(validator.validateCanceled(true, null, new StringList()));
+  }
+  
+  @Test
+  void validator_validateCanceled_whenPaymentNotNull() {
+    assertTrue(validator.validateCanceled(null, new Payment(), new StringList()));
   }
 
   @Test
