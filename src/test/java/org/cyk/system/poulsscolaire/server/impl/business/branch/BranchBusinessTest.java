@@ -38,7 +38,7 @@ class BranchBusinessTest extends AbstractTest {
   void readMany() {
     GetManyRequestDto request = new GetManyRequestDto();
     request.setAuditWho("christian");
-    assertEquals(1, readManyBusiness.process(request).getCount());
+    assertEquals(7, readManyBusiness.process(request).getCount());
   }
   
   @Test
