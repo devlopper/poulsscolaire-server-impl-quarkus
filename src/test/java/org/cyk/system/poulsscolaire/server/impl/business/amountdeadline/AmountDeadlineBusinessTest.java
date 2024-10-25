@@ -2,11 +2,13 @@ package org.cyk.system.poulsscolaire.server.impl.business.amountdeadline;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import ci.gouv.dgbf.extension.core.StringList;
 import ci.gouv.dgbf.extension.server.persistence.entity.embeddable.Audit;
+import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
 import ci.gouv.dgbf.extension.server.service.api.entity.AuditDto;
 import ci.gouv.dgbf.extension.test.AbstractTest;
 import io.quarkus.test.junit.QuarkusTest;
@@ -19,6 +21,8 @@ import org.cyk.system.poulsscolaire.server.api.fee.AmountDeadlineDto;
 import org.cyk.system.poulsscolaire.server.api.fee.AmountDeadlineService.AmountDeadlineCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.fee.AmountDeadlineService.AmountDeadlineUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AmountDeadline;
+import org.cyk.system.poulsscolaire.server.impl.persistence.AmountDeadlineDynamicQuery;
+import org.cyk.system.poulsscolaire.server.impl.persistence.AmountDeadlineStatuses;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest
@@ -28,6 +32,11 @@ class AmountDeadlineBusinessTest extends AbstractTest {
   @Inject
   EntityManager entityManager;
 
+  @Inject
+  AmountDeadlineDynamicQuery dynamicQuery;
+
+  DynamicQueryParameters<AmountDeadline> dynamicQueryParameters = new DynamicQueryParameters<>();
+  
   @Inject
   AmountDeadlineValidator validator;
 
@@ -51,6 +60,19 @@ class AmountDeadlineBusinessTest extends AbstractTest {
 
   @Inject
   AmountDeadlineMapper mapper;
+  
+  @Test
+  void instantiateAmountDeadlineStatuses() {
+    assertNotNull(new AmountDeadlineStatuses());
+  }
+
+  @Test
+  void dynamicQuery_getMany() {
+    dynamicQueryParameters.projection().addNames(AmountDeadlineDto.JSON_IDENTIFIER,
+        AmountDeadlineDto.JSON_AMOUNT_IDENTIFIER, AmountDeadlineDto.JSON_DEADLINE_AS_STRING,
+         AmountDeadlineDto.JSON_DEADLINE_IDENTIFIER);
+    assertEquals(true, dynamicQuery.getMany(dynamicQueryParameters).size() > 0);
+  }
   
   @Test
   void validatePayment_whenPaymentTooMuch() {
