@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import ci.gouv.dgbf.extension.server.business.BusinessInputValidationException;
 import ci.gouv.dgbf.extension.server.persistence.entity.embeddable.Audit;
+import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
+import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters.ResultMode;
 import ci.gouv.dgbf.extension.server.service.api.entity.AuditDto;
 import ci.gouv.dgbf.extension.test.AbstractTest;
 import io.quarkus.test.junit.QuarkusTest;
@@ -17,11 +19,15 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import java.util.Map;
 import org.cyk.system.poulsscolaire.server.api.fee.FeeDto;
+import org.cyk.system.poulsscolaire.server.api.fee.FeeFilter;
 import org.cyk.system.poulsscolaire.server.api.fee.FeeService.FeeCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.fee.FeeService.FeeUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Amount;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Fee;
+import org.cyk.system.poulsscolaire.server.impl.persistence.FeeDynamicQuery;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 @QuarkusTest
 @TestProfile(FeeBusinessTest.Profile.class)
@@ -50,6 +56,40 @@ class FeeBusinessTest extends AbstractTest {
 
   @Inject
   FeeMapper mapper;
+  
+  @Inject
+  FeeDynamicQuery dynamicQuery;
+
+  DynamicQueryParameters<Fee> dynamicQueryParameters = new DynamicQueryParameters<>();
+
+  @Test
+  void buildQuery_whenProjectionSchoolingSchoolAsString() {
+    dynamicQueryParameters.projection().addNames(FeeDto.JSON_SCHOOLING_SCHOOL_AS_STRING);
+    assertEquals(
+        "SELECT school.name FROM Fee t "
+            + "LEFT JOIN School school ON school.identifier = t.schooling.schoolIdentifier "
+            + "ORDER BY t.amount.paymentOrderNumber ASC,t.category.name ASC",
+        dynamicQuery.buildQueryString(dynamicQueryParameters));
+  }
+
+  @ParameterizedTest
+  @CsvSource(value = {"1,1,1,100,0", "2,1,1,500,75"})
+  void getOne_whenSumAmountAndRegistration_whenFilterSchoolingAssignlentTypeSeniority(
+      String schoolingIdentifier, String assignmenttypeIdentifier, String seniorityIdentifier,
+      String expectedAmountSum, String expectedRegistrationSum) {
+    dynamicQueryParameters.setResultMode(ResultMode.ONE);
+    dynamicQueryParameters.projection().addNames(FeeDto.JSON_AMOUNT_VALUE_SUM_AS_STRING,
+        FeeDto.JSON_AMOUNT_REGISTRATION_SUM_AS_STRING);
+    dynamicQueryParameters.filter().addCriteria(FeeFilter.JSON_SCHOOLING_IDENTIFIER,
+        schoolingIdentifier);
+    dynamicQueryParameters.filter().addCriteria(FeeFilter.JSON_ASSIGNMENT_TYPE_IDENTIFIER,
+        assignmenttypeIdentifier);
+    dynamicQueryParameters.filter().addCriteria(FeeFilter.JSON_SENIORITY_IDENTIFIER,
+        seniorityIdentifier);
+    Fee fee = dynamicQuery.getOne(dynamicQueryParameters);
+    assertEquals(expectedAmountSum, fee.amountValueSumAsString);
+    assertEquals(expectedRegistrationSum, fee.amountRegistrationSumAsString);
+  }
   
   @Test
   void create() {
@@ -114,7 +154,7 @@ class FeeBusinessTest extends AbstractTest {
   void update() {
     FeeUpdateRequestDto request = new FeeUpdateRequestDto();
     request.setIdentifier("toupdate");
-    request.setAssignmentTypeIdentifier("1");
+    request.setAssignmentTypeIdentifier("forupdate");
     request.setSeniorityIdentifier("1");
     request.setSchoolingIdentifier("1");
     request.setCategoryIdentifier("1");

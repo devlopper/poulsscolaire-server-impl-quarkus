@@ -2,8 +2,10 @@ package org.cyk.system.poulsscolaire.server.impl.business.deadline;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import ci.gouv.dgbf.extension.server.persistence.entity.embeddable.Audit;
+import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
 import ci.gouv.dgbf.extension.server.service.api.entity.AuditDto;
 import ci.gouv.dgbf.extension.test.AbstractTest;
 import io.quarkus.test.junit.QuarkusTest;
@@ -17,6 +19,7 @@ import java.util.UUID;
 import org.cyk.system.poulsscolaire.server.api.fee.DeadlineDto;
 import org.cyk.system.poulsscolaire.server.api.fee.DeadlineService.DeadlineCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Deadline;
+import org.cyk.system.poulsscolaire.server.impl.persistence.DeadlineDynamicQuery;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest
@@ -46,6 +49,17 @@ class DeadlineBusinessTest extends AbstractTest {
   
   @Inject
   DeadlineMapper mapper;
+  
+  @Inject
+  DeadlineDynamicQuery dynamicQuery;
+
+  DynamicQueryParameters<Deadline> dynamicQueryParameters = new DynamicQueryParameters<>();
+
+  @Test
+  void getMany() {
+    dynamicQueryParameters.projection().addNames(DeadlineDto.JSON_AS_STRING);
+    assertTrue(dynamicQuery.getMany(dynamicQueryParameters).size() > 0);
+  }
   
   @Test
   void create() {
