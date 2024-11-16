@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import ci.gouv.dgbf.extension.server.persistence.entity.embeddable.Audit;
+import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
 import ci.gouv.dgbf.extension.server.service.api.entity.AuditDto;
 import ci.gouv.dgbf.extension.test.AbstractTest;
 import io.quarkus.test.junit.QuarkusTest;
@@ -17,6 +18,7 @@ import org.cyk.system.poulsscolaire.server.api.registration.IdentityRelationship
 import org.cyk.system.poulsscolaire.server.api.registration.IdentityRelationshipService.IdentityRelationshipUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.registration.IdentityRelationshipType;
 import org.cyk.system.poulsscolaire.server.impl.persistence.IdentityRelationship;
+import org.cyk.system.poulsscolaire.server.impl.persistence.IdentityRelationshipDynamicQuery;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest
@@ -46,6 +48,11 @@ class IdentityRelationshipBusinessTest extends AbstractTest {
 
   @Inject
   IdentityRelationshipMapper mapper;
+  
+  @Inject
+  IdentityRelationshipDynamicQuery dynamicQuery;
+
+  DynamicQueryParameters<IdentityRelationship> parameters = new DynamicQueryParameters<>();
   
   @Test
   void mapToDto_whenNull() {
@@ -123,6 +130,14 @@ class IdentityRelationshipBusinessTest extends AbstractTest {
     assertEquals(count, count(entityManager, IdentityRelationship.ENTITY_NAME));
   }
 
+  @Test
+  void getMany() {
+    parameters.projection().addNames(IdentityRelationshipDto.JSON_TYPE_AS_STRING,
+        IdentityRelationshipDto.JSON_PARENT_AS_STRING,
+        IdentityRelationshipDto.JSON_CHILD_AS_STRING);
+    assertEquals(3, dynamicQuery.getMany(parameters).size());
+  }
+  
   public static class Profile implements QuarkusTestProfile {
 
     @Override

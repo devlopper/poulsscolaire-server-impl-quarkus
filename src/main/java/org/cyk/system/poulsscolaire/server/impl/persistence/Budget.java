@@ -14,21 +14,20 @@ import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.cyk.system.poulsscolaire.server.api.accounting.AccountingAccountType;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
 
 /**
- * Cette classe représente une opération comptable.
+ * Cette classe représente un budget.
  *
  * @author Christian
  *
  */
 @Getter
 @Setter
-@Entity(name = AccountingOperation.ENTITY_NAME)
-@Table(name = AccountingOperation.TABLE_NAME)
+@Entity(name = Budget.ENTITY_NAME)
+@Table(name = Budget.TABLE_NAME)
 @Audited
 @AuditOverrides(
     value = {@AuditOverride(forClass = AbstractIdentifiableCodableNamableAuditable.class),
@@ -36,7 +35,7 @@ import org.hibernate.envers.Audited;
         @AuditOverride(forClass = AbstractIdentifiableCodable.class),
         @AuditOverride(forClass = AbstractIdentifiable.class)})
 @EqualsAndHashCode(callSuper = true)
-public class AccountingOperation extends AbstractIdentifiableCodableNamableAuditable {
+public class Budget extends AbstractIdentifiableCodableNamableAuditable {
 
   @NotNull
   @Column(name = COLUMN_SCHOOL_IDENTIFIER, nullable = false)
@@ -44,53 +43,37 @@ public class AccountingOperation extends AbstractIdentifiableCodableNamableAudit
   
   @NotNull
   @ManyToOne
-  @JoinColumn(name = COLUMN_PLAN, nullable = false)
-  public AccountingPlan plan;
+  @JoinColumn(name = COLUMN_ACCOUNTING_PLAN, nullable = false)
+  public AccountingPlan accountingPlan;
 
   @NotNull
-  @Column(name = COLUMN_ACCOUNT_TYPE, nullable = false)
-  public AccountingAccountType accountType;
-
-  @NotNull
-  @Column(name = COLUMN_BENEFICIARY, nullable = false)
-  public String beneficiary;
-
-  @NotNull
-  @Column(name = COLUMN_CANCELED, nullable = false)
-  public Boolean canceled;
+  @Column(name = COLUMN_YEAR, nullable = false)
+  public Integer year;
   
   @Transient
   public String schoolAsString;
 
   @Transient
-  public String planIdentifier;
+  public String accountingPlanIdentifier;
   
   @Transient
-  public String planAsString;
-  
-  @Transient
-  public String accountTypeAsString;
+  public String accountingPlanAsString;
 
   @Transient
   public String amountAsString;
   
   public static final String FIELD_SCHOOL_IDENTIFIER = "schoolIdentifier";
   public static final String FIELD_SCHOOL_AS_STRING = "schoolAsString";
-  public static final String FIELD_PLAN = "plan";
-  public static final String FIELD_PLAN_IDENTIFIER = "planIdentifier";
-  public static final String FIELD_PLAN_AS_STRING = "planAsString";
-  public static final String FIELD_ACCOUNT_TYPE = "accountType";
-  public static final String FIELD_ACCOUNT_TYPE_AS_STRING = "accountTypeAsString";
-  public static final String FIELD_BENEFICIARY = "beneficiary";
+  public static final String FIELD_ACCOUNTING_PLAN = "accountingPlan";
+  public static final String FIELD_ACCOUNTING_PLAN_IDENTIFIER = "accountingPlanIdentifier";
+  public static final String FIELD_ACCOUNTING_PLAN_AS_STRING = "accountingPlanAsString";
+  public static final String FIELD_YEAR = "year";
   public static final String FIELD_AMOUNT_AS_STRING = "amountAsString";
-  public static final String FIELD_CANCELED = "canceled";
   
-  public static final String ENTITY_NAME = "AccountingOperation";
-  public static final String TABLE_NAME = "TA_OPERATION_COMPTABLE";
+  public static final String ENTITY_NAME = "Budget";
+  public static final String TABLE_NAME = "TA_BUDGET";
 
   public static final String COLUMN_SCHOOL_IDENTIFIER = "ECOLE";
-  public static final String COLUMN_PLAN = "PLAN";
-  public static final String COLUMN_ACCOUNT_TYPE = "TYPE_COMPTE";
-  public static final String COLUMN_BENEFICIARY = "BENEFICIAIRE";
-  public static final String COLUMN_CANCELED = "ANNULEE";
+  public static final String COLUMN_ACCOUNTING_PLAN = "PLAN_COMPTABLE";
+  public static final String COLUMN_YEAR = "ANNEE";
 }

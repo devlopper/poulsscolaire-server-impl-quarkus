@@ -2,6 +2,8 @@ package org.cyk.system.poulsscolaire.server.impl.business.student;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
+import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters.ResultMode;
 import ci.gouv.dgbf.extension.server.service.api.request.DeleteOneRequestDto;
 import ci.gouv.dgbf.extension.test.AbstractTest;
 import io.quarkus.test.junit.QuarkusTest;
@@ -11,10 +13,13 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import java.util.Map;
 import java.util.UUID;
+import org.cyk.system.poulsscolaire.server.api.registration.BloodGroup;
+import org.cyk.system.poulsscolaire.server.api.registration.StudentDto;
 import org.cyk.system.poulsscolaire.server.api.registration.StudentService.StudentCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.registration.StudentService.StudentUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Identity;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Student;
+import org.cyk.system.poulsscolaire.server.impl.persistence.StudentDynamicQuery;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest
@@ -42,6 +47,11 @@ class StudentBusinessTest extends AbstractTest {
   @Inject
   StudentDeleteBusiness deleteBusiness;
 
+  @Inject
+  StudentDynamicQuery dynamicQuery;
+
+  DynamicQueryParameters<Student> dynamicQueryParameters = new DynamicQueryParameters<>();
+  
   @Test
   void create() {
     StudentCreateRequestDto request = new StudentCreateRequestDto();
@@ -85,6 +95,24 @@ class StudentBusinessTest extends AbstractTest {
     assertEquals(identityCount - 1, count(entityManager, Identity.ENTITY_NAME));
   }
 
+  @Test
+  void getOne_asString() {
+    dynamicQueryParameters.setResultMode(ResultMode.ONE);
+    dynamicQueryParameters.projection().addNames(StudentDto.JSON_AS_STRING);
+    dynamicQueryParameters.filter().addCriteria(StudentDto.JSON_IDENTIFIER, "1");
+    Student student = dynamicQuery.getOne(dynamicQueryParameters);
+    assertEquals("1 - 1 1", student.asString);
+  }
+  
+  @Test
+  void getOne_bloodGroup() {
+    dynamicQueryParameters.setResultMode(ResultMode.ONE);
+    dynamicQueryParameters.projection().addNames(StudentDto.JSON_BLOOD_GROUP);
+    dynamicQueryParameters.filter().addCriteria(StudentDto.JSON_IDENTIFIER, "1");
+    Student student = dynamicQuery.getOne(dynamicQueryParameters);
+    assertEquals(BloodGroup.A_PLUS, student.bloodGroup);
+  }
+  
   public static class Profile implements QuarkusTestProfile {
 
     @Override
