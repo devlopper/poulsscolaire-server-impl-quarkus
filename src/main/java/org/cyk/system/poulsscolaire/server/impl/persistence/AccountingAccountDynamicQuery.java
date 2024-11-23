@@ -86,6 +86,13 @@ public class AccountingAccountDynamicQuery extends AbstractDynamicQuery<Accounti
             AccountingAccountFilter.JSON_SCHOOL_IDENTIFIER))
         .valueFunction(AccountingAccountFilter::getSchoolIdentifier).build();
 
+    predicateBuilder().name(AccountingAccountFilter.JSON_BUDGET_IDENTIFIER)
+    .expression(String.format(
+        "EXISTS(SELECT z FROM Budget z "
+            + "WHERE z.accountingPlan = t.plan AND z.identifier = :%s)",
+        AccountingAccountFilter.JSON_BUDGET_IDENTIFIER))
+    .valueFunction(AccountingAccountFilter::getBudgetIdentifier).build();
+    
     // Ordres par défaut
     orderBuilder().fieldName(AbstractIdentifiableCodableNamable.FIELD_NAME).build();
     orderBuilder().fieldName(AbstractIdentifiableCodable.FIELD_CODE).build();

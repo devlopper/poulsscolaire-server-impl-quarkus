@@ -2,8 +2,10 @@ package org.cyk.system.poulsscolaire.server.impl.business.identity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import ci.gouv.dgbf.extension.server.persistence.entity.embeddable.Audit;
+import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
 import ci.gouv.dgbf.extension.server.service.api.entity.AuditDto;
 import ci.gouv.dgbf.extension.server.service.api.request.DeleteOneRequestDto;
 import ci.gouv.dgbf.extension.test.AbstractTest;
@@ -19,6 +21,7 @@ import org.cyk.system.poulsscolaire.server.api.registration.IdentityRelationship
 import org.cyk.system.poulsscolaire.server.api.registration.IdentityService.IdentityCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.registration.IdentityService.IdentityUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Identity;
+import org.cyk.system.poulsscolaire.server.impl.persistence.IdentityDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.IdentityRelationship;
 import org.junit.jupiter.api.Test;
 
@@ -34,27 +37,38 @@ class IdentityBusinessTest extends AbstractTest {
 
   @Inject
   IdentityReadManyBusiness readManyBusiness;
-  
+
   @Inject
   IdentityReadOneBusiness readOneBusiness;
-  
+
   @Inject
   IdentityReadByIdentifierBusiness readByIdentifierBusiness;
-  
+
   @Inject
   IdentityUpdateBusiness updateBusiness;
-  
+
   @Inject
   IdentityDeleteBusiness deleteBusiness;
-  
+
   @Inject
   IdentityMapper mapper;
-  
+
+  @Inject
+  IdentityDynamicQuery dynamicQuery;
+
+  DynamicQueryParameters<Identity> parameters = new DynamicQueryParameters<>();
+
+  @Test
+  void getMany() {
+    parameters.projection().addNames(IdentityDto.JSON_RELATIONSHIP_TYPE_PARENT_AS_STRING);
+    assertTrue(dynamicQuery.getMany(parameters).size() > 0);
+  }
+
   @Test
   void mapToDto_whenNull() {
     assertNull(mapper.mapToDto(null));
   }
-  
+
   @Test
   void mapToDto_whenNotNull() {
     Identity instance = new Identity();
@@ -65,7 +79,7 @@ class IdentityBusinessTest extends AbstractTest {
     assertEquals(instance.getIdentifier(), dto.getIdentifier());
     assertEquals(instance.getAudit().getWho(), dto.getAudit().getWho());
   }
-  
+
   @Test
   void mapToDto_whenNotNullAndAuditNull() {
     Identity instance = new Identity();
@@ -74,12 +88,12 @@ class IdentityBusinessTest extends AbstractTest {
     assertEquals(instance.getIdentifier(), dto.getIdentifier());
     assertNull(dto.getAudit());
   }
-  
+
   @Test
   void mapFromDto_whenNull() {
     assertNull(mapper.mapFromDto(null));
   }
-  
+
   @Test
   void mapFromDto_whenAuditNull() {
     IdentityDto dto = new IdentityDto();
@@ -88,7 +102,7 @@ class IdentityBusinessTest extends AbstractTest {
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
     assertEquals(null, instance.getAudit());
   }
-  
+
   @Test
   void mapFromDto_whenAuditNotNull() {
     IdentityDto dto = new IdentityDto();
@@ -99,7 +113,7 @@ class IdentityBusinessTest extends AbstractTest {
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
     assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
   }
-  
+
   @Test
   void create() {
     IdentityCreateRequestDto request = new IdentityCreateRequestDto();
@@ -111,7 +125,7 @@ class IdentityBusinessTest extends AbstractTest {
     createBusiness.process(request);
     assertEquals(count + 1, count(entityManager, Identity.ENTITY_NAME));
   }
-  
+
   @Test
   void createWithRelationship() {
     IdentityCreateRequestDto request = new IdentityCreateRequestDto();
@@ -128,7 +142,7 @@ class IdentityBusinessTest extends AbstractTest {
     assertEquals(count + 1, count(entityManager, Identity.ENTITY_NAME));
     assertEquals(relationshipCount + 2, count(entityManager, IdentityRelationship.ENTITY_NAME));
   }
-  
+
   @Test
   void update() {
     IdentityUpdateRequestDto request = new IdentityUpdateRequestDto();
@@ -142,7 +156,7 @@ class IdentityBusinessTest extends AbstractTest {
     updateBusiness.process(request);
     assertEquals(count, count(entityManager, Identity.ENTITY_NAME));
   }
-  
+
   @Test
   void delete() {
     DeleteOneRequestDto request = new DeleteOneRequestDto();
@@ -152,7 +166,7 @@ class IdentityBusinessTest extends AbstractTest {
     deleteBusiness.process(request);
     assertEquals(count - 1, count(entityManager, Identity.ENTITY_NAME));
   }
-  
+
   public static class Profile implements QuarkusTestProfile {
 
     @Override

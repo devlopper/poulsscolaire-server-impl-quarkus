@@ -3,6 +3,7 @@ package org.cyk.system.poulsscolaire.server.impl.persistence;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableNamable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Transient;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Subselect;
 
@@ -15,6 +16,7 @@ import org.hibernate.annotations.Subselect;
 @Entity(name = School.ENTITY_NAME)
 @Immutable
 @Subselect(School.QUERY)
+@EqualsAndHashCode(callSuper = true)
 public class School extends AbstractIdentifiableCodableNamable {
 
   @Transient

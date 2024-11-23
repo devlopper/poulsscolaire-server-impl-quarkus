@@ -16,6 +16,7 @@ import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import lombok.EqualsAndHashCode;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
@@ -36,6 +37,7 @@ import org.hibernate.envers.Audited;
         @AuditOverride(forClass = AbstractIdentifiableCodableNamable.class),
         @AuditOverride(forClass = AbstractIdentifiableCodable.class),
         @AuditOverride(forClass = AbstractIdentifiable.class)})
+@EqualsAndHashCode(callSuper = true)
 public class Deadline extends AbstractIdentifiableCodableNamableAuditable {
 
   @NotNull
