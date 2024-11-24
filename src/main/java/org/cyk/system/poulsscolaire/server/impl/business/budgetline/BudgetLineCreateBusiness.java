@@ -61,7 +61,7 @@ public class BudgetLineCreateBusiness extends AbstractIdentifiableCreateBusiness
     budgetLine.departmentIdentifier = request.getDepartmentIdentifier();
     budgetLine.accountingAccount = (AccountingAccount) array[1];
     budgetLine.fundingSource = (FundingSource) array[2];
-    budgetLine.monthIndex = request.getMonthIndex();
+    budgetLine.month = request.getMonth();
     budgetLine.amount = request.getAmount();
     budgetLine.justification = request.getJustification();
   }

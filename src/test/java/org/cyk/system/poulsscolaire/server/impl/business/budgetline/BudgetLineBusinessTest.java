@@ -13,6 +13,7 @@ import io.quarkus.test.junit.QuarkusTestProfile;
 import io.quarkus.test.junit.TestProfile;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import java.time.Month;
 import java.util.Map;
 import org.cyk.system.poulsscolaire.server.api.accounting.BudgetLineDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.BudgetLineService.BudgetLineCreateRequestDto;
@@ -57,7 +58,8 @@ class BudgetLineBusinessTest extends AbstractTest {
     request.setBudgetIdentifier("1");
     request.setDepartmentIdentifier("1");
     request.setAccountingAccountIdentifier("1");
-    request.setMonthIndex(1);
+    request.setFundingSourceIdentifier("1");
+    request.setMonth(Month.FEBRUARY);
     request.setAmount(0L);
     request.setAuditWho("christian");
     long count = count(entityManager, BudgetLine.ENTITY_NAME);
