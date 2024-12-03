@@ -80,7 +80,7 @@ public class FundingDynamicQuery extends AbstractDynamicQuery<Funding> {
         .valueFunction(AbstractIdentifiableFilter::getIdentifier).build();
 
     predicateBuilder().name(FundingFilter.JSON_BUDGET_IDENTIFIER)
-        .fieldName(Funding.FIELD_BUDGET_IDENTIFIER)
+        .fieldName(fieldName(Funding.FIELD_BUDGET, AbstractIdentifiable.FIELD_IDENTIFIER))
         .valueFunction(FundingFilter::getBudgetIdentifier).build();
 
     predicateBuilder().name(FundingFilter.JSON_DEPARTMENT_IDENTIFIER)
