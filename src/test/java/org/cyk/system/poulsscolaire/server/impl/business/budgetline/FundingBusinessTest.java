@@ -15,74 +15,75 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import java.time.Month;
 import java.util.Map;
-import org.cyk.system.poulsscolaire.server.api.accounting.BudgetLineDto;
-import org.cyk.system.poulsscolaire.server.api.accounting.BudgetLineService.BudgetLineCreateRequestDto;
-import org.cyk.system.poulsscolaire.server.api.accounting.BudgetLineService.BudgetLineUpdateRequestDto;
-import org.cyk.system.poulsscolaire.server.impl.persistence.BudgetLine;
+import org.cyk.system.poulsscolaire.server.api.accounting.FundingDto;
+import org.cyk.system.poulsscolaire.server.api.accounting.FundingService.FundingCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.accounting.FundingService.FundingUpdateRequestDto;
+import org.cyk.system.poulsscolaire.server.impl.persistence.Funding;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest
-@TestProfile(BudgetLineBusinessTest.Profile.class)
-class BudgetLineBusinessTest extends AbstractTest {
+@TestProfile(FundingBusinessTest.Profile.class)
+class FundingBusinessTest extends AbstractTest {
 
   @Inject
   EntityManager entityManager;
 
   @Inject
-  BudgetLineCreateBusiness createBusiness;
+  FundingCreateBusiness createBusiness;
 
   @Inject
-  BudgetLineReadManyBusiness readManyBusiness;
+  FundingReadManyBusiness readManyBusiness;
 
   @Inject
-  BudgetLineReadOneBusiness readOneBusiness;
+  FundingReadOneBusiness readOneBusiness;
 
   @Inject
-  BudgetLineReadByIdentifierBusiness readByIdentifierBusiness;
+  FundingReadByIdentifierBusiness readByIdentifierBusiness;
 
   @Inject
-  BudgetLineUpdateBusiness updateBusiness;
+  FundingUpdateBusiness updateBusiness;
 
   @Inject
-  BudgetLineDeleteBusiness deleteBusiness;
+  FundingDeleteBusiness deleteBusiness;
 
   @Inject
-  BudgetLineValidator validator;
+  FundingValidator validator;
 
   @Inject
-  BudgetLineMapper mapper;
+  FundingMapper mapper;
 
   @Test
   void create() {
-    BudgetLineCreateRequestDto request = new BudgetLineCreateRequestDto();
+    FundingCreateRequestDto request = new FundingCreateRequestDto();
     request.setBudgetIdentifier("1");
     request.setDepartmentIdentifier("1");
     request.setAccountingAccountIdentifier("1");
-    request.setFundingSourceIdentifier("1");
+    request.setSourceIdentifier("1");
     request.setMonth(Month.FEBRUARY);
     request.setAmount(0L);
     request.setAuditWho("christian");
-    long count = count(entityManager, BudgetLine.ENTITY_NAME);
+    long count = count(entityManager, Funding.ENTITY_NAME);
     createBusiness.process(request);
-    assertEquals(count + 1, count(entityManager, BudgetLine.ENTITY_NAME));
+    assertEquals(count + 1, count(entityManager, Funding.ENTITY_NAME));
   }
 
   @Test
   void readMany() {
     GetManyRequestDto request = new GetManyRequestDto();
+    request.projection().addNames(FundingDto.JSON_MONTH_AS_STRING);
     request.setAuditWho("christian");
     assertTrue(readManyBusiness.process(request).getCount() > 0);
   }
 
   @Test
   void update() {
-    BudgetLineUpdateRequestDto request = new BudgetLineUpdateRequestDto();
+    FundingUpdateRequestDto request = new FundingUpdateRequestDto();
     request.setIdentifier("toupdate");
     
     request.setAuditWho("christian");
-    long count = count(entityManager, BudgetLine.ENTITY_NAME);
+    long count = count(entityManager, Funding.ENTITY_NAME);
     updateBusiness.process(request);
-    assertEquals(count, count(entityManager, BudgetLine.ENTITY_NAME));
+    assertEquals(count, count(entityManager, Funding.ENTITY_NAME));
   }
 
   @Test
@@ -92,20 +93,20 @@ class BudgetLineBusinessTest extends AbstractTest {
 
   @Test
   void mapToDto_whenNotNull() {
-    BudgetLine instance = new BudgetLine();
+    Funding instance = new Funding();
     instance.setIdentifier("1");
     instance.setAudit(new Audit());
     instance.getAudit().setWho("christian");
-    BudgetLineDto dto = mapper.mapToDto(instance);
+    FundingDto dto = mapper.mapToDto(instance);
     assertEquals(instance.getIdentifier(), dto.getIdentifier());
     assertEquals(instance.getAudit().getWho(), dto.getAudit().getWho());
   }
 
   @Test
   void mapToDto_whenNotNullAndAuditNull() {
-    BudgetLine instance = new BudgetLine();
+    Funding instance = new Funding();
     instance.setIdentifier("1");
-    BudgetLineDto dto = mapper.mapToDto(instance);
+    FundingDto dto = mapper.mapToDto(instance);
     assertEquals(instance.getIdentifier(), dto.getIdentifier());
     assertNull(dto.getAudit());
   }
@@ -117,20 +118,20 @@ class BudgetLineBusinessTest extends AbstractTest {
 
   @Test
   void mapFromDto_whenAuditNull() {
-    BudgetLineDto dto = new BudgetLineDto();
+    FundingDto dto = new FundingDto();
     dto.setIdentifier("1");
-    BudgetLine instance = mapper.mapFromDto(dto);
+    Funding instance = mapper.mapFromDto(dto);
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
     assertEquals(null, instance.getAudit());
   }
 
   @Test
   void mapFromDto_whenAuditNotNull() {
-    BudgetLineDto dto = new BudgetLineDto();
+    FundingDto dto = new FundingDto();
     dto.setIdentifier("1");
     dto.setAudit(new AuditDto());
     dto.getAudit().setWho("meliane");
-    BudgetLine instance = mapper.mapFromDto(dto);
+    Funding instance = mapper.mapFromDto(dto);
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
     assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
   }

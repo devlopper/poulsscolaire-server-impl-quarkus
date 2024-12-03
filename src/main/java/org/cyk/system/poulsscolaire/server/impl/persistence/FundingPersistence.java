@@ -5,16 +5,16 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
-import org.cyk.system.poulsscolaire.server.api.accounting.BudgetLineDto;
+import org.cyk.system.poulsscolaire.server.api.accounting.FundingDto;
 
 /**
- * Cette classe représente les fonctionnalités de persistance de {@link BudgetLine}.
+ * Cette classe représente les fonctionnalités de persistance de {@link Funding}.
  *
  * @author Christian
  *
  */
 @ApplicationScoped
-public class BudgetLinePersistence extends AbstractIdentifiablePersistence<BudgetLine> {
+public class FundingPersistence extends AbstractIdentifiablePersistence<Funding> {
 
   @Inject
   @Getter
@@ -23,9 +23,9 @@ public class BudgetLinePersistence extends AbstractIdentifiablePersistence<Budge
   /**
    * Cette méthode permet de construire une instance.
    */
-  public BudgetLinePersistence() {
-    super(BudgetLine.class);
-    name = BudgetLineDto.NAME;
-    pluralName = BudgetLineDto.PLURAL_NAME;
+  public FundingPersistence() {
+    super(Funding.class);
+    name = FundingDto.NAME;
+    pluralName = FundingDto.PLURAL_NAME;
   }
 }

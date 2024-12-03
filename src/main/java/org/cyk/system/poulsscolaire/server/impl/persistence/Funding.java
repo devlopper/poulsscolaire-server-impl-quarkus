@@ -26,16 +26,16 @@ import org.hibernate.envers.Audited;
  */
 @Getter
 @Setter
-@Entity(name = BudgetLine.ENTITY_NAME)
-@Table(name = BudgetLine.TABLE_NAME,
-    uniqueConstraints = {@UniqueConstraint(columnNames = {BudgetLine.COLUMN_BUDGET,
-        BudgetLine.COLUMN_DEPARTMENT_IDENTIFIER, BudgetLine.COLUMN_MONTH,
-        BudgetLine.COLUMN_ACCOUNTING_ACCOUNT, BudgetLine.COLUMN_FUNDING_SOURCE})})
+@Entity(name = Funding.ENTITY_NAME)
+@Table(name = Funding.TABLE_NAME,
+    uniqueConstraints = {@UniqueConstraint(columnNames = {Funding.COLUMN_BUDGET,
+        Funding.COLUMN_DEPARTMENT_IDENTIFIER, Funding.COLUMN_MONTH,
+        Funding.COLUMN_ACCOUNTING_ACCOUNT, Funding.COLUMN_SOURCE})})
 @Audited
 @AuditOverrides(value = {@AuditOverride(forClass = AbstractIdentifiableAuditable.class),
     @AuditOverride(forClass = AbstractIdentifiable.class)})
 @EqualsAndHashCode(callSuper = true)
-public class BudgetLine extends AbstractIdentifiableAuditable {
+public class Funding extends AbstractIdentifiableAuditable {
 
   @NotNull
   @ManyToOne
@@ -57,8 +57,8 @@ public class BudgetLine extends AbstractIdentifiableAuditable {
 
   @NotNull
   @ManyToOne
-  @JoinColumn(name = COLUMN_FUNDING_SOURCE, nullable = false)
-  public FundingSource fundingSource;
+  @JoinColumn(name = COLUMN_SOURCE, nullable = false)
+  public FundingSource source;
 
   @NotNull
   @Column(name = COLUMN_AMOUNT, nullable = false)
@@ -92,16 +92,16 @@ public class BudgetLine extends AbstractIdentifiableAuditable {
   public static final String FIELD_BUDGET_IDENTIFIER = "budgetIdentifier";
   public static final String FIELD_BUDGET_AS_STRING = "budgetAsString";
 
-  public static final String FIELD_DEPARTMENT_IDENTIFIER = "budgetIdentifier";
-  public static final String FIELD_DEPARTMENT_AS_STRING = "budgetAsString";
+  public static final String FIELD_DEPARTMENT_IDENTIFIER = "departmentIdentifier";
+  public static final String FIELD_DEPARTMENT_AS_STRING = "departmentAsString";
 
   public static final String FIELD_ACCOUNTING_ACCOUNT = "accountingAccount";
   public static final String FIELD_ACCOUNTING_ACCOUNT_IDENTIFIER = "accountingAccountIdentifier";
   public static final String FIELD_ACCOUNTING_ACCOUNT_AS_STRING = "accountingAccountAsString";
 
-  public static final String FIELD_FUNDING_SOURCE = "fundingSource";
-  public static final String FIELD_FUNDING_SOURCE_IDENTIFIER = "fundingSourceIdentifier";
-  public static final String FIELD_FUNDING_SOURCE_AS_STRING = "fundingSourceAsString";
+  public static final String FIELD_SOURCE = "source";
+  public static final String FIELD_SOURCE_IDENTIFIER = "sourceIdentifier";
+  public static final String FIELD_SOURCE_AS_STRING = "sourceAsString";
 
   public static final String FIELD_MONTH = "month";
   public static final String FIELD_MONTH_AS_STRING = "monthAsString";
@@ -111,13 +111,13 @@ public class BudgetLine extends AbstractIdentifiableAuditable {
 
   public static final String FIELD_JUSTIFICATION = "justification";
 
-  public static final String ENTITY_NAME = "BudgetLine";
-  public static final String TABLE_NAME = "TA_LIGNE_BUDGET";
+  public static final String ENTITY_NAME = "Funding";
+  public static final String TABLE_NAME = "TA_FINANCEMENT";
 
   public static final String COLUMN_BUDGET = "BUDGET";
   public static final String COLUMN_DEPARTMENT_IDENTIFIER = "DEPARTEMENT";
   public static final String COLUMN_ACCOUNTING_ACCOUNT = "COMPTE_COMPTABLE";
-  public static final String COLUMN_FUNDING_SOURCE = "SOURCE_FINANCEMENT";
+  public static final String COLUMN_SOURCE = "SOURCE_FINANCEMENT";
   public static final String COLUMN_MONTH = "MOIS";
   public static final String COLUMN_AMOUNT = "MONTANT";
   public static final String COLUMN_JUSTIFICATION = "JUSTIFICATION";

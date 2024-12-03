@@ -12,45 +12,45 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
-import org.cyk.system.poulsscolaire.server.api.accounting.BudgetLineDto;
-import org.cyk.system.poulsscolaire.server.api.accounting.BudgetLineService;
-import org.cyk.system.poulsscolaire.server.impl.business.budgetline.BudgetLineCreateBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.budgetline.BudgetLineDeleteBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.budgetline.BudgetLineReadByIdentifierBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.budgetline.BudgetLineReadManyBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.budgetline.BudgetLineReadOneBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.budgetline.BudgetLineUpdateBusiness;
+import org.cyk.system.poulsscolaire.server.api.accounting.FundingDto;
+import org.cyk.system.poulsscolaire.server.api.accounting.FundingService;
+import org.cyk.system.poulsscolaire.server.impl.business.budgetline.FundingCreateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.budgetline.FundingDeleteBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.budgetline.FundingReadByIdentifierBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.budgetline.FundingReadManyBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.budgetline.FundingReadOneBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.budgetline.FundingUpdateBusiness;
 
 /**
- * Cette classe représente l'implémentation de {@link BudgetLineService}.
+ * Cette classe représente l'implémentation de {@link FundingService}.
  *
  * @author Christian
  *
  */
 @ApplicationScoped
-public class BudgetLineServiceImpl extends AbstractServiceImpl
-    implements BudgetLineService {
+public class FundingServiceImpl extends AbstractServiceImpl
+    implements FundingService {
 
   @Inject
-  BudgetLineCreateBusiness createBusiness;
+  FundingCreateBusiness createBusiness;
 
   @Inject
-  BudgetLineReadManyBusiness readManyBusiness;
+  FundingReadManyBusiness readManyBusiness;
 
   @Inject
-  BudgetLineReadOneBusiness readOneBusiness;
+  FundingReadOneBusiness readOneBusiness;
 
   @Inject
-  BudgetLineReadByIdentifierBusiness readByIdentifierBusiness;
+  FundingReadByIdentifierBusiness readByIdentifierBusiness;
 
   @Inject
-  BudgetLineUpdateBusiness updateBusiness;
+  FundingUpdateBusiness updateBusiness;
   
   @Inject
-  BudgetLineDeleteBusiness deleteBusiness;
+  FundingDeleteBusiness deleteBusiness;
 
   @Override
-  public Response create(BudgetLineCreateRequestDto request) {
+  public Response create(FundingCreateRequestDto request) {
     CreateResponseDto dto = createBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);
@@ -60,7 +60,7 @@ public class BudgetLineServiceImpl extends AbstractServiceImpl
 
   @Override
   public Response getMany(GetManyRequestDto request) {
-    BudgetLineGetManyResponseDto dto = readManyBusiness.process(request);
+    FundingGetManyResponseDto dto = readManyBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);
     return responseBuilder.build();
@@ -68,7 +68,7 @@ public class BudgetLineServiceImpl extends AbstractServiceImpl
 
   @Override
   public Response getOne(GetOneRequestDto request) {
-    BudgetLineDto dto = readOneBusiness.process(request);
+    FundingDto dto = readOneBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);
     return responseBuilder.build();
@@ -76,14 +76,14 @@ public class BudgetLineServiceImpl extends AbstractServiceImpl
 
   @Override
   public Response getByIdentifier(GetByIdentifierRequestDto request) {
-    BudgetLineDto dto = readByIdentifierBusiness.process(request);
+    FundingDto dto = readByIdentifierBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);
     return responseBuilder.build();
   }
 
   @Override
-  public Response update(BudgetLineUpdateRequestDto request) {
+  public Response update(FundingUpdateRequestDto request) {
     IdentifiableResponseDto dto = updateBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);
