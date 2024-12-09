@@ -29,6 +29,7 @@ public class BudgetDynamicQuery extends AbstractDynamicQuery<Budget> {
   EntityManager entityManager;
 
   String schoolVariableName;
+  String amountVariableName;
 
   /**
    * Cette méthode permet d'instancier un object.
@@ -36,6 +37,7 @@ public class BudgetDynamicQuery extends AbstractDynamicQuery<Budget> {
   public BudgetDynamicQuery() {
     super(Budget.class);
     schoolVariableName = "s";
+    amountVariableName = "ba";
   }
 
   @PostConstruct
@@ -48,6 +50,9 @@ public class BudgetDynamicQuery extends AbstractDynamicQuery<Budget> {
 
     projectionBuilder().name(AbstractIdentifiableCodableNamableDto.JSON_NAME)
         .fieldName(AbstractIdentifiableCodableNamable.FIELD_NAME).build();
+
+    projectionBuilder().name(BudgetDto.JSON_AMOUNT_AS_STRING).tupleVariableName(amountVariableName)
+        .fieldName(BudgetAmount.FIELD_VALUE).nameFieldName(Budget.FIELD_AMOUNT_AS_STRING).build();
 
     projectionBuilder().name(BudgetDto.JSON_SCHOOL_IDENTIFIER)
         .fieldName(Budget.FIELD_SCHOOL_IDENTIFIER).build();
@@ -72,12 +77,15 @@ public class BudgetDynamicQuery extends AbstractDynamicQuery<Budget> {
         .tupleVariableName(schoolVariableName).parentFieldName(Budget.FIELD_SCHOOL_IDENTIFIER)
         .leftInnerOrRight(true).build();
 
+    joinBuilder().projectionsNames(BudgetDto.JSON_AMOUNT_AS_STRING).leftInnerOrRight(true)
+        .entityClass(BudgetAmount.class).tupleVariableName(amountVariableName).build();
+
     // Prédicats
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
         .valueFunction(AbstractIdentifiableFilter::getIdentifier).build();
 
     // Ordres par défaut
-    orderBuilder().fieldName(Budget.FIELD_YEAR).build();
+    orderBuilder().fieldName(Budget.FIELD_YEAR).ascending(false).build();
   }
 }

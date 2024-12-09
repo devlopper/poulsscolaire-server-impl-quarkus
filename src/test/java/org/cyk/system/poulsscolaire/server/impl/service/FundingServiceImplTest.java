@@ -12,12 +12,13 @@ import io.restassured.http.ContentType;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingService;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingService.FundingGetManyResponseDto;
-import org.cyk.system.poulsscolaire.server.impl.business.budgetline.FundingCreateBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.budgetline.FundingDeleteBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.budgetline.FundingReadByIdentifierBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.budgetline.FundingReadManyBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.budgetline.FundingReadOneBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.budgetline.FundingUpdateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingCreateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingDeleteBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingReadByIdentifierBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingReadManyBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingReadOneBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingUpdateAmountBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingUpdateBusiness;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -32,35 +33,32 @@ class FundingServiceImplTest extends AbstractTest {
 
   @Test
   void create() {
-    FundingCreateBusiness business =
-        installMockForType(FundingCreateBusiness.class);
+    FundingCreateBusiness business = installMockForType(FundingCreateBusiness.class);
     Mockito.when(business.process(any())).thenReturn(new CreateResponseDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
-        .post(FundingService.PATH + "/" + FundingService.CREATE_PATH).then()
-        .log().ifError().statusCode(jakarta.ws.rs.core.Response.Status.CREATED.getStatusCode());
+        .post(FundingService.PATH + "/" + FundingService.CREATE_PATH).then().log().ifError()
+        .statusCode(jakarta.ws.rs.core.Response.Status.CREATED.getStatusCode());
   }
 
   @Test
   void readMany() {
-    FundingReadManyBusiness business =
-        installMockForType(FundingReadManyBusiness.class);
+    FundingReadManyBusiness business = installMockForType(FundingReadManyBusiness.class);
     Mockito.when(business.process(any())).thenReturn(new FundingGetManyResponseDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
-        .post(FundingService.PATH + "/" + FundingService.GET_MANY_PATH)
-        .then().log().ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
+        .post(FundingService.PATH + "/" + FundingService.GET_MANY_PATH).then().log().ifError()
+        .statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
   }
 
   @Test
   void readOne() {
-    FundingReadOneBusiness business =
-        installMockForType(FundingReadOneBusiness.class);
+    FundingReadOneBusiness business = installMockForType(FundingReadOneBusiness.class);
     Mockito.when(business.process(any())).thenReturn(new FundingDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
-        .post(FundingService.PATH + "/" + FundingService.GET_ONE_PATH)
-        .then().log().ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
+        .post(FundingService.PATH + "/" + FundingService.GET_ONE_PATH).then().log().ifError()
+        .statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
   }
 
   @Test
@@ -70,31 +68,38 @@ class FundingServiceImplTest extends AbstractTest {
     Mockito.when(business.process(any())).thenReturn(new FundingDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
-        .post(FundingService.PATH + "/"
-            + FundingService.GET_BY_IDENTIFIER_PATH)
-        .then().log().ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
+        .post(FundingService.PATH + "/" + FundingService.GET_BY_IDENTIFIER_PATH).then().log()
+        .ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
   }
 
   @Test
   void update() {
-    FundingUpdateBusiness business =
-        installMockForType(FundingUpdateBusiness.class);
+    FundingUpdateBusiness business = installMockForType(FundingUpdateBusiness.class);
     Mockito.when(business.process(any())).thenReturn(new IdentifiableResponseDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
-        .put(FundingService.PATH + "/" + FundingService.UPDATE_PATH).then()
-        .log().ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
+        .put(FundingService.PATH + "/" + FundingService.UPDATE_PATH).then().log().ifError()
+        .statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
   }
-  
+
+  @Test
+  void updateAmount() {
+    FundingUpdateAmountBusiness business = installMockForType(FundingUpdateAmountBusiness.class);
+    Mockito.when(business.process(any())).thenReturn(new IdentifiableResponseDto());
+
+    RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
+        .put(FundingService.PATH + "/" + FundingService.UPDATE_AMOUNT_PATH).then().log().ifError()
+        .statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
+  }
+
   @Test
   void delete() {
-    FundingDeleteBusiness business =
-        installMockForType(FundingDeleteBusiness.class);
+    FundingDeleteBusiness business = installMockForType(FundingDeleteBusiness.class);
     Mockito.when(business.process(any())).thenReturn(new IdentifiableResponseDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
-        .delete(FundingService.PATH + "/" + FundingService.DELETE_PATH)
-        .then().log().ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
+        .delete(FundingService.PATH + "/" + FundingService.DELETE_PATH).then().log().ifError()
+        .statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
   }
 
 }

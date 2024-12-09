@@ -1,4 +1,4 @@
-package org.cyk.system.poulsscolaire.server.impl.business.budgetline;
+package org.cyk.system.poulsscolaire.server.impl.business.funding;
 
 import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableReadByIdentifierBusiness;
 import jakarta.enterprise.context.ApplicationScoped;

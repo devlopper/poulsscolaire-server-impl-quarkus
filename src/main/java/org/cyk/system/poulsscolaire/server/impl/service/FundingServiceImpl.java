@@ -14,12 +14,13 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingService;
-import org.cyk.system.poulsscolaire.server.impl.business.budgetline.FundingCreateBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.budgetline.FundingDeleteBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.budgetline.FundingReadByIdentifierBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.budgetline.FundingReadManyBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.budgetline.FundingReadOneBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.budgetline.FundingUpdateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingCreateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingDeleteBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingReadByIdentifierBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingReadManyBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingReadOneBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingUpdateAmountBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingUpdateBusiness;
 
 /**
  * Cette classe représente l'implémentation de {@link FundingService}.
@@ -45,6 +46,9 @@ public class FundingServiceImpl extends AbstractServiceImpl
 
   @Inject
   FundingUpdateBusiness updateBusiness;
+  
+  @Inject
+  FundingUpdateAmountBusiness updateAmountBusiness;
   
   @Inject
   FundingDeleteBusiness deleteBusiness;
@@ -85,6 +89,14 @@ public class FundingServiceImpl extends AbstractServiceImpl
   @Override
   public Response update(FundingUpdateRequestDto request) {
     IdentifiableResponseDto dto = updateBusiness.process(request);
+    ResponseBuilder responseBuilder = new ResponseBuilder();
+    responseBuilder.setDto(dto);
+    return responseBuilder.build();
+  }
+  
+  @Override
+  public Response updateAmount(FundingUpdateAmountRequestDto request) {
+    IdentifiableResponseDto dto = updateAmountBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);
     return responseBuilder.build();

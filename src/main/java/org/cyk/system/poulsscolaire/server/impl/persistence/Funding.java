@@ -43,12 +43,12 @@ public class Funding extends AbstractIdentifiableAuditable {
   public Budget budget;
 
   @NotNull
-  @Column(name = COLUMN_DEPARTMENT_IDENTIFIER, nullable = false)
-  public String departmentIdentifier;
-
-  @NotNull
   @Column(name = COLUMN_MONTH, nullable = false)
   public Month month;
+  
+  @NotNull
+  @Column(name = COLUMN_DEPARTMENT_IDENTIFIER, nullable = false)
+  public String departmentIdentifier;
 
   @NotNull
   @ManyToOne
@@ -74,6 +74,9 @@ public class Funding extends AbstractIdentifiableAuditable {
   public String budgetAsString;
 
   @Transient
+  public String monthAsString;
+  
+  @Transient
   public String departmentAsString;
 
   @Transient
@@ -81,12 +84,18 @@ public class Funding extends AbstractIdentifiableAuditable {
 
   @Transient
   public String accountingAccountAsString;
+  
+  @Transient
+  public String sourceIdentifier;
 
   @Transient
-  public String monthAsString;
+  public String sourceAsString;
 
   @Transient
   public String amountAsString;
+  
+  @Transient
+  public Boolean amountInputable;
 
   public static final String FIELD_BUDGET = "budget";
   public static final String FIELD_BUDGET_IDENTIFIER = "budgetIdentifier";
@@ -108,7 +117,8 @@ public class Funding extends AbstractIdentifiableAuditable {
 
   public static final String FIELD_AMOUNT = "amount";
   public static final String FIELD_AMOUNT_AS_STRING = "amountAsString";
-
+  public static final String FIELD_AMOUNT_INPUTABLE = "amountInputable";
+  
   public static final String FIELD_JUSTIFICATION = "justification";
 
   public static final String ENTITY_NAME = "Funding";

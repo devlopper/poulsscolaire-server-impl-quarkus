@@ -1,4 +1,4 @@
-package org.cyk.system.poulsscolaire.server.impl.business.budgetline;
+package org.cyk.system.poulsscolaire.server.impl.business.funding;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -17,6 +17,7 @@ import java.time.Month;
 import java.util.Map;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingService.FundingCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.accounting.FundingService.FundingUpdateAmountRequestDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingService.FundingUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Funding;
 import org.junit.jupiter.api.Test;
@@ -42,6 +43,9 @@ class FundingBusinessTest extends AbstractTest {
 
   @Inject
   FundingUpdateBusiness updateBusiness;
+
+  @Inject
+  FundingUpdateAmountBusiness updateAmountBusiness;
 
   @Inject
   FundingDeleteBusiness deleteBusiness;
@@ -70,7 +74,8 @@ class FundingBusinessTest extends AbstractTest {
   @Test
   void readMany() {
     GetManyRequestDto request = new GetManyRequestDto();
-    request.projection().addNames(FundingDto.JSON_MONTH_AS_STRING);
+    request.projection().addNames(FundingDto.JSON_MONTH_AS_STRING,
+        FundingDto.JSON_AMOUNT_INPUTABLE);
     request.setAuditWho("christian");
     assertTrue(readManyBusiness.process(request).getCount() > 0);
   }
@@ -79,10 +84,21 @@ class FundingBusinessTest extends AbstractTest {
   void update() {
     FundingUpdateRequestDto request = new FundingUpdateRequestDto();
     request.setIdentifier("toupdate");
-    
+
     request.setAuditWho("christian");
     long count = count(entityManager, Funding.ENTITY_NAME);
     updateBusiness.process(request);
+    assertEquals(count, count(entityManager, Funding.ENTITY_NAME));
+  }
+
+  @Test
+  void updateAmount() {
+    FundingUpdateAmountRequestDto request = new FundingUpdateAmountRequestDto();
+    request.setIdentifier("toupdateamount");
+    request.setAmount(1);
+    request.setAuditWho("christian");
+    long count = count(entityManager, Funding.ENTITY_NAME);
+    updateAmountBusiness.process(request);
     assertEquals(count, count(entityManager, Funding.ENTITY_NAME));
   }
 
@@ -140,7 +156,7 @@ class FundingBusinessTest extends AbstractTest {
 
     @Override
     public Map<String, String> getConfigOverrides() {
-      return Map.of("quarkus.hibernate-orm.sql-load-script", "sql/budgetlinebusiness.sql");
+      return Map.of("quarkus.hibernate-orm.sql-load-script", "sql/fundingbusiness.sql");
     }
   }
 }
