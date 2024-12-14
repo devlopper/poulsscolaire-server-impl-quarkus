@@ -1,6 +1,7 @@
 package org.cyk.system.poulsscolaire.server.impl.business.budget;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -19,6 +20,7 @@ import org.cyk.system.poulsscolaire.server.api.accounting.BudgetDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.BudgetService.BudgetCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.BudgetService.BudgetUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Budget;
+import org.cyk.system.poulsscolaire.server.impl.persistence.BudgetAmount;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest
@@ -132,6 +134,11 @@ class BudgetBusinessTest extends AbstractTest {
     Budget instance = mapper.mapFromDto(dto);
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
     assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
+  }
+  
+  @Test
+  void instantiate() {
+    assertNotNull(new BudgetAmount());
   }
 
   public static class Profile implements QuarkusTestProfile {

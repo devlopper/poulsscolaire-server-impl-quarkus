@@ -2,6 +2,7 @@ package org.cyk.system.poulsscolaire.server.impl.business.feecategory;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -21,8 +22,32 @@ import java.util.UUID;
 import org.cyk.system.poulsscolaire.server.api.fee.FeeCategoryDto;
 import org.cyk.system.poulsscolaire.server.api.fee.FeeCategoryService.FeeCategoryCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.fee.FeeCategoryService.FeeCategoryUpdateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.fee.StockDto;
+import org.cyk.system.poulsscolaire.server.api.fee.StockMovementDto;
+import org.cyk.system.poulsscolaire.server.api.fee.StockMovementService.StockMovementCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.fee.StockService.StockCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.impl.business.stock.StockCreateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.stock.StockDeleteBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.stock.StockMapper;
+import org.cyk.system.poulsscolaire.server.impl.business.stock.StockReadByIdentifierBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.stock.StockReadManyBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.stock.StockReadOneBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.stock.StockUpdateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.stock.StockValidator;
+import org.cyk.system.poulsscolaire.server.impl.business.stockmovement.StockMovementCreateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.stockmovement.StockMovementDeleteBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.stockmovement.StockMovementMapper;
+import org.cyk.system.poulsscolaire.server.impl.business.stockmovement.StockMovementReadByIdentifierBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.stockmovement.StockMovementReadManyBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.stockmovement.StockMovementReadOneBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.stockmovement.StockMovementUpdateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.stockmovement.StockMovementValidator;
 import org.cyk.system.poulsscolaire.server.impl.persistence.FeeCategory;
 import org.cyk.system.poulsscolaire.server.impl.persistence.FeeCategoryDynamicQuery;
+import org.cyk.system.poulsscolaire.server.impl.persistence.Stock;
+import org.cyk.system.poulsscolaire.server.impl.persistence.StockDynamicQuery;
+import org.cyk.system.poulsscolaire.server.impl.persistence.StockMovement;
+import org.cyk.system.poulsscolaire.server.impl.persistence.StockMovementDynamicQuery;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
@@ -40,26 +65,88 @@ class FeeCategoryBusinessTest extends AbstractTest {
 
   @Inject
   FeeCategoryReadManyBusiness readManyBusiness;
-  
+
   @Inject
   FeeCategoryReadOneBusiness readOneBusiness;
-  
+
   @Inject
   FeeCategoryReadByIdentifierBusiness readByIdentifierBusiness;
-  
+
   @Inject
   FeeCategoryUpdateBusiness updateBusiness;
-  
+
   @Inject
   FeeCategoryDeleteBusiness deleteBusiness;
-  
+
   @Inject
   FeeCategoryMapper mapper;
-  
+
   @Inject
   FeeCategoryDynamicQuery dynamicQuery;
 
   DynamicQueryParameters<FeeCategory> parameters = new DynamicQueryParameters<>();
+
+  /* Stock */
+
+  @Inject
+  StockCreateBusiness stockCreateBusiness;
+
+  @Inject
+  StockReadManyBusiness stockReadManyBusiness;
+
+  @Inject
+  StockReadOneBusiness stockReadOneBusiness;
+
+  @Inject
+  StockReadByIdentifierBusiness stockReadByIdentifierBusiness;
+
+  @Inject
+  StockUpdateBusiness stockUpdateBusiness;
+
+  @Inject
+  StockDeleteBusiness stockDeleteBusiness;
+
+  @Inject
+  StockMapper stockMapper;
+
+  @Inject
+  StockDynamicQuery stockDynamicQuery;
+
+  DynamicQueryParameters<Stock> stockParameters = new DynamicQueryParameters<>();
+
+  @Inject
+  StockValidator stockValidator;
+  
+  /* Stock Movement */
+
+  @Inject
+  StockMovementCreateBusiness stockMovementCreateBusiness;
+
+  @Inject
+  StockMovementReadManyBusiness stockMovementReadManyBusiness;
+
+  @Inject
+  StockMovementReadOneBusiness stockMovementReadOneBusiness;
+
+  @Inject
+  StockMovementReadByIdentifierBusiness stockMovementReadByIdentifierBusiness;
+
+  @Inject
+  StockMovementUpdateBusiness stockMovementUpdateBusiness;
+
+  @Inject
+  StockMovementDeleteBusiness stockMovementDeleteBusiness;
+
+  @Inject
+  StockMovementMapper stockMovementMapper;
+
+  @Inject
+  StockMovementDynamicQuery stockMovementDynamicQuery;
+
+  DynamicQueryParameters<StockMovement> stockMovementParameters = new DynamicQueryParameters<>();
+
+  @Inject
+  StockMovementValidator stockMovementValidator;
   
   @Test
   void create() {
@@ -72,7 +159,7 @@ class FeeCategoryBusinessTest extends AbstractTest {
     createBusiness.process(request);
     assertEquals(count + 1, count(entityManager, FeeCategory.ENTITY_NAME));
   }
-  
+
   @Test
   void create_whenExistingCode_whenDifferentSchoolIdentifier() {
     FeeCategoryCreateRequestDto request = new FeeCategoryCreateRequestDto();
@@ -84,7 +171,7 @@ class FeeCategoryBusinessTest extends AbstractTest {
     createBusiness.process(request);
     assertEquals(count + 1, count(entityManager, FeeCategory.ENTITY_NAME));
   }
-  
+
   @Test
   void create_whenExistingCode_whenSameSchoolIdentifier() {
     FeeCategoryCreateRequestDto request = new FeeCategoryCreateRequestDto();
@@ -94,7 +181,7 @@ class FeeCategoryBusinessTest extends AbstractTest {
     request.setAuditWho("christian");
     assertThrows(BusinessInputValidationException.class, () -> createBusiness.process(request));
   }
-  
+
   @Test
   void create_whenSchoolIdentifierExisting_whenSameCode() {
     FeeCategoryCreateRequestDto request = new FeeCategoryCreateRequestDto();
@@ -104,7 +191,7 @@ class FeeCategoryBusinessTest extends AbstractTest {
     request.setAuditWho("christian");
     assertThrows(BusinessInputValidationException.class, () -> createBusiness.process(request));
   }
-  
+
   @Test
   void create_whenSchoolIdentifierExisting_whenDifferentCode() {
     FeeCategoryCreateRequestDto request = new FeeCategoryCreateRequestDto();
@@ -116,7 +203,7 @@ class FeeCategoryBusinessTest extends AbstractTest {
     createBusiness.process(request);
     assertEquals(count + 1, count(entityManager, FeeCategory.ENTITY_NAME));
   }
-  
+
   @Test
   void update() {
     FeeCategoryUpdateRequestDto request = new FeeCategoryUpdateRequestDto();
@@ -129,12 +216,12 @@ class FeeCategoryBusinessTest extends AbstractTest {
     updateBusiness.process(request);
     assertEquals(count + 0, count(entityManager, FeeCategory.ENTITY_NAME));
   }
-  
+
   @Test
   void mapToDto_whenNull() {
     assertNull(mapper.mapToDto(null));
   }
-  
+
   @Test
   void mapToDto_whenNotNull() {
     FeeCategory instance = new FeeCategory();
@@ -145,7 +232,7 @@ class FeeCategoryBusinessTest extends AbstractTest {
     assertEquals(instance.getIdentifier(), dto.getIdentifier());
     assertEquals(instance.getAudit().getWho(), dto.getAudit().getWho());
   }
-  
+
   @Test
   void mapToDto_whenNotNullAndAuditNull() {
     FeeCategory instance = new FeeCategory();
@@ -154,12 +241,12 @@ class FeeCategoryBusinessTest extends AbstractTest {
     assertEquals(instance.getIdentifier(), dto.getIdentifier());
     assertNull(dto.getAudit());
   }
-  
+
   @Test
   void mapFromDto_whenNull() {
     assertNull(mapper.mapFromDto(null));
   }
-  
+
   @Test
   void mapFromDto_whenAuditNull() {
     FeeCategoryDto dto = new FeeCategoryDto();
@@ -168,7 +255,7 @@ class FeeCategoryBusinessTest extends AbstractTest {
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
     assertEquals(null, instance.getAudit());
   }
-  
+
   @Test
   void mapFromDto_whenAuditNotNull() {
     FeeCategoryDto dto = new FeeCategoryDto();
@@ -179,7 +266,7 @@ class FeeCategoryBusinessTest extends AbstractTest {
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
     assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
   }
-  
+
   @ParameterizedTest
   @CsvFileSource(resources = {"feecategorydynamicquery_buildquery_projection.csv"},
       useHeadersInDisplayName = true)
@@ -255,6 +342,142 @@ class FeeCategoryBusinessTest extends AbstractTest {
     parameters.setResultMode(ResultMode.ONE);
     parameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, "1");
     assertDoesNotThrow(() -> dynamicQuery.getOne(parameters));
+  }
+
+  /* Stock */
+
+  @Test
+  void stock_create() {
+    StockCreateRequestDto request = new StockCreateRequestDto();
+    request.setName(UUID.randomUUID().toString());
+    request.setFeeCategoryIdentifier("1");
+    request.setAuditWho("christian");
+    long count = count(entityManager, Stock.ENTITY_NAME);
+    stockCreateBusiness.process(request);
+    assertEquals(count + 1, count(entityManager, Stock.ENTITY_NAME));
+  }
+  
+  @Test
+  void stock_mapToDto_whenNull() {
+    assertNull(stockMapper.mapToDto(null));
+  }
+
+  @Test
+  void stock_mapToDto_whenNotNull() {
+    Stock instance = new Stock();
+    instance.setIdentifier("1");
+    instance.setAudit(new Audit());
+    instance.getAudit().setWho("christian");
+    StockDto dto = stockMapper.mapToDto(instance);
+    assertEquals(instance.getIdentifier(), dto.getIdentifier());
+    assertEquals(instance.getAudit().getWho(), dto.getAudit().getWho());
+  }
+
+  @Test
+  void stock_mapToDto_whenNotNullAndAuditNull() {
+    Stock instance = new Stock();
+    instance.setIdentifier("1");
+    StockDto dto = stockMapper.mapToDto(instance);
+    assertEquals(instance.getIdentifier(), dto.getIdentifier());
+    assertNull(dto.getAudit());
+  }
+
+  @Test
+  void stock_mapFromDto_whenNull() {
+    assertNull(stockMapper.mapFromDto(null));
+  }
+
+  @Test
+  void stock_mapFromDto_whenAuditNull() {
+    StockDto dto = new StockDto();
+    dto.setIdentifier("1");
+    Stock instance = stockMapper.mapFromDto(dto);
+    assertEquals(dto.getIdentifier(), instance.getIdentifier());
+    assertEquals(null, instance.getAudit());
+  }
+
+  @Test
+  void stock_mapFromDto_whenAuditNotNull() {
+    StockDto dto = new StockDto();
+    dto.setIdentifier("1");
+    dto.setAudit(new AuditDto());
+    dto.getAudit().setWho("meliane");
+    Stock instance = stockMapper.mapFromDto(dto);
+    assertEquals(dto.getIdentifier(), instance.getIdentifier());
+    assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
+  }
+
+  /* Stock Movement */
+
+  @Test
+  void stockMovement_create() {
+    StockMovementCreateRequestDto request = new StockMovementCreateRequestDto();
+    request.setStockIdentifier("1");
+    request.setQuantity(1);
+    request.setReason("r");
+    request.setAuditWho("christian");
+    long count = count(entityManager, StockMovement.ENTITY_NAME);
+    stockMovementCreateBusiness.process(request);
+    assertEquals(count + 1, count(entityManager, StockMovement.ENTITY_NAME));
+  }
+  
+  @Test
+  void stockMovement_mapToDto_whenNull() {
+    assertNull(stockMovementMapper.mapToDto(null));
+  }
+
+  @Test
+  void stockMovement_mapToDto_whenNotNull() {
+    StockMovement instance = new StockMovement();
+    instance.setIdentifier("1");
+    instance.setAudit(new Audit());
+    instance.getAudit().setWho("christian");
+    StockMovementDto dto = stockMovementMapper.mapToDto(instance);
+    assertEquals(instance.getIdentifier(), dto.getIdentifier());
+    assertEquals(instance.getAudit().getWho(), dto.getAudit().getWho());
+  }
+
+  @Test
+  void stockMovement_mapToDto_whenNotNullAndAuditNull() {
+    StockMovement instance = new StockMovement();
+    instance.setIdentifier("1");
+    StockMovementDto dto = stockMovementMapper.mapToDto(instance);
+    assertEquals(instance.getIdentifier(), dto.getIdentifier());
+    assertNull(dto.getAudit());
+  }
+
+  @Test
+  void stockMovement_mapFromDto_whenNull() {
+    assertNull(stockMovementMapper.mapFromDto(null));
+  }
+
+  @Test
+  void stockMovement_mapFromDto_whenAuditNull() {
+    StockMovementDto dto = new StockMovementDto();
+    dto.setIdentifier("1");
+    StockMovement instance = stockMovementMapper.mapFromDto(dto);
+    assertEquals(dto.getIdentifier(), instance.getIdentifier());
+    assertEquals(null, instance.getAudit());
+  }
+
+  @Test
+  void stockMovement_mapFromDto_whenAuditNotNull() {
+    StockMovementDto dto = new StockMovementDto();
+    dto.setIdentifier("1");
+    dto.setAudit(new AuditDto());
+    dto.getAudit().setWho("meliane");
+    StockMovement instance = stockMovementMapper.mapFromDto(dto);
+    assertEquals(dto.getIdentifier(), instance.getIdentifier());
+    assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
+  }
+  
+  @Test
+  void instantiate() {
+    assertNotNull(stockValidator.toString());
+    assertNotNull(stockMovementValidator.toString());
+
+    assertNotNull(stockDynamicQuery.toString());
+    assertNotNull(stockMovementDynamicQuery.toString());
   }
   
   public static class Profile implements QuarkusTestProfile {

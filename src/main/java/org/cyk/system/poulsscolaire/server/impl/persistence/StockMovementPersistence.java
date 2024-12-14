@@ -8,14 +8,14 @@ import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.payment.PaymentDto;
 
 /**
- * Cette classe représente les fonctionnalités de persistance de {@link PaymentAdjustedFee}.
+ * Cette classe représente les fonctionnalités de persistance de {@link StockMovement}.
  *
  * @author Christian
  *
  */
 @ApplicationScoped
-public class PaymentAdjustedFeePersistence
-    extends AbstractIdentifiablePersistence<PaymentAdjustedFee> {
+public class StockMovementPersistence
+    extends AbstractIdentifiablePersistence<StockMovement> {
 
   @Inject
   @Getter
@@ -24,8 +24,8 @@ public class PaymentAdjustedFeePersistence
   /**
    * Cette méthode permet de construire une instance.
    */
-  public PaymentAdjustedFeePersistence() {
-    super(PaymentAdjustedFee.class);
+  public StockMovementPersistence() {
+    super(StockMovement.class);
     name = PaymentDto.NAME;
     pluralName = PaymentDto.PLURAL_NAME;
   }

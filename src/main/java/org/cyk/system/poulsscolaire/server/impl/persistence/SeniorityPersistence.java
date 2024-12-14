@@ -5,6 +5,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
+import org.cyk.system.poulsscolaire.server.api.configuration.SeniorityDto;
 
 /**
  * Cette classe représente les fonctionnalités de persistance de {@link Seniority}.
@@ -24,7 +25,7 @@ public class SeniorityPersistence extends AbstractIdentifiableCodableNamablePers
    */
   public SeniorityPersistence() {
     super(Seniority.class);
-    name = "ancienneté";
-    pluralName = "anciennetés";
+    name = SeniorityDto.NAME;
+    pluralName = SeniorityDto.PLURAL_NAME;
   }
 }

@@ -9,6 +9,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
+import lombok.EqualsAndHashCode;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
@@ -25,6 +26,7 @@ import org.hibernate.envers.Audited;
 @AuditOverrides(
     value = {@AuditOverride(forClass = AbstractIdentifiableAuditable.class),
         @AuditOverride(forClass = AbstractIdentifiable.class)})
+@EqualsAndHashCode(callSuper = true)
 public class PaymentAdjustedFee extends AbstractIdentifiableAuditable {
 
   @NotNull
