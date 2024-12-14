@@ -50,7 +50,7 @@ public class StockMovement extends AbstractIdentifiableAuditable {
   @Transient
   public String quantityAsString;
 
-  public static final String FIELD_STOCK = "payment";
+  public static final String FIELD_STOCK = "stock";
   public static final String FIELD_STOCK_IDENTIFIER = "stockIdentifier";
   public static final String FIELD_STOCK_AS_STRING = "stockAsString";
   public static final String FIELD_QUANTITY = "quantity";

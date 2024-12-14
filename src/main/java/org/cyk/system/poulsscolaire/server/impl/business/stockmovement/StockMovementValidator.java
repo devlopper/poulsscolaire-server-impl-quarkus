@@ -1,5 +1,6 @@
 package org.cyk.system.poulsscolaire.server.impl.business.stockmovement;
 
+import ci.gouv.dgbf.extension.core.Core;
 import ci.gouv.dgbf.extension.core.StringList;
 import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableValidator;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -29,7 +30,7 @@ public class StockMovementValidator extends AbstractIdentifiableValidator<StockM
    * @return vrai si un message a été ajouté
    */
   public boolean validateQuantity(Integer quantity, StringList messages) {
-    return validationHelper.validateLowerThanByName(this, quantity, 0, "quantité", "zéro",
-        messages);
+    return validationHelper.validateLowerThanByName(this, Core.getOrDefaultIfNull(quantity, 0), 0,
+        "quantité", "zéro", messages);
   }
 }

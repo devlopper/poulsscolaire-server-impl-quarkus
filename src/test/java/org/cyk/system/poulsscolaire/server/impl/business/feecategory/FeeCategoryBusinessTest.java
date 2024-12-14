@@ -25,7 +25,9 @@ import org.cyk.system.poulsscolaire.server.api.fee.FeeCategoryService.FeeCategor
 import org.cyk.system.poulsscolaire.server.api.fee.StockDto;
 import org.cyk.system.poulsscolaire.server.api.fee.StockMovementDto;
 import org.cyk.system.poulsscolaire.server.api.fee.StockMovementService.StockMovementCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.fee.StockMovementService.StockMovementUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.fee.StockService.StockCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.fee.StockService.StockUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.business.stock.StockCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stock.StockDeleteBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stock.StockMapper;
@@ -116,7 +118,7 @@ class FeeCategoryBusinessTest extends AbstractTest {
 
   @Inject
   StockValidator stockValidator;
-  
+
   /* Stock Movement */
 
   @Inject
@@ -147,7 +149,7 @@ class FeeCategoryBusinessTest extends AbstractTest {
 
   @Inject
   StockMovementValidator stockMovementValidator;
-  
+
   @Test
   void create() {
     FeeCategoryCreateRequestDto request = new FeeCategoryCreateRequestDto();
@@ -356,7 +358,19 @@ class FeeCategoryBusinessTest extends AbstractTest {
     stockCreateBusiness.process(request);
     assertEquals(count + 1, count(entityManager, Stock.ENTITY_NAME));
   }
-  
+
+  @Test
+  void stock_update() {
+    StockUpdateRequestDto request = new StockUpdateRequestDto();
+    request.setIdentifier("stocktoupdate");
+    request.setName(UUID.randomUUID().toString());
+    request.setFeeCategoryIdentifier("1");
+    request.setAuditWho("christian");
+    long count = count(entityManager, Stock.ENTITY_NAME);
+    stockUpdateBusiness.process(request);
+    assertEquals(count + 0, count(entityManager, Stock.ENTITY_NAME));
+  }
+
   @Test
   void stock_mapToDto_whenNull() {
     assertNull(stockMapper.mapToDto(null));
@@ -420,7 +434,19 @@ class FeeCategoryBusinessTest extends AbstractTest {
     stockMovementCreateBusiness.process(request);
     assertEquals(count + 1, count(entityManager, StockMovement.ENTITY_NAME));
   }
-  
+
+  @Test
+  void stockMovement_update() {
+    StockMovementUpdateRequestDto request = new StockMovementUpdateRequestDto();
+    request.setIdentifier("stockmovementtoupdate");
+    request.setStockIdentifier("1");
+    request.setQuantity(0);
+    request.setAuditWho("christian");
+    long count = count(entityManager, StockMovement.ENTITY_NAME);
+    stockMovementUpdateBusiness.process(request);
+    assertEquals(count + 0, count(entityManager, StockMovement.ENTITY_NAME));
+  }
+
   @Test
   void stockMovement_mapToDto_whenNull() {
     assertNull(stockMovementMapper.mapToDto(null));
@@ -470,7 +496,7 @@ class FeeCategoryBusinessTest extends AbstractTest {
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
     assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
   }
-  
+
   @Test
   void instantiate() {
     assertNotNull(stockValidator.toString());
@@ -479,7 +505,7 @@ class FeeCategoryBusinessTest extends AbstractTest {
     assertNotNull(stockDynamicQuery.toString());
     assertNotNull(stockMovementDynamicQuery.toString());
   }
-  
+
   public static class Profile implements QuarkusTestProfile {
 
     @Override

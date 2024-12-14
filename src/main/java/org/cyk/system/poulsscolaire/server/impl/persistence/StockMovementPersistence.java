@@ -5,7 +5,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
-import org.cyk.system.poulsscolaire.server.api.payment.PaymentDto;
+import org.cyk.system.poulsscolaire.server.api.fee.StockMovementDto;
 
 /**
  * Cette classe représente les fonctionnalités de persistance de {@link StockMovement}.
@@ -26,7 +26,7 @@ public class StockMovementPersistence
    */
   public StockMovementPersistence() {
     super(StockMovement.class);
-    name = PaymentDto.NAME;
-    pluralName = PaymentDto.PLURAL_NAME;
+    name = StockMovementDto.NAME;
+    pluralName = StockMovementDto.PLURAL_NAME;
   }
 }

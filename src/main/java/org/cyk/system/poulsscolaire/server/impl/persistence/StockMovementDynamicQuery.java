@@ -42,7 +42,6 @@ public class StockMovementDynamicQuery extends AbstractDynamicQuery<StockMovemen
         .fieldName(fieldName(StockMovement.FIELD_STOCK, AbstractIdentifiable.FIELD_IDENTIFIER))
         .build();
 
-
     projectionBuilder().name(StockMovementDto.JSON_STOCK_AS_STRING)
         .nameFieldName(StockMovement.FIELD_STOCK_AS_STRING)
         .fieldName(
@@ -55,6 +54,9 @@ public class StockMovementDynamicQuery extends AbstractDynamicQuery<StockMovemen
     projectionBuilder().name(StockMovementDto.JSON_QUANTITY_AS_STRING)
         .nameFieldName(StockMovement.FIELD_QUANTITY_AS_STRING)
         .fieldName(StockMovement.FIELD_QUANTITY).build();
+
+    projectionBuilder().name(StockMovementDto.JSON_REASON).fieldName(StockMovement.FIELD_REASON)
+        .build();
 
     // Prédicats
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)
