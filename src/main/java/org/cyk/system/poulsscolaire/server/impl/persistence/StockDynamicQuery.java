@@ -13,6 +13,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
+import org.cyk.system.poulsscolaire.server.api.fee.StockDto;
 
 /**
  * Cette classe représente la requête dynamique de {@link Stock}.
@@ -44,6 +45,15 @@ public class StockDynamicQuery extends AbstractDynamicQuery<Stock> {
 
     projectionBuilder().name(AbstractIdentifiableCodableNamableDto.JSON_NAME)
         .fieldName(AbstractIdentifiableCodableNamable.FIELD_NAME).build();
+
+    projectionBuilder().name(StockDto.JSON_FEE_CATEGORY_IDENTIFIER)
+        .fieldName(fieldName(Stock.FIELD_FEE_CATEGORY, AbstractIdentifiable.FIELD_IDENTIFIER))
+        .nameFieldName(Stock.FIELD_FEE_CATEGORY_IDENTIFIER).build();
+
+    projectionBuilder().name(StockDto.JSON_FEE_CATEGORY_AS_STRING)
+        .fieldName(
+            fieldName(Stock.FIELD_FEE_CATEGORY, AbstractIdentifiableCodableNamable.FIELD_NAME))
+        .nameFieldName(Stock.FIELD_FEE_CATEGORY_AS_STRING).build();
 
     // Prédicats
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)
