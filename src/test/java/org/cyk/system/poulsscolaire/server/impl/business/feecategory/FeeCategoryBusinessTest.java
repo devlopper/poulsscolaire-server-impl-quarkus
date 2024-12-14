@@ -11,6 +11,7 @@ import ci.gouv.dgbf.extension.server.persistence.entity.embeddable.Audit;
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters.ResultMode;
 import ci.gouv.dgbf.extension.server.service.api.entity.AuditDto;
+import ci.gouv.dgbf.extension.server.service.api.request.DeleteOneRequestDto;
 import ci.gouv.dgbf.extension.test.AbstractTest;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.QuarkusTestProfile;
@@ -50,6 +51,7 @@ import org.cyk.system.poulsscolaire.server.impl.persistence.Stock;
 import org.cyk.system.poulsscolaire.server.impl.persistence.StockDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.StockMovement;
 import org.cyk.system.poulsscolaire.server.impl.persistence.StockMovementDynamicQuery;
+import org.cyk.system.poulsscolaire.server.impl.persistence.StockQuantity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
@@ -446,6 +448,16 @@ class FeeCategoryBusinessTest extends AbstractTest {
     stockMovementUpdateBusiness.process(request);
     assertEquals(count + 0, count(entityManager, StockMovement.ENTITY_NAME));
   }
+  
+  @Test
+  void stockMovement_delete() {
+    DeleteOneRequestDto request = new DeleteOneRequestDto();
+    request.setIdentifier("stockmovementtodelete");
+    request.setAuditWho("christian");
+    long count = count(entityManager, StockMovement.ENTITY_NAME);
+    stockMovementDeleteBusiness.process(request);
+    assertEquals(count - 1, count(entityManager, StockMovement.ENTITY_NAME));
+  }
 
   @Test
   void stockMovement_mapToDto_whenNull() {
@@ -504,6 +516,8 @@ class FeeCategoryBusinessTest extends AbstractTest {
 
     assertNotNull(stockDynamicQuery.toString());
     assertNotNull(stockMovementDynamicQuery.toString());
+    
+    assertNotNull(new StockQuantity());
   }
 
   public static class Profile implements QuarkusTestProfile {

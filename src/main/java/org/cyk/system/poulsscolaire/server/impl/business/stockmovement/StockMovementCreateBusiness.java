@@ -1,11 +1,15 @@
 package org.cyk.system.poulsscolaire.server.impl.business.stockmovement;
 
+import ci.gouv.dgbf.extension.core.NumberHelper;
 import ci.gouv.dgbf.extension.core.StringList;
 import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableCreateBusiness;
+import ci.gouv.dgbf.extension.server.business.ResponseBuilder.Arguments;
+import ci.gouv.dgbf.extension.server.service.api.response.CreateResponseDto;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.fee.StockMovementService.StockMovementCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.fee.StockMovementService.StockMovementCreateResponseDto;
 import org.cyk.system.poulsscolaire.server.impl.business.stock.StockValidator;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Stock;
 import org.cyk.system.poulsscolaire.server.impl.persistence.StockMovement;
@@ -32,6 +36,9 @@ public class StockMovementCreateBusiness extends AbstractIdentifiableCreateBusin
   @Inject
   StockValidator stockValidator;
 
+  @Inject
+  NumberHelper numberHelper;
+
   @Override
   protected Object[] validate(StockMovementCreateRequestDto request, StringList messages) {
     Stock stock =
@@ -47,5 +54,19 @@ public class StockMovementCreateBusiness extends AbstractIdentifiableCreateBusin
     stockMovement.stock = (Stock) array[0];
     stockMovement.quantity = request.getQuantity();
     stockMovement.reason = request.getReason();
+  }
+
+  @Override
+  protected Class<? extends CreateResponseDto> getResponseClass() {
+    return StockMovementCreateResponseDto.class;
+  }
+
+  @Override
+  protected CreateResponseDto buildResponse(StockMovement stockMovement, Arguments arguments) {
+    StockMovementCreateResponseDto response =
+        (StockMovementCreateResponseDto) super.buildResponse(stockMovement, arguments);
+    response.setStockQuantityAsString(
+        numberHelper.format(persistence.sumQuantityByStock(stockMovement.stock)));
+    return response;
   }
 }

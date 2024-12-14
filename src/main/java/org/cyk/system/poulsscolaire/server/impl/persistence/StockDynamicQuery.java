@@ -28,11 +28,14 @@ public class StockDynamicQuery extends AbstractDynamicQuery<Stock> {
   @Getter
   EntityManager entityManager;
 
+  String quantityVariableName;
+
   /**
    * Cette méthode permet d'instancier un object.
    */
   public StockDynamicQuery() {
     super(Stock.class);
+    quantityVariableName = "sq";
   }
 
   @PostConstruct
@@ -54,6 +57,14 @@ public class StockDynamicQuery extends AbstractDynamicQuery<Stock> {
         .fieldName(
             fieldName(Stock.FIELD_FEE_CATEGORY, AbstractIdentifiableCodableNamable.FIELD_NAME))
         .nameFieldName(Stock.FIELD_FEE_CATEGORY_AS_STRING).build();
+
+    projectionBuilder().name(StockDto.JSON_QUANTITY_AS_STRING)
+        .tupleVariableName(quantityVariableName).fieldName(StockQuantity.FIELD_VALUE)
+        .nameFieldName(Stock.FIELD_QUANTITY_AS_STRING).nullValueIsZeroNumberString().build();
+
+    // Jointures
+    joinBuilder().projectionsNames(StockDto.JSON_QUANTITY_AS_STRING).leftInnerOrRight(true)
+        .entityClass(StockQuantity.class).tupleVariableName(quantityVariableName).build();
 
     // Prédicats
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)

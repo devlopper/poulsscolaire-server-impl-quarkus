@@ -1,11 +1,15 @@
 package org.cyk.system.poulsscolaire.server.impl.business.stockmovement;
 
+import ci.gouv.dgbf.extension.core.NumberHelper;
 import ci.gouv.dgbf.extension.core.StringList;
 import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableUpdateBusiness;
+import ci.gouv.dgbf.extension.server.business.ResponseBuilder.Arguments;
+import ci.gouv.dgbf.extension.server.service.api.response.IdentifiableResponseDto;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.fee.StockMovementService.StockMovementUpdateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.fee.StockMovementService.StockMovementUpdateResponseDto;
 import org.cyk.system.poulsscolaire.server.impl.business.stock.StockValidator;
 import org.cyk.system.poulsscolaire.server.impl.persistence.StockMovement;
 import org.cyk.system.poulsscolaire.server.impl.persistence.StockMovementPersistence;
@@ -31,6 +35,9 @@ public class StockMovementUpdateBusiness extends AbstractIdentifiableUpdateBusin
   @Inject
   StockValidator stockValidator;
 
+  @Inject
+  NumberHelper numberHelper;
+
   @Override
   protected void validate(StockMovementUpdateRequestDto request, StringList messages,
       StockMovement stockMovement) {
@@ -45,5 +52,20 @@ public class StockMovementUpdateBusiness extends AbstractIdentifiableUpdateBusin
     super.prepare(stockMovement, request);
     stockMovement.quantity = request.getQuantity();
     stockMovement.reason = request.getReason();
+  }
+
+  @Override
+  protected Class<? extends IdentifiableResponseDto> getResponseClass() {
+    return StockMovementUpdateResponseDto.class;
+  }
+
+  @Override
+  protected IdentifiableResponseDto buildResponse(StockMovement stockMovement,
+      Arguments arguments) {
+    StockMovementUpdateResponseDto response =
+        (StockMovementUpdateResponseDto) super.buildResponse(stockMovement, arguments);
+    response.setStockQuantityAsString(
+        numberHelper.format(persistence.sumQuantityByStock(stockMovement.stock)));
+    return response;
   }
 }

@@ -30,7 +30,7 @@ public class StockMovementValidator extends AbstractIdentifiableValidator<StockM
    * @return vrai si un message a été ajouté
    */
   public boolean validateQuantity(Integer quantity, StringList messages) {
-    return validationHelper.validateLowerThanByName(this, Core.getOrDefaultIfNull(quantity, 0), 0,
-        "quantité", "zéro", messages);
+    return messages.addIfTrue(Core.getOrDefaultIfNull(quantity, 0) == 0,
+        "quantité ne doit pas être zéro(0)");
   }
 }
