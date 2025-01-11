@@ -1,9 +1,11 @@
 package org.cyk.system.poulsscolaire.server.impl.business.funding;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import ci.gouv.dgbf.extension.core.StringList;
 import ci.gouv.dgbf.extension.server.persistence.entity.embeddable.Audit;
 import ci.gouv.dgbf.extension.server.service.api.entity.AuditDto;
 import ci.gouv.dgbf.extension.server.service.api.request.GetManyRequestDto;
@@ -15,10 +17,12 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import java.time.Month;
 import java.util.Map;
+import org.cyk.system.poulsscolaire.server.api.accounting.BudgetStatus;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingService.FundingCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingService.FundingUpdateAmountRequestDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingService.FundingUpdateRequestDto;
+import org.cyk.system.poulsscolaire.server.impl.persistence.Budget;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Funding;
 import org.junit.jupiter.api.Test;
 
@@ -152,6 +156,17 @@ class FundingBusinessTest extends AbstractTest {
     assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
   }
 
+  @Test
+  void updateAmount_validate_whenBudgetStatusApproved() {
+    FundingUpdateAmountRequestDto request = new FundingUpdateAmountRequestDto();
+    Funding funding = new Funding();
+    funding.budget = new Budget();
+    funding.budget.status = BudgetStatus.APPROVED;
+    StringList messages = new StringList();
+    updateAmountBusiness.validate(request, messages, funding);
+    assertNotNull(messages.getList());
+  }
+  
   public static class Profile implements QuarkusTestProfile {
 
     @Override

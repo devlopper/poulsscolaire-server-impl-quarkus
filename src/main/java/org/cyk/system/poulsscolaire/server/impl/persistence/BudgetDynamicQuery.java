@@ -12,8 +12,11 @@ import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.accounting.BudgetDto;
+import org.cyk.system.poulsscolaire.server.api.accounting.BudgetStatus;
 
 /**
  * Cette classe représente la requête dynamique de {@link Budget}.
@@ -72,6 +75,28 @@ public class BudgetDynamicQuery extends AbstractDynamicQuery<Budget> {
 
     projectionBuilder().name(BudgetDto.JSON_YEAR).fieldName(Budget.FIELD_YEAR).build();
 
+    projectionBuilder().name(BudgetDto.JSON_STATUS).fieldName(Budget.FIELD_STATUS).build();
+
+    projectionBuilder().name(BudgetDto.JSON_STATUS_AS_STRING)
+        .nameFieldName(Budget.FIELD_STATUS_AS_STRING).fieldName(Budget.FIELD_STATUS)
+        .resultConsumer((i, a) -> i.statusAsString = a.getNextAs(BudgetStatus.class).getName())
+        .build();
+
+    projectionBuilder().name(BudgetDto.JSON_STATUS_REASON).fieldName(Budget.FIELD_STATUS_REASON)
+        .build();
+
+    buildStatusableProjection(BudgetDto.JSON_TRANSMITABLE, Budget.FIELD_TRANSMITABLE,
+        BudgetStatus.TRANSMITTED, (a, b) -> a.transmitable = b);
+
+    buildStatusableProjection(BudgetDto.JSON_ACCEPTABLE, Budget.FIELD_ACCEPTABLE,
+        BudgetStatus.ACCEPTED, (a, b) -> a.acceptable = b);
+
+    buildStatusableProjection(BudgetDto.JSON_APPROVABLE, Budget.FIELD_APPROVABLE,
+        BudgetStatus.APPROVED, (a, b) -> a.approvable = b);
+
+    buildStatusableProjection(BudgetDto.JSON_RETURNABLE, Budget.FIELD_RETURNABLE,
+        BudgetStatus.RETURNED, (a, b) -> a.returnable = b);
+
     // Jointures
     joinBuilder().projectionsNames(BudgetDto.JSON_SCHOOL_AS_STRING).entityClass(School.class)
         .tupleVariableName(schoolVariableName).parentFieldName(Budget.FIELD_SCHOOL_IDENTIFIER)
@@ -88,4 +113,16 @@ public class BudgetDynamicQuery extends AbstractDynamicQuery<Budget> {
     // Ordres par défaut
     orderBuilder().fieldName(Budget.FIELD_YEAR).ascending(false).build();
   }
+
+  void buildStatusableProjection(String name, String fieldName, BudgetStatus status,
+      BiConsumer<Budget, Boolean> booleanConsumer) {
+    projectionBuilder().name(name).nameFieldName(fieldName)
+        .expression(status.getPrevious().stream()
+            .map(p -> String.format(STATUS_EQUALS_FORMAT, BudgetStatus.class.getName(), p.name()))
+            .collect(Collectors.joining(OR)))
+        .resultConsumer((i, a) -> booleanConsumer.accept(i, a.getNextAsBoolean())).build();
+  }
+
+  static final String STATUS_EQUALS_FORMAT = "t.status = %s.%s";
+  static final String OR = " OR ";
 }

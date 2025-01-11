@@ -14,6 +14,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.cyk.system.poulsscolaire.server.api.accounting.BudgetStatus;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
@@ -50,6 +51,16 @@ public class Budget extends AbstractIdentifiableCodableNamableAuditable {
   @Column(name = COLUMN_YEAR, nullable = false)
   public Integer year;
   
+  @NotNull
+  @Column(name = COLUMN_STATUS, nullable = false)
+  public BudgetStatus status;
+  
+  @Column(name = COLUMN_STATUS_REASON)
+  public String statusReason;
+  
+  @Transient
+  public String statusAsString;
+  
   @Transient
   public String schoolAsString;
 
@@ -62,6 +73,30 @@ public class Budget extends AbstractIdentifiableCodableNamableAuditable {
   @Transient
   public String amountAsString;
   
+  /**
+   * Transmissible.
+   */
+  @Transient
+  public Boolean transmitable;
+
+  /**
+   * Acceptable.
+   */
+  @Transient
+  public Boolean acceptable;
+
+  /**
+   * Retournable.
+   */
+  @Transient
+  public Boolean returnable;
+
+  /**
+   * Approuvable.
+   */
+  @Transient
+  public Boolean approvable;
+  
   public static final String FIELD_SCHOOL_IDENTIFIER = "schoolIdentifier";
   public static final String FIELD_SCHOOL_AS_STRING = "schoolAsString";
   public static final String FIELD_ACCOUNTING_PLAN = "accountingPlan";
@@ -69,6 +104,13 @@ public class Budget extends AbstractIdentifiableCodableNamableAuditable {
   public static final String FIELD_ACCOUNTING_PLAN_AS_STRING = "accountingPlanAsString";
   public static final String FIELD_YEAR = "year";
   public static final String FIELD_AMOUNT_AS_STRING = "amountAsString";
+  public static final String FIELD_STATUS = "status";
+  public static final String FIELD_STATUS_AS_STRING = "statusAsString";
+  public static final String FIELD_TRANSMITABLE = "transmitable";
+  public static final String FIELD_ACCEPTABLE = "acceptable";
+  public static final String FIELD_RETURNABLE = "returnable";
+  public static final String FIELD_APPROVABLE = "approvable";
+  public static final String FIELD_STATUS_REASON = "statusReason";
   
   public static final String ENTITY_NAME = "Budget";
   public static final String TABLE_NAME = "TA_BUDGET";
@@ -76,4 +118,6 @@ public class Budget extends AbstractIdentifiableCodableNamableAuditable {
   public static final String COLUMN_SCHOOL_IDENTIFIER = "ECOLE";
   public static final String COLUMN_ACCOUNTING_PLAN = "PLAN_COMPTABLE";
   public static final String COLUMN_YEAR = "ANNEE";
+  public static final String COLUMN_STATUS = "STATUT";
+  public static final String COLUMN_STATUS_REASON = "MOTIF";
 }

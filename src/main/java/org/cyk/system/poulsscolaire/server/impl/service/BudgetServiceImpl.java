@@ -1,6 +1,7 @@
 package org.cyk.system.poulsscolaire.server.impl.service;
 
 import ci.gouv.dgbf.extension.core.ResponseBuilder;
+import ci.gouv.dgbf.extension.server.service.api.request.ByIdentifierRequestDto;
 import ci.gouv.dgbf.extension.server.service.api.request.DeleteOneRequestDto;
 import ci.gouv.dgbf.extension.server.service.api.request.GetByIdentifierRequestDto;
 import ci.gouv.dgbf.extension.server.service.api.request.GetManyRequestDto;
@@ -14,11 +15,15 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 import org.cyk.system.poulsscolaire.server.api.accounting.BudgetDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.BudgetService;
+import org.cyk.system.poulsscolaire.server.impl.business.budget.BudgetAcceptBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.budget.BudgetApproveBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.budget.BudgetCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.budget.BudgetDeleteBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.budget.BudgetReadByIdentifierBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.budget.BudgetReadManyBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.budget.BudgetReadOneBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.budget.BudgetReturnBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.budget.BudgetTransmitBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.budget.BudgetUpdateBusiness;
 
 /**
@@ -34,6 +39,18 @@ public class BudgetServiceImpl extends AbstractServiceImpl
   @Inject
   BudgetCreateBusiness createBusiness;
 
+  @Inject
+  BudgetTransmitBusiness transmitBusiness;
+  
+  @Inject
+  BudgetAcceptBusiness acceptBusiness;
+  
+  @Inject
+  BudgetApproveBusiness approveBusiness;
+  
+  @Inject
+  BudgetReturnBusiness returnBusiness;
+  
   @Inject
   BudgetReadManyBusiness readManyBusiness;
 
@@ -55,6 +72,38 @@ public class BudgetServiceImpl extends AbstractServiceImpl
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);
     responseBuilder.setStatusCode(Status.CREATED.getStatusCode());
+    return responseBuilder.build();
+  }
+  
+  @Override
+  public Response transmit(ByIdentifierRequestDto request) {
+    IdentifiableResponseDto dto = transmitBusiness.process(request);
+    ResponseBuilder responseBuilder = new ResponseBuilder();
+    responseBuilder.setDto(dto);
+    return responseBuilder.build();
+  }
+  
+  @Override
+  public Response accept(ByIdentifierRequestDto request) {
+    IdentifiableResponseDto dto = acceptBusiness.process(request);
+    ResponseBuilder responseBuilder = new ResponseBuilder();
+    responseBuilder.setDto(dto);
+    return responseBuilder.build();
+  }
+  
+  @Override
+  public Response approve(ByIdentifierRequestDto request) {
+    IdentifiableResponseDto dto = approveBusiness.process(request);
+    ResponseBuilder responseBuilder = new ResponseBuilder();
+    responseBuilder.setDto(dto);
+    return responseBuilder.build();
+  }
+  
+  @Override
+  public Response returnBack(BudgetReturnRequestDto request) {
+    IdentifiableResponseDto dto = returnBusiness.process(request);
+    ResponseBuilder responseBuilder = new ResponseBuilder();
+    responseBuilder.setDto(dto);
     return responseBuilder.build();
   }
 

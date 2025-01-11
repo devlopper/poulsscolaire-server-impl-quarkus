@@ -8,6 +8,7 @@ import ci.gouv.dgbf.extension.server.service.api.response.IdentifiableResponseDt
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
+import org.cyk.system.poulsscolaire.server.api.accounting.BudgetStatus;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingService.FundingUpdateAmountRequestDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingService.FundingUpdateAmountResponseDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Funding;
@@ -37,13 +38,17 @@ public class FundingUpdateAmountBusiness extends AbstractIdentifiableUpdateBusin
 
   @Inject
   NumberHelper numberHelper;
-  
+
   @Override
   protected void validate(FundingUpdateAmountRequestDto request, StringList messages,
       Funding funding) {
     super.validate(request, messages, funding);
-    validationHelper.validateLowerThanByName(this, request.getAmount(), 0, "montant", "zéro",
-        messages);
+    if (BudgetStatus.APPROVED.equals(funding.budget.status)) {
+      messages.add("Aucun financement ne peut être mis à jour car le budget est approuvé.");
+    } else {
+      validationHelper.validateLowerThanByName(this, request.getAmount(), 0, "montant", "zéro",
+          messages);
+    }
   }
 
   @Override

@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import ci.gouv.dgbf.extension.server.persistence.entity.embeddable.Audit;
 import ci.gouv.dgbf.extension.server.service.api.entity.AuditDto;
+import ci.gouv.dgbf.extension.server.service.api.request.ByIdentifierRequestDto;
 import ci.gouv.dgbf.extension.server.service.api.request.GetManyRequestDto;
 import ci.gouv.dgbf.extension.test.AbstractTest;
 import io.quarkus.test.junit.QuarkusTest;
@@ -18,10 +19,14 @@ import java.util.Map;
 import java.util.UUID;
 import org.cyk.system.poulsscolaire.server.api.accounting.BudgetDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.BudgetService.BudgetCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.accounting.BudgetService.BudgetReturnRequestDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.BudgetService.BudgetUpdateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.accounting.BudgetStatus;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Budget;
 import org.cyk.system.poulsscolaire.server.impl.persistence.BudgetAmount;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 @QuarkusTest
 @TestProfile(BudgetBusinessTest.Profile.class)
@@ -33,6 +38,18 @@ class BudgetBusinessTest extends AbstractTest {
   @Inject
   BudgetCreateBusiness createBusiness;
 
+  @Inject
+  BudgetTransmitBusiness transmitBusiness;
+
+  @Inject
+  BudgetAcceptBusiness acceptBusiness;
+
+  @Inject
+  BudgetApproveBusiness approveBusiness;
+
+  @Inject
+  BudgetReturnBusiness returnBusiness;
+  
   @Inject
   BudgetReadManyBusiness readManyBusiness;
 
@@ -66,6 +83,47 @@ class BudgetBusinessTest extends AbstractTest {
     assertEquals(count + 1, count(entityManager, Budget.ENTITY_NAME));
   }
 
+  @ParameterizedTest
+  @ValueSource(strings = {"transmit_when_created"})
+  void transmit(String identifier) {
+    ByIdentifierRequestDto request = new ByIdentifierRequestDto();
+    request.setIdentifier(identifier);
+    request.setAuditWho(UUID.randomUUID().toString());
+    transmitBusiness.process(request);
+    assertStatus(request.getIdentifier(), BudgetStatus.TRANSMITTED);
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"accept_when_transmitted"})
+  void accept(String identifier) {
+    ByIdentifierRequestDto request = new ByIdentifierRequestDto();
+    request.setIdentifier(identifier);
+    request.setAuditWho(UUID.randomUUID().toString());
+    acceptBusiness.process(request);
+    assertStatus(request.getIdentifier(), BudgetStatus.ACCEPTED);
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"approve_when_accepted"})
+  void approve(String identifier) {
+    ByIdentifierRequestDto request = new ByIdentifierRequestDto();
+    request.setIdentifier(identifier);
+    request.setAuditWho(UUID.randomUUID().toString());
+    approveBusiness.process(request);
+    assertStatus(request.getIdentifier(), BudgetStatus.APPROVED);
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"return_when_accepted"})
+  void returnBack(String identifier) {
+    BudgetReturnRequestDto request = new BudgetReturnRequestDto();
+    request.setIdentifier(identifier);
+    request.setReason("ma raison");
+    request.setAuditWho(UUID.randomUUID().toString());
+    returnBusiness.process(request);
+    assertStatus(request.getIdentifier(), BudgetStatus.RETURNED);
+  }
+  
   @Test
   void readMany() {
     GetManyRequestDto request = new GetManyRequestDto();
@@ -139,6 +197,11 @@ class BudgetBusinessTest extends AbstractTest {
   @Test
   void instantiate() {
     assertNotNull(new BudgetAmount());
+  }
+  
+  void assertStatus(String actIdentifier, BudgetStatus expectedStatus) {
+    Budget triennialProgram = entityManager.find(Budget.class, actIdentifier);
+    assertEquals(expectedStatus, triennialProgram.status);
   }
 
   public static class Profile implements QuarkusTestProfile {

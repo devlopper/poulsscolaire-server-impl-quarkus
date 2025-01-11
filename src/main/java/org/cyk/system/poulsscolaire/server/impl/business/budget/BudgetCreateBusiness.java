@@ -6,6 +6,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.accounting.BudgetService.BudgetCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.accounting.BudgetStatus;
 import org.cyk.system.poulsscolaire.server.impl.business.accountingplan.AccountingPlanValidator;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AccountingPlan;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Budget;
@@ -44,13 +45,14 @@ public class BudgetCreateBusiness extends AbstractIdentifiableCreateBusiness<Bud
   }
 
   @Override
-  protected void setFields(Budget accountingOperation, Object[] array,
+  protected void setFields(Budget budget, Object[] array,
       BudgetCreateRequestDto request) {
-    super.setFields(accountingOperation, array, request);
-    accountingOperation.code = "B" + request.getSchoolIdentifier() + request.getYear();
-    accountingOperation.name = "Budget " + request.getYear();
-    accountingOperation.schoolIdentifier = request.getSchoolIdentifier();
-    accountingOperation.accountingPlan = (AccountingPlan) array[0];
-    accountingOperation.year = request.getYear();
+    super.setFields(budget, array, request);
+    budget.code = "B" + request.getSchoolIdentifier() + request.getYear();
+    budget.name = "Budget " + request.getYear();
+    budget.schoolIdentifier = request.getSchoolIdentifier();
+    budget.accountingPlan = (AccountingPlan) array[0];
+    budget.year = request.getYear();
+    budget.status = BudgetStatus.CREATED;
   }
 }

@@ -18,6 +18,7 @@ import java.time.Month;
 import java.time.format.TextStyle;
 import java.util.Locale;
 import lombok.Getter;
+import org.cyk.system.poulsscolaire.server.api.accounting.BudgetStatus;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingFilter;
 
@@ -94,8 +95,11 @@ public class FundingDynamicQuery extends AbstractDynamicQuery<Funding> {
     projectionBuilder().name(FundingDto.JSON_AMOUNT_AS_STRING).fieldName(Funding.FIELD_AMOUNT)
         .nameFieldName(Funding.FIELD_AMOUNT_AS_STRING).build();
 
-    projectionBuilder().name(FundingDto.JSON_AMOUNT_INPUTABLE).fieldName(Funding.FIELD_AMOUNT)
-        .resultConsumer((i, a) -> i.amountInputable = Core.isNotNull(a.getNextAsLong())).build();
+    projectionBuilder().name(FundingDto.JSON_AMOUNT_INPUTABLE)
+        .fieldName(fieldName(Funding.FIELD_BUDGET, Budget.FIELD_STATUS))
+        .resultConsumer((i, a) -> i.amountInputable =
+            Core.isNotTrue(BudgetStatus.APPROVED.equals(a.getNext(BudgetStatus.class))))
+        .build();
 
     projectionBuilder().name(FundingDto.JSON_JUSTIFICATION).fieldName(Funding.FIELD_JUSTIFICATION)
         .build();

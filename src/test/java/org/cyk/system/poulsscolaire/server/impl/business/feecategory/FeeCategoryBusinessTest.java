@@ -442,13 +442,24 @@ class FeeCategoryBusinessTest extends AbstractTest {
     StockMovementUpdateRequestDto request = new StockMovementUpdateRequestDto();
     request.setIdentifier("stockmovementtoupdate");
     request.setStockIdentifier("1");
-    request.setQuantity(0);
+    request.setQuantity(1);
     request.setAuditWho("christian");
     long count = count(entityManager, StockMovement.ENTITY_NAME);
     stockMovementUpdateBusiness.process(request);
     assertEquals(count + 0, count(entityManager, StockMovement.ENTITY_NAME));
   }
-  
+
+  @Test
+  void stockMovement_update_whenQuantityZero() {
+    StockMovementUpdateRequestDto request = new StockMovementUpdateRequestDto();
+    request.setIdentifier("stockmovementtoupdate");
+    request.setStockIdentifier("1");
+    request.setQuantity(0);
+    request.setAuditWho("christian");
+    assertThrows(BusinessInputValidationException.class,
+        () -> stockMovementUpdateBusiness.process(request));
+  }
+
   @Test
   void stockMovement_delete() {
     DeleteOneRequestDto request = new DeleteOneRequestDto();
@@ -516,7 +527,7 @@ class FeeCategoryBusinessTest extends AbstractTest {
 
     assertNotNull(stockDynamicQuery.toString());
     assertNotNull(stockMovementDynamicQuery.toString());
-    
+
     assertNotNull(new StockQuantity());
   }
 
