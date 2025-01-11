@@ -49,7 +49,7 @@ class BudgetBusinessTest extends AbstractTest {
 
   @Inject
   BudgetReturnBusiness returnBusiness;
-  
+
   @Inject
   BudgetReadManyBusiness readManyBusiness;
 
@@ -123,10 +123,12 @@ class BudgetBusinessTest extends AbstractTest {
     returnBusiness.process(request);
     assertStatus(request.getIdentifier(), BudgetStatus.RETURNED);
   }
-  
+
   @Test
   void readMany() {
     GetManyRequestDto request = new GetManyRequestDto();
+    request.projection().addNames(BudgetDto.JSON_STATUS_AS_STRING, BudgetDto.JSON_TRANSMITABLE,
+        BudgetDto.JSON_ACCEPTABLE, BudgetDto.JSON_APPROVABLE, BudgetDto.JSON_RETURNABLE);
     request.setAuditWho("christian");
     assertTrue(readManyBusiness.process(request).getCount() > 0);
   }
@@ -193,12 +195,12 @@ class BudgetBusinessTest extends AbstractTest {
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
     assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
   }
-  
+
   @Test
   void instantiate() {
     assertNotNull(new BudgetAmount());
   }
-  
+
   void assertStatus(String actIdentifier, BudgetStatus expectedStatus) {
     Budget triennialProgram = entityManager.find(Budget.class, actIdentifier);
     assertEquals(expectedStatus, triennialProgram.status);
