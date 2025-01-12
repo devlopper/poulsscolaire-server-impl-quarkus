@@ -84,6 +84,12 @@ public class SchoolingDynamicQuery extends AbstractDynamicQuery<Schooling> {
         .nameFieldName(Schooling.FIELD_PRE_REGISTRATION_AMOUNT_AS_STRING)
         .fieldName(Schooling.FIELD_PRE_REGISTRATION_AMOUNT).build();
 
+    projectionBuilder().name(SchoolingDto.JSON_SUBSIDY_AMOUNT)
+        .fieldName(Schooling.FIELD_SUBSIDY_AMOUNT).build();
+    projectionBuilder().name(SchoolingDto.JSON_SUBSIDY_AMOUNT_AS_STRING)
+        .nameFieldName(Schooling.FIELD_SUBSIDY_AMOUNT_AS_STRING)
+        .fieldName(Schooling.FIELD_SUBSIDY_AMOUNT).build();
+
     projectionBuilder().name(SchoolingDto.JSON_FEE_AMOUNT_VALUE_AS_STRING)
         .tupleVariableName(amountVariableName)
         .expression(

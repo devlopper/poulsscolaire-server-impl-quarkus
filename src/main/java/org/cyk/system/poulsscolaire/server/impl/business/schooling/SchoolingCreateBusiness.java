@@ -33,6 +33,7 @@ public class SchoolingCreateBusiness extends AbstractIdentifiableCreateBusiness<
     schooling.branchIdentifier = request.getBranchIdentifier();
     schooling.periodIdentifier = request.getPeriodIdentifier();
     schooling.preRegistrationAmount = request.getPreRegistrationAmount();
+    schooling.subsidyAmount = request.getSubsidyAmount();
     schooling.setCode(String.format("S%s", System.currentTimeMillis()));
   }
 }

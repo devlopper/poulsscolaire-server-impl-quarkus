@@ -43,6 +43,10 @@ public class AdjustedFee extends AbstractAmountContainer {
   @JoinColumn(name = COLUMN_REGISTRATION, nullable = false)
   public Registration registration;
 
+  @ManyToOne
+  @JoinColumn(name = COLUMN_STOCK_MOVEMENT)
+  public StockMovement stockMovement;
+  
   /* valeurs dérivées */
 
   @Transient
@@ -152,13 +156,15 @@ public class AdjustedFee extends AbstractAmountContainer {
   public static final String FIELD_REDUCED_REGISTRATION_AMOUNT_IS_ZERO =
       "reducedRegistrationAmountIsZero";
   public static final String FIELD_BRANCH_INSTANCE_AS_STRING = "branchInstanceAsString";
+  public static final String FIELD_STOCK_MOVEMENT = "stockMovement";
 
   public static final String ENTITY_NAME = "AdjustedFee";
   public static final String TABLE_NAME = "TA_FRAIS_AJUSTE";
 
   public static final String COLUMN_FEE = "FRAIS";
   public static final String COLUMN_REGISTRATION = "INSCRIPTION";
-
+  public static final String COLUMN_STOCK_MOVEMENT = "STOCK_MOUVEMENT";
+  
   public static final String QUERY_READ_FOR_PAYMENT_BY_REGISTRATION_IDENTIFIER =
       "AdjustedFee.readForPaymentByRegistration";
   public static final String QUERY_READ_FOR_PAYMENT_BY_REGISTRATION_VALUE =

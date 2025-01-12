@@ -30,5 +30,6 @@ public class SchoolingUpdateBusiness extends AbstractIdentifiableUpdateBusiness<
   protected void prepare(Schooling schooling, SchoolingUpdateRequestDto request) {
     super.prepare(schooling, request);
     schooling.preRegistrationAmount = request.getPreRegistrationAmount();
+    schooling.subsidyAmount = request.getSubsidyAmount();
   }
 }

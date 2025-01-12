@@ -11,6 +11,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
+import lombok.EqualsAndHashCode;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
@@ -30,6 +31,7 @@ import org.hibernate.envers.Audited;
 @AuditOverrides(value = {@AuditOverride(forClass = AbstractIdentifiableCodableAuditable.class),
     @AuditOverride(forClass = AbstractIdentifiableCodable.class),
     @AuditOverride(forClass = AbstractIdentifiable.class)})
+@EqualsAndHashCode(callSuper = true)
 public class Registration extends AbstractIdentifiableCodableAuditable {
 
   @NotNull

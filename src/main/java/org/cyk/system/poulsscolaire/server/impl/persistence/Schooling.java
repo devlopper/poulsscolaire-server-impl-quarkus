@@ -22,10 +22,9 @@ import org.hibernate.envers.Audited;
 @Entity(name = Schooling.ENTITY_NAME)
 @Table(name = Schooling.TABLE_NAME)
 @Audited
-@AuditOverrides(
-    value = {@AuditOverride(forClass = AbstractIdentifiableCodableAuditable.class),
-        @AuditOverride(forClass = AbstractIdentifiableCodable.class),
-        @AuditOverride(forClass = AbstractIdentifiable.class)})
+@AuditOverrides(value = {@AuditOverride(forClass = AbstractIdentifiableCodableAuditable.class),
+    @AuditOverride(forClass = AbstractIdentifiableCodable.class),
+    @AuditOverride(forClass = AbstractIdentifiable.class)})
 @EqualsAndHashCode(callSuper = true)
 public class Schooling extends AbstractIdentifiableCodableAuditable {
 
@@ -44,6 +43,9 @@ public class Schooling extends AbstractIdentifiableCodableAuditable {
   @Column(name = COLUMN_PRE_REGISTRATION_AMOUNT)
   public Integer preRegistrationAmount;
 
+  @Column(name = COLUMN_SUBSIDY_AMOUNT)
+  public Integer subsidyAmount;
+
   /* Transient Fields */
 
   @Transient
@@ -57,6 +59,9 @@ public class Schooling extends AbstractIdentifiableCodableAuditable {
 
   @Transient
   public String preRegistrationAmountAsString;
+
+  @Transient
+  public Integer subsidyAmountAsString;
 
   @Transient
   public Integer feeAmountValue;
@@ -85,6 +90,8 @@ public class Schooling extends AbstractIdentifiableCodableAuditable {
   public static final String FIELD_PRE_REGISTRATION_AMOUNT = "preRegistrationAmount";
   public static final String FIELD_PRE_REGISTRATION_AMOUNT_AS_STRING =
       "preRegistrationAmountAsString";
+  public static final String FIELD_SUBSIDY_AMOUNT = "subsidyAmount";
+  public static final String FIELD_SUBSIDY_AMOUNT_AS_STRING = "subsidyAmountAsString";
   public static final String FIELD_FEE_AMOUNT_VALUE = "feeAmountValue";
   public static final String FIELD_FEE_AMOUNT_VALUE_AS_STRING = "feeAmountValueAsString";
   public static final String FIELDT_NOT_OPTIONAL_FEE_AMOUN_VALUE_AS_STRING =
@@ -103,4 +110,5 @@ public class Schooling extends AbstractIdentifiableCodableAuditable {
   public static final String COLUMN_BRANCH_IDENTIFIER = "BRANCHE";
   public static final String COLUMN_PERIOD_IDENTIFIER = "PERIODE";
   public static final String COLUMN_PRE_REGISTRATION_AMOUNT = "MONTANT_PRE_INSCRIPTION";
+  public static final String COLUMN_SUBSIDY_AMOUNT = "MONTANT_SUBVENTION";
 }
