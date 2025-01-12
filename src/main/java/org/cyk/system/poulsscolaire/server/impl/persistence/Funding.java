@@ -19,7 +19,7 @@ import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
 
 /**
- * Cette classe représente une ligne de budget.
+ * Cette classe représente un financement.
  *
  * @author Christian
  *

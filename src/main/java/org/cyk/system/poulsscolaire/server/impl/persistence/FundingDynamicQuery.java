@@ -50,6 +50,14 @@ public class FundingDynamicQuery extends AbstractDynamicQuery<Funding> {
     projectionBuilder().name(AbstractIdentifiableDto.JSON_IDENTIFIER)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER).build();
 
+    projectionBuilder().name(AbstractIdentifiableDto.JSON_AS_STRING)
+        .expression(formatConcat(
+            fieldName(Funding.FIELD_BUDGET, AbstractIdentifiableCodableNamable.FIELD_NAME), "' '",
+            Funding.FIELD_MONTH, "' '",
+            fieldName(Funding.FIELD_SOURCE, AbstractIdentifiableCodableNamable.FIELD_NAME), "' '",
+            Funding.FIELD_AMOUNT))
+        .resultConsumer((i, a) -> i.asString = a.getNextAsString()).build();
+
     projectionBuilder().name(FundingDto.JSON_BUDGET_IDENTIFIER)
         .fieldName(fieldName(Funding.FIELD_BUDGET, AbstractIdentifiable.FIELD_IDENTIFIER))
         .nameFieldName(Funding.FIELD_BUDGET_IDENTIFIER).build();
