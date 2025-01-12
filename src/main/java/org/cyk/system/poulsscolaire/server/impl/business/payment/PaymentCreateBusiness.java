@@ -132,7 +132,8 @@ public class PaymentCreateBusiness extends AbstractIdentifiableCreateBusiness<Pa
     payment.payables = (List<Object[]>) array[2];
     payment.canceled = false;
     payment.initiator = request.getInitiator();
-
+    payment.isForSubsidy = request.getIsForSubsidy();
+    
     payment.accountingOperation = new AccountingOperation();
     payment.accountingOperation.generateIdentifier();
     payment.accountingOperation.audit = payment.audit;

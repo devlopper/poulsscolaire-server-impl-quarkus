@@ -64,6 +64,9 @@ public class PaymentDynamicQuery extends AbstractDynamicQuery<Payment> {
             (i, a) -> i.registrationAsString = RegistrationDynamicQuery.computeAsString(a))
         .build();
 
+    projectionBuilder().name(PaymentDto.JSON_IS_FOR_SUBSIDY).fieldName(Payment.FIELD_IS_FOR_SUBSIDY)
+        .build();
+
     projectionBuilder().name(PaymentDto.JSON_CANCELED).fieldName(Payment.FIELD_CANCELED).build();
 
     projectionBuilder().name(PaymentDto.JSON_MODE_AS_STRING)
