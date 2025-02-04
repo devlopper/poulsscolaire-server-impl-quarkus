@@ -61,7 +61,7 @@ public class Schooling extends AbstractIdentifiableCodableAuditable {
   public String preRegistrationAmountAsString;
 
   @Transient
-  public Integer subsidyAmountAsString;
+  public String subsidyAmountAsString;
 
   @Transient
   public Integer feeAmountValue;
