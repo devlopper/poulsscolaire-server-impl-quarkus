@@ -6,9 +6,7 @@ import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters.ResultMode;
 import ci.gouv.dgbf.extension.server.service.api.request.DeleteOneRequestDto;
 import ci.gouv.dgbf.extension.test.AbstractTest;
-import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.QuarkusTestProfile;
-import io.quarkus.test.junit.TestProfile;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import java.util.Map;
@@ -20,40 +18,40 @@ import org.cyk.system.poulsscolaire.server.api.registration.StudentService.Stude
 import org.cyk.system.poulsscolaire.server.impl.persistence.Identity;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Student;
 import org.cyk.system.poulsscolaire.server.impl.persistence.StudentDynamicQuery;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-@QuarkusTest
-@TestProfile(StudentBusinessTest.Profile.class)
+@Disabled
 class StudentBusinessTest extends AbstractTest {
 
   @Inject
   EntityManager entityManager;
 
   @Inject
-  StudentCreateBusiness createBusiness;
+  StudentCreateBusiness studentCreateBusiness;
 
   @Inject
-  StudentReadManyBusiness readManyBusiness;
+  StudentReadManyBusiness studentReadManyBusiness;
 
   @Inject
-  StudentReadOneBusiness readOneBusiness;
+  StudentReadOneBusiness studentReadOneBusiness;
 
   @Inject
-  StudentReadByIdentifierBusiness readByIdentifierBusiness;
+  StudentReadByIdentifierBusiness studentReadByIdentifierBusiness;
 
   @Inject
-  StudentUpdateBusiness updateBusiness;
+  StudentUpdateBusiness studentUpdateBusiness;
 
   @Inject
-  StudentDeleteBusiness deleteBusiness;
+  StudentDeleteBusiness studentDeleteBusiness;
 
   @Inject
-  StudentDynamicQuery dynamicQuery;
+  StudentDynamicQuery studentDynamicQuery;
 
-  DynamicQueryParameters<Student> dynamicQueryParameters = new DynamicQueryParameters<>();
+  DynamicQueryParameters<Student> studentDynamicQueryParameters = new DynamicQueryParameters<>();
   
   @Test
-  void create() {
+  void student_create() {
     StudentCreateRequestDto request = new StudentCreateRequestDto();
     request.setFirstName(UUID.randomUUID().toString());
     request.setLastNames(UUID.randomUUID().toString());
@@ -63,13 +61,13 @@ class StudentBusinessTest extends AbstractTest {
     request.setAuditWho("christian");
     long count = count(entityManager, Student.ENTITY_NAME);
     long identityCount = count(entityManager, Identity.ENTITY_NAME);
-    createBusiness.process(request);
+    studentCreateBusiness.process(request);
     assertEquals(count + 1, count(entityManager, Student.ENTITY_NAME));
     assertEquals(identityCount + 1, count(entityManager, Identity.ENTITY_NAME));
   }
 
   @Test
-  void update() {
+  void student_update() {
     StudentUpdateRequestDto request = new StudentUpdateRequestDto();
     request.setIdentifier("toupdate");
     request.setFirstName(UUID.randomUUID().toString());
@@ -79,37 +77,37 @@ class StudentBusinessTest extends AbstractTest {
     request.setGenderIdentifier("M");
     request.setAuditWho("christian");
     long count = count(entityManager, Identity.ENTITY_NAME);
-    updateBusiness.process(request);
+    studentUpdateBusiness.process(request);
     assertEquals(count, count(entityManager, Identity.ENTITY_NAME));
   }
 
   @Test
-  void delete() {
+  void student_delete() {
     DeleteOneRequestDto request = new DeleteOneRequestDto();
     request.setIdentifier("todelete");
     request.setAuditWho("christian");
     long count = count(entityManager, Student.ENTITY_NAME);
     long identityCount = count(entityManager, Identity.ENTITY_NAME);
-    deleteBusiness.process(request);
+    studentDeleteBusiness.process(request);
     assertEquals(count - 1, count(entityManager, Student.ENTITY_NAME));
     assertEquals(identityCount - 1, count(entityManager, Identity.ENTITY_NAME));
   }
 
   @Test
-  void getOne_asString() {
-    dynamicQueryParameters.setResultMode(ResultMode.ONE);
-    dynamicQueryParameters.projection().addNames(StudentDto.JSON_AS_STRING);
-    dynamicQueryParameters.filter().addCriteria(StudentDto.JSON_IDENTIFIER, "1");
-    Student student = dynamicQuery.getOne(dynamicQueryParameters);
+  void student_getOne_asString() {
+    studentDynamicQueryParameters.setResultMode(ResultMode.ONE);
+    studentDynamicQueryParameters.projection().addNames(StudentDto.JSON_AS_STRING);
+    studentDynamicQueryParameters.filter().addCriteria(StudentDto.JSON_IDENTIFIER, "1");
+    Student student = studentDynamicQuery.getOne(studentDynamicQueryParameters);
     assertEquals("1 - 1 1", student.asString);
   }
   
   @Test
-  void getOne_bloodGroup() {
-    dynamicQueryParameters.setResultMode(ResultMode.ONE);
-    dynamicQueryParameters.projection().addNames(StudentDto.JSON_BLOOD_GROUP);
-    dynamicQueryParameters.filter().addCriteria(StudentDto.JSON_IDENTIFIER, "1");
-    Student student = dynamicQuery.getOne(dynamicQueryParameters);
+  void student_getOne_bloodGroup() {
+    studentDynamicQueryParameters.setResultMode(ResultMode.ONE);
+    studentDynamicQueryParameters.projection().addNames(StudentDto.JSON_BLOOD_GROUP);
+    studentDynamicQueryParameters.filter().addCriteria(StudentDto.JSON_IDENTIFIER, "1");
+    Student student = studentDynamicQuery.getOne(studentDynamicQueryParameters);
     assertEquals(BloodGroup.A_PLUS, student.bloodGroup);
   }
   
