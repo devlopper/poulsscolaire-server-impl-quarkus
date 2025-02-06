@@ -1,6 +1,7 @@
 package org.cyk.system.poulsscolaire.server.impl.business.registration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -10,6 +11,7 @@ import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters.Re
 import ci.gouv.dgbf.extension.server.service.api.entity.AuditDto;
 import ci.gouv.dgbf.extension.server.service.api.request.ByIdentifierRequestDto;
 import ci.gouv.dgbf.extension.server.service.api.request.DeleteOneRequestDto;
+import ci.gouv.dgbf.extension.server.service.api.request.GetManyRequestDto;
 import ci.gouv.dgbf.extension.test.AbstractTest;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.QuarkusTestProfile;
@@ -18,6 +20,10 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import java.util.Map;
 import java.util.UUID;
+import org.cyk.system.poulsscolaire.server.api.configuration.SchoolConfigurationDto;
+import org.cyk.system.poulsscolaire.server.api.configuration.SchoolConfigurationService.SchoolConfigurationCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.configuration.SchoolConfigurationService.SchoolConfigurationUpdateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.configuration.SchoolDto;
 import org.cyk.system.poulsscolaire.server.api.registration.BloodGroup;
 import org.cyk.system.poulsscolaire.server.api.registration.IdentityDto;
 import org.cyk.system.poulsscolaire.server.api.registration.IdentityRelationshipType;
@@ -36,6 +42,17 @@ import org.cyk.system.poulsscolaire.server.impl.business.identity.IdentityReadBy
 import org.cyk.system.poulsscolaire.server.impl.business.identity.IdentityReadManyBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.identity.IdentityReadOneBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.identity.IdentityUpdateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.school.SchoolMapper;
+import org.cyk.system.poulsscolaire.server.impl.business.school.SchoolReadByIdentifierBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.school.SchoolReadManyBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.school.SchoolReadOneBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.schoolconfiguration.SchoolConfigurationCreateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.schoolconfiguration.SchoolConfigurationDeleteBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.schoolconfiguration.SchoolConfigurationMapper;
+import org.cyk.system.poulsscolaire.server.impl.business.schoolconfiguration.SchoolConfigurationReadByIdentifierBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.schoolconfiguration.SchoolConfigurationReadManyBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.schoolconfiguration.SchoolConfigurationReadOneBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.schoolconfiguration.SchoolConfigurationUpdateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.student.StudentCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.student.StudentDeleteBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.student.StudentReadByIdentifierBusiness;
@@ -49,6 +66,12 @@ import org.cyk.system.poulsscolaire.server.impl.persistence.Identity;
 import org.cyk.system.poulsscolaire.server.impl.persistence.IdentityDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.IdentityRelationship;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Registration;
+import org.cyk.system.poulsscolaire.server.impl.persistence.School;
+import org.cyk.system.poulsscolaire.server.impl.persistence.SchoolBranch;
+import org.cyk.system.poulsscolaire.server.impl.persistence.SchoolConfiguration;
+import org.cyk.system.poulsscolaire.server.impl.persistence.SchoolDynamicQuery;
+import org.cyk.system.poulsscolaire.server.impl.persistence.SchoolPeriod;
+import org.cyk.system.poulsscolaire.server.impl.persistence.SchoolUser;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Student;
 import org.cyk.system.poulsscolaire.server.impl.persistence.StudentDynamicQuery;
 import org.junit.jupiter.api.Test;
@@ -57,6 +80,48 @@ import org.junit.jupiter.api.Test;
 @TestProfile(RegistrationBusinessTest.Profile.class)
 class RegistrationBusinessTest extends AbstractTest {
 
+  /* School */
+  
+  @Inject
+  SchoolReadManyBusiness schoolReadManyBusiness;
+
+  @Inject
+  SchoolReadOneBusiness schoolReadOneBusiness;
+
+  @Inject
+  SchoolReadByIdentifierBusiness schoolReadByIdentifierBusiness;
+
+  @Inject
+  SchoolDynamicQuery schoolDynamicQuery;
+
+  DynamicQueryParameters<School> schoolParameters = new DynamicQueryParameters<>();
+
+  @Inject
+  SchoolMapper schoolMapper;
+  
+  /* SchoolConfiguration */
+  
+  @Inject
+  SchoolConfigurationCreateBusiness schoolConfigurationCreateBusiness;
+
+  @Inject
+  SchoolConfigurationReadManyBusiness schoolConfigurationReadManyBusiness;
+
+  @Inject
+  SchoolConfigurationReadOneBusiness schoolConfigurationReadOneBusiness;
+
+  @Inject
+  SchoolConfigurationReadByIdentifierBusiness schoolConfigurationReadByIdentifierBusiness;
+
+  @Inject
+  SchoolConfigurationUpdateBusiness schoolConfigurationUpdateBusiness;
+
+  @Inject
+  SchoolConfigurationDeleteBusiness schoolConfigurationDeleteBusiness;
+  
+  @Inject
+  SchoolConfigurationMapper schoolConfigurationMapper;
+  
   /* Identity */
   
   @Inject
@@ -138,6 +203,154 @@ class RegistrationBusinessTest extends AbstractTest {
 
   @Inject
   RegistrationMapper mapper;
+  
+  /* School */
+  
+  @Test
+  void school_mapToDto_whenNull() {
+    assertNull(schoolMapper.mapToDto(null));
+  }
+  
+  @Test
+  void school_mapToDto_whenNotNull() {
+    School instance = new School();
+    instance.setIdentifier("1");
+    SchoolDto dto = schoolMapper.mapToDto(instance);
+    assertEquals(instance.getIdentifier(), dto.getIdentifier());
+  }
+  
+  @Test
+  void school_mapFromDto_whenNull() {
+    assertNull(schoolMapper.mapFromDto(null));
+  }
+  
+  @Test
+  void school_mapFromDto() {
+    SchoolDto dto = new SchoolDto();
+    dto.setIdentifier("1");
+    School instance = schoolMapper.mapFromDto(dto);
+    assertEquals(dto.getIdentifier(), instance.getIdentifier());
+  }
+  
+  @Test
+  void school_buildQueryString_whenTotalAmount() {
+    schoolParameters.projection().addNames(SchoolDto.JSON_TOTAL_AMOUNT_AS_STRING);
+    assertEquals(
+        "SELECT SUM(afa.amountToPay) FROM School t "
+            + "LEFT JOIN AdjustedFeeAmounts afa ON afa.schoolIdentifier = t.identifier "
+            + "GROUP BY t.identifier,t.name ORDER BY t.name ASC",
+        schoolDynamicQuery.buildQueryString(schoolParameters));
+  }
+
+  @Test
+  void school_buildQueryString_whenPaidAmount() {
+    schoolParameters.projection().addNames(SchoolDto.JSON_PAID_AMOUNT_AS_STRING);
+    assertEquals(
+        "SELECT SUM(afa.amountPaid) FROM School t "
+        + "LEFT JOIN AdjustedFeeAmounts afa ON afa.schoolIdentifier = t.identifier "
+        + "GROUP BY t.identifier,t.name ORDER BY t.name ASC",
+        schoolDynamicQuery.buildQueryString(schoolParameters));
+  }
+
+  @Test
+  void school_buildQueryString_whenPayableAmount() {
+    schoolParameters.projection().addNames(SchoolDto.JSON_PAYABLE_AMOUNT_AS_STRING);
+    assertEquals(
+        "SELECT SUM(afa.amountLeftToPay) "
+        + "FROM School t "
+        + "LEFT JOIN AdjustedFeeAmounts afa ON afa.schoolIdentifier = t.identifier "
+        + "GROUP BY t.identifier,t.name ORDER BY t.name ASC",
+        schoolDynamicQuery.buildQueryString(schoolParameters));
+  }
+  
+  @Test
+  void school_instantiate() {
+    assertNotNull(new SchoolBranch());
+    assertNotNull(new SchoolPeriod());
+    assertNotNull(new SchoolUser());
+  }
+  
+  @Test
+  void school_readMany() {
+    GetManyRequestDto request = new GetManyRequestDto();
+    request.setAuditWho("christian");
+    assertEquals(1, schoolReadManyBusiness.process(request).getCount());
+  }
+  
+  /* SchoolConfiguration */
+  
+  @Test
+  void schoolConfiguration_create() {
+    SchoolConfigurationCreateRequestDto request = new SchoolConfigurationCreateRequestDto();
+    request.setSchoolIdentifier("2");
+    request.setPaymentAccountingAccountIdentifier("1");
+    request.setAuditWho("christian");
+    long count = count(entityManager, SchoolConfiguration.ENTITY_NAME);
+    schoolConfigurationCreateBusiness.process(request);
+    assertEquals(count + 1, count(entityManager, SchoolConfiguration.ENTITY_NAME));
+  }
+
+  @Test
+  void schoolConfiguration_update() {
+    SchoolConfigurationUpdateRequestDto request = new SchoolConfigurationUpdateRequestDto();
+    request.setIdentifier("toupdate");
+    request.setSchoolIdentifier("1");
+    request.setPaymentAccountingAccountIdentifier("1");
+    request.setAuditWho("christian");
+    long count = count(entityManager, SchoolConfiguration.ENTITY_NAME);
+    schoolConfigurationUpdateBusiness.process(request);
+    assertEquals(count, count(entityManager, SchoolConfiguration.ENTITY_NAME));
+  }
+  
+  @Test
+  void schoolConfiguration_mapToDto_whenNull() {
+    assertNull(schoolConfigurationMapper.mapToDto(null));
+  }
+  
+  @Test
+  void schoolConfiguration_mapToDto_whenNotNull() {
+    SchoolConfiguration instance = new SchoolConfiguration();
+    instance.setIdentifier("1");
+    instance.setAudit(new Audit());
+    instance.getAudit().setWho("christian");
+    SchoolConfigurationDto dto = schoolConfigurationMapper.mapToDto(instance);
+    assertEquals(instance.getIdentifier(), dto.getIdentifier());
+    assertEquals(instance.getAudit().getWho(), dto.getAudit().getWho());
+  }
+  
+  @Test
+  void schoolConfiguration_mapToDto_whenNotNullAndAuditNull() {
+    SchoolConfiguration instance = new SchoolConfiguration();
+    instance.setIdentifier("1");
+    SchoolConfigurationDto dto = schoolConfigurationMapper.mapToDto(instance);
+    assertEquals(instance.getIdentifier(), dto.getIdentifier());
+    assertNull(dto.getAudit());
+  }
+  
+  @Test
+  void schoolConfiguration_mapFromDto_whenNull() {
+    assertNull(schoolConfigurationMapper.mapFromDto(null));
+  }
+  
+  @Test
+  void schoolConfiguration_mapFromDto_whenAuditNull() {
+    SchoolConfigurationDto dto = new SchoolConfigurationDto();
+    dto.setIdentifier("1");
+    SchoolConfiguration instance = schoolConfigurationMapper.mapFromDto(dto);
+    assertEquals(dto.getIdentifier(), instance.getIdentifier());
+    assertEquals(null, instance.getAudit());
+  }
+  
+  @Test
+  void schoolConfiguration_mapFromDto_whenAuditNotNull() {
+    SchoolConfigurationDto dto = new SchoolConfigurationDto();
+    dto.setIdentifier("1");
+    dto.setAudit(new AuditDto());
+    dto.getAudit().setWho("meliane");
+    SchoolConfiguration instance = schoolConfigurationMapper.mapFromDto(dto);
+    assertEquals(dto.getIdentifier(), instance.getIdentifier());
+    assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
+  }
   
   /* Identity */
   

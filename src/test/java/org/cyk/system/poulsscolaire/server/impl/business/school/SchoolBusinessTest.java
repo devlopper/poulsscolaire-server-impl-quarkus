@@ -7,9 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
 import ci.gouv.dgbf.extension.server.service.api.request.GetManyRequestDto;
 import ci.gouv.dgbf.extension.test.AbstractTest;
-import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.QuarkusTestProfile;
-import io.quarkus.test.junit.TestProfile;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import java.util.Map;
@@ -19,101 +17,101 @@ import org.cyk.system.poulsscolaire.server.impl.persistence.SchoolBranch;
 import org.cyk.system.poulsscolaire.server.impl.persistence.SchoolDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.SchoolPeriod;
 import org.cyk.system.poulsscolaire.server.impl.persistence.SchoolUser;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-@QuarkusTest
-@TestProfile(SchoolBusinessTest.Profile.class)
+@Disabled
 class SchoolBusinessTest extends AbstractTest {
 
   @Inject
   EntityManager entityManager;
 
   @Inject
-  SchoolReadManyBusiness readManyBusiness;
+  SchoolReadManyBusiness schoolReadManyBusiness;
 
   @Inject
-  SchoolReadOneBusiness readOneBusiness;
+  SchoolReadOneBusiness schoolReadOneBusiness;
 
   @Inject
-  SchoolReadByIdentifierBusiness readByIdentifierBusiness;
+  SchoolReadByIdentifierBusiness schoolReadByIdentifierBusiness;
 
   @Inject
-  SchoolDynamicQuery dynamicQuery;
+  SchoolDynamicQuery schoolDynamicQuery;
 
-  DynamicQueryParameters<School> parameters = new DynamicQueryParameters<>();
+  DynamicQueryParameters<School> schoolParameters = new DynamicQueryParameters<>();
 
   @Inject
-  SchoolMapper mapper;
+  SchoolMapper schoolMapper;
   
   @Test
-  void mapToDto_whenNull() {
-    assertNull(mapper.mapToDto(null));
+  void school_mapToDto_whenNull() {
+    assertNull(schoolMapper.mapToDto(null));
   }
   
   @Test
-  void mapToDto_whenNotNull() {
+  void school_mapToDto_whenNotNull() {
     School instance = new School();
     instance.setIdentifier("1");
-    SchoolDto dto = mapper.mapToDto(instance);
+    SchoolDto dto = schoolMapper.mapToDto(instance);
     assertEquals(instance.getIdentifier(), dto.getIdentifier());
   }
   
   @Test
-  void mapFromDto_whenNull() {
-    assertNull(mapper.mapFromDto(null));
+  void school_mapFromDto_whenNull() {
+    assertNull(schoolMapper.mapFromDto(null));
   }
   
   @Test
-  void mapFromDto() {
+  void school_mapFromDto() {
     SchoolDto dto = new SchoolDto();
     dto.setIdentifier("1");
-    School instance = mapper.mapFromDto(dto);
+    School instance = schoolMapper.mapFromDto(dto);
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
   }
   
   @Test
-  void buildQueryString_whenTotalAmount() {
-    parameters.projection().addNames(SchoolDto.JSON_TOTAL_AMOUNT_AS_STRING);
+  void school_buildQueryString_whenTotalAmount() {
+    schoolParameters.projection().addNames(SchoolDto.JSON_TOTAL_AMOUNT_AS_STRING);
     assertEquals(
         "SELECT SUM(afa.amountToPay) FROM School t "
             + "LEFT JOIN AdjustedFeeAmounts afa ON afa.schoolIdentifier = t.identifier "
             + "GROUP BY t.identifier,t.name ORDER BY t.name ASC",
-        dynamicQuery.buildQueryString(parameters));
+        schoolDynamicQuery.buildQueryString(schoolParameters));
   }
 
   @Test
-  void buildQueryString_whenPaidAmount() {
-    parameters.projection().addNames(SchoolDto.JSON_PAID_AMOUNT_AS_STRING);
+  void school_buildQueryString_whenPaidAmount() {
+    schoolParameters.projection().addNames(SchoolDto.JSON_PAID_AMOUNT_AS_STRING);
     assertEquals(
         "SELECT SUM(afa.amountPaid) FROM School t "
         + "LEFT JOIN AdjustedFeeAmounts afa ON afa.schoolIdentifier = t.identifier "
         + "GROUP BY t.identifier,t.name ORDER BY t.name ASC",
-        dynamicQuery.buildQueryString(parameters));
+        schoolDynamicQuery.buildQueryString(schoolParameters));
   }
 
   @Test
-  void buildQueryString_whenPayableAmount() {
-    parameters.projection().addNames(SchoolDto.JSON_PAYABLE_AMOUNT_AS_STRING);
+  void school_buildQueryString_whenPayableAmount() {
+    schoolParameters.projection().addNames(SchoolDto.JSON_PAYABLE_AMOUNT_AS_STRING);
     assertEquals(
         "SELECT SUM(afa.amountLeftToPay) "
         + "FROM School t "
         + "LEFT JOIN AdjustedFeeAmounts afa ON afa.schoolIdentifier = t.identifier "
         + "GROUP BY t.identifier,t.name ORDER BY t.name ASC",
-        dynamicQuery.buildQueryString(parameters));
+        schoolDynamicQuery.buildQueryString(schoolParameters));
   }
   
   @Test
-  void instantiate() {
+  void school_instantiate() {
     assertNotNull(new SchoolBranch());
     assertNotNull(new SchoolPeriod());
     assertNotNull(new SchoolUser());
   }
   
   @Test
-  void readMany() {
+  void school_readMany() {
     GetManyRequestDto request = new GetManyRequestDto();
     request.setAuditWho("christian");
-    assertEquals(1, readManyBusiness.process(request).getCount());
+    assertEquals(1, schoolReadManyBusiness.process(request).getCount());
   }
   
   public static class Profile implements QuarkusTestProfile {

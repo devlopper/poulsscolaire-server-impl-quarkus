@@ -9,9 +9,7 @@ import ci.gouv.dgbf.extension.core.StringList;
 import ci.gouv.dgbf.extension.server.persistence.entity.embeddable.Audit;
 import ci.gouv.dgbf.extension.server.service.api.entity.AuditDto;
 import ci.gouv.dgbf.extension.test.AbstractTest;
-import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.QuarkusTestProfile;
-import io.quarkus.test.junit.TestProfile;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import java.util.Map;
@@ -23,51 +21,53 @@ import org.cyk.system.poulsscolaire.server.impl.persistence.AccountingAccount;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AccountingOperation;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AccountingOperationAccount;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AccountingPlan;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-@QuarkusTest
-@TestProfile(AccountingOperationAccountBusinessTest.Profile.class)
+@Disabled
 class AccountingOperationAccountBusinessTest extends AbstractTest {
 
   @Inject
   EntityManager entityManager;
 
   @Inject
-  AccountingOperationAccountCreateBusiness createBusiness;
+  AccountingOperationAccountCreateBusiness accountingOperationAccountCreateBusiness;
 
   @Inject
-  AccountingOperationAccountReadManyBusiness readManyBusiness;
+  AccountingOperationAccountReadManyBusiness accountingOperationAccountReadManyBusiness;
 
   @Inject
-  AccountingOperationAccountReadOneBusiness readOneBusiness;
+  AccountingOperationAccountReadOneBusiness accountingOperationAccountReadOneBusiness;
 
   @Inject
-  AccountingOperationAccountReadByIdentifierBusiness readByIdentifierBusiness;
+  AccountingOperationAccountReadByIdentifierBusiness
+      accountingOperationAccountReadByIdentifierBusiness;
 
   @Inject
-  AccountingOperationAccountUpdateBusiness updateBusiness;
+  AccountingOperationAccountUpdateBusiness accountingOperationAccountUpdateBusiness;
 
   @Inject
-  AccountingOperationAccountDeleteBusiness deleteBusiness;
+  AccountingOperationAccountDeleteBusiness accountingOperationAccountDeleteBusiness;
 
   @Inject
-  AccountingOperationAccountValidator validator;
+  AccountingOperationAccountValidator accountingOperationAccountValidator;
 
   @Inject
-  AccountingOperationAccountMapper mapper;
-  
+  AccountingOperationAccountMapper accountingOperationAccountMapper;
+
   @Test
-  void validateAccount_whenOperationNull() {
-    assertFalse(validator.validateAccount(null, null, new StringList()));
+  void accountingOperationAccount_validateAccount_whenOperationNull() {
+    assertFalse(accountingOperationAccountValidator.validateAccount(null, null, new StringList()));
   }
 
   @Test
-  void validateAccount_whenAccountnNull() {
-    assertFalse(validator.validateAccount(new AccountingOperation(), null, new StringList()));
+  void accountingOperationAccount_validateAccount_whenAccountnNull() {
+    assertFalse(accountingOperationAccountValidator.validateAccount(new AccountingOperation(), null,
+        new StringList()));
   }
 
   @Test
-  void validateAccount_whenDifferentPlan() {
+  void accountingOperationAccount_validateAccount_whenDifferentPlan() {
     AccountingPlan plan1 = new AccountingPlan();
     plan1.generateIdentifier();
     AccountingOperation operation = new AccountingOperation();
@@ -78,11 +78,12 @@ class AccountingOperationAccountBusinessTest extends AbstractTest {
     AccountingAccount account = new AccountingAccount();
     account.plan = plan2;
 
-    assertTrue(validator.validateAccount(operation, account, new StringList()));
+    assertTrue(
+        accountingOperationAccountValidator.validateAccount(operation, account, new StringList()));
   }
-  
+
   @Test
-  void validateAccount_whenSamePlan() {
+  void accountingOperationAccount_validateAccount_whenSamePlan() {
     AccountingPlan plan1 = new AccountingPlan();
     plan1.identifier = "1";
     AccountingOperation operation = new AccountingOperation();
@@ -93,11 +94,12 @@ class AccountingOperationAccountBusinessTest extends AbstractTest {
     AccountingAccount account = new AccountingAccount();
     account.plan = plan2;
 
-    assertFalse(validator.validateAccount(operation, account, new StringList()));
+    assertFalse(
+        accountingOperationAccountValidator.validateAccount(operation, account, new StringList()));
   }
 
   @Test
-  void create() {
+  void accountingOperationAccount_create() {
     AccountingOperationAccountCreateRequestDto request =
         new AccountingOperationAccountCreateRequestDto();
     request.setName(UUID.randomUUID().toString());
@@ -106,12 +108,12 @@ class AccountingOperationAccountBusinessTest extends AbstractTest {
     request.setAmount(1);
     request.setAuditWho("christian");
     long count = count(entityManager, AccountingOperationAccount.ENTITY_NAME);
-    createBusiness.process(request);
+    accountingOperationAccountCreateBusiness.process(request);
     assertEquals(count + 1, count(entityManager, AccountingOperationAccount.ENTITY_NAME));
   }
 
   @Test
-  void update() {
+  void accountingOperationAccount_update() {
     AccountingOperationAccountUpdateRequestDto request =
         new AccountingOperationAccountUpdateRequestDto();
     request.setIdentifier("toupdate");
@@ -121,56 +123,56 @@ class AccountingOperationAccountBusinessTest extends AbstractTest {
     request.setAmount(1);
     request.setAuditWho("christian");
     long count = count(entityManager, AccountingOperationAccount.ENTITY_NAME);
-    updateBusiness.process(request);
+    accountingOperationAccountUpdateBusiness.process(request);
     assertEquals(count, count(entityManager, AccountingOperationAccount.ENTITY_NAME));
   }
-  
+
   @Test
-  void mapToDto_whenNull() {
-    assertNull(mapper.mapToDto(null));
+  void accountingOperationAccount_mapToDto_whenNull() {
+    assertNull(accountingOperationAccountMapper.mapToDto(null));
   }
-  
+
   @Test
-  void mapToDto_whenNotNull() {
+  void accountingOperationAccount_mapToDto_whenNotNull() {
     AccountingOperationAccount instance = new AccountingOperationAccount();
     instance.setIdentifier("1");
     instance.setAudit(new Audit());
     instance.getAudit().setWho("christian");
-    AccountingOperationAccountDto dto = mapper.mapToDto(instance);
+    AccountingOperationAccountDto dto = accountingOperationAccountMapper.mapToDto(instance);
     assertEquals(instance.getIdentifier(), dto.getIdentifier());
     assertEquals(instance.getAudit().getWho(), dto.getAudit().getWho());
   }
-  
+
   @Test
-  void mapToDto_whenNotNullAndAuditNull() {
+  void accountingOperationAccount_mapToDto_whenNotNullAndAuditNull() {
     AccountingOperationAccount instance = new AccountingOperationAccount();
     instance.setIdentifier("1");
-    AccountingOperationAccountDto dto = mapper.mapToDto(instance);
+    AccountingOperationAccountDto dto = accountingOperationAccountMapper.mapToDto(instance);
     assertEquals(instance.getIdentifier(), dto.getIdentifier());
     assertNull(dto.getAudit());
   }
-  
+
   @Test
-  void mapFromDto_whenNull() {
-    assertNull(mapper.mapFromDto(null));
+  void accountingOperationAccount_mapFromDto_whenNull() {
+    assertNull(accountingOperationAccountMapper.mapFromDto(null));
   }
-  
+
   @Test
-  void mapFromDto_whenAuditNull() {
+  void accountingOperationAccount_mapFromDto_whenAuditNull() {
     AccountingOperationAccountDto dto = new AccountingOperationAccountDto();
     dto.setIdentifier("1");
-    AccountingOperationAccount instance = mapper.mapFromDto(dto);
+    AccountingOperationAccount instance = accountingOperationAccountMapper.mapFromDto(dto);
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
     assertEquals(null, instance.getAudit());
   }
-  
+
   @Test
-  void mapFromDto_whenAuditNotNull() {
+  void accountingOperationAccount_mapFromDto_whenAuditNotNull() {
     AccountingOperationAccountDto dto = new AccountingOperationAccountDto();
     dto.setIdentifier("1");
     dto.setAudit(new AuditDto());
     dto.getAudit().setWho("meliane");
-    AccountingOperationAccount instance = mapper.mapFromDto(dto);
+    AccountingOperationAccount instance = accountingOperationAccountMapper.mapFromDto(dto);
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
     assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
   }
