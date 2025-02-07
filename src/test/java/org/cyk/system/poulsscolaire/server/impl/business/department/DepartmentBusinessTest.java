@@ -6,72 +6,70 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
 import ci.gouv.dgbf.extension.server.service.api.request.GetManyRequestDto;
 import ci.gouv.dgbf.extension.test.AbstractTest;
-import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.QuarkusTestProfile;
-import io.quarkus.test.junit.TestProfile;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import java.util.Map;
 import org.cyk.system.poulsscolaire.server.api.configuration.DepartmentDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Department;
 import org.cyk.system.poulsscolaire.server.impl.persistence.DepartmentDynamicQuery;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-@QuarkusTest
-@TestProfile(DepartmentBusinessTest.Profile.class)
+@Disabled
 class DepartmentBusinessTest extends AbstractTest {
 
   @Inject
   EntityManager entityManager;
 
   @Inject
-  DepartmentReadManyBusiness readManyBusiness;
+  DepartmentReadManyBusiness departmentReadManyBusiness;
 
   @Inject
-  DepartmentReadOneBusiness readOneBusiness;
+  DepartmentReadOneBusiness departmentReadOneBusiness;
 
   @Inject
-  DepartmentReadByIdentifierBusiness readByIdentifierBusiness;
+  DepartmentReadByIdentifierBusiness departmentReadByIdentifierBusiness;
 
   @Inject
-  DepartmentDynamicQuery dynamicQuery;
+  DepartmentDynamicQuery departmentDynamicQuery;
 
-  DynamicQueryParameters<Department> parameters = new DynamicQueryParameters<>();
+  DynamicQueryParameters<Department> departmentParameters = new DynamicQueryParameters<>();
   
   @Inject
-  DepartmentMapper mapper;
+  DepartmentMapper departmentMapper;
   
   @Test
-  void mapToDto_whenNull() {
-    assertNull(mapper.mapToDto(null));
+  void department_mapToDto_whenNull() {
+    assertNull(departmentMapper.mapToDto(null));
   }
   
   @Test
-  void mapToDto_whenNotNull() {
+  void department_mapToDto_whenNotNull() {
     Department instance = new Department();
     instance.setIdentifier("1");
-    DepartmentDto dto = mapper.mapToDto(instance);
+    DepartmentDto dto = departmentMapper.mapToDto(instance);
     assertEquals(instance.getIdentifier(), dto.getIdentifier());
   }
   
   @Test
-  void mapFromDto_whenNull() {
-    assertNull(mapper.mapFromDto(null));
+  void department_mapFromDto_whenNull() {
+    assertNull(departmentMapper.mapFromDto(null));
   }
   
   @Test
-  void mapFromDto() {
+  void department_mapFromDto() {
     DepartmentDto dto = new DepartmentDto();
     dto.setIdentifier("1");
-    Department instance = mapper.mapFromDto(dto);
+    Department instance = departmentMapper.mapFromDto(dto);
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
   }
   
   @Test
-  void readMany() {
+  void department_readMany() {
     GetManyRequestDto request = new GetManyRequestDto();
     request.setAuditWho("christian");
-    assertEquals(1, readManyBusiness.process(request).getCount());
+    assertEquals(1, departmentReadManyBusiness.process(request).getCount());
   }
   
   public static class Profile implements QuarkusTestProfile {

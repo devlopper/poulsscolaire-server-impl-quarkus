@@ -9,9 +9,7 @@ import ci.gouv.dgbf.extension.core.Core;
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
 import ci.gouv.dgbf.extension.server.service.api.request.GetManyRequestDto;
 import ci.gouv.dgbf.extension.test.AbstractTest;
-import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.QuarkusTestProfile;
-import io.quarkus.test.junit.TestProfile;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import java.util.List;
@@ -20,77 +18,79 @@ import org.cyk.system.poulsscolaire.server.api.configuration.BranchInstanceDto;
 import org.cyk.system.poulsscolaire.server.api.configuration.BranchInstanceFilter;
 import org.cyk.system.poulsscolaire.server.impl.persistence.BranchInstance;
 import org.cyk.system.poulsscolaire.server.impl.persistence.BranchInstanceDynamicQuery;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-@QuarkusTest
-@TestProfile(BranchInstanceBusinessTest.Profile.class)
+@Disabled
 class BranchInstanceBusinessTest extends AbstractTest {
 
   @Inject
   EntityManager entityManager;
 
   @Inject
-  BranchInstanceReadManyBusiness readManyBusiness;
+  BranchInstanceReadManyBusiness branchInstanceReadManyBusiness;
 
   @Inject
-  BranchInstanceReadOneBusiness readOneBusiness;
+  BranchInstanceReadOneBusiness branchInstanceReadOneBusiness;
 
   @Inject
-  BranchInstanceReadByIdentifierBusiness readByIdentifierBusiness;
+  BranchInstanceReadByIdentifierBusiness branchInstanceReadByIdentifierBusiness;
 
   @Inject
-  BranchInstanceMapper mapper;
-  
-  @Inject
-  BranchInstanceDynamicQuery dynamicQuery;
+  BranchInstanceMapper branchInstanceMapper;
 
-  DynamicQueryParameters<BranchInstance> dynamicQueryParameters = new DynamicQueryParameters<>();
-  
+  @Inject
+  BranchInstanceDynamicQuery branchInstanceDynamicQuery;
+
+  DynamicQueryParameters<BranchInstance> branchInstanceDynamicQueryParameters =
+      new DynamicQueryParameters<>();
+
   @Test
-  void readMany() {
+  void branchInstance_readMany() {
     GetManyRequestDto request = new GetManyRequestDto();
     request.setAuditWho("christian");
-    assertEquals(8, readManyBusiness.process(request).getCount());
+    assertEquals(8, branchInstanceReadManyBusiness.process(request).getCount());
   }
 
   @Test
-  void mapToDto_whenNull() {
-    assertNull(mapper.mapToDto(null));
+  void branchInstance_mapToDto_whenNull() {
+    assertNull(branchInstanceMapper.mapToDto(null));
   }
-  
+
   @Test
-  void mapToDto_whenNotNull() {
+  void branchInstance_mapToDto_whenNotNull() {
     BranchInstance instance = new BranchInstance();
     instance.setIdentifier("1");
-    BranchInstanceDto dto = mapper.mapToDto(instance);
+    BranchInstanceDto dto = branchInstanceMapper.mapToDto(instance);
     assertEquals(instance.getIdentifier(), dto.getIdentifier());
   }
-  
+
   @Test
-  void mapFromDto_whenNull() {
-    assertNull(mapper.mapFromDto(null));
+  void branchInstance_mapFromDto_whenNull() {
+    assertNull(branchInstanceMapper.mapFromDto(null));
   }
-  
+
   @Test
-  void mapFromDto() {
+  void branchInstance_mapFromDto() {
     BranchInstanceDto dto = new BranchInstanceDto();
     dto.setIdentifier("1");
-    BranchInstance instance = mapper.mapFromDto(dto);
+    BranchInstance instance = branchInstanceMapper.mapFromDto(dto);
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
   }
-  
+
   @ParameterizedTest
   @CsvSource(value = {"1,1,1", "2,2,3:4:5", "3,3,"})
-  void getMany_whenSchoolIdentifierWhenBranchIdentifier(String schoolIdentifier,
+  void branchInstance_getMany_whenSchoolIdentifierWhenBranchIdentifier(String schoolIdentifier,
       String branchIdentifier, String expected) {
     BranchInstanceFilter filter = new BranchInstanceFilter();
     filter.setSchoolIdentifier(schoolIdentifier);
     filter.setBranchIdentifier(branchIdentifier);
-    dynamicQueryParameters.setFilter(filter.toDto());
-    dynamicQueryParameters.projection().addNames(BranchInstanceDto.JSON_IDENTIFIER);
-    List<BranchInstance> instances = dynamicQuery.getMany(dynamicQueryParameters);
+    branchInstanceDynamicQueryParameters.setFilter(filter.toDto());
+    branchInstanceDynamicQueryParameters.projection().addNames(BranchInstanceDto.JSON_IDENTIFIER);
+    List<BranchInstance> instances =
+        branchInstanceDynamicQuery.getMany(branchInstanceDynamicQueryParameters);
     assertNotNull(instances);
     if (Core.isStringBlank(expected)) {
       assertEquals(0, instances.size());
@@ -102,12 +102,13 @@ class BranchInstanceBusinessTest extends AbstractTest {
 
   @ParameterizedTest
   @CsvSource(value = {"1,6", "2,7:8", "3,"})
-  void getMany_whenSchoolingIdentifier(String schoolingIdentifier, String expected) {
+  void branchInstance_getMany_whenSchoolingIdentifier(String schoolingIdentifier, String expected) {
     BranchInstanceFilter filter = new BranchInstanceFilter();
     filter.setSchoolingIdentifier(schoolingIdentifier);
-    dynamicQueryParameters.setFilter(filter.toDto());
-    dynamicQueryParameters.projection().addNames(BranchInstanceDto.JSON_IDENTIFIER);
-    List<BranchInstance> instances = dynamicQuery.getMany(dynamicQueryParameters);
+    branchInstanceDynamicQueryParameters.setFilter(filter.toDto());
+    branchInstanceDynamicQueryParameters.projection().addNames(BranchInstanceDto.JSON_IDENTIFIER);
+    List<BranchInstance> instances =
+        branchInstanceDynamicQuery.getMany(branchInstanceDynamicQueryParameters);
     assertNotNull(instances);
     if (Core.isStringBlank(expected)) {
       assertEquals(0, instances.size());
@@ -116,7 +117,7 @@ class BranchInstanceBusinessTest extends AbstractTest {
           instances.stream().map(i -> i.getIdentifier()).toList());
     }
   }
-  
+
   public static class Profile implements QuarkusTestProfile {
 
     @Override

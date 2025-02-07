@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import ci.gouv.dgbf.extension.server.persistence.entity.embeddable.Audit;
+import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
 import ci.gouv.dgbf.extension.server.service.api.entity.AuditDto;
 import ci.gouv.dgbf.extension.server.service.api.request.ByIdentifierRequestDto;
 import ci.gouv.dgbf.extension.server.service.api.request.GetManyRequestDto;
@@ -22,8 +23,15 @@ import org.cyk.system.poulsscolaire.server.api.accounting.BudgetService.BudgetCr
 import org.cyk.system.poulsscolaire.server.api.accounting.BudgetService.BudgetReturnRequestDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.BudgetService.BudgetUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.BudgetStatus;
+import org.cyk.system.poulsscolaire.server.api.configuration.DepartmentDto;
+import org.cyk.system.poulsscolaire.server.impl.business.department.DepartmentMapper;
+import org.cyk.system.poulsscolaire.server.impl.business.department.DepartmentReadByIdentifierBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.department.DepartmentReadManyBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.department.DepartmentReadOneBusiness;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Budget;
 import org.cyk.system.poulsscolaire.server.impl.persistence.BudgetAmount;
+import org.cyk.system.poulsscolaire.server.impl.persistence.Department;
+import org.cyk.system.poulsscolaire.server.impl.persistence.DepartmentDynamicQuery;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -71,6 +79,25 @@ class BudgetBusinessTest extends AbstractTest {
   @Inject
   BudgetMapper mapper;
 
+  /* Department */
+  
+  @Inject
+  DepartmentReadManyBusiness departmentReadManyBusiness;
+
+  @Inject
+  DepartmentReadOneBusiness departmentReadOneBusiness;
+
+  @Inject
+  DepartmentReadByIdentifierBusiness departmentReadByIdentifierBusiness;
+
+  @Inject
+  DepartmentDynamicQuery departmentDynamicQuery;
+
+  DynamicQueryParameters<Department> departmentParameters = new DynamicQueryParameters<>();
+  
+  @Inject
+  DepartmentMapper departmentMapper;
+  
   @Test
   void create() {
     BudgetCreateRequestDto request = new BudgetCreateRequestDto();
@@ -200,7 +227,42 @@ class BudgetBusinessTest extends AbstractTest {
   void instantiate() {
     assertNotNull(new BudgetAmount());
   }
+  
+  /* Department */
 
+  @Test
+  void department_mapToDto_whenNull() {
+    assertNull(departmentMapper.mapToDto(null));
+  }
+  
+  @Test
+  void department_mapToDto_whenNotNull() {
+    Department instance = new Department();
+    instance.setIdentifier("1");
+    DepartmentDto dto = departmentMapper.mapToDto(instance);
+    assertEquals(instance.getIdentifier(), dto.getIdentifier());
+  }
+  
+  @Test
+  void department_mapFromDto_whenNull() {
+    assertNull(departmentMapper.mapFromDto(null));
+  }
+  
+  @Test
+  void department_mapFromDto() {
+    DepartmentDto dto = new DepartmentDto();
+    dto.setIdentifier("1");
+    Department instance = departmentMapper.mapFromDto(dto);
+    assertEquals(dto.getIdentifier(), instance.getIdentifier());
+  }
+  
+  @Test
+  void department_readMany() {
+    GetManyRequestDto request = new GetManyRequestDto();
+    request.setAuditWho("christian");
+    assertEquals(1, departmentReadManyBusiness.process(request).getCount());
+  }
+  
   void assertStatus(String actIdentifier, BudgetStatus expectedStatus) {
     Budget triennialProgram = entityManager.find(Budget.class, actIdentifier);
     assertEquals(expectedStatus, triennialProgram.status);

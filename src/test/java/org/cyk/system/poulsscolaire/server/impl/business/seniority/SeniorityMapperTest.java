@@ -5,64 +5,64 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import ci.gouv.dgbf.extension.server.persistence.entity.embeddable.Audit;
 import ci.gouv.dgbf.extension.server.service.api.entity.AuditDto;
-import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import org.cyk.system.poulsscolaire.server.api.configuration.SeniorityDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Seniority;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-@QuarkusTest
+@Disabled
 class SeniorityMapperTest {
   
   @Inject
-  SeniorityMapper mapper;
+  SeniorityMapper seniorityMapper;
   
   @Test
-  void mapToDto_whenNull() {
-    assertNull(mapper.mapToDto(null));
+  void seniority_mapToDto_whenNull() {
+    assertNull(seniorityMapper.mapToDto(null));
   }
   
   @Test
-  void mapToDto_whenNotNull() {
+  void seniority_mapToDto_whenNotNull() {
     Seniority instance = new Seniority();
     instance.setIdentifier("1");
     instance.setAudit(new Audit());
     instance.getAudit().setWho("christian");
-    SeniorityDto dto = mapper.mapToDto(instance);
+    SeniorityDto dto = seniorityMapper.mapToDto(instance);
     assertEquals(instance.getIdentifier(), dto.getIdentifier());
     assertEquals(instance.getAudit().getWho(), dto.getAudit().getWho());
   }
   
   @Test
-  void mapToDto_whenNotNullAndAuditNull() {
+  void seniority_mapToDto_whenNotNullAndAuditNull() {
     Seniority instance = new Seniority();
     instance.setIdentifier("1");
-    SeniorityDto dto = mapper.mapToDto(instance);
+    SeniorityDto dto = seniorityMapper.mapToDto(instance);
     assertEquals(instance.getIdentifier(), dto.getIdentifier());
     assertNull(dto.getAudit());
   }
   
   @Test
-  void mapFromDto_whenNull() {
-    assertNull(mapper.mapFromDto(null));
+  void seniority_mapFromDto_whenNull() {
+    assertNull(seniorityMapper.mapFromDto(null));
   }
   
   @Test
-  void mapFromDto_whenAuditNull() {
+  void seniority_mapFromDto_whenAuditNull() {
     SeniorityDto dto = new SeniorityDto();
     dto.setIdentifier("1");
-    Seniority instance = mapper.mapFromDto(dto);
+    Seniority instance = seniorityMapper.mapFromDto(dto);
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
     assertEquals(null, instance.getAudit());
   }
   
   @Test
-  void mapFromDto_whenAuditNotNull() {
+  void seniority_mapFromDto_whenAuditNotNull() {
     SeniorityDto dto = new SeniorityDto();
     dto.setIdentifier("1");
     dto.setAudit(new AuditDto());
     dto.getAudit().setWho("meliane");
-    Seniority instance = mapper.mapFromDto(dto);
+    Seniority instance = seniorityMapper.mapFromDto(dto);
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
     assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
   }

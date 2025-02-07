@@ -3,46 +3,46 @@ package org.cyk.system.poulsscolaire.server.impl.business.paymentmode;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import ci.gouv.dgbf.extension.test.AbstractTest;
-import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import java.util.UUID;
 import org.cyk.system.poulsscolaire.server.api.payment.PaymentModeService.PaymentModeCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.PaymentMode;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-@QuarkusTest
+@Disabled
 class PaymentModeBusinessTest extends AbstractTest {
 
   @Inject
   EntityManager entityManager;
 
   @Inject
-  PaymentModeCreateBusiness createBusiness;
+  PaymentModeCreateBusiness paymentModeCreateBusiness;
 
   @Inject
-  PaymentModeReadManyBusiness readManyBusiness;
+  PaymentModeReadManyBusiness paymentModeReadManyBusiness;
   
   @Inject
-  PaymentModeReadOneBusiness readOneBusiness;
+  PaymentModeReadOneBusiness paymentModeReadOneBusiness;
   
   @Inject
-  PaymentModeReadByIdentifierBusiness readByIdentifierBusiness;
+  PaymentModeReadByIdentifierBusiness paymentModeReadByIdentifierBusiness;
   
   @Inject
-  PaymentModeUpdateBusiness updateBusiness;
+  PaymentModeUpdateBusiness paymentModeUpdateBusiness;
   
   @Inject
-  PaymentModeDeleteBusiness deleteBusiness;
+  PaymentModeDeleteBusiness paymentModeDeleteBusiness;
   
   @Test
-  void create() {
+  void paymentMode_create() {
     PaymentModeCreateRequestDto request = new PaymentModeCreateRequestDto();
     request.setCode(UUID.randomUUID().toString());
     request.setName(UUID.randomUUID().toString());
     request.setAuditWho("christian");
     long count = count(entityManager, PaymentMode.ENTITY_NAME);
-    createBusiness.process(request);
+    paymentModeCreateBusiness.process(request);
     assertEquals(count + 1, count(entityManager, PaymentMode.ENTITY_NAME));
   }
 }

@@ -3,10 +3,13 @@ package org.cyk.system.poulsscolaire.server.impl.business.payment;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import ci.gouv.dgbf.extension.server.business.BusinessInputValidationException;
+import ci.gouv.dgbf.extension.server.persistence.entity.embeddable.Audit;
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
+import ci.gouv.dgbf.extension.server.service.api.entity.AuditDto;
 import ci.gouv.dgbf.extension.server.service.api.request.ByIdentifierRequestDto;
 import ci.gouv.dgbf.extension.test.AbstractTest;
 import io.quarkus.test.junit.QuarkusTest;
@@ -15,21 +18,32 @@ import io.quarkus.test.junit.TestProfile;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import java.util.Map;
+import java.util.UUID;
+import org.cyk.system.poulsscolaire.server.api.payment.PaymentAdjustedFeeDto;
 import org.cyk.system.poulsscolaire.server.api.payment.PaymentAdjustedFeeService.PaymentAdjustedFeeCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.payment.PaymentDto;
+import org.cyk.system.poulsscolaire.server.api.payment.PaymentModeService.PaymentModeCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.payment.PaymentService.PaymentCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.business.paymentadjustedfee.PaymentAdjustedFeeCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.paymentadjustedfee.PaymentAdjustedFeeDeleteBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.paymentadjustedfee.PaymentAdjustedFeeMapper;
 import org.cyk.system.poulsscolaire.server.impl.business.paymentadjustedfee.PaymentAdjustedFeeReadByIdentifierBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.paymentadjustedfee.PaymentAdjustedFeeReadManyBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.paymentadjustedfee.PaymentAdjustedFeeReadOneBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.paymentadjustedfee.PaymentAdjustedFeeUpdateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.paymentmode.PaymentModeCreateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.paymentmode.PaymentModeDeleteBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.paymentmode.PaymentModeReadByIdentifierBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.paymentmode.PaymentModeReadManyBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.paymentmode.PaymentModeReadOneBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.paymentmode.PaymentModeUpdateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Payment;
 import org.cyk.system.poulsscolaire.server.impl.persistence.PaymentAdjustedFee;
 import org.cyk.system.poulsscolaire.server.impl.persistence.PaymentAdjustedFeeDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.PaymentAmounts;
 import org.cyk.system.poulsscolaire.server.impl.persistence.PaymentAudits;
 import org.cyk.system.poulsscolaire.server.impl.persistence.PaymentDynamicQuery;
+import org.cyk.system.poulsscolaire.server.impl.persistence.PaymentMode;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -67,7 +81,7 @@ class PaymentBusinessTest extends AbstractTest {
 
   DynamicQueryParameters<Payment> parameters = new DynamicQueryParameters<>();
 
-  /**/
+  /* PaymentAdjustedFee */
 
   @Inject
   PaymentAdjustedFeeCreateBusiness paymentAdjustedFeeCreateBusiness;
@@ -93,6 +107,29 @@ class PaymentBusinessTest extends AbstractTest {
   DynamicQueryParameters<PaymentAdjustedFee> parametersPaymentAdjustedFee =
       new DynamicQueryParameters<>();
 
+  @Inject
+  PaymentAdjustedFeeMapper paymentAdjustedFeeMapper;
+  
+  /* PaymentMode */
+  
+  @Inject
+  PaymentModeCreateBusiness paymentModeCreateBusiness;
+
+  @Inject
+  PaymentModeReadManyBusiness paymentModeReadManyBusiness;
+  
+  @Inject
+  PaymentModeReadOneBusiness paymentModeReadOneBusiness;
+  
+  @Inject
+  PaymentModeReadByIdentifierBusiness paymentModeReadByIdentifierBusiness;
+  
+  @Inject
+  PaymentModeUpdateBusiness paymentModeUpdateBusiness;
+  
+  @Inject
+  PaymentModeDeleteBusiness paymentModeDeleteBusiness;
+  
   @ParameterizedTest
   @CsvSource(value = {"2", "nofees", "unknown"})
   void create_whenPayablesEmpty(String registrationIdentifier) {
@@ -171,6 +208,78 @@ class PaymentBusinessTest extends AbstractTest {
   @Test
   void paymentAdjustedFeeDynamicQuery() {
     assertNotNull(paymentAdjustedFeeDynamicQuery.buildQuery(parametersPaymentAdjustedFee));
+  }
+  
+  @Test
+  void paymentAdjustedFee_mapToDto_whenNull() {
+    assertNull(paymentAdjustedFeeMapper.mapToDto(null));
+  }
+  
+  @Test
+  void paymentAdjustedFee_mapToDto_whenNotNull() {
+    PaymentAdjustedFee instance = new PaymentAdjustedFee();
+    instance.setIdentifier("1");
+    instance.setAudit(new Audit());
+    instance.getAudit().setWho("christian");
+    PaymentAdjustedFeeDto dto = paymentAdjustedFeeMapper.mapToDto(instance);
+    assertEquals(instance.getIdentifier(), dto.getIdentifier());
+    assertEquals(instance.getAudit().getWho(), dto.getAudit().getWho());
+  }
+  
+  @Test
+  void paymentAdjustedFee_mapToDto_whenNotNullAndAuditNull() {
+    PaymentAdjustedFee instance = new PaymentAdjustedFee();
+    instance.setIdentifier("1");
+    PaymentAdjustedFeeDto dto = paymentAdjustedFeeMapper.mapToDto(instance);
+    assertEquals(instance.getIdentifier(), dto.getIdentifier());
+    assertNull(dto.getAudit());
+  }
+  
+  @Test
+  void paymentAdjustedFee_mapFromDto_whenNull() {
+    assertNull(paymentAdjustedFeeMapper.mapFromDto(null));
+  }
+  
+  @Test
+  void paymentAdjustedFee_mapFromDto_whenAuditNull() {
+    PaymentAdjustedFeeDto dto = new PaymentAdjustedFeeDto();
+    dto.setIdentifier("1");
+    PaymentAdjustedFee instance = paymentAdjustedFeeMapper.mapFromDto(dto);
+    assertEquals(dto.getIdentifier(), instance.getIdentifier());
+    assertEquals(null, instance.getAudit());
+  }
+  
+  @Test
+  void paymentAdjustedFee_mapFromDto_whenAuditNotNull() {
+    PaymentAdjustedFeeDto dto = new PaymentAdjustedFeeDto();
+    dto.setIdentifier("1");
+    dto.setAudit(new AuditDto());
+    dto.getAudit().setWho("meliane");
+    PaymentAdjustedFee instance = paymentAdjustedFeeMapper.mapFromDto(dto);
+    assertEquals(dto.getIdentifier(), instance.getIdentifier());
+    assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
+  }
+ 
+  @Test
+  void paymentAdjustedFee_mapFromDto_whenAmountNotNull() {
+    PaymentAdjustedFeeDto dto = new PaymentAdjustedFeeDto();
+    dto.setIdentifier("1");
+    dto.setAmount(5);
+    PaymentAdjustedFee instance = paymentAdjustedFeeMapper.mapFromDto(dto);
+    assertEquals(dto.getAmount(), instance.amount);
+  }
+  
+  /* PaymentMode */
+  
+  @Test
+  void paymentMode_create() {
+    PaymentModeCreateRequestDto request = new PaymentModeCreateRequestDto();
+    request.setCode(UUID.randomUUID().toString());
+    request.setName(UUID.randomUUID().toString());
+    request.setAuditWho("christian");
+    long count = count(entityManager, PaymentMode.ENTITY_NAME);
+    paymentModeCreateBusiness.process(request);
+    assertEquals(count + 1, count(entityManager, PaymentMode.ENTITY_NAME));
   }
 
   public static class Profile implements QuarkusTestProfile {

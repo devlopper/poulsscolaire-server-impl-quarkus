@@ -18,31 +18,31 @@ class SeniorityBusinessTest extends AbstractTest {
   EntityManager entityManager;
 
   @Inject
-  SeniorityCreateBusiness createBusiness;
+  SeniorityCreateBusiness seniorityCreateBusiness;
 
   @Inject
-  SeniorityReadManyBusiness readManyBusiness;
+  SeniorityReadManyBusiness seniorityReadManyBusiness;
   
   @Inject
-  SeniorityReadOneBusiness readOneBusiness;
+  SeniorityReadOneBusiness seniorityReadOneBusiness;
   
   @Inject
-  SeniorityReadByIdentifierBusiness readByIdentifierBusiness;
+  SeniorityReadByIdentifierBusiness seniorityReadByIdentifierBusiness;
   
   @Inject
-  SeniorityUpdateBusiness updateBusiness;
+  SeniorityUpdateBusiness seniorityUpdateBusiness;
   
   @Inject
-  SeniorityDeleteBusiness deleteBusiness;
+  SeniorityDeleteBusiness seniorityDeleteBusiness;
   
   @Test
-  void create() {
+  void seniority_create() {
     SeniorityCreateRequestDto request = new SeniorityCreateRequestDto();
     request.setCode(UUID.randomUUID().toString());
     request.setName(UUID.randomUUID().toString());
     request.setAuditWho("christian");
     long count = count(entityManager, Seniority.ENTITY_NAME);
-    createBusiness.process(request);
+    seniorityCreateBusiness.process(request);
     assertEquals(count + 1, count(entityManager, Seniority.ENTITY_NAME));
   }
 }

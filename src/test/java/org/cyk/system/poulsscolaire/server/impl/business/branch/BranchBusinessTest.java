@@ -5,65 +5,63 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import ci.gouv.dgbf.extension.server.service.api.request.GetManyRequestDto;
 import ci.gouv.dgbf.extension.test.AbstractTest;
-import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.QuarkusTestProfile;
-import io.quarkus.test.junit.TestProfile;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import java.util.Map;
 import org.cyk.system.poulsscolaire.server.api.configuration.BranchDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Branch;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-@QuarkusTest
-@TestProfile(BranchBusinessTest.Profile.class)
+@Disabled
 class BranchBusinessTest extends AbstractTest {
 
   @Inject
   EntityManager entityManager;
 
   @Inject
-  BranchReadManyBusiness readManyBusiness;
+  BranchReadManyBusiness branchReadManyBusiness;
 
   @Inject
-  BranchReadOneBusiness readOneBusiness;
+  BranchReadOneBusiness branchReadOneBusiness;
 
   @Inject
-  BranchReadByIdentifierBusiness readByIdentifierBusiness;
+  BranchReadByIdentifierBusiness branchReadByIdentifierBusiness;
 
   @Inject
-  BranchMapper mapper;
+  BranchMapper branchMapper;
   
   @Test
-  void readMany() {
+  void branch_readMany() {
     GetManyRequestDto request = new GetManyRequestDto();
     request.setAuditWho("christian");
-    assertEquals(7, readManyBusiness.process(request).getCount());
+    assertEquals(7, branchReadManyBusiness.process(request).getCount());
   }
   
   @Test
-  void mapToDto_whenNull() {
-    assertNull(mapper.mapToDto(null));
+  void branch_mapToDto_whenNull() {
+    assertNull(branchMapper.mapToDto(null));
   }
   
   @Test
-  void mapToDto_whenNotNull() {
+  void branch_mapToDto_whenNotNull() {
     Branch instance = new Branch();
     instance.setIdentifier("1");
-    BranchDto dto = mapper.mapToDto(instance);
+    BranchDto dto = branchMapper.mapToDto(instance);
     assertEquals(instance.getIdentifier(), dto.getIdentifier());
   }
   
   @Test
-  void mapFromDto_whenNull() {
-    assertNull(mapper.mapFromDto(null));
+  void branch_mapFromDto_whenNull() {
+    assertNull(branchMapper.mapFromDto(null));
   }
   
   @Test
-  void mapFromDto() {
+  void branch_mapFromDto() {
     BranchDto dto = new BranchDto();
     dto.setIdentifier("1");
-    Branch instance = mapper.mapFromDto(dto);
+    Branch instance = branchMapper.mapFromDto(dto);
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
   }
   
