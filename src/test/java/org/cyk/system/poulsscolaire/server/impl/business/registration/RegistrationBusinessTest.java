@@ -1157,6 +1157,14 @@ class RegistrationBusinessTest extends AbstractTest {
     subsidyDecisionUpdateBusiness.process(request);
     assertEquals(count, count(entityManager, SubsidyDecision.ENTITY_NAME));
   }
+  
+  @Test
+  void subsidyDecision_getMany() {
+    GetManyRequestDto request = new GetManyRequestDto();
+    request.setAuditWho("christian");
+    subsidyDecisionReadManyBusiness.process(request);
+    assertNotNull(subsidyDecisionReadManyBusiness.process(request));
+  }
 
   public static class Profile implements QuarkusTestProfile {
 
