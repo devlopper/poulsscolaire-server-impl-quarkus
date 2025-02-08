@@ -9,9 +9,7 @@ import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
 import ci.gouv.dgbf.extension.server.service.api.entity.AuditDto;
 import ci.gouv.dgbf.extension.server.service.api.request.GetManyRequestDto;
 import ci.gouv.dgbf.extension.test.AbstractTest;
-import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.QuarkusTestProfile;
-import io.quarkus.test.junit.TestProfile;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import java.time.LocalDateTime;
@@ -21,51 +19,51 @@ import org.cyk.system.poulsscolaire.server.api.fee.DeadlineDto;
 import org.cyk.system.poulsscolaire.server.api.fee.DeadlineService.DeadlineCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Deadline;
 import org.cyk.system.poulsscolaire.server.impl.persistence.DeadlineDynamicQuery;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-@QuarkusTest
-@TestProfile(DeadlineBusinessTest.Profile.class)
+@Disabled
 class DeadlineBusinessTest extends AbstractTest {
 
   @Inject
   EntityManager entityManager;
 
   @Inject
-  DeadlineCreateBusiness createBusiness;
+  DeadlineCreateBusiness deadlineCreateBusiness;
 
   @Inject
-  DeadlineReadManyBusiness readManyBusiness;
+  DeadlineReadManyBusiness deadlineDeadlineReadManyBusiness;
   
   @Inject
-  DeadlineReadOneBusiness readOneBusiness;
+  DeadlineReadOneBusiness deadlineReadOneBusiness;
   
   @Inject
-  DeadlineReadByIdentifierBusiness readByIdentifierBusiness;
+  DeadlineReadByIdentifierBusiness deadlineReadByIdentifierBusiness;
   
   @Inject
-  DeadlineUpdateBusiness updateBusiness;
+  DeadlineUpdateBusiness deadlineUpdateBusiness;
   
   @Inject
-  DeadlineDeleteBusiness deleteBusiness;
+  DeadlineDeleteBusiness deadlineDeleteBusiness;
   
   @Inject
-  DeadlineMapper mapper;
+  DeadlineMapper deadlineMapper;
   
   @Inject
-  DeadlineDynamicQuery dynamicQuery;
+  DeadlineDynamicQuery deadlineDynamicQuery;
 
-  DynamicQueryParameters<Deadline> dynamicQueryParameters = new DynamicQueryParameters<>();
+  DynamicQueryParameters<Deadline> deadlineDynamicQueryParameters = new DynamicQueryParameters<>();
 
   @Test
-  void getMany() {
+  void deadline_getMany() {
     GetManyRequestDto request = new GetManyRequestDto();
     request.projection().addNames(DeadlineDto.JSON_AS_STRING);
     request.setAuditWho("christian");
-    assertTrue(readManyBusiness.process(request).getCount() > 0);
+    assertTrue(deadlineDeadlineReadManyBusiness.process(request).getCount() > 0);
   }
   
   @Test
-  void create() {
+  void deadline_create() {
     DeadlineCreateRequestDto request = new DeadlineCreateRequestDto();
     request.setName(UUID.randomUUID().toString());
     request.setGroupIdentifier("1");
@@ -73,56 +71,56 @@ class DeadlineBusinessTest extends AbstractTest {
     request.setDate(LocalDateTime.now());
     request.setAuditWho("christian");
     long count = count(entityManager, Deadline.ENTITY_NAME);
-    createBusiness.process(request);
+    deadlineCreateBusiness.process(request);
     assertEquals(count + 1, count(entityManager, Deadline.ENTITY_NAME));
   }
   
   @Test
-  void mapToDto_whenNull() {
-    assertNull(mapper.mapToDto(null));
+  void deadline_mapToDto_whenNull() {
+    assertNull(deadlineMapper.mapToDto(null));
   }
   
   @Test
-  void mapToDto_whenNotNull() {
+  void deadline_mapToDto_whenNotNull() {
     Deadline instance = new Deadline();
     instance.setIdentifier("1");
     instance.setAudit(new Audit());
     instance.getAudit().setWho("christian");
-    DeadlineDto dto = mapper.mapToDto(instance);
+    DeadlineDto dto = deadlineMapper.mapToDto(instance);
     assertEquals(instance.getIdentifier(), dto.getIdentifier());
     assertEquals(instance.getAudit().getWho(), dto.getAudit().getWho());
   }
   
   @Test
-  void mapToDto_whenNotNullAndAuditNull() {
+  void deadline_mapToDto_whenNotNullAndAuditNull() {
     Deadline instance = new Deadline();
     instance.setIdentifier("1");
-    DeadlineDto dto = mapper.mapToDto(instance);
+    DeadlineDto dto = deadlineMapper.mapToDto(instance);
     assertEquals(instance.getIdentifier(), dto.getIdentifier());
     assertNull(dto.getAudit());
   }
   
   @Test
-  void mapFromDto_whenNull() {
-    assertNull(mapper.mapFromDto(null));
+  void deadline_mapFromDto_whenNull() {
+    assertNull(deadlineMapper.mapFromDto(null));
   }
   
   @Test
-  void mapFromDto_whenAuditNull() {
+  void deadline_mapFromDto_whenAuditNull() {
     DeadlineDto dto = new DeadlineDto();
     dto.setIdentifier("1");
-    Deadline instance = mapper.mapFromDto(dto);
+    Deadline instance = deadlineMapper.mapFromDto(dto);
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
     assertEquals(null, instance.getAudit());
   }
   
   @Test
-  void mapFromDto_whenAuditNotNull() {
+  void deadline_mapFromDto_whenAuditNotNull() {
     DeadlineDto dto = new DeadlineDto();
     dto.setIdentifier("1");
     dto.setAudit(new AuditDto());
     dto.getAudit().setWho("meliane");
-    Deadline instance = mapper.mapFromDto(dto);
+    Deadline instance = deadlineMapper.mapFromDto(dto);
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
     assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
   }

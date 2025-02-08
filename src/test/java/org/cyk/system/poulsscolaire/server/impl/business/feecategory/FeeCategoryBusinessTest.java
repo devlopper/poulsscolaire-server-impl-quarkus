@@ -65,30 +65,30 @@ class FeeCategoryBusinessTest extends AbstractTest {
   EntityManager entityManager;
 
   @Inject
-  FeeCategoryCreateBusiness createBusiness;
+  FeeCategoryCreateBusiness feeCategoryCreateBusiness;
 
   @Inject
-  FeeCategoryReadManyBusiness readManyBusiness;
+  FeeCategoryReadManyBusiness feeCategoryReadManyBusiness;
 
   @Inject
-  FeeCategoryReadOneBusiness readOneBusiness;
+  FeeCategoryReadOneBusiness feeCategoryReadOneBusiness;
 
   @Inject
-  FeeCategoryReadByIdentifierBusiness readByIdentifierBusiness;
+  FeeCategoryReadByIdentifierBusiness feeCategoryReadByIdentifierBusiness;
 
   @Inject
-  FeeCategoryUpdateBusiness updateBusiness;
+  FeeCategoryUpdateBusiness feeCategoryUpdateBusiness;
 
   @Inject
-  FeeCategoryDeleteBusiness deleteBusiness;
+  FeeCategoryDeleteBusiness feeCategoryDeleteBusiness;
 
   @Inject
-  FeeCategoryMapper mapper;
+  FeeCategoryMapper feeCategoryMapper;
 
   @Inject
-  FeeCategoryDynamicQuery dynamicQuery;
+  FeeCategoryDynamicQuery feeCategoryDynamicQuery;
 
-  DynamicQueryParameters<FeeCategory> parameters = new DynamicQueryParameters<>();
+  DynamicQueryParameters<FeeCategory> feeCategoryParameters = new DynamicQueryParameters<>();
 
   /* Stock */
 
@@ -160,7 +160,7 @@ class FeeCategoryBusinessTest extends AbstractTest {
     request.setSchoolIdentifier(UUID.randomUUID().toString());
     request.setAuditWho("christian");
     long count = count(entityManager, FeeCategory.ENTITY_NAME);
-    createBusiness.process(request);
+    feeCategoryCreateBusiness.process(request);
     assertEquals(count + 1, count(entityManager, FeeCategory.ENTITY_NAME));
   }
 
@@ -172,7 +172,7 @@ class FeeCategoryBusinessTest extends AbstractTest {
     request.setSchoolIdentifier(UUID.randomUUID().toString());
     request.setAuditWho("christian");
     long count = count(entityManager, FeeCategory.ENTITY_NAME);
-    createBusiness.process(request);
+    feeCategoryCreateBusiness.process(request);
     assertEquals(count + 1, count(entityManager, FeeCategory.ENTITY_NAME));
   }
 
@@ -183,7 +183,8 @@ class FeeCategoryBusinessTest extends AbstractTest {
     request.setName(UUID.randomUUID().toString());
     request.setSchoolIdentifier("1");
     request.setAuditWho("christian");
-    assertThrows(BusinessInputValidationException.class, () -> createBusiness.process(request));
+    assertThrows(BusinessInputValidationException.class,
+        () -> feeCategoryCreateBusiness.process(request));
   }
 
   @Test
@@ -193,7 +194,8 @@ class FeeCategoryBusinessTest extends AbstractTest {
     request.setName(UUID.randomUUID().toString());
     request.setSchoolIdentifier("existingschool");
     request.setAuditWho("christian");
-    assertThrows(BusinessInputValidationException.class, () -> createBusiness.process(request));
+    assertThrows(BusinessInputValidationException.class,
+        () -> feeCategoryCreateBusiness.process(request));
   }
 
   @Test
@@ -204,7 +206,7 @@ class FeeCategoryBusinessTest extends AbstractTest {
     request.setSchoolIdentifier("existingschool");
     request.setAuditWho("christian");
     long count = count(entityManager, FeeCategory.ENTITY_NAME);
-    createBusiness.process(request);
+    feeCategoryCreateBusiness.process(request);
     assertEquals(count + 1, count(entityManager, FeeCategory.ENTITY_NAME));
   }
 
@@ -217,13 +219,13 @@ class FeeCategoryBusinessTest extends AbstractTest {
     request.setSchoolIdentifier(UUID.randomUUID().toString());
     request.setAuditWho("christian");
     long count = count(entityManager, FeeCategory.ENTITY_NAME);
-    updateBusiness.process(request);
+    feeCategoryUpdateBusiness.process(request);
     assertEquals(count + 0, count(entityManager, FeeCategory.ENTITY_NAME));
   }
 
   @Test
   void mapToDto_whenNull() {
-    assertNull(mapper.mapToDto(null));
+    assertNull(feeCategoryMapper.mapToDto(null));
   }
 
   @Test
@@ -232,7 +234,7 @@ class FeeCategoryBusinessTest extends AbstractTest {
     instance.setIdentifier("1");
     instance.setAudit(new Audit());
     instance.getAudit().setWho("christian");
-    FeeCategoryDto dto = mapper.mapToDto(instance);
+    FeeCategoryDto dto = feeCategoryMapper.mapToDto(instance);
     assertEquals(instance.getIdentifier(), dto.getIdentifier());
     assertEquals(instance.getAudit().getWho(), dto.getAudit().getWho());
   }
@@ -241,21 +243,21 @@ class FeeCategoryBusinessTest extends AbstractTest {
   void mapToDto_whenNotNullAndAuditNull() {
     FeeCategory instance = new FeeCategory();
     instance.setIdentifier("1");
-    FeeCategoryDto dto = mapper.mapToDto(instance);
+    FeeCategoryDto dto = feeCategoryMapper.mapToDto(instance);
     assertEquals(instance.getIdentifier(), dto.getIdentifier());
     assertNull(dto.getAudit());
   }
 
   @Test
   void mapFromDto_whenNull() {
-    assertNull(mapper.mapFromDto(null));
+    assertNull(feeCategoryMapper.mapFromDto(null));
   }
 
   @Test
   void mapFromDto_whenAuditNull() {
     FeeCategoryDto dto = new FeeCategoryDto();
     dto.setIdentifier("1");
-    FeeCategory instance = mapper.mapFromDto(dto);
+    FeeCategory instance = feeCategoryMapper.mapFromDto(dto);
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
     assertEquals(null, instance.getAudit());
   }
@@ -266,7 +268,7 @@ class FeeCategoryBusinessTest extends AbstractTest {
     dto.setIdentifier("1");
     dto.setAudit(new AuditDto());
     dto.getAudit().setWho("meliane");
-    FeeCategory instance = mapper.mapFromDto(dto);
+    FeeCategory instance = feeCategoryMapper.mapFromDto(dto);
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
     assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
   }
@@ -275,77 +277,80 @@ class FeeCategoryBusinessTest extends AbstractTest {
   @CsvFileSource(resources = {"feecategorydynamicquery_buildquery_projection.csv"},
       useHeadersInDisplayName = true)
   void buildQuery_amount(String amount, String expected) {
-    parameters.projection().addNames(amount);
-    assertEquals(expected, dynamicQuery.buildQueryString(parameters));
+    feeCategoryParameters.projection().addNames(amount);
+    assertEquals(expected, feeCategoryDynamicQuery.buildQueryString(feeCategoryParameters));
   }
 
   @ParameterizedTest
   @CsvSource({"1,90 000", "2,30 000"})
   void getToPay(String identifier, String expected) {
-    parameters.projection().addNames(FeeCategoryDto.JSON_TOTAL_AMOUNT_AS_STRING);
-    parameters.setResultMode(ResultMode.ONE);
-    parameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, identifier);
-    FeeCategory feeCategory = dynamicQuery.getOne(parameters);
+    feeCategoryParameters.projection().addNames(FeeCategoryDto.JSON_TOTAL_AMOUNT_AS_STRING);
+    feeCategoryParameters.setResultMode(ResultMode.ONE);
+    feeCategoryParameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, identifier);
+    FeeCategory feeCategory = feeCategoryDynamicQuery.getOne(feeCategoryParameters);
     assertEquals(expected, feeCategory.totalAmountAsString);
   }
 
   @ParameterizedTest
   @CsvSource({"1,20 000", "2,12 000"})
   void getRegistrationToPay(String identifier, String expected) {
-    parameters.projection().addNames(FeeCategoryDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING);
-    parameters.setResultMode(ResultMode.ONE);
-    parameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, identifier);
-    FeeCategory feeCategory = dynamicQuery.getOne(parameters);
+    feeCategoryParameters.projection()
+        .addNames(FeeCategoryDto.JSON_TOTAL_REGISTRATION_AMOUNT_AS_STRING);
+    feeCategoryParameters.setResultMode(ResultMode.ONE);
+    feeCategoryParameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, identifier);
+    FeeCategory feeCategory = feeCategoryDynamicQuery.getOne(feeCategoryParameters);
     assertEquals(expected, feeCategory.totalRegistrationAmountAsString);
   }
 
   @ParameterizedTest
   @CsvSource({"1,5", "2,30 000"})
   void getPaid(String identifier, String expected) {
-    parameters.projection().addNames(FeeCategoryDto.JSON_PAID_AMOUNT_AS_STRING);
-    parameters.setResultMode(ResultMode.ONE);
-    parameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, identifier);
-    FeeCategory feeCategory = dynamicQuery.getOne(parameters);
+    feeCategoryParameters.projection().addNames(FeeCategoryDto.JSON_PAID_AMOUNT_AS_STRING);
+    feeCategoryParameters.setResultMode(ResultMode.ONE);
+    feeCategoryParameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, identifier);
+    FeeCategory feeCategory = feeCategoryDynamicQuery.getOne(feeCategoryParameters);
     assertEquals(expected, feeCategory.paidAmountAsString);
   }
 
   @ParameterizedTest
   @CsvSource({"1,5", "2,12 000"})
   void getRegistrationPaid(String identifier, String expected) {
-    parameters.projection().addNames(FeeCategoryDto.JSON_PAID_REGISTRATION_AMOUNT_AS_STRING);
-    parameters.setResultMode(ResultMode.ONE);
-    parameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, identifier);
-    FeeCategory feeCategory = dynamicQuery.getOne(parameters);
+    feeCategoryParameters.projection()
+        .addNames(FeeCategoryDto.JSON_PAID_REGISTRATION_AMOUNT_AS_STRING);
+    feeCategoryParameters.setResultMode(ResultMode.ONE);
+    feeCategoryParameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, identifier);
+    FeeCategory feeCategory = feeCategoryDynamicQuery.getOne(feeCategoryParameters);
     assertEquals(expected, feeCategory.paidRegistrationAmountAsString);
   }
 
   @ParameterizedTest
   @CsvSource({"1,89 995", "2,0"})
   void getPayable(String identifier, String expected) {
-    parameters.projection().addNames(FeeCategoryDto.JSON_PAYABLE_AMOUNT_AS_STRING);
-    parameters.setResultMode(ResultMode.ONE);
-    parameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, identifier);
-    FeeCategory feeCategory = dynamicQuery.getOne(parameters);
+    feeCategoryParameters.projection().addNames(FeeCategoryDto.JSON_PAYABLE_AMOUNT_AS_STRING);
+    feeCategoryParameters.setResultMode(ResultMode.ONE);
+    feeCategoryParameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, identifier);
+    FeeCategory feeCategory = feeCategoryDynamicQuery.getOne(feeCategoryParameters);
     assertEquals(expected, feeCategory.payableAmountAsString);
   }
 
   @ParameterizedTest
   @CsvSource({"1,19 995", "2,0"})
   void getRegistrationPayable(String identifier, String expected) {
-    parameters.projection().addNames(FeeCategoryDto.JSON_PAYABLE_REGISTRATION_AMOUNT_AS_STRING);
-    parameters.setResultMode(ResultMode.ONE);
-    parameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, identifier);
-    FeeCategory feeCategory = dynamicQuery.getOne(parameters);
+    feeCategoryParameters.projection()
+        .addNames(FeeCategoryDto.JSON_PAYABLE_REGISTRATION_AMOUNT_AS_STRING);
+    feeCategoryParameters.setResultMode(ResultMode.ONE);
+    feeCategoryParameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, identifier);
+    FeeCategory feeCategory = feeCategoryDynamicQuery.getOne(feeCategoryParameters);
     assertEquals(expected, feeCategory.payableRegistrationAmountAsString);
   }
 
   @Test
   void projectionsGroup() {
-    parameters.projection().addNames(FeeCategoryDto.JSON_SCHOOL_IDENTIFIER,
+    feeCategoryParameters.projection().addNames(FeeCategoryDto.JSON_SCHOOL_IDENTIFIER,
         FeeCategoryDto.JSON_SCHOOL_AS_STRING);
-    parameters.setResultMode(ResultMode.ONE);
-    parameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, "1");
-    assertDoesNotThrow(() -> dynamicQuery.getOne(parameters));
+    feeCategoryParameters.setResultMode(ResultMode.ONE);
+    feeCategoryParameters.filter().addCriteria(FeeCategoryDto.JSON_IDENTIFIER, "1");
+    assertDoesNotThrow(() -> feeCategoryDynamicQuery.getOne(feeCategoryParameters));
   }
 
   /* Stock */

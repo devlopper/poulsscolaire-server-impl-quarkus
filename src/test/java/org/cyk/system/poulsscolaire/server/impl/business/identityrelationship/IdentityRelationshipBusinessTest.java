@@ -7,9 +7,7 @@ import ci.gouv.dgbf.extension.server.persistence.entity.embeddable.Audit;
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
 import ci.gouv.dgbf.extension.server.service.api.entity.AuditDto;
 import ci.gouv.dgbf.extension.test.AbstractTest;
-import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.QuarkusTestProfile;
-import io.quarkus.test.junit.TestProfile;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import java.util.Map;
@@ -19,106 +17,107 @@ import org.cyk.system.poulsscolaire.server.api.registration.IdentityRelationship
 import org.cyk.system.poulsscolaire.server.api.registration.IdentityRelationshipType;
 import org.cyk.system.poulsscolaire.server.impl.persistence.IdentityRelationship;
 import org.cyk.system.poulsscolaire.server.impl.persistence.IdentityRelationshipDynamicQuery;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-@QuarkusTest
-@TestProfile(IdentityRelationshipBusinessTest.Profile.class)
+@Disabled
 class IdentityRelationshipBusinessTest extends AbstractTest {
 
   @Inject
   EntityManager entityManager;
 
   @Inject
-  IdentityRelationshipCreateBusiness createBusiness;
+  IdentityRelationshipCreateBusiness identityRelationshipCreateBusiness;
 
   @Inject
-  IdentityRelationshipReadManyBusiness readManyBusiness;
+  IdentityRelationshipReadManyBusiness identityRelationshipReadManyBusiness;
 
   @Inject
-  IdentityRelationshipReadOneBusiness readOneBusiness;
+  IdentityRelationshipReadOneBusiness identityRelationshipReadOneBusiness;
 
   @Inject
-  IdentityRelationshipReadByIdentifierBusiness readByIdentifierBusiness;
+  IdentityRelationshipReadByIdentifierBusiness identityRelationshipReadByIdentifierBusiness;
 
   @Inject
-  IdentityRelationshipUpdateBusiness updateBusiness;
+  IdentityRelationshipUpdateBusiness identityRelationshipUpdateBusiness;
 
   @Inject
-  IdentityRelationshipDeleteBusiness deleteBusiness;
+  IdentityRelationshipDeleteBusiness identityRelationshipDeleteBusiness;
 
   @Inject
-  IdentityRelationshipMapper mapper;
-  
-  @Inject
-  IdentityRelationshipDynamicQuery dynamicQuery;
+  IdentityRelationshipMapper identityRelationshipMapper;
 
-  DynamicQueryParameters<IdentityRelationship> parameters = new DynamicQueryParameters<>();
-  
+  @Inject
+  IdentityRelationshipDynamicQuery identityRelationshipDynamicQuery;
+
+  DynamicQueryParameters<IdentityRelationship> identityRelationshipParameters =
+      new DynamicQueryParameters<>();
+
   @Test
-  void mapToDto_whenNull() {
-    assertNull(mapper.mapToDto(null));
+  void identityRelationship_mapToDto_whenNull() {
+    assertNull(identityRelationshipMapper.mapToDto(null));
   }
-  
+
   @Test
-  void mapToDto_whenNotNull() {
+  void identityRelationship_mapToDto_whenNotNull() {
     IdentityRelationship instance = new IdentityRelationship();
     instance.setIdentifier("1");
     instance.setAudit(new Audit());
     instance.getAudit().setWho("christian");
-    IdentityRelationshipDto dto = mapper.mapToDto(instance);
+    IdentityRelationshipDto dto = identityRelationshipMapper.mapToDto(instance);
     assertEquals(instance.getIdentifier(), dto.getIdentifier());
     assertEquals(instance.getAudit().getWho(), dto.getAudit().getWho());
   }
-  
+
   @Test
-  void mapToDto_whenNotNullAndAuditNull() {
+  void identityRelationship_mapToDto_whenNotNullAndAuditNull() {
     IdentityRelationship instance = new IdentityRelationship();
     instance.setIdentifier("1");
-    IdentityRelationshipDto dto = mapper.mapToDto(instance);
+    IdentityRelationshipDto dto = identityRelationshipMapper.mapToDto(instance);
     assertEquals(instance.getIdentifier(), dto.getIdentifier());
     assertNull(dto.getAudit());
   }
-  
+
   @Test
-  void mapFromDto_whenNull() {
-    assertNull(mapper.mapFromDto(null));
+  void identityRelationship_mapFromDto_whenNull() {
+    assertNull(identityRelationshipMapper.mapFromDto(null));
   }
-  
+
   @Test
-  void mapFromDto_whenAuditNull() {
+  void identityRelationship_mapFromDto_whenAuditNull() {
     IdentityRelationshipDto dto = new IdentityRelationshipDto();
     dto.setIdentifier("1");
-    IdentityRelationship instance = mapper.mapFromDto(dto);
+    IdentityRelationship instance = identityRelationshipMapper.mapFromDto(dto);
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
     assertEquals(null, instance.getAudit());
   }
-  
+
   @Test
-  void mapFromDto_whenAuditNotNull() {
+  void identityRelationship_mapFromDto_whenAuditNotNull() {
     IdentityRelationshipDto dto = new IdentityRelationshipDto();
     dto.setIdentifier("1");
     dto.setAudit(new AuditDto());
     dto.getAudit().setWho("meliane");
-    IdentityRelationship instance = mapper.mapFromDto(dto);
+    IdentityRelationship instance = identityRelationshipMapper.mapFromDto(dto);
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
     assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
   }
-  
-  
+
+
   @Test
-  void create() {
+  void identityRelationship_create() {
     IdentityRelationshipCreateRequestDto request = new IdentityRelationshipCreateRequestDto();
     request.setParentIdentifier("1");
     request.setChildIdentifier("3");
     request.setType(IdentityRelationshipType.TUTOR);
     request.setAuditWho("christian");
     long count = count(entityManager, IdentityRelationship.ENTITY_NAME);
-    createBusiness.process(request);
+    identityRelationshipCreateBusiness.process(request);
     assertEquals(count + 1, count(entityManager, IdentityRelationship.ENTITY_NAME));
   }
 
   @Test
-  void update() {
+  void identityRelationship_update() {
     IdentityRelationshipUpdateRequestDto request = new IdentityRelationshipUpdateRequestDto();
     request.setIdentifier("toupdate");
     request.setParentIdentifier("1");
@@ -126,18 +125,19 @@ class IdentityRelationshipBusinessTest extends AbstractTest {
     request.setType(IdentityRelationshipType.FATHER);
     request.setAuditWho("christian");
     long count = count(entityManager, IdentityRelationship.ENTITY_NAME);
-    updateBusiness.process(request);
+    identityRelationshipUpdateBusiness.process(request);
     assertEquals(count, count(entityManager, IdentityRelationship.ENTITY_NAME));
   }
 
   @Test
-  void getMany() {
-    parameters.projection().addNames(IdentityRelationshipDto.JSON_TYPE_AS_STRING,
-        IdentityRelationshipDto.JSON_PARENT_AS_STRING,
+  void identityRelationship_getMany() {
+    identityRelationshipParameters.projection().addNames(
+        IdentityRelationshipDto.JSON_TYPE_AS_STRING, IdentityRelationshipDto.JSON_PARENT_AS_STRING,
         IdentityRelationshipDto.JSON_CHILD_AS_STRING);
-    assertEquals(3, dynamicQuery.getMany(parameters).size());
+    assertEquals(3,
+        identityRelationshipDynamicQuery.getMany(identityRelationshipParameters).size());
   }
-  
+
   public static class Profile implements QuarkusTestProfile {
 
     @Override

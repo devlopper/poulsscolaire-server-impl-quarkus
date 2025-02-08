@@ -1,5 +1,6 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
+import ci.gouv.dgbf.extension.core.ArrayContainer;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableNamable;
@@ -8,6 +9,7 @@ import ci.gouv.dgbf.extension.server.service.api.entity.AbstractIdentifiableDto;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import java.util.function.BiConsumer;
 import org.cyk.system.poulsscolaire.server.api.fee.AbstractAmountContainerDto;
 import org.cyk.system.poulsscolaire.server.api.fee.AbstractAmountContainerFilter;
 import org.cyk.system.poulsscolaire.server.api.fee.AdjustedFeeDto;
@@ -107,9 +109,7 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
     projectionBuilder().name(AdjustedFeeDto.JSON_REGISTRATION_AS_STRING)
         .expression(registrationDynamicQuery.buildAsStringProjectionExpression(
             fieldName(variableName, AdjustedFee.FIELD_REGISTRATION), branchInstanceVariableName))
-        .resultConsumer(
-            (i, a) -> i.registrationAsString = RegistrationDynamicQuery.computeAsString(a))
-        .build();
+        .resultConsumer(registrationAsStringConsumer()).build();
 
     projectionBuilder().name(AdjustedFeeDto.JSON_REGISTRATION_STUDENT_AS_STRING)
         .expression(formatConcat("t.registration.student.identity.firstName", "' '",
@@ -130,6 +130,10 @@ public class AdjustedFeeDynamicQuery extends AbstractAmountContainerDynamicQuery
         .expression(formatConcatName(periodVariableName))
         .resultConsumer((i, a) -> i.registrationSchoolingPeriodAsString = a.getNextAsString())
         .build();
+  }
+
+  BiConsumer<AdjustedFee, ArrayContainer> registrationAsStringConsumer() {
+    return (i, a) -> i.registrationAsString = RegistrationDynamicQuery.computeAsString(a);
   }
 
   void buildAmountProjections() {

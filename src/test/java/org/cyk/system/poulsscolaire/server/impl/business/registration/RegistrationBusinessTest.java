@@ -1,6 +1,7 @@
 package org.cyk.system.poulsscolaire.server.impl.business.registration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertLinesMatch;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -18,14 +19,22 @@ import io.quarkus.test.junit.QuarkusTestProfile;
 import io.quarkus.test.junit.TestProfile;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolConfigurationDto;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolConfigurationService.SchoolConfigurationCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolConfigurationService.SchoolConfigurationUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolDto;
+import org.cyk.system.poulsscolaire.server.api.fee.AdjustedFeeDto;
+import org.cyk.system.poulsscolaire.server.api.fee.AdjustedFeeFilter;
+import org.cyk.system.poulsscolaire.server.api.fee.AdjustedFeeService.AdjustedFeeCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.fee.AdjustedFeeService.AdjustedFeeUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.registration.BloodGroup;
 import org.cyk.system.poulsscolaire.server.api.registration.IdentityDto;
+import org.cyk.system.poulsscolaire.server.api.registration.IdentityRelationshipDto;
+import org.cyk.system.poulsscolaire.server.api.registration.IdentityRelationshipService.IdentityRelationshipCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.registration.IdentityRelationshipService.IdentityRelationshipUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.registration.IdentityRelationshipType;
 import org.cyk.system.poulsscolaire.server.api.registration.IdentityService.IdentityCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.registration.IdentityService.IdentityUpdateRequestDto;
@@ -35,6 +44,13 @@ import org.cyk.system.poulsscolaire.server.api.registration.RegistrationService.
 import org.cyk.system.poulsscolaire.server.api.registration.StudentDto;
 import org.cyk.system.poulsscolaire.server.api.registration.StudentService.StudentCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.registration.StudentService.StudentUpdateRequestDto;
+import org.cyk.system.poulsscolaire.server.impl.business.adjustedfee.AdjustedFeeCreateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.adjustedfee.AdjustedFeeDeleteBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.adjustedfee.AdjustedFeeMapper;
+import org.cyk.system.poulsscolaire.server.impl.business.adjustedfee.AdjustedFeeReadByIdentifierBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.adjustedfee.AdjustedFeeReadManyBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.adjustedfee.AdjustedFeeReadOneBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.adjustedfee.AdjustedFeeUpdateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.identity.IdentityCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.identity.IdentityDeleteBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.identity.IdentityMapper;
@@ -42,6 +58,13 @@ import org.cyk.system.poulsscolaire.server.impl.business.identity.IdentityReadBy
 import org.cyk.system.poulsscolaire.server.impl.business.identity.IdentityReadManyBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.identity.IdentityReadOneBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.identity.IdentityUpdateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.identityrelationship.IdentityRelationshipCreateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.identityrelationship.IdentityRelationshipDeleteBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.identityrelationship.IdentityRelationshipMapper;
+import org.cyk.system.poulsscolaire.server.impl.business.identityrelationship.IdentityRelationshipReadByIdentifierBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.identityrelationship.IdentityRelationshipReadManyBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.identityrelationship.IdentityRelationshipReadOneBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.identityrelationship.IdentityRelationshipUpdateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.school.SchoolMapper;
 import org.cyk.system.poulsscolaire.server.impl.business.school.SchoolReadByIdentifierBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.school.SchoolReadManyBusiness;
@@ -60,11 +83,14 @@ import org.cyk.system.poulsscolaire.server.impl.business.student.StudentReadMany
 import org.cyk.system.poulsscolaire.server.impl.business.student.StudentReadOneBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.student.StudentUpdateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AdjustedFee;
+import org.cyk.system.poulsscolaire.server.impl.persistence.AdjustedFeeAmounts;
+import org.cyk.system.poulsscolaire.server.impl.persistence.AdjustedFeeDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Amount;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AmountDeadline;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Identity;
 import org.cyk.system.poulsscolaire.server.impl.persistence.IdentityDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.IdentityRelationship;
+import org.cyk.system.poulsscolaire.server.impl.persistence.IdentityRelationshipDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Registration;
 import org.cyk.system.poulsscolaire.server.impl.persistence.School;
 import org.cyk.system.poulsscolaire.server.impl.persistence.SchoolBranch;
@@ -81,7 +107,7 @@ import org.junit.jupiter.api.Test;
 class RegistrationBusinessTest extends AbstractTest {
 
   /* School */
-  
+
   @Inject
   SchoolReadManyBusiness schoolReadManyBusiness;
 
@@ -98,9 +124,9 @@ class RegistrationBusinessTest extends AbstractTest {
 
   @Inject
   SchoolMapper schoolMapper;
-  
+
   /* SchoolConfiguration */
-  
+
   @Inject
   SchoolConfigurationCreateBusiness schoolConfigurationCreateBusiness;
 
@@ -118,12 +144,12 @@ class RegistrationBusinessTest extends AbstractTest {
 
   @Inject
   SchoolConfigurationDeleteBusiness schoolConfigurationDeleteBusiness;
-  
+
   @Inject
   SchoolConfigurationMapper schoolConfigurationMapper;
-  
+
   /* Identity */
-  
+
   @Inject
   IdentityCreateBusiness identityCreateBusiness;
 
@@ -149,9 +175,9 @@ class RegistrationBusinessTest extends AbstractTest {
   IdentityDynamicQuery identityDynamicQuery;
 
   DynamicQueryParameters<Identity> identityParameters = new DynamicQueryParameters<>();
-  
+
   /* Student */
-  
+
   @Inject
   StudentCreateBusiness studentCreateBusiness;
 
@@ -174,9 +200,9 @@ class RegistrationBusinessTest extends AbstractTest {
   StudentDynamicQuery studentDynamicQuery;
 
   DynamicQueryParameters<Student> studentDynamicQueryParameters = new DynamicQueryParameters<>();
-  
+
   /* Registration */
-  
+
   @Inject
   EntityManager entityManager;
 
@@ -203,14 +229,71 @@ class RegistrationBusinessTest extends AbstractTest {
 
   @Inject
   RegistrationMapper mapper;
+
+  /* AdjustedFee */
+
+  @Inject
+  AdjustedFeeCreateBusiness adjustedFeeCreateBusiness;
+
+  @Inject
+  AdjustedFeeReadManyBusiness adjustedFeeReadManyBusiness;
+
+  @Inject
+  AdjustedFeeReadOneBusiness adjustedFeeReadOneBusiness;
+
+  @Inject
+  AdjustedFeeReadByIdentifierBusiness adjustedFeeReadByIdentifierBusiness;
+
+  @Inject
+  AdjustedFeeUpdateBusiness adjustedFeeUpdateBusiness;
+
+  @Inject
+  AdjustedFeeDeleteBusiness adjustedFeeDeleteBusiness;
+
+  @Inject
+  AdjustedFeeMapper adjustedFeeMapper;
+
+  @Inject
+  AdjustedFeeDynamicQuery adjustedFeeDynamicQuery;
+
+  DynamicQueryParameters<AdjustedFee> adjustedFeeParameters = new DynamicQueryParameters<>();
+
+  /* IdentityRelationship */
+  
+  @Inject
+  IdentityRelationshipCreateBusiness identityRelationshipCreateBusiness;
+
+  @Inject
+  IdentityRelationshipReadManyBusiness identityRelationshipReadManyBusiness;
+
+  @Inject
+  IdentityRelationshipReadOneBusiness identityRelationshipReadOneBusiness;
+
+  @Inject
+  IdentityRelationshipReadByIdentifierBusiness identityRelationshipReadByIdentifierBusiness;
+
+  @Inject
+  IdentityRelationshipUpdateBusiness identityRelationshipUpdateBusiness;
+
+  @Inject
+  IdentityRelationshipDeleteBusiness identityRelationshipDeleteBusiness;
+
+  @Inject
+  IdentityRelationshipMapper identityRelationshipMapper;
+
+  @Inject
+  IdentityRelationshipDynamicQuery identityRelationshipDynamicQuery;
+
+  DynamicQueryParameters<IdentityRelationship> identityRelationshipParameters =
+      new DynamicQueryParameters<>();
   
   /* School */
-  
+
   @Test
   void school_mapToDto_whenNull() {
     assertNull(schoolMapper.mapToDto(null));
   }
-  
+
   @Test
   void school_mapToDto_whenNotNull() {
     School instance = new School();
@@ -218,12 +301,12 @@ class RegistrationBusinessTest extends AbstractTest {
     SchoolDto dto = schoolMapper.mapToDto(instance);
     assertEquals(instance.getIdentifier(), dto.getIdentifier());
   }
-  
+
   @Test
   void school_mapFromDto_whenNull() {
     assertNull(schoolMapper.mapFromDto(null));
   }
-  
+
   @Test
   void school_mapFromDto() {
     SchoolDto dto = new SchoolDto();
@@ -231,7 +314,7 @@ class RegistrationBusinessTest extends AbstractTest {
     School instance = schoolMapper.mapFromDto(dto);
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
   }
-  
+
   @Test
   void school_buildQueryString_whenTotalAmount() {
     schoolParameters.projection().addNames(SchoolDto.JSON_TOTAL_AMOUNT_AS_STRING);
@@ -247,8 +330,8 @@ class RegistrationBusinessTest extends AbstractTest {
     schoolParameters.projection().addNames(SchoolDto.JSON_PAID_AMOUNT_AS_STRING);
     assertEquals(
         "SELECT SUM(afa.amountPaid) FROM School t "
-        + "LEFT JOIN AdjustedFeeAmounts afa ON afa.schoolIdentifier = t.identifier "
-        + "GROUP BY t.identifier,t.name ORDER BY t.name ASC",
+            + "LEFT JOIN AdjustedFeeAmounts afa ON afa.schoolIdentifier = t.identifier "
+            + "GROUP BY t.identifier,t.name ORDER BY t.name ASC",
         schoolDynamicQuery.buildQueryString(schoolParameters));
   }
 
@@ -256,29 +339,28 @@ class RegistrationBusinessTest extends AbstractTest {
   void school_buildQueryString_whenPayableAmount() {
     schoolParameters.projection().addNames(SchoolDto.JSON_PAYABLE_AMOUNT_AS_STRING);
     assertEquals(
-        "SELECT SUM(afa.amountLeftToPay) "
-        + "FROM School t "
-        + "LEFT JOIN AdjustedFeeAmounts afa ON afa.schoolIdentifier = t.identifier "
-        + "GROUP BY t.identifier,t.name ORDER BY t.name ASC",
+        "SELECT SUM(afa.amountLeftToPay) " + "FROM School t "
+            + "LEFT JOIN AdjustedFeeAmounts afa ON afa.schoolIdentifier = t.identifier "
+            + "GROUP BY t.identifier,t.name ORDER BY t.name ASC",
         schoolDynamicQuery.buildQueryString(schoolParameters));
   }
-  
+
   @Test
   void school_instantiate() {
     assertNotNull(new SchoolBranch());
     assertNotNull(new SchoolPeriod());
     assertNotNull(new SchoolUser());
   }
-  
+
   @Test
   void school_readMany() {
     GetManyRequestDto request = new GetManyRequestDto();
     request.setAuditWho("christian");
     assertEquals(1, schoolReadManyBusiness.process(request).getCount());
   }
-  
+
   /* SchoolConfiguration */
-  
+
   @Test
   void schoolConfiguration_create() {
     SchoolConfigurationCreateRequestDto request = new SchoolConfigurationCreateRequestDto();
@@ -301,12 +383,12 @@ class RegistrationBusinessTest extends AbstractTest {
     schoolConfigurationUpdateBusiness.process(request);
     assertEquals(count, count(entityManager, SchoolConfiguration.ENTITY_NAME));
   }
-  
+
   @Test
   void schoolConfiguration_mapToDto_whenNull() {
     assertNull(schoolConfigurationMapper.mapToDto(null));
   }
-  
+
   @Test
   void schoolConfiguration_mapToDto_whenNotNull() {
     SchoolConfiguration instance = new SchoolConfiguration();
@@ -317,7 +399,7 @@ class RegistrationBusinessTest extends AbstractTest {
     assertEquals(instance.getIdentifier(), dto.getIdentifier());
     assertEquals(instance.getAudit().getWho(), dto.getAudit().getWho());
   }
-  
+
   @Test
   void schoolConfiguration_mapToDto_whenNotNullAndAuditNull() {
     SchoolConfiguration instance = new SchoolConfiguration();
@@ -326,12 +408,12 @@ class RegistrationBusinessTest extends AbstractTest {
     assertEquals(instance.getIdentifier(), dto.getIdentifier());
     assertNull(dto.getAudit());
   }
-  
+
   @Test
   void schoolConfiguration_mapFromDto_whenNull() {
     assertNull(schoolConfigurationMapper.mapFromDto(null));
   }
-  
+
   @Test
   void schoolConfiguration_mapFromDto_whenAuditNull() {
     SchoolConfigurationDto dto = new SchoolConfigurationDto();
@@ -340,7 +422,7 @@ class RegistrationBusinessTest extends AbstractTest {
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
     assertEquals(null, instance.getAudit());
   }
-  
+
   @Test
   void schoolConfiguration_mapFromDto_whenAuditNotNull() {
     SchoolConfigurationDto dto = new SchoolConfigurationDto();
@@ -351,9 +433,9 @@ class RegistrationBusinessTest extends AbstractTest {
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
     assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
   }
-  
+
   /* Identity */
-  
+
   @Test
   void identity_getMany() {
     identityParameters.projection().addNames(IdentityDto.JSON_RELATIONSHIP_TYPE_PARENT_AS_STRING);
@@ -462,9 +544,9 @@ class RegistrationBusinessTest extends AbstractTest {
     identityDeleteBusiness.process(request);
     assertEquals(count - 1, count(entityManager, Identity.ENTITY_NAME));
   }
-  
+
   /* Student */
-  
+
   @Test
   void student_create() {
     StudentCreateRequestDto request = new StudentCreateRequestDto();
@@ -516,7 +598,7 @@ class RegistrationBusinessTest extends AbstractTest {
     Student student = studentDynamicQuery.getOne(studentDynamicQueryParameters);
     assertEquals("1 - 1 1", student.asString);
   }
-  
+
   @Test
   void student_getOne_bloodGroup() {
     studentDynamicQueryParameters.setResultMode(ResultMode.ONE);
@@ -525,16 +607,16 @@ class RegistrationBusinessTest extends AbstractTest {
     Student student = studentDynamicQuery.getOne(studentDynamicQueryParameters);
     assertEquals(BloodGroup.A_PLUS, student.bloodGroup);
   }
-  
+
   /* Registration */
-  
+
   @Test
   void create_whenNoFees() {
     RegistrationCreateRequestDto request = new RegistrationCreateRequestDto();
-    request.setSchoolingIdentifier("1");
+    request.setSchoolingIdentifier("nofees");
     request.setStudentIdentifier("nofees");
-    request.setAssignmentTypeIdentifier("1");
-    request.setSeniorityIdentifier("1");
+    request.setAssignmentTypeIdentifier("nofees");
+    request.setSeniorityIdentifier("nofees");
     request.setBranchInstanceIdentifier("1");
     request.setAuditWho("christian");
     long registrationCount = count(entityManager, Registration.ENTITY_NAME);
@@ -561,7 +643,7 @@ class RegistrationBusinessTest extends AbstractTest {
     assertEquals(adjustedFeeCount + 3, count(entityManager, AdjustedFee.ENTITY_NAME));
     assertEquals(deadlinesCount + 1, count(entityManager, AmountDeadline.ENTITY_NAME));
   }
-  
+
   @Test
   void create_whenSchooling2() {
     RegistrationCreateRequestDto request = new RegistrationCreateRequestDto();
@@ -581,7 +663,7 @@ class RegistrationBusinessTest extends AbstractTest {
     assertEquals(adjustedFeeCount + 3, count(entityManager, AdjustedFee.ENTITY_NAME));
     assertEquals(deadlinesCount + 1, count(entityManager, AmountDeadline.ENTITY_NAME));
   }
-  
+
   @Test
   void create_whenSchooling2AmountGreater() {
     RegistrationCreateRequestDto request = new RegistrationCreateRequestDto();
@@ -630,12 +712,12 @@ class RegistrationBusinessTest extends AbstractTest {
         entityManager.find(Amount.class, "toupdateamountstozerou").registrationValuePart);
     assertEquals(0, entityManager.find(AmountDeadline.class, "2").payment);
   }
-  
+
   @Test
   void mapToDto_whenNull() {
     assertNull(mapper.mapToDto(null));
   }
-  
+
   @Test
   void mapToDto_whenNotNull() {
     Registration instance = new Registration();
@@ -646,7 +728,7 @@ class RegistrationBusinessTest extends AbstractTest {
     assertEquals(instance.getIdentifier(), dto.getIdentifier());
     assertEquals(instance.getAudit().getWho(), dto.getAudit().getWho());
   }
-  
+
   @Test
   void mapToDto_whenNotNullAndAuditNull() {
     Registration instance = new Registration();
@@ -655,12 +737,12 @@ class RegistrationBusinessTest extends AbstractTest {
     assertEquals(instance.getIdentifier(), dto.getIdentifier());
     assertNull(dto.getAudit());
   }
-  
+
   @Test
   void mapFromDto_whenNull() {
     assertNull(mapper.mapFromDto(null));
   }
-  
+
   @Test
   void mapFromDto_whenAuditNull() {
     RegistrationDto dto = new RegistrationDto();
@@ -669,7 +751,7 @@ class RegistrationBusinessTest extends AbstractTest {
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
     assertEquals(null, instance.getAudit());
   }
-  
+
   @Test
   void mapFromDto_whenAuditNotNull() {
     RegistrationDto dto = new RegistrationDto();
@@ -681,6 +763,284 @@ class RegistrationBusinessTest extends AbstractTest {
     assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
   }
 
+  /* AdjustedFee */
+
+  @Test
+  void adjustedFee_create() {
+    AdjustedFeeCreateRequestDto request = new AdjustedFeeCreateRequestDto();
+    request.setFeeIdentifier("1");
+    request.setRegistrationIdentifier("1");
+    request.setOptional(true);
+    request.setPaymentOrderNumber(0);
+    request.setRegistrationValuePart(0);
+    request.setRenewable(true);
+    request.setValue(0);
+    request.setAuditWho("christian");
+    long adjustedFeeCount = count(entityManager, AdjustedFee.ENTITY_NAME);
+    long amountCount = count(entityManager, Amount.ENTITY_NAME);
+    adjustedFeeCreateBusiness.process(request);
+    assertEquals(adjustedFeeCount + 1, count(entityManager, AdjustedFee.ENTITY_NAME));
+    assertEquals(amountCount + 1, count(entityManager, Amount.ENTITY_NAME));
+  }
+
+  @Test
+  void adjustedFee_update() {
+    AdjustedFeeUpdateRequestDto request = new AdjustedFeeUpdateRequestDto();
+    request.setIdentifier("toupdate");
+    request.setFeeIdentifier("1");
+    request.setRegistrationIdentifier("1");
+    request.setOptional(true);
+    request.setPaymentOrderNumber(0);
+    request.setRegistrationValuePart(0);
+    request.setRenewable(true);
+    request.setValue(0);
+    request.setAuditWho("christian");
+    long count = count(entityManager, AdjustedFee.ENTITY_NAME);
+    adjustedFeeUpdateBusiness.process(request);
+    assertEquals(count, count(entityManager, AdjustedFee.ENTITY_NAME));
+  }
+
+  /* Mapping */
+
+  @Test
+  void adjustedFee_mapToDto_whenNull() {
+    assertNull(adjustedFeeMapper.mapToDto(null));
+  }
+
+  @Test
+  void adjustedFee_mapToDto_whenNotNull() {
+    AdjustedFee instance = new AdjustedFee();
+    instance.setIdentifier("1");
+    instance.setAudit(new Audit());
+    instance.getAudit().setWho("christian");
+    AdjustedFeeDto dto = adjustedFeeMapper.mapToDto(instance);
+    assertEquals(instance.getIdentifier(), dto.getIdentifier());
+    assertEquals(instance.getAudit().getWho(), dto.getAudit().getWho());
+  }
+
+  @Test
+  void adjustedFee_mapToDto_whenNotNullAndAuditNull() {
+    AdjustedFee instance = new AdjustedFee();
+    instance.setIdentifier("1");
+    AdjustedFeeDto dto = adjustedFeeMapper.mapToDto(instance);
+    assertEquals(instance.getIdentifier(), dto.getIdentifier());
+    assertNull(dto.getAudit());
+  }
+
+  @Test
+  void adjustedFee_mapFromDto_whenNull() {
+    assertNull(adjustedFeeMapper.mapFromDto(null));
+  }
+
+  @Test
+  void adjustedFee_mapFromDto_whenAuditNull() {
+    AdjustedFeeDto dto = new AdjustedFeeDto();
+    dto.setIdentifier("1");
+    AdjustedFee instance = adjustedFeeMapper.mapFromDto(dto);
+    assertEquals(dto.getIdentifier(), instance.getIdentifier());
+    assertEquals(null, instance.getAudit());
+  }
+
+  @Test
+  void adjustedFee_mapFromDto_whenAuditNotNull() {
+    AdjustedFeeDto dto = new AdjustedFeeDto();
+    dto.setIdentifier("1");
+    dto.setAudit(new AuditDto());
+    dto.getAudit().setWho("meliane");
+    AdjustedFee instance = adjustedFeeMapper.mapFromDto(dto);
+    assertEquals(dto.getIdentifier(), instance.getIdentifier());
+    assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
+  }
+
+  /* Dynamic query */
+
+  @Test
+  void iadjustedFee_nstanciateAdjustedFeeAmounts() {
+    assertNotNull(new AdjustedFeeAmounts());
+  }
+
+  @Test
+  void adjustedFee_getMany() {
+    adjustedFeeParameters.projection().addNames(AdjustedFeeDto.JSON_IDENTIFIER);
+    assertEquals(true, adjustedFeeDynamicQuery.getMany(adjustedFeeParameters).size() > 0);
+  }
+
+  @Test
+  void adjustedFee_buildQueryString_whenProjectionAmountValueToPay() {
+    adjustedFeeParameters.setResultMode(ResultMode.ONE);
+    adjustedFeeParameters.projection().addNames(AdjustedFeeDto.JSON_AMOUNT_VALUE_TO_PAY_AS_STRING);
+    adjustedFeeParameters.filter().addCriteria(AdjustedFeeDto.JSON_IDENTIFIER,
+        "amountvaluepayable");
+    assertEquals(
+        "SELECT afa.amountToPay FROM AdjustedFee t "
+            + "LEFT JOIN AdjustedFeeAmounts afa ON afa.identifier = t.identifier "
+            + "WHERE t.identifier = :identifiant",
+        adjustedFeeDynamicQuery.buildQueryString(adjustedFeeParameters));
+  }
+
+  @Test
+  void adjustedFee_buildQueryString_whenProjectionAmountValuePaid() {
+    adjustedFeeParameters.setResultMode(ResultMode.ONE);
+    adjustedFeeParameters.projection().addNames(AdjustedFeeDto.JSON_AMOUNT_VALUE_PAID_AS_STRING);
+    adjustedFeeParameters.filter().addCriteria(AdjustedFeeDto.JSON_IDENTIFIER,
+        "amountvaluepayable");
+    assertEquals(
+        "SELECT afa.amountPaid FROM AdjustedFee t "
+            + "LEFT JOIN AdjustedFeeAmounts afa ON afa.identifier = t.identifier "
+            + "WHERE t.identifier = :identifiant",
+        adjustedFeeDynamicQuery.buildQueryString(adjustedFeeParameters));
+  }
+
+  @Test
+  void adjustedFee_get_whenProjectionAmountValueToPay() {
+    adjustedFeeParameters.setResultMode(ResultMode.ONE);
+    adjustedFeeParameters.projection().addNames(AdjustedFeeDto.JSON_AMOUNT_VALUE_TO_PAY_AS_STRING);
+    adjustedFeeParameters.filter().addCriteria(AdjustedFeeDto.JSON_IDENTIFIER,
+        "amountvaluepayable");
+    AdjustedFee adjustedFee = adjustedFeeDynamicQuery.getOne(adjustedFeeParameters);
+    assertEquals("1 000 000", adjustedFee.amountValueToPayAsString);
+  }
+
+  @Test
+  void adjustedFee_get_whenProjectionAmountValuePaid() {
+    adjustedFeeParameters.setResultMode(ResultMode.ONE);
+    adjustedFeeParameters.projection().addNames(AdjustedFeeDto.JSON_AMOUNT_VALUE_PAID_AS_STRING);
+    adjustedFeeParameters.filter().addCriteria(AdjustedFeeDto.JSON_IDENTIFIER,
+        "amountvaluepayable");
+    AdjustedFee adjustedFee = adjustedFeeDynamicQuery.getOne(adjustedFeeParameters);
+    assertEquals("1", adjustedFee.amountValuePaidAsString);
+  }
+
+  @Test
+  void adjustedFee_get_whenProjectionAmountValuePayable() {
+    adjustedFeeParameters.setResultMode(ResultMode.ONE);
+    adjustedFeeParameters.projection().addNames(AdjustedFeeDto.JSON_AMOUNT_VALUE_PAYABLE,
+        AdjustedFeeDto.JSON_AMOUNT_VALUE_PAYABLE_AS_STRING);
+    adjustedFeeParameters.filter().addCriteria(AdjustedFeeDto.JSON_IDENTIFIER,
+        "amountvaluepayable");
+    AdjustedFee adjustedFee = adjustedFeeDynamicQuery.getOne(adjustedFeeParameters);
+    assertEquals(999999, adjustedFee.amountValuePayable);
+    assertEquals("999 999", adjustedFee.amountValuePayableAsString);
+  }
+
+  @Test
+  void adjustedFee_get_whenProjectionDeadline() {
+    adjustedFeeParameters.setResultMode(ResultMode.ONE);
+    adjustedFeeParameters.projection().addNames(AdjustedFeeDto.JSON_AMOUNT_DEADLINE_AS_STRING);
+    adjustedFeeParameters.filter().addCriteria(AdjustedFeeDto.JSON_IDENTIFIER,
+        "amountvaluepayable");
+    AdjustedFee adjustedFee = adjustedFeeDynamicQuery.getOne(adjustedFeeParameters);
+    assertNotNull(adjustedFee.amountDeadlineAsString);
+  }
+
+  @Test
+  void adjustedFee_get_whenFilterAmountValuePayableLessThanOrEqualsZeroTrue() {
+    adjustedFeeParameters.projection().addNames(AdjustedFeeDto.JSON_IDENTIFIER);
+    adjustedFeeParameters.filter()
+        .addCriteria(AdjustedFeeFilter.JSON_AMOUNT_VALUE_PAYABLE_LESS_THAN_OR_EQUALS_ZERO, true);
+    List<AdjustedFee> instances = adjustedFeeDynamicQuery.getMany(adjustedFeeParameters);
+    assertLinesMatch(List.of("deadlineover", "payableequalszero", "toupdateamountstozero"),
+        instances.stream().map(i -> i.getIdentifier()).sorted().toList());
+  }
+
+  //@Test
+  void adjustedFee_get_whenFilterAmountValuePayableLessThanOrEqualsZeroFalse() {
+    adjustedFeeParameters.projection().addNames(AdjustedFeeDto.JSON_IDENTIFIER,
+        AdjustedFeeDto.JSON_REGISTRATION_AS_STRING);
+    adjustedFeeParameters.filter()
+        .addCriteria(AdjustedFeeFilter.JSON_AMOUNT_VALUE_PAYABLE_LESS_THAN_OR_EQUALS_ZERO, false);
+    List<AdjustedFee> instances = adjustedFeeDynamicQuery.getMany(adjustedFeeParameters);
+    assertLinesMatch(List.of("amountvaluepayable"),
+        instances.stream().map(i -> i.getIdentifier()).toList());
+  }
+
+  /* IdentityRelationship */
+  
+  @Test
+  void identityRelationship_mapToDto_whenNull() {
+    assertNull(identityRelationshipMapper.mapToDto(null));
+  }
+
+  @Test
+  void identityRelationship_mapToDto_whenNotNull() {
+    IdentityRelationship instance = new IdentityRelationship();
+    instance.setIdentifier("1");
+    instance.setAudit(new Audit());
+    instance.getAudit().setWho("christian");
+    IdentityRelationshipDto dto = identityRelationshipMapper.mapToDto(instance);
+    assertEquals(instance.getIdentifier(), dto.getIdentifier());
+    assertEquals(instance.getAudit().getWho(), dto.getAudit().getWho());
+  }
+
+  @Test
+  void identityRelationship_mapToDto_whenNotNullAndAuditNull() {
+    IdentityRelationship instance = new IdentityRelationship();
+    instance.setIdentifier("1");
+    IdentityRelationshipDto dto = identityRelationshipMapper.mapToDto(instance);
+    assertEquals(instance.getIdentifier(), dto.getIdentifier());
+    assertNull(dto.getAudit());
+  }
+
+  @Test
+  void identityRelationship_mapFromDto_whenNull() {
+    assertNull(identityRelationshipMapper.mapFromDto(null));
+  }
+
+  @Test
+  void identityRelationship_mapFromDto_whenAuditNull() {
+    IdentityRelationshipDto dto = new IdentityRelationshipDto();
+    dto.setIdentifier("1");
+    IdentityRelationship instance = identityRelationshipMapper.mapFromDto(dto);
+    assertEquals(dto.getIdentifier(), instance.getIdentifier());
+    assertEquals(null, instance.getAudit());
+  }
+
+  @Test
+  void identityRelationship_mapFromDto_whenAuditNotNull() {
+    IdentityRelationshipDto dto = new IdentityRelationshipDto();
+    dto.setIdentifier("1");
+    dto.setAudit(new AuditDto());
+    dto.getAudit().setWho("meliane");
+    IdentityRelationship instance = identityRelationshipMapper.mapFromDto(dto);
+    assertEquals(dto.getIdentifier(), instance.getIdentifier());
+    assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
+  }
+
+
+  @Test
+  void identityRelationship_create() {
+    IdentityRelationshipCreateRequestDto request = new IdentityRelationshipCreateRequestDto();
+    request.setParentIdentifier("1");
+    request.setChildIdentifier("3");
+    request.setType(IdentityRelationshipType.TUTOR);
+    request.setAuditWho("christian");
+    long count = count(entityManager, IdentityRelationship.ENTITY_NAME);
+    identityRelationshipCreateBusiness.process(request);
+    assertEquals(count + 1, count(entityManager, IdentityRelationship.ENTITY_NAME));
+  }
+
+  @Test
+  void identityRelationship_update() {
+    IdentityRelationshipUpdateRequestDto request = new IdentityRelationshipUpdateRequestDto();
+    request.setIdentifier("toupdate");
+    request.setParentIdentifier("1");
+    request.setChildIdentifier("2");
+    request.setType(IdentityRelationshipType.FATHER);
+    request.setAuditWho("christian");
+    long count = count(entityManager, IdentityRelationship.ENTITY_NAME);
+    identityRelationshipUpdateBusiness.process(request);
+    assertEquals(count, count(entityManager, IdentityRelationship.ENTITY_NAME));
+  }
+
+  @Test
+  void identityRelationship_getMany() {
+    identityRelationshipParameters.projection().addNames(
+        IdentityRelationshipDto.JSON_TYPE_AS_STRING, IdentityRelationshipDto.JSON_PARENT_AS_STRING,
+        IdentityRelationshipDto.JSON_CHILD_AS_STRING);
+    assertEquals(2,
+        identityRelationshipDynamicQuery.getMany(identityRelationshipParameters).size());
+  }
+  
   public static class Profile implements QuarkusTestProfile {
 
     @Override
