@@ -16,6 +16,7 @@ import io.quarkus.test.junit.QuarkusTestProfile;
 import io.quarkus.test.junit.TestProfile;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import java.time.Month;
 import java.util.Map;
 import java.util.UUID;
 import org.cyk.system.poulsscolaire.server.api.accounting.BudgetDto;
@@ -23,15 +24,52 @@ import org.cyk.system.poulsscolaire.server.api.accounting.BudgetService.BudgetCr
 import org.cyk.system.poulsscolaire.server.api.accounting.BudgetService.BudgetReturnRequestDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.BudgetService.BudgetUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.BudgetStatus;
+import org.cyk.system.poulsscolaire.server.api.accounting.FundingDto;
+import org.cyk.system.poulsscolaire.server.api.accounting.FundingExecutionDto;
+import org.cyk.system.poulsscolaire.server.api.accounting.FundingExecutionService.FundingExecutionCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.accounting.FundingExecutionService.FundingExecutionUpdateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.accounting.FundingService.FundingCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.accounting.FundingService.FundingUpdateAmountRequestDto;
+import org.cyk.system.poulsscolaire.server.api.accounting.FundingService.FundingUpdateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.accounting.FundingSourceDto;
+import org.cyk.system.poulsscolaire.server.api.accounting.FundingSourceService.FundingSourceCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.configuration.DepartmentDto;
 import org.cyk.system.poulsscolaire.server.impl.business.department.DepartmentMapper;
 import org.cyk.system.poulsscolaire.server.impl.business.department.DepartmentReadByIdentifierBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.department.DepartmentReadManyBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.department.DepartmentReadOneBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingCreateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingDeleteBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingMapper;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingReadByIdentifierBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingReadManyBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingReadOneBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingUpdateAmountBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingUpdateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingValidator;
+import org.cyk.system.poulsscolaire.server.impl.business.fundingexecution.FundingExecutionCreateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.fundingexecution.FundingExecutionDeleteBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.fundingexecution.FundingExecutionMapper;
+import org.cyk.system.poulsscolaire.server.impl.business.fundingexecution.FundingExecutionReadByIdentifierBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.fundingexecution.FundingExecutionReadManyBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.fundingexecution.FundingExecutionReadOneBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.fundingexecution.FundingExecutionUpdateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.fundingexecution.FundingExecutionValidator;
+import org.cyk.system.poulsscolaire.server.impl.business.fundingsource.FundingSourceCreateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.fundingsource.FundingSourceDeleteBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.fundingsource.FundingSourceMapper;
+import org.cyk.system.poulsscolaire.server.impl.business.fundingsource.FundingSourceReadByIdentifierBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.fundingsource.FundingSourceReadManyBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.fundingsource.FundingSourceReadOneBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.fundingsource.FundingSourceUpdateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Budget;
 import org.cyk.system.poulsscolaire.server.impl.persistence.BudgetAmount;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Department;
 import org.cyk.system.poulsscolaire.server.impl.persistence.DepartmentDynamicQuery;
+import org.cyk.system.poulsscolaire.server.impl.persistence.Funding;
+import org.cyk.system.poulsscolaire.server.impl.persistence.FundingExecution;
+import org.cyk.system.poulsscolaire.server.impl.persistence.FundingSource;
+import org.cyk.system.poulsscolaire.server.impl.persistence.FundingSourceDynamicQuery;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -97,6 +135,90 @@ class BudgetBusinessTest extends AbstractTest {
   
   @Inject
   DepartmentMapper departmentMapper;
+  
+  /* FundingSource */
+  
+  @Inject
+  FundingSourceCreateBusiness fundingSourceCreateBusiness;
+
+  @Inject
+  FundingSourceReadManyBusiness fundingSourceReadManyBusiness;
+
+  @Inject
+  FundingSourceReadOneBusiness fundingSourceReadOneBusiness;
+
+  @Inject
+  FundingSourceReadByIdentifierBusiness fundingSourceReadByIdentifierBusiness;
+
+  @Inject
+  FundingSourceUpdateBusiness fundingSourceUpdateBusiness;
+
+  @Inject
+  FundingSourceDeleteBusiness fundingSourceDeleteBusiness;
+
+  @Inject
+  FundingSourceMapper fundingSourceMapper;
+
+  @Inject
+  FundingSourceDynamicQuery fundingSourceDynamicQuery;
+
+  DynamicQueryParameters<FundingSource> fundingSourceDynamicQueryParameters =
+      new DynamicQueryParameters<>();
+  
+  /* Funding */
+  
+  @Inject
+  FundingCreateBusiness fundingCreateBusiness;
+
+  @Inject
+  FundingReadManyBusiness fundingReadManyBusiness;
+
+  @Inject
+  FundingReadOneBusiness fundingReadOneBusiness;
+
+  @Inject
+  FundingReadByIdentifierBusiness fundingReadByIdentifierBusiness;
+
+  @Inject
+  FundingUpdateBusiness fundingUpdateBusiness;
+
+  @Inject
+  FundingUpdateAmountBusiness fundingUpdateAmountBusiness;
+
+  @Inject
+  FundingDeleteBusiness fundingDeleteBusiness;
+
+  @Inject
+  FundingValidator fundingValidator;
+
+  @Inject
+  FundingMapper fundingMapper;
+
+  /* Execution */
+
+  @Inject
+  FundingExecutionCreateBusiness executionCreateBusiness;
+
+  @Inject
+  FundingExecutionReadManyBusiness executionReadManyBusiness;
+
+  @Inject
+  FundingExecutionReadOneBusiness executionReadOneBusiness;
+
+  @Inject
+  FundingExecutionReadByIdentifierBusiness executionReadByIdentifierBusiness;
+
+  @Inject
+  FundingExecutionUpdateBusiness executionUpdateBusiness;
+
+  @Inject
+  FundingExecutionDeleteBusiness executionDeleteBusiness;
+
+  @Inject
+  FundingExecutionValidator executionValidator;
+
+  @Inject
+  FundingExecutionMapper executionMapper;
   
   @Test
   void create() {
@@ -267,7 +389,258 @@ class BudgetBusinessTest extends AbstractTest {
     Budget triennialProgram = entityManager.find(Budget.class, actIdentifier);
     assertEquals(expectedStatus, triennialProgram.status);
   }
+  
+  /* FundingSource */
 
+  @Test
+  void fundingSource_getMany() {
+    GetManyRequestDto request = new GetManyRequestDto();
+    request.projection().addNames(FundingSourceDto.JSON_AS_STRING);
+    request.setAuditWho("christian");
+    assertTrue(fundingSourceReadManyBusiness.process(request).getCount() > 0);
+  }
+
+  @Test
+  void fundingSource_create() {
+    FundingSourceCreateRequestDto request = new FundingSourceCreateRequestDto();
+    request.setCode("c");
+    request.setName(UUID.randomUUID().toString());
+    request.setSchoolIdentifier("1");
+    request.setAuditWho("christian");
+    long count = count(entityManager, FundingSource.ENTITY_NAME);
+    fundingSourceCreateBusiness.process(request);
+    assertEquals(count + 1, count(entityManager, FundingSource.ENTITY_NAME));
+  }
+
+  @Test
+  void fundingSource_mapToDto_whenNull() {
+    assertNull(fundingSourceMapper.mapToDto(null));
+  }
+
+  @Test
+  void fundingSource_mapToDto_whenNotNull() {
+    FundingSource instance = new FundingSource();
+    instance.setIdentifier("1");
+    instance.setAudit(new Audit());
+    instance.getAudit().setWho("christian");
+    FundingSourceDto dto = fundingSourceMapper.mapToDto(instance);
+    assertEquals(instance.getIdentifier(), dto.getIdentifier());
+    assertEquals(instance.getAudit().getWho(), dto.getAudit().getWho());
+  }
+
+  @Test
+  void fundingSource_mapToDto_whenNotNullAndAuditNull() {
+    FundingSource instance = new FundingSource();
+    instance.setIdentifier("1");
+    FundingSourceDto dto = fundingSourceMapper.mapToDto(instance);
+    assertEquals(instance.getIdentifier(), dto.getIdentifier());
+    assertNull(dto.getAudit());
+  }
+
+  @Test
+  void fundingSource_mapFromDto_whenNull() {
+    assertNull(fundingSourceMapper.mapFromDto(null));
+  }
+
+  @Test
+  void fundingSource_mapFromDto_whenAuditNull() {
+    FundingSourceDto dto = new FundingSourceDto();
+    dto.setIdentifier("1");
+    FundingSource instance = fundingSourceMapper.mapFromDto(dto);
+    assertEquals(dto.getIdentifier(), instance.getIdentifier());
+    assertEquals(null, instance.getAudit());
+  }
+
+  @Test
+  void fundingSource_mapFromDto_whenAuditNotNull() {
+    FundingSourceDto dto = new FundingSourceDto();
+    dto.setIdentifier("1");
+    dto.setAudit(new AuditDto());
+    dto.getAudit().setWho("meliane");
+    FundingSource instance = fundingSourceMapper.mapFromDto(dto);
+    assertEquals(dto.getIdentifier(), instance.getIdentifier());
+    assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
+  }
+  
+  /* Funding */
+  
+  @Test
+  void funding_create() {
+    FundingCreateRequestDto request = new FundingCreateRequestDto();
+    request.setBudgetIdentifier("1");
+    request.setDepartmentIdentifier("1");
+    request.setAccountingAccountIdentifier("1");
+    request.setSourceIdentifier("1");
+    request.setMonth(Month.FEBRUARY);
+    request.setAmount(0L);
+    request.setAuditWho("christian");
+    long count = count(entityManager, Funding.ENTITY_NAME);
+    fundingCreateBusiness.process(request);
+    assertEquals(count + 1, count(entityManager, Funding.ENTITY_NAME));
+  }
+
+  @Test
+  void funding_readMany() {
+    GetManyRequestDto request = new GetManyRequestDto();
+    request.projection().addNames(FundingDto.JSON_MONTH_AS_STRING,
+        FundingDto.JSON_AMOUNT_INPUTABLE);
+    request.setAuditWho("christian");
+    assertTrue(fundingReadManyBusiness.process(request).getCount() > 0);
+  }
+
+  @Test
+  void funding_update() {
+    FundingUpdateRequestDto request = new FundingUpdateRequestDto();
+    request.setIdentifier("toupdate");
+
+    request.setAuditWho("christian");
+    long count = count(entityManager, Funding.ENTITY_NAME);
+    fundingUpdateBusiness.process(request);
+    assertEquals(count, count(entityManager, Funding.ENTITY_NAME));
+  }
+
+  @Test
+  void funding_updateAmount() {
+    FundingUpdateAmountRequestDto request = new FundingUpdateAmountRequestDto();
+    request.setIdentifier("toupdateamount");
+    request.setAmount(1);
+    request.setAuditWho("christian");
+    long count = count(entityManager, Funding.ENTITY_NAME);
+    fundingUpdateAmountBusiness.process(request);
+    assertEquals(count, count(entityManager, Funding.ENTITY_NAME));
+  }
+
+  @Test
+  void funding_mapToDto_whenNull() {
+    assertNull(fundingMapper.mapToDto(null));
+  }
+
+  @Test
+  void funding_mapToDto_whenNotNull() {
+    Funding instance = new Funding();
+    instance.setIdentifier("1");
+    instance.setAudit(new Audit());
+    instance.getAudit().setWho("christian");
+    FundingDto dto = fundingMapper.mapToDto(instance);
+    assertEquals(instance.getIdentifier(), dto.getIdentifier());
+    assertEquals(instance.getAudit().getWho(), dto.getAudit().getWho());
+  }
+
+  @Test
+  void funding_mapToDto_whenNotNullAndAuditNull() {
+    Funding instance = new Funding();
+    instance.setIdentifier("1");
+    FundingDto dto = fundingMapper.mapToDto(instance);
+    assertEquals(instance.getIdentifier(), dto.getIdentifier());
+    assertNull(dto.getAudit());
+  }
+
+  @Test
+  void funding_mapFromDto_whenNull() {
+    assertNull(fundingMapper.mapFromDto(null));
+  }
+
+  @Test
+  void funding_mapFromDto_whenAuditNull() {
+    FundingDto dto = new FundingDto();
+    dto.setIdentifier("1");
+    Funding instance = fundingMapper.mapFromDto(dto);
+    assertEquals(dto.getIdentifier(), instance.getIdentifier());
+    assertEquals(null, instance.getAudit());
+  }
+
+  @Test
+  void funding_mapFromDto_whenAuditNotNull() {
+    FundingDto dto = new FundingDto();
+    dto.setIdentifier("1");
+    dto.setAudit(new AuditDto());
+    dto.getAudit().setWho("meliane");
+    Funding instance = fundingMapper.mapFromDto(dto);
+    assertEquals(dto.getIdentifier(), instance.getIdentifier());
+    assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
+  }
+
+  /* Execution */
+
+  @Test
+  void execution_create() {
+    FundingExecutionCreateRequestDto request = new FundingExecutionCreateRequestDto();
+    request.setFundingIdentifier("1");
+    request.setAmount(1);
+    request.setAuditWho("christian");
+    assertCreateEntity(entityManager, FundingExecution.class,
+        () -> executionCreateBusiness.process(request));
+  }
+
+  @Test
+  void execution_readMany() {
+    GetManyRequestDto request = new GetManyRequestDto();
+    request.projection().addNames(FundingExecutionDto.JSON_FUNDING_AS_STRING);
+    request.setAuditWho("christian");
+    assertTrue(executionReadManyBusiness.process(request).getCount() > 0);
+  }
+
+  @Test
+  void execution_update() {
+    FundingExecutionUpdateRequestDto request = new FundingExecutionUpdateRequestDto();
+    request.setIdentifier("toupdate");
+
+    request.setAuditWho("christian");
+    long count = count(entityManager, FundingExecution.ENTITY_NAME);
+    executionUpdateBusiness.process(request);
+    assertEquals(count, count(entityManager, FundingExecution.ENTITY_NAME));
+  }
+
+  @Test
+  void execution_mapToDto_whenNull() {
+    assertNull(executionMapper.mapToDto(null));
+  }
+
+  @Test
+  void execution_mapToDto_whenNotNull() {
+    FundingExecution instance = new FundingExecution();
+    instance.setIdentifier("1");
+    instance.setAudit(new Audit());
+    instance.getAudit().setWho("christian");
+    FundingExecutionDto dto = executionMapper.mapToDto(instance);
+    assertEquals(instance.getIdentifier(), dto.getIdentifier());
+    assertEquals(instance.getAudit().getWho(), dto.getAudit().getWho());
+  }
+
+  @Test
+  void execution_mapToDto_whenNotNullAndAuditNull() {
+    FundingExecution instance = new FundingExecution();
+    instance.setIdentifier("1");
+    FundingExecutionDto dto = executionMapper.mapToDto(instance);
+    assertEquals(instance.getIdentifier(), dto.getIdentifier());
+    assertNull(dto.getAudit());
+  }
+
+  @Test
+  void execution_mapFromDto_whenNull() {
+    assertNull(executionMapper.mapFromDto(null));
+  }
+
+  @Test
+  void execution_mapFromDto_whenAuditNull() {
+    FundingExecutionDto dto = new FundingExecutionDto();
+    dto.setIdentifier("1");
+    FundingExecution instance = executionMapper.mapFromDto(dto);
+    assertEquals(dto.getIdentifier(), instance.getIdentifier());
+    assertEquals(null, instance.getAudit());
+  }
+
+  @Test
+  void execution_mapFromDto_whenAuditNotNull() {
+    FundingExecutionDto dto = new FundingExecutionDto();
+    dto.setIdentifier("1");
+    dto.setAudit(new AuditDto());
+    dto.getAudit().setWho("meliane");
+    FundingExecution instance = executionMapper.mapFromDto(dto);
+    assertEquals(dto.getIdentifier(), instance.getIdentifier());
+    assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
+  }
+  
   public static class Profile implements QuarkusTestProfile {
 
     @Override

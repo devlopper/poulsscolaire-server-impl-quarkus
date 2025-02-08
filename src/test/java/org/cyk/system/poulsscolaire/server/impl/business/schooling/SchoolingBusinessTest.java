@@ -28,6 +28,8 @@ import java.util.UUID;
 import org.cyk.system.poulsscolaire.server.api.configuration.BranchDto;
 import org.cyk.system.poulsscolaire.server.api.configuration.BranchInstanceDto;
 import org.cyk.system.poulsscolaire.server.api.configuration.BranchInstanceFilter;
+import org.cyk.system.poulsscolaire.server.api.configuration.PeriodDto;
+import org.cyk.system.poulsscolaire.server.api.configuration.PeriodFilter;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolingDto;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolingService.SchoolingCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolingService.SchoolingUpdateRequestDto;
@@ -61,6 +63,9 @@ import org.cyk.system.poulsscolaire.server.impl.business.fee.FeeReadByIdentifier
 import org.cyk.system.poulsscolaire.server.impl.business.fee.FeeReadManyBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.fee.FeeReadOneBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.fee.FeeUpdateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.period.PeriodReadByIdentifierBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.period.PeriodReadManyBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.period.PeriodReadOneBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.seniority.SeniorityCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.seniority.SeniorityDeleteBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.seniority.SeniorityMapper;
@@ -76,6 +81,8 @@ import org.cyk.system.poulsscolaire.server.impl.persistence.Deadline;
 import org.cyk.system.poulsscolaire.server.impl.persistence.DeadlineDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Fee;
 import org.cyk.system.poulsscolaire.server.impl.persistence.FeeDynamicQuery;
+import org.cyk.system.poulsscolaire.server.impl.persistence.Period;
+import org.cyk.system.poulsscolaire.server.impl.persistence.PeriodDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Schooling;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Seniority;
 import org.junit.jupiter.api.Test;
@@ -222,6 +229,22 @@ class SchoolingBusinessTest extends AbstractTest {
   DeadlineDynamicQuery deadlineDynamicQuery;
 
   DynamicQueryParameters<Deadline> deadlineDynamicQueryParameters = new DynamicQueryParameters<>();
+  
+  /* Period */
+  
+  @Inject
+  PeriodReadManyBusiness periodReadManyBusiness;
+
+  @Inject
+  PeriodReadOneBusiness periodReadOneBusiness;
+
+  @Inject
+  PeriodReadByIdentifierBusiness periodReadByIdentifierBusiness;
+
+  @Inject
+  PeriodDynamicQuery periodDynamicQuery;
+
+  DynamicQueryParameters<Period> periodParameters = new DynamicQueryParameters<>();
   
   @Test
   void create() {
@@ -719,6 +742,29 @@ class SchoolingBusinessTest extends AbstractTest {
     Deadline instance = deadlineMapper.mapFromDto(dto);
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
     assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
+  }
+  
+  /* Period */
+  
+  @ParameterizedTest
+  @CsvSource(value = {"1,true,3", "1,false,1:2", "2,true,4", "2,false,1:2:3", "3,true,3:4",
+      "3,false,1:2", "4,true,", "4,false,"})
+  void period_getMany_whenSchoolIdentifier_whenOpened(String schoolIdentifier, boolean opened,
+      String expected) {
+    PeriodFilter filter = new PeriodFilter();
+    filter.setSchoolIdentifier(schoolIdentifier);
+    filter.setOpened(opened);
+    periodParameters.setFilter(filter.toDto());
+    periodParameters.projection().addNames(PeriodDto.JSON_IDENTIFIER);
+    List<Period> periods = periodDynamicQuery.getMany(periodParameters);
+    assertNotNull(periods);
+    if (Core.isStringBlank(expected)) {
+      assertEquals(0, periods.size());
+    } else {
+      assertLinesMatch(List.of(expected.split(":")),
+          periods.stream().map(i -> i.getIdentifier()).toList());
+    }
+
   }
   
   public static class Profile implements QuarkusTestProfile {
