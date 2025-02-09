@@ -45,6 +45,10 @@ public class SubsidyDecisionDynamicQuery extends AbstractDynamicQuery<SubsidyDec
     projectionBuilder().name(AbstractIdentifiableCodableDto.JSON_CODE)
         .fieldName(AbstractIdentifiableCodable.FIELD_CODE).build();
 
+    projectionBuilder().name(AbstractIdentifiableDto.JSON_AS_STRING)
+        .fieldName(AbstractIdentifiableCodable.FIELD_CODE)
+        .nameFieldName(AbstractIdentifiable.FIELD_AS_STRING).build();
+
     projectionBuilder().name(SubsidyDecisionDto.JSON_AMOUNT).fieldName(SubsidyDecision.FIELD_AMOUNT)
         .build();
 

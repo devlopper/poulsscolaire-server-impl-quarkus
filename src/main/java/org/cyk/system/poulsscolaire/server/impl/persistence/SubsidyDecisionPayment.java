@@ -33,12 +33,12 @@ public class SubsidyDecisionPayment extends AbstractIdentifiableAuditable {
   @JoinColumn(name = COLUMN_SUBSIDY_DECISION, nullable = false)
   public SubsidyDecision subsidyDecision;
 
+  @Transient
+  public String subsidyDecisionAsString;
+  
   @NotNull
   @Column(name = COLUMN_AMOUNT, nullable = false)
   public Integer amount;
-
-  @Transient
-  public String paymentAsString;
 
   @Transient
   public String amountAsString;
