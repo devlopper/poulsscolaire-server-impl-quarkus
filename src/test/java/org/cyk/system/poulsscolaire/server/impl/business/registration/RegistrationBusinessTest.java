@@ -1139,6 +1139,8 @@ class RegistrationBusinessTest extends AbstractTest {
   void subsidyDecision_create() {
     SubsidyDecisionCreateRequestDto request = new SubsidyDecisionCreateRequestDto();
     request.setCode("mycode");
+    request.setSchoolingIdentifier("1");
+    request.setAmount(0);
     request.setAuditWho("christian");
     long count = count(entityManager, SubsidyDecision.ENTITY_NAME);
     subsidyDecisionCreateBusiness.process(request);
@@ -1150,6 +1152,8 @@ class RegistrationBusinessTest extends AbstractTest {
     SubsidyDecisionUpdateRequestDto request = new SubsidyDecisionUpdateRequestDto();
     request.setIdentifier("toupdate");
     request.setCode("mycode2");
+    request.setSchoolingIdentifier("1");
+    request.setAmount(0);
     request.setAuditWho("christian");
     long count = count(entityManager, SubsidyDecision.ENTITY_NAME);
     subsidyDecisionUpdateBusiness.process(request);

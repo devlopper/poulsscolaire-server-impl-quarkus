@@ -1,10 +1,13 @@
 package org.cyk.system.poulsscolaire.server.impl.business.subsidydecision;
 
+import ci.gouv.dgbf.extension.core.StringList;
 import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableCreateBusiness;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.registration.SubsidyDecisionService.SubsidyDecisionCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.impl.business.schooling.SchoolingValidator;
+import org.cyk.system.poulsscolaire.server.impl.persistence.Schooling;
 import org.cyk.system.poulsscolaire.server.impl.persistence.SubsidyDecision;
 import org.cyk.system.poulsscolaire.server.impl.persistence.SubsidyDecisionPersistence;
 
@@ -26,4 +29,22 @@ public class SubsidyDecisionCreateBusiness
   @Inject
   @Getter
   SubsidyDecisionValidator validator;
+
+  @Inject
+  SchoolingValidator schoolingValidator;
+
+  @Override
+  protected Object[] validate(SubsidyDecisionCreateRequestDto request, StringList messages) {
+    Schooling schooling =
+        schoolingValidator.validateInstanceByIdentifier(request.getSchoolingIdentifier(), messages);
+    return new Object[] {schooling};
+  }
+
+  @Override
+  protected void setFields(SubsidyDecision subsidyDecision, Object[] array,
+      SubsidyDecisionCreateRequestDto request) {
+    super.setFields(subsidyDecision, array, request);
+    subsidyDecision.schooling = (Schooling) array[0];
+    subsidyDecision.amount = request.getAmount();
+  }
 }
