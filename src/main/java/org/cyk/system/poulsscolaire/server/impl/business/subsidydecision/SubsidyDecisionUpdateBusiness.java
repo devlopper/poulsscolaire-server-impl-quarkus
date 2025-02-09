@@ -43,7 +43,6 @@ public class SubsidyDecisionUpdateBusiness
   @Override
   protected void prepare(SubsidyDecision subsidyDecision, SubsidyDecisionUpdateRequestDto request) {
     super.prepare(subsidyDecision, request);
-    subsidyDecision.schoolingIdentifier = request.getSchoolingIdentifier();
     subsidyDecision.amount = request.getAmount();
   }
 }
