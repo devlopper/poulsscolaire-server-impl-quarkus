@@ -13,6 +13,7 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.registration.SubsidyDecisionDto;
+import org.cyk.system.poulsscolaire.server.api.registration.SubsidyDecisionFilter;
 
 /**
  * Cette classe représente la requête dynamique de {@link SubsidyDecision}.
@@ -27,6 +28,7 @@ public class SubsidyDecisionDynamicQuery extends AbstractDynamicQuery<SubsidyDec
   @Getter
   EntityManager entityManager;
 
+  String schoolVariableName;
   String branchVariableName;
 
   /**
@@ -34,6 +36,7 @@ public class SubsidyDecisionDynamicQuery extends AbstractDynamicQuery<SubsidyDec
    */
   public SubsidyDecisionDynamicQuery() {
     super(SubsidyDecision.class);
+    schoolVariableName = "school";
     branchVariableName = "branch";
   }
 
@@ -76,6 +79,15 @@ public class SubsidyDecisionDynamicQuery extends AbstractDynamicQuery<SubsidyDec
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
         .valueFunction(AbstractIdentifiableFilter::getIdentifier).build();
+
+    predicateBuilder().name(SubsidyDecisionFilter.JSON_SCHOOL_IDENTIFIER)
+        .fieldName(fieldName(SubsidyDecision.FIELD_SCHOOLING, Schooling.FIELD_SCHOOL_IDENTIFIER))
+        .valueFunction(SubsidyDecisionFilter::getSchoolIdentifier).build();
+
+    predicateBuilder().name(SubsidyDecisionFilter.JSON_SCHOOLING_IDENTIFIER)
+        .fieldName(
+            fieldName(SubsidyDecision.FIELD_SCHOOLING, AbstractIdentifiable.FIELD_IDENTIFIER))
+        .valueFunction(SubsidyDecisionFilter::getSchoolingIdentifier).build();
 
     // Ordres par défaut
     orderBuilder().fieldName(AbstractIdentifiableCodable.FIELD_CODE).build();

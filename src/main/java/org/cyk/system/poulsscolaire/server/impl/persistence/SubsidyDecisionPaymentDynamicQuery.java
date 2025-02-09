@@ -11,6 +11,7 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.registration.SubsidyDecisionPaymentDto;
+import org.cyk.system.poulsscolaire.server.api.registration.SubsidyDecisionPaymentFilter;
 
 /**
  * Cette classe représente la requête dynamique de {@link SubsidyDecisionPayment}.
@@ -52,6 +53,11 @@ public class SubsidyDecisionPaymentDynamicQuery
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
         .valueFunction(AbstractIdentifiableFilter::getIdentifier).build();
+
+    predicateBuilder().name(SubsidyDecisionPaymentFilter.JSON_SUBSIDY_DECISION_IDENTIFIER)
+        .fieldName(fieldName(SubsidyDecisionPayment.FIELD_SUBSIDY_DECISION,
+            AbstractIdentifiable.FIELD_IDENTIFIER))
+        .valueFunction(SubsidyDecisionPaymentFilter::getSubsidyDecisionIdentifier).build();
 
     // Ordres par défaut
     orderBuilder().fieldName(fieldName(SubsidyDecisionPayment.FIELD_SUBSIDY_DECISION,
