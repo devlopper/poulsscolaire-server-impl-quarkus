@@ -1,6 +1,6 @@
 package org.cyk.system.poulsscolaire.server.impl.business.subsidydecision;
 
-import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableCodableNamableValidator;
+import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableCodableValidator;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
@@ -15,7 +15,7 @@ import org.cyk.system.poulsscolaire.server.impl.persistence.SubsidyDecisionPersi
  */
 @ApplicationScoped
 public class SubsidyDecisionValidator
-    extends AbstractIdentifiableCodableNamableValidator<SubsidyDecision> {
+    extends AbstractIdentifiableCodableValidator<SubsidyDecision> {
 
   @Inject
   @Getter
