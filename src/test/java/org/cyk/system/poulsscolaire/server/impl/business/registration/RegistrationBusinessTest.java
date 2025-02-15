@@ -19,6 +19,7 @@ import io.quarkus.test.junit.QuarkusTestProfile;
 import io.quarkus.test.junit.TestProfile;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -50,6 +51,8 @@ import org.cyk.system.poulsscolaire.server.api.registration.SubsidyDecisionPayme
 import org.cyk.system.poulsscolaire.server.api.registration.SubsidyDecisionPaymentService.SubsidyDecisionPaymentUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.registration.SubsidyDecisionService.SubsidyDecisionCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.registration.SubsidyDecisionService.SubsidyDecisionUpdateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.registration.SubsidyDecisionService.SubsidyDecisionUpdateSubsidiesRequestDto;
+import org.cyk.system.poulsscolaire.server.api.registration.SubsidyDecisionService.SubsidyDecisionUpdateSubsidiesRequestDto.SubsidyDto;
 import org.cyk.system.poulsscolaire.server.impl.business.adjustedfee.AdjustedFeeCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.adjustedfee.AdjustedFeeDeleteBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.adjustedfee.AdjustedFeeMapper;
@@ -95,6 +98,7 @@ import org.cyk.system.poulsscolaire.server.impl.business.subsidydecision.Subsidy
 import org.cyk.system.poulsscolaire.server.impl.business.subsidydecision.SubsidyDecisionReadManyBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.subsidydecision.SubsidyDecisionReadOneBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.subsidydecision.SubsidyDecisionUpdateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.subsidydecision.SubsidyDecisionUpdateSubsidiesBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.subsidydecisionpayment.SubsidyDecisionPaymentCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.subsidydecisionpayment.SubsidyDecisionPaymentDeleteBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.subsidydecisionpayment.SubsidyDecisionPaymentMapper;
@@ -327,6 +331,9 @@ class RegistrationBusinessTest extends AbstractTest {
 
   @Inject
   SubsidyDecisionUpdateBusiness subsidyDecisionUpdateBusiness;
+
+  @Inject
+  SubsidyDecisionUpdateSubsidiesBusiness subsidyDecisionUpdateSubsidiesBusiness;
 
   @Inject
   SubsidyDecisionDeleteBusiness subsidyDecisionDeleteBusiness;
@@ -1175,7 +1182,6 @@ class RegistrationBusinessTest extends AbstractTest {
     assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
   }
 
-
   @Test
   void subsidyDecision_create() {
     SubsidyDecisionCreateRequestDto request = new SubsidyDecisionCreateRequestDto();
@@ -1199,6 +1205,34 @@ class RegistrationBusinessTest extends AbstractTest {
     long count = count(entityManager, SubsidyDecision.ENTITY_NAME);
     subsidyDecisionUpdateBusiness.process(request);
     assertEquals(count, count(entityManager, SubsidyDecision.ENTITY_NAME));
+  }
+
+  @Test
+  void subsidyDecision_updateSubsidies() {
+    SubsidyDecisionUpdateSubsidiesRequestDto request =
+        new SubsidyDecisionUpdateSubsidiesRequestDto();
+    request.setIdentifier("toupdate");
+    request.setSubsidies(new ArrayList<>());
+    SubsidyDto subsidy = new SubsidyDto();
+    subsidy.setRegistrationIdentifier("1");
+    request.getSubsidies().add(subsidy);
+    request.setAuditWho("christian");
+    long count = count(entityManager, SubsidyDecision.ENTITY_NAME);
+    subsidyDecisionUpdateSubsidiesBusiness.process(request);
+    assertEquals(count, count(entityManager, SubsidyDecision.ENTITY_NAME));
+  }
+
+  @Test
+  void subsidyDecision_registrations_whenNull() {
+    SubsidyDecision subsidyDecision = new SubsidyDecision();
+    assertNotNull(subsidyDecision.registrations());
+  }
+
+  @Test
+  void subsidyDecision_registrations_whenNotNull() {
+    SubsidyDecision subsidyDecision = new SubsidyDecision();
+    subsidyDecision.registrations = new ArrayList<>();
+    assertEquals(subsidyDecision.registrations, subsidyDecision.registrations());
   }
 
   @Test

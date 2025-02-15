@@ -20,6 +20,7 @@ import org.cyk.system.poulsscolaire.server.impl.business.subsidydecision.Subsidy
 import org.cyk.system.poulsscolaire.server.impl.business.subsidydecision.SubsidyDecisionReadManyBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.subsidydecision.SubsidyDecisionReadOneBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.subsidydecision.SubsidyDecisionUpdateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.subsidydecision.SubsidyDecisionUpdateSubsidiesBusiness;
 
 /**
  * Cette classe représente l'implémentation de {@link SubsidyDecisionService}.
@@ -46,6 +47,9 @@ public class SubsidyDecisionServiceImpl extends AbstractServiceImpl
   @Inject
   SubsidyDecisionUpdateBusiness updateBusiness;
 
+  @Inject
+  SubsidyDecisionUpdateSubsidiesBusiness updateSubsidiesBusiness;
+  
   @Inject
   SubsidyDecisionDeleteBusiness deleteBusiness;
 
@@ -85,6 +89,14 @@ public class SubsidyDecisionServiceImpl extends AbstractServiceImpl
   @Override
   public Response update(SubsidyDecisionUpdateRequestDto request) {
     IdentifiableResponseDto dto = updateBusiness.process(request);
+    ResponseBuilder responseBuilder = new ResponseBuilder();
+    responseBuilder.setDto(dto);
+    return responseBuilder.build();
+  }
+  
+  @Override
+  public Response updateSubsidies(SubsidyDecisionUpdateSubsidiesRequestDto request) {
+    IdentifiableResponseDto dto = updateSubsidiesBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);
     return responseBuilder.build();

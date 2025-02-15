@@ -10,6 +10,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Collection;
 import lombok.EqualsAndHashCode;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
@@ -47,6 +49,21 @@ public class SubsidyDecision extends AbstractIdentifiableCodableAuditable {
 
   @Transient
   public String amountAsString;
+  
+  @Transient
+  public Collection<Registration> registrations;
+  
+  /**
+   * Cette méthode permet d'obtenir {@link #registrations} non null.
+   *
+   * @return {@link #registrations} non null
+   */
+  public Collection<Registration> registrations() {
+    if (registrations == null) {
+      registrations = new ArrayList<>();
+    }
+    return registrations;
+  }
   
   public static final String FIELD_SCHOOLING = "schooling";
   public static final String FIELD_SCHOOLING_IDENTIFIER = "schoolingIdentifier";

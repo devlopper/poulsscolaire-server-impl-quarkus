@@ -61,6 +61,19 @@ public class Registration extends AbstractIdentifiableCodableAuditable {
   @Column(name = COLUMN_PRE_REGISTRATION_AMOUNT)
   public Integer preRegistrationAmount;
 
+  @ManyToOne
+  @JoinColumn(name = COLUMN_SUBSIDY_DECISION)
+  public SubsidyDecision subsidyDecision;
+  
+  @Transient
+  public String subsidyDecisionAsString;
+  
+  @Column(name = COLUMN_SUBSIDY_REFUSED)
+  public Boolean subsidyRefused;
+  
+  @Column(name = COLUMN_SUBSIDY_REFUSAL_REASON)
+  public String subsidyRefusalReason;
+  
   @Transient
   public String studentAsString;
 
@@ -120,7 +133,11 @@ public class Registration extends AbstractIdentifiableCodableAuditable {
       "preRegistrationAmountAsString";
   public static final String FIELD_BRANCH_INSTANCE_IDENTIFIER = "branchInstanceIdentifier";
   public static final String FIELD_BRANCH_INSTANCE_AS_STRING = "branchInstanceAsString";
-
+  public static final String FIELD_SUBSIDY_DECISION = "subsidyDecision";
+  public static final String FIELD_SUBSIDY_DECISION_AS_STRING = "subsidyDecisionAsString";
+  public static final String FIELD_SUBSIDY_REFUSED = "subsidyRefused";
+  public static final String FIELD_SUBSIDY_REFUSAL_REASON = "subsidyRefusalReason";
+  
   public static final String ENTITY_NAME = "Registration";
   public static final String TABLE_NAME = "TA_INSCRIPTION";
 
@@ -130,4 +147,7 @@ public class Registration extends AbstractIdentifiableCodableAuditable {
   public static final String COLUMN_SENIORITY = "ANCIENNETE";
   public static final String COLUMN_BRANCH_INSTANCE_IDENTIFIER = "CLASSE";
   public static final String COLUMN_PRE_REGISTRATION_AMOUNT = "MONTANT_PRE_INSCRIPTION";
+  public static final String COLUMN_SUBSIDY_DECISION = "DECISION_SUBVENTION";
+  public static final String COLUMN_SUBSIDY_REFUSED = "SUBVENTION_REFUSEE";
+  public static final String COLUMN_SUBSIDY_REFUSAL_REASON = "MOTIF_REFUS_SUBVENTION";
 }

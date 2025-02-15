@@ -18,6 +18,7 @@ import org.cyk.system.poulsscolaire.server.impl.business.subsidydecision.Subsidy
 import org.cyk.system.poulsscolaire.server.impl.business.subsidydecision.SubsidyDecisionReadManyBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.subsidydecision.SubsidyDecisionReadOneBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.subsidydecision.SubsidyDecisionUpdateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.subsidydecision.SubsidyDecisionUpdateSubsidiesBusiness;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -48,8 +49,8 @@ class SubsidyDecisionServiceImplTest extends AbstractTest {
     Mockito.when(business.process(any())).thenReturn(new SubsidyDecisionGetManyResponseDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
-        .post(SubsidyDecisionService.PATH + "/" + SubsidyDecisionService.GET_MANY_PATH).then()
-        .log().ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
+        .post(SubsidyDecisionService.PATH + "/" + SubsidyDecisionService.GET_MANY_PATH).then().log()
+        .ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
   }
 
   @Test
@@ -59,10 +60,10 @@ class SubsidyDecisionServiceImplTest extends AbstractTest {
     Mockito.when(business.process(any())).thenReturn(new SubsidyDecisionDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
-        .post(SubsidyDecisionService.PATH + "/" + SubsidyDecisionService.GET_ONE_PATH).then()
-        .log().ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
+        .post(SubsidyDecisionService.PATH + "/" + SubsidyDecisionService.GET_ONE_PATH).then().log()
+        .ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
   }
-  
+
   @Test
   void readByIdentifier() {
     SubsidyDecisionReadByIdentifierBusiness business =
@@ -86,14 +87,25 @@ class SubsidyDecisionServiceImplTest extends AbstractTest {
   }
 
   @Test
+  void updateSubsidies() {
+    SubsidyDecisionUpdateSubsidiesBusiness business =
+        installMockForType(SubsidyDecisionUpdateSubsidiesBusiness.class);
+    Mockito.when(business.process(any())).thenReturn(new IdentifiableResponseDto());
+
+    RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
+        .post(SubsidyDecisionService.PATH + "/" + SubsidyDecisionService.UPDATE_SUBSIDIES_PATH)
+        .then().log().ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
+  }
+
+  @Test
   void delete() {
     SubsidyDecisionDeleteBusiness business =
         installMockForType(SubsidyDecisionDeleteBusiness.class);
     Mockito.when(business.process(any())).thenReturn(new IdentifiableResponseDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
-        .delete(SubsidyDecisionService.PATH + "/" + SubsidyDecisionService.DELETE_PATH).then()
-        .log().ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
+        .delete(SubsidyDecisionService.PATH + "/" + SubsidyDecisionService.DELETE_PATH).then().log()
+        .ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
   }
-  
+
 }

@@ -991,7 +991,7 @@ CREATE TABLE TA_INSCRIPTION (
 	CLASSE VARCHAR(36) NOT NULL COMMENT 'Identifiant de la classe',
 	MONTANT_PRE_INSCRIPTION INT NOT NULL COMMENT 'Montant de la pré-inscription',
 	DECISION_SUBVENTION VARCHAR(36) COMMENT 'Identifiant de la décision de subvention',
-	SUBVENTION_ACCEPTEE BOOLEAN COMMENT 'Subvention acceptée',
+	SUBVENTION_REFUSEE BOOLEAN COMMENT 'Subvention refusée',
 	MOTIF_REFUS_SUBVENTION VARCHAR(255) COMMENT 'Motif refus subvention',
 	
 	-- Audit
@@ -1030,7 +1030,7 @@ CREATE TABLE TA_INSCRIPTION_AUD (
 	CLASSE VARCHAR(36) NOT NULL COMMENT 'Identifiant de la classe',
 	MONTANT_PRE_INSCRIPTION INT NOT NULL COMMENT 'Montant de la pré-inscription',
 	DECISION_SUBVENTION VARCHAR(36) COMMENT 'Identifiant de la décision de subvention',
-	SUBVENTION_ACCEPTEE BOOLEAN COMMENT 'Subvention acceptée',
+	SUBVENTION_REFUSEE BOOLEAN COMMENT 'Subvention refusée',
 	MOTIF_REFUS_SUBVENTION VARCHAR(255) COMMENT 'Motif refus subvention',
 	
 	-- Audit
