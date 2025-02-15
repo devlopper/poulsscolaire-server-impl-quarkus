@@ -192,6 +192,11 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
         .fieldName(
             fieldName(Registration.FIELD_SUBSIDY_DECISION, AbstractIdentifiable.FIELD_IDENTIFIER))
         .valueFunction(RegistrationFilter::getSubsidyDecisionIdentifier).build();
+
+    predicateBuilder().name(RegistrationFilter.JSON_DOES_NOT_BELONGS_TO_SUBSIDY_DECISION_IDENTIFIER)
+        .expression("(t.subsidyDecision IS NULL OR t.subsidyDecision.identifier <> :%s)"
+            .formatted(RegistrationFilter.JSON_DOES_NOT_BELONGS_TO_SUBSIDY_DECISION_IDENTIFIER))
+        .valueFunction(RegistrationFilter::getDoesNotBelongsToSubsidyDecisionIdentifier).build();
   }
 
   String buildAsStringProjectionExpression(String variableName, String branchInstanceVariableName) {
