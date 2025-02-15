@@ -71,6 +71,12 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
     projectionBuilder().name(AbstractIdentifiableCodableDto.JSON_CODE)
         .fieldName(AbstractIdentifiableCodable.FIELD_CODE).build();
 
+    projectionBuilder().name(RegistrationDto.JSON_SUBSIDY_REFUSAL_REASON)
+        .fieldName(Registration.FIELD_SUBSIDY_REFUSAL_REASON).build();
+
+    projectionBuilder().name(RegistrationDto.JSON_SUBSIDY_REFUSED)
+        .fieldName(Registration.FIELD_SUBSIDY_REFUSED).build();
+
     projectionBuilder().name(RegistrationDto.JSON_BRANCH_INSTANCE_AS_STRING)
         .expression(formatConcatName(branchInstanceVariableName))
         .resultConsumer((i, a) -> i.branchInstanceAsString = a.getNextAsString()).build();
@@ -197,6 +203,12 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
         .expression("(t.subsidyDecision IS NULL OR t.subsidyDecision.identifier <> :%s)"
             .formatted(RegistrationFilter.JSON_DOES_NOT_BELONGS_TO_SUBSIDY_DECISION_IDENTIFIER))
         .valueFunction(RegistrationFilter::getDoesNotBelongsToSubsidyDecisionIdentifier).build();
+
+    predicateBuilder().name(RegistrationFilter.JSON_SUBSIDY_REFUSED)
+        .expression("((:" + RegistrationFilter.JSON_SUBSIDY_REFUSED
+            + " = FALSE AND (t.subsidyRefused IS NULL OR t.subsidyRefused IS FALSE))" + " OR (:"
+            + RegistrationFilter.JSON_SUBSIDY_REFUSED + " = TRUE AND t.subsidyRefused IS TRUE))")
+        .valueFunction(RegistrationFilter::getSubsidyRefused).build();
   }
 
   String buildAsStringProjectionExpression(String variableName, String branchInstanceVariableName) {
