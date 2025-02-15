@@ -187,6 +187,11 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
         .tupleVariableName(branchInstanceVariableName)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
         .valueFunction(RegistrationFilter::getBranchInstanceIdentifier).build();
+
+    predicateBuilder().name(RegistrationFilter.JSON_SUBSIDY_DECISION_IDENTIFIER)
+        .fieldName(
+            fieldName(Registration.FIELD_SUBSIDY_DECISION, AbstractIdentifiable.FIELD_IDENTIFIER))
+        .valueFunction(RegistrationFilter::getSubsidyDecisionIdentifier).build();
   }
 
   String buildAsStringProjectionExpression(String variableName, String branchInstanceVariableName) {
