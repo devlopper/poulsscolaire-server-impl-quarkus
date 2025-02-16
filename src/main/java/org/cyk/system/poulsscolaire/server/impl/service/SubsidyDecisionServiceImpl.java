@@ -21,6 +21,7 @@ import org.cyk.system.poulsscolaire.server.impl.business.subsidydecision.Subsidy
 import org.cyk.system.poulsscolaire.server.impl.business.subsidydecision.SubsidyDecisionReadOneBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.subsidydecision.SubsidyDecisionUpdateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.subsidydecision.SubsidyDecisionUpdateSubsidiesBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.subsidydecision.SubsidyDecisionUpdateSubsidiesToNullBusiness;
 
 /**
  * Cette classe représente l'implémentation de {@link SubsidyDecisionService}.
@@ -49,7 +50,9 @@ public class SubsidyDecisionServiceImpl extends AbstractServiceImpl
 
   @Inject
   SubsidyDecisionUpdateSubsidiesBusiness updateSubsidiesBusiness;
-  
+  @Inject
+  SubsidyDecisionUpdateSubsidiesToNullBusiness updateSubsidiesToNullBusiness;
+
   @Inject
   SubsidyDecisionDeleteBusiness deleteBusiness;
 
@@ -93,10 +96,18 @@ public class SubsidyDecisionServiceImpl extends AbstractServiceImpl
     responseBuilder.setDto(dto);
     return responseBuilder.build();
   }
-  
+
   @Override
   public Response updateSubsidies(SubsidyDecisionUpdateSubsidiesRequestDto request) {
     IdentifiableResponseDto dto = updateSubsidiesBusiness.process(request);
+    ResponseBuilder responseBuilder = new ResponseBuilder();
+    responseBuilder.setDto(dto);
+    return responseBuilder.build();
+  }
+
+  @Override
+  public Response updateSubsidiesToNull(SubsidyDecisionUpdateSubsidiesToNullRequestDto request) {
+    IdentifiableResponseDto dto = updateSubsidiesToNullBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);
     return responseBuilder.build();

@@ -19,6 +19,7 @@ import org.cyk.system.poulsscolaire.server.impl.business.subsidydecision.Subsidy
 import org.cyk.system.poulsscolaire.server.impl.business.subsidydecision.SubsidyDecisionReadOneBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.subsidydecision.SubsidyDecisionUpdateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.subsidydecision.SubsidyDecisionUpdateSubsidiesBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.subsidydecision.SubsidyDecisionUpdateSubsidiesToNullBusiness;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -94,6 +95,18 @@ class SubsidyDecisionServiceImplTest extends AbstractTest {
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
         .post(SubsidyDecisionService.PATH + "/" + SubsidyDecisionService.UPDATE_SUBSIDIES_PATH)
+        .then().log().ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
+  }
+
+  @Test
+  void updateSubsidiesToNull() {
+    SubsidyDecisionUpdateSubsidiesToNullBusiness business =
+        installMockForType(SubsidyDecisionUpdateSubsidiesToNullBusiness.class);
+    Mockito.when(business.process(any())).thenReturn(new IdentifiableResponseDto());
+
+    RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
+        .post(SubsidyDecisionService.PATH + "/"
+            + SubsidyDecisionService.UPDATE_SUBSIDIES_TO_NULL_PATH)
         .then().log().ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
   }
 

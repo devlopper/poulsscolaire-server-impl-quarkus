@@ -53,6 +53,7 @@ import org.cyk.system.poulsscolaire.server.api.registration.SubsidyDecisionServi
 import org.cyk.system.poulsscolaire.server.api.registration.SubsidyDecisionService.SubsidyDecisionUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.registration.SubsidyDecisionService.SubsidyDecisionUpdateSubsidiesRequestDto;
 import org.cyk.system.poulsscolaire.server.api.registration.SubsidyDecisionService.SubsidyDecisionUpdateSubsidiesRequestDto.SubsidyDto;
+import org.cyk.system.poulsscolaire.server.api.registration.SubsidyDecisionService.SubsidyDecisionUpdateSubsidiesToNullRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.business.adjustedfee.AdjustedFeeCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.adjustedfee.AdjustedFeeDeleteBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.adjustedfee.AdjustedFeeMapper;
@@ -99,6 +100,7 @@ import org.cyk.system.poulsscolaire.server.impl.business.subsidydecision.Subsidy
 import org.cyk.system.poulsscolaire.server.impl.business.subsidydecision.SubsidyDecisionReadOneBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.subsidydecision.SubsidyDecisionUpdateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.subsidydecision.SubsidyDecisionUpdateSubsidiesBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.subsidydecision.SubsidyDecisionUpdateSubsidiesToNullBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.subsidydecisionpayment.SubsidyDecisionPaymentCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.subsidydecisionpayment.SubsidyDecisionPaymentDeleteBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.subsidydecisionpayment.SubsidyDecisionPaymentMapper;
@@ -335,6 +337,9 @@ class RegistrationBusinessTest extends AbstractTest {
   @Inject
   SubsidyDecisionUpdateSubsidiesBusiness subsidyDecisionUpdateSubsidiesBusiness;
 
+  @Inject
+  SubsidyDecisionUpdateSubsidiesToNullBusiness subsidyDecisionUpdateSubsidiesToNullBusiness;
+  
   @Inject
   SubsidyDecisionDeleteBusiness subsidyDecisionDeleteBusiness;
 
@@ -1214,7 +1219,7 @@ class RegistrationBusinessTest extends AbstractTest {
     request.setIdentifier("toupdate");
     request.setSubsidies(new ArrayList<>());
     SubsidyDto subsidy = new SubsidyDto();
-    subsidy.setRegistrationIdentifier("1");
+    subsidy.setRegistrationIdentifier("tosubsidize");
     request.getSubsidies().add(subsidy);
     request.setAuditWho("christian");
     long count = count(entityManager, SubsidyDecision.ENTITY_NAME);
@@ -1222,6 +1227,18 @@ class RegistrationBusinessTest extends AbstractTest {
     assertEquals(count, count(entityManager, SubsidyDecision.ENTITY_NAME));
   }
 
+  @Test
+  void subsidyDecision_updateSubsidiesToNull() {
+    SubsidyDecisionUpdateSubsidiesToNullRequestDto request =
+        new SubsidyDecisionUpdateSubsidiesToNullRequestDto();
+    request.setIdentifier("toupdate");
+    request.setRegistrationsIdentifiers(List.of("tosubsidizetonull"));
+    request.setAuditWho("christian");
+    long count = count(entityManager, SubsidyDecision.ENTITY_NAME);
+    subsidyDecisionUpdateSubsidiesToNullBusiness.process(request);
+    assertEquals(count, count(entityManager, SubsidyDecision.ENTITY_NAME));
+  }
+  
   @Test
   void subsidyDecision_registrations_whenNull() {
     SubsidyDecision subsidyDecision = new SubsidyDecision();
