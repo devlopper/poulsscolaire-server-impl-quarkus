@@ -10,10 +10,12 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.time.Month;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.cyk.system.poulsscolaire.server.api.accounting.FundingStatus;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
@@ -67,6 +69,19 @@ public class Funding extends AbstractIdentifiableAuditable {
   @Column(name = COLUMN_JUSTIFICATION)
   public String justification;
 
+  @NotNull
+  @Column(name = COLUMN_STATUS, nullable = false)
+  public FundingStatus status;
+  
+  @Column(name = COLUMN_STATUS_REASON)
+  public String statusReason;
+  
+  @Column(name = COLUMN_INPUT_DEADLINE)
+  public LocalDateTime inputDeadline;
+  
+  @Transient
+  public String statusAsString;
+  
   @Transient
   public String budgetIdentifier;
 
@@ -97,6 +112,30 @@ public class Funding extends AbstractIdentifiableAuditable {
   @Transient
   public Boolean amountInputable;
 
+  /**
+   * Transmissible.
+   */
+  @Transient
+  public Boolean transmitable;
+
+  /**
+   * Acceptable.
+   */
+  @Transient
+  public Boolean acceptable;
+
+  /**
+   * Retournable.
+   */
+  @Transient
+  public Boolean returnable;
+
+  /**
+   * Approuvable.
+   */
+  @Transient
+  public Boolean approvable;
+  
   public static final String FIELD_BUDGET = "budget";
   public static final String FIELD_BUDGET_IDENTIFIER = "budgetIdentifier";
   public static final String FIELD_BUDGET_AS_STRING = "budgetAsString";
@@ -131,4 +170,7 @@ public class Funding extends AbstractIdentifiableAuditable {
   public static final String COLUMN_MONTH = "MOIS";
   public static final String COLUMN_AMOUNT = "MONTANT";
   public static final String COLUMN_JUSTIFICATION = "JUSTIFICATION";
+  public static final String COLUMN_STATUS = "STATUT";
+  public static final String COLUMN_STATUS_REASON = "MOTIF";
+  public static final String COLUMN_INPUT_DEADLINE = "DATE_LIMITE_SAISIE";
 }

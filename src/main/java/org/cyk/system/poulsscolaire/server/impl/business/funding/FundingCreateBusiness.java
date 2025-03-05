@@ -6,6 +6,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingService.FundingCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.accounting.FundingStatus;
 import org.cyk.system.poulsscolaire.server.impl.business.accountingaccount.AccountingAccountValidator;
 import org.cyk.system.poulsscolaire.server.impl.business.budget.BudgetValidator;
 import org.cyk.system.poulsscolaire.server.impl.business.fundingsource.FundingSourceValidator;
@@ -64,5 +65,6 @@ public class FundingCreateBusiness extends AbstractIdentifiableCreateBusiness<Fu
     funding.month = request.getMonth();
     funding.amount = request.getAmount();
     funding.justification = request.getJustification();
+    funding.status = FundingStatus.CREATED;
   }
 }
