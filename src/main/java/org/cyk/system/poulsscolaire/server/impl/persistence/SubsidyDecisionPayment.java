@@ -34,6 +34,9 @@ public class SubsidyDecisionPayment extends AbstractIdentifiableAuditable {
   public SubsidyDecision subsidyDecision;
 
   @Transient
+  public String subsidyDecisionIdentifier;
+  
+  @Transient
   public String subsidyDecisionAsString;
   
   @NotNull
@@ -44,6 +47,7 @@ public class SubsidyDecisionPayment extends AbstractIdentifiableAuditable {
   public String amountAsString;
 
   public static final String FIELD_SUBSIDY_DECISION = "subsidyDecision";
+  public static final String FIELD_SUBSIDY_DECISION_IDENTIFIER = "subsidyDecisionIdentifier";
   public static final String FIELD_SUBSIDY_DECISION_AS_STRING = "subsidyDecisionAsString";
   public static final String FIELD_AMOUNT = "amount";
   public static final String FIELD_AMOUNT_AS_STRING = "amountAsString";

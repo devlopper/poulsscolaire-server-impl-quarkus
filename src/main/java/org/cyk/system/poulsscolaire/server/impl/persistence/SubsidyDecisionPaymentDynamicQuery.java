@@ -39,6 +39,15 @@ public class SubsidyDecisionPaymentDynamicQuery
     projectionBuilder().name(AbstractIdentifiableDto.JSON_IDENTIFIER)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER).build();
 
+    projectionBuilder().name(SubsidyDecisionPaymentDto.JSON_AMOUNT)
+        .fieldName(SubsidyDecisionPayment.FIELD_AMOUNT).build();
+
+    projectionBuilder().name(SubsidyDecisionPaymentDto.JSON_SUBSIDY_DECISION_IDENTIFIER)
+        .nameFieldName(SubsidyDecisionPayment.FIELD_SUBSIDY_DECISION_IDENTIFIER)
+        .fieldName(fieldName(SubsidyDecisionPayment.FIELD_SUBSIDY_DECISION,
+            AbstractIdentifiable.FIELD_IDENTIFIER))
+        .build();
+
     projectionBuilder().name(SubsidyDecisionPaymentDto.JSON_SUBSIDY_DECISION_AS_STRING)
         .nameFieldName(SubsidyDecisionPayment.FIELD_SUBSIDY_DECISION_AS_STRING)
         .fieldName(fieldName(SubsidyDecisionPayment.FIELD_SUBSIDY_DECISION,
