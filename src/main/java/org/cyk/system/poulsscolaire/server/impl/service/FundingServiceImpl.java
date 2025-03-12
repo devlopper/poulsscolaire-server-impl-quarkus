@@ -1,6 +1,7 @@
 package org.cyk.system.poulsscolaire.server.impl.service;
 
 import ci.gouv.dgbf.extension.core.ResponseBuilder;
+import ci.gouv.dgbf.extension.server.service.api.request.ByIdentifierRequestDto;
 import ci.gouv.dgbf.extension.server.service.api.request.DeleteOneRequestDto;
 import ci.gouv.dgbf.extension.server.service.api.request.GetByIdentifierRequestDto;
 import ci.gouv.dgbf.extension.server.service.api.request.GetManyRequestDto;
@@ -14,11 +15,15 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingService;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingAcceptBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingApproveBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingDeleteBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingReadByIdentifierBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingReadManyBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingReadOneBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingReturnBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingTransmitBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingUpdateAmountBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingUpdateBusiness;
 
@@ -35,6 +40,18 @@ public class FundingServiceImpl extends AbstractServiceImpl
   @Inject
   FundingCreateBusiness createBusiness;
 
+  @Inject
+  FundingTransmitBusiness transmitBusiness;
+  
+  @Inject
+  FundingAcceptBusiness acceptBusiness;
+  
+  @Inject
+  FundingApproveBusiness approveBusiness;
+  
+  @Inject
+  FundingReturnBusiness returnBusiness;
+  
   @Inject
   FundingReadManyBusiness readManyBusiness;
 
@@ -59,6 +76,38 @@ public class FundingServiceImpl extends AbstractServiceImpl
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);
     responseBuilder.setStatusCode(Status.CREATED.getStatusCode());
+    return responseBuilder.build();
+  }
+  
+  @Override
+  public Response transmit(ByIdentifierRequestDto request) {
+    IdentifiableResponseDto dto = transmitBusiness.process(request);
+    ResponseBuilder responseBuilder = new ResponseBuilder();
+    responseBuilder.setDto(dto);
+    return responseBuilder.build();
+  }
+  
+  @Override
+  public Response accept(ByIdentifierRequestDto request) {
+    IdentifiableResponseDto dto = acceptBusiness.process(request);
+    ResponseBuilder responseBuilder = new ResponseBuilder();
+    responseBuilder.setDto(dto);
+    return responseBuilder.build();
+  }
+  
+  @Override
+  public Response approve(ByIdentifierRequestDto request) {
+    IdentifiableResponseDto dto = approveBusiness.process(request);
+    ResponseBuilder responseBuilder = new ResponseBuilder();
+    responseBuilder.setDto(dto);
+    return responseBuilder.build();
+  }
+  
+  @Override
+  public Response returnBack(FundingReturnRequestDto request) {
+    IdentifiableResponseDto dto = returnBusiness.process(request);
+    ResponseBuilder responseBuilder = new ResponseBuilder();
+    responseBuilder.setDto(dto);
     return responseBuilder.build();
   }
 

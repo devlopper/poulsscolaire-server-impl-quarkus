@@ -29,21 +29,27 @@ import org.cyk.system.poulsscolaire.server.api.accounting.FundingExecutionDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingExecutionService.FundingExecutionCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingExecutionService.FundingExecutionUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingService.FundingCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.accounting.FundingService.FundingReturnRequestDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingService.FundingUpdateAmountRequestDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingService.FundingUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingSourceDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingSourceService.FundingSourceCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.accounting.FundingStatus;
 import org.cyk.system.poulsscolaire.server.api.configuration.DepartmentDto;
 import org.cyk.system.poulsscolaire.server.impl.business.department.DepartmentMapper;
 import org.cyk.system.poulsscolaire.server.impl.business.department.DepartmentReadByIdentifierBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.department.DepartmentReadManyBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.department.DepartmentReadOneBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingAcceptBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingApproveBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingDeleteBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingMapper;
 import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingReadByIdentifierBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingReadManyBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingReadOneBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingReturnBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingTransmitBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingUpdateAmountBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingUpdateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingValidator;
@@ -141,6 +147,18 @@ class BudgetBusinessTest extends AbstractTest {
   @Inject
   FundingSourceCreateBusiness fundingSourceCreateBusiness;
 
+  @Inject
+  FundingTransmitBusiness fundingTransmitBusiness;
+
+  @Inject
+  FundingAcceptBusiness fundingAcceptBusiness;
+
+  @Inject
+  FundingApproveBusiness fundingApproveBusiness;
+
+  @Inject
+  FundingReturnBusiness fundingReturnBusiness;
+  
   @Inject
   FundingSourceReadManyBusiness fundingSourceReadManyBusiness;
 
@@ -386,8 +404,13 @@ class BudgetBusinessTest extends AbstractTest {
   }
   
   void assertStatus(String actIdentifier, BudgetStatus expectedStatus) {
-    Budget triennialProgram = entityManager.find(Budget.class, actIdentifier);
-    assertEquals(expectedStatus, triennialProgram.status);
+    Budget budget = entityManager.find(Budget.class, actIdentifier);
+    assertEquals(expectedStatus, budget.status);
+  }
+  
+  void assertStatus(String actIdentifier, FundingStatus expectedStatus) {
+    Funding funding = entityManager.find(Funding.class, actIdentifier);
+    assertEquals(expectedStatus, funding.status);
   }
   
   /* FundingSource */
@@ -479,6 +502,47 @@ class BudgetBusinessTest extends AbstractTest {
     assertEquals(count + 1, count(entityManager, Funding.ENTITY_NAME));
   }
 
+  @ParameterizedTest
+  @ValueSource(strings = {"transmit_when_created"})
+  void funding_transmit(String identifier) {
+    ByIdentifierRequestDto request = new ByIdentifierRequestDto();
+    request.setIdentifier(identifier);
+    request.setAuditWho(UUID.randomUUID().toString());
+    fundingTransmitBusiness.process(request);
+    assertStatus(request.getIdentifier(), FundingStatus.TRANSMITTED);
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"accept_when_transmitted"})
+  void funding_accept(String identifier) {
+    ByIdentifierRequestDto request = new ByIdentifierRequestDto();
+    request.setIdentifier(identifier);
+    request.setAuditWho(UUID.randomUUID().toString());
+    fundingAcceptBusiness.process(request);
+    assertStatus(request.getIdentifier(), FundingStatus.ACCEPTED);
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"approve_when_accepted"})
+  void funding_approve(String identifier) {
+    ByIdentifierRequestDto request = new ByIdentifierRequestDto();
+    request.setIdentifier(identifier);
+    request.setAuditWho(UUID.randomUUID().toString());
+    fundingApproveBusiness.process(request);
+    assertStatus(request.getIdentifier(), FundingStatus.APPROVED);
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"return_when_accepted"})
+  void funding_returnBack(String identifier) {
+    FundingReturnRequestDto request = new FundingReturnRequestDto();
+    request.setIdentifier(identifier);
+    request.setReason("ma raison");
+    request.setAuditWho(UUID.randomUUID().toString());
+    fundingReturnBusiness.process(request);
+    assertStatus(request.getIdentifier(), FundingStatus.RETURNED);
+  }
+  
   @Test
   void funding_readMany() {
     GetManyRequestDto request = new GetManyRequestDto();
