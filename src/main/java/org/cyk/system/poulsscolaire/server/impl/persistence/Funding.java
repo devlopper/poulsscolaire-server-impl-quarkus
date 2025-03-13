@@ -160,6 +160,14 @@ public class Funding extends AbstractIdentifiableAuditable {
   
   public static final String FIELD_JUSTIFICATION = "justification";
 
+  public static final String FIELD_STATUS = "status";
+  public static final String FIELD_STATUS_AS_STRING = "statusAsString";
+  public static final String FIELD_TRANSMITABLE = "transmitable";
+  public static final String FIELD_ACCEPTABLE = "acceptable";
+  public static final String FIELD_RETURNABLE = "returnable";
+  public static final String FIELD_APPROVABLE = "approvable";
+  public static final String FIELD_STATUS_REASON = "statusReason";
+  
   public static final String ENTITY_NAME = "Funding";
   public static final String TABLE_NAME = "TA_FINANCEMENT";
 

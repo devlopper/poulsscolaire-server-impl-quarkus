@@ -21,6 +21,7 @@ import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.accounting.BudgetStatus;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingFilter;
+import org.cyk.system.poulsscolaire.server.api.accounting.FundingStatus;
 
 /**
  * Cette classe représente la requête dynamique de {@link Funding}.
@@ -112,6 +113,16 @@ public class FundingDynamicQuery extends AbstractDynamicQuery<Funding> {
     projectionBuilder().name(FundingDto.JSON_JUSTIFICATION).fieldName(Funding.FIELD_JUSTIFICATION)
         .build();
 
+    projectionBuilder().name(FundingDto.JSON_STATUS).fieldName(Funding.FIELD_STATUS).build();
+
+    projectionBuilder().name(FundingDto.JSON_STATUS_AS_STRING)
+        .nameFieldName(Funding.FIELD_STATUS_AS_STRING).fieldName(Funding.FIELD_STATUS)
+        .resultConsumer((i, a) -> i.statusAsString = a.getNextAs(FundingStatus.class).getName())
+        .build();
+
+    projectionBuilder().name(FundingDto.JSON_STATUS_REASON).fieldName(Funding.FIELD_STATUS_REASON)
+        .build();
+    
     // Jointures
     joinBuilder().projectionsNames(FundingDto.JSON_DEPARTMENT_AS_STRING)
         .predicatesNames(FundingFilter.JSON_DEPARTMENT_IDENTIFIER).leftInnerOrRight(true)
