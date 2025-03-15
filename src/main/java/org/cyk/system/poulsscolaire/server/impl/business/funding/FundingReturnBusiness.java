@@ -36,25 +36,32 @@ public class FundingReturnBusiness extends AbstractIdentifiableUpdateBusiness<Fu
   }
 
   @Override
-  protected void validate(FundingReturnRequestDto request, StringList messages,
-      Funding processing) {
-    super.validate(request, messages, processing);
-    validationHelper.validateBlankByName(this, request.getReason(), "motif", messages);
-    validator.validateStatusChange(processing.status, FundingStatus.RETURNED, messages);
+  protected void validate(FundingReturnRequestDto request, StringList messages, Funding funding) {
+    super.validate(request, messages, funding);
+    validate(funding, request.getReason(), messages);
+  }
+
+  void validate(Funding funding, String reason, StringList messages) {
+    validationHelper.validateBlankByName(this, reason, "motif", messages);
+    validator.validateStatusChange(funding.status, FundingStatus.RETURNED, messages);
   }
 
   @Override
-  protected void prepare(Funding processing, FundingReturnRequestDto request) {
-    super.prepare(processing, request);
-    processing.status = FundingStatus.RETURNED;
-    processing.statusReason = request.getReason();
+  protected void prepare(Funding funding, FundingReturnRequestDto request) {
+    super.prepare(funding, request);
+    prepare(funding, request.getReason());
   }
 
+  void prepare(Funding funding, String reason) {
+    funding.status = FundingStatus.RETURNED;
+    funding.statusReason = reason;
+  }
+  
   @Override
-  protected void processResponse(Funding budget, IdentifiableResponseDto response) {
-    super.processResponse(budget, response);
-    ((FundingStatusUpdateResponseDto) response).initialize(budget.status, budget.status.getName(),
-        budget.statusReason);
+  protected void processResponse(Funding funding, IdentifiableResponseDto response) {
+    super.processResponse(funding, response);
+    ((FundingStatusUpdateResponseDto) response).initialize(funding.status, funding.status.getName(),
+        funding.statusReason);
   }
 
   @Override

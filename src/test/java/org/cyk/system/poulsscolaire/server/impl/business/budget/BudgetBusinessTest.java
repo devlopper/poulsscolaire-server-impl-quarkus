@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import ci.gouv.dgbf.extension.server.persistence.entity.embeddable.Audit;
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
 import ci.gouv.dgbf.extension.server.service.api.entity.AuditDto;
+import ci.gouv.dgbf.extension.server.service.api.request.ByFilterRequestDto;
 import ci.gouv.dgbf.extension.server.service.api.request.ByIdentifierRequestDto;
 import ci.gouv.dgbf.extension.server.service.api.request.GetManyRequestDto;
 import ci.gouv.dgbf.extension.test.AbstractTest;
@@ -28,6 +29,8 @@ import org.cyk.system.poulsscolaire.server.api.accounting.FundingDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingExecutionDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingExecutionService.FundingExecutionCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingExecutionService.FundingExecutionUpdateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.accounting.FundingFilter;
+import org.cyk.system.poulsscolaire.server.api.accounting.FundingService.ByFilterWithReasonRequestDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingService.FundingCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingService.FundingReturnRequestDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingService.FundingUpdateAmountRequestDto;
@@ -41,7 +44,9 @@ import org.cyk.system.poulsscolaire.server.impl.business.department.DepartmentRe
 import org.cyk.system.poulsscolaire.server.impl.business.department.DepartmentReadManyBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.department.DepartmentReadOneBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingAcceptBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingAcceptByFilterBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingApproveBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingApproveByFilterBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingDeleteBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingMapper;
@@ -49,7 +54,9 @@ import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingReadById
 import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingReadManyBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingReadOneBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingReturnBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingReturnByFilterBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingTransmitBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingTransmitByFilterBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingUpdateAmountBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingUpdateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.funding.FundingValidator;
@@ -148,18 +155,6 @@ class BudgetBusinessTest extends AbstractTest {
   FundingSourceCreateBusiness fundingSourceCreateBusiness;
 
   @Inject
-  FundingTransmitBusiness fundingTransmitBusiness;
-
-  @Inject
-  FundingAcceptBusiness fundingAcceptBusiness;
-
-  @Inject
-  FundingApproveBusiness fundingApproveBusiness;
-
-  @Inject
-  FundingReturnBusiness fundingReturnBusiness;
-  
-  @Inject
   FundingSourceReadManyBusiness fundingSourceReadManyBusiness;
 
   @Inject
@@ -188,6 +183,30 @@ class BudgetBusinessTest extends AbstractTest {
   @Inject
   FundingCreateBusiness fundingCreateBusiness;
 
+  @Inject
+  FundingTransmitBusiness fundingTransmitBusiness;
+
+  @Inject
+  FundingTransmitByFilterBusiness fundingTransmitByFilterBusiness;
+  
+  @Inject
+  FundingAcceptBusiness fundingAcceptBusiness;
+
+  @Inject
+  FundingAcceptByFilterBusiness fundingAcceptByFilterBusiness;
+  
+  @Inject
+  FundingApproveBusiness fundingApproveBusiness;
+
+  @Inject
+  FundingApproveByFilterBusiness fundingApproveByFilterBusiness;
+  
+  @Inject
+  FundingReturnBusiness fundingReturnBusiness;
+  
+  @Inject
+  FundingReturnByFilterBusiness fundingReturnByFilterBusiness;
+  
   @Inject
   FundingReadManyBusiness fundingReadManyBusiness;
 
@@ -511,6 +530,18 @@ class BudgetBusinessTest extends AbstractTest {
     fundingTransmitBusiness.process(request);
     assertStatus(request.getIdentifier(), FundingStatus.TRANSMITTED);
   }
+  
+  @ParameterizedTest
+  @ValueSource(strings = {"transmitbyfilter_when_created"})
+  void funding_transmitByFilter(String identifier) {
+    ByFilterRequestDto request = new ByFilterRequestDto();
+    FundingFilter filter = new FundingFilter();
+    filter.setIdentifier(identifier);
+    request.setFilter(filter.toDto());
+    request.setAuditWho(UUID.randomUUID().toString());
+    fundingTransmitByFilterBusiness.process(request);
+    assertStatus(identifier, FundingStatus.TRANSMITTED);
+  }
 
   @ParameterizedTest
   @ValueSource(strings = {"accept_when_transmitted"})
@@ -520,6 +551,18 @@ class BudgetBusinessTest extends AbstractTest {
     request.setAuditWho(UUID.randomUUID().toString());
     fundingAcceptBusiness.process(request);
     assertStatus(request.getIdentifier(), FundingStatus.ACCEPTED);
+  }
+  
+  @ParameterizedTest
+  @ValueSource(strings = {"acceptbyfilter_when_transmitted"})
+  void funding_acceptByFilter(String identifier) {
+    ByFilterRequestDto request = new ByFilterRequestDto();
+    FundingFilter filter = new FundingFilter();
+    filter.setIdentifier(identifier);
+    request.setFilter(filter.toDto());
+    request.setAuditWho(UUID.randomUUID().toString());
+    fundingAcceptByFilterBusiness.process(request);
+    assertStatus(identifier, FundingStatus.ACCEPTED);
   }
 
   @ParameterizedTest
@@ -531,16 +574,41 @@ class BudgetBusinessTest extends AbstractTest {
     fundingApproveBusiness.process(request);
     assertStatus(request.getIdentifier(), FundingStatus.APPROVED);
   }
+  
+  @ParameterizedTest
+  @ValueSource(strings = {"approvebyfilter_when_accepted"})
+  void funding_approvedByFilter(String identifier) {
+    ByFilterRequestDto request = new ByFilterRequestDto();
+    FundingFilter filter = new FundingFilter();
+    filter.setIdentifier(identifier);
+    request.setFilter(filter.toDto());
+    request.setAuditWho(UUID.randomUUID().toString());
+    fundingApproveByFilterBusiness.process(request);
+    assertStatus(identifier, FundingStatus.APPROVED);
+  }
 
   @ParameterizedTest
   @ValueSource(strings = {"return_when_accepted"})
-  void funding_returnBack(String identifier) {
+  void funding_return(String identifier) {
     FundingReturnRequestDto request = new FundingReturnRequestDto();
     request.setIdentifier(identifier);
     request.setReason("ma raison");
     request.setAuditWho(UUID.randomUUID().toString());
     fundingReturnBusiness.process(request);
     assertStatus(request.getIdentifier(), FundingStatus.RETURNED);
+  }
+  
+  @ParameterizedTest
+  @ValueSource(strings = {"returnbyfilter_when_accepted"})
+  void funding_returnByFilter(String identifier) {
+    ByFilterWithReasonRequestDto request = new ByFilterWithReasonRequestDto();
+    FundingFilter filter = new FundingFilter();
+    filter.setIdentifier(identifier);
+    request.setFilter(filter.toDto());
+    request.setReason("reason");
+    request.setAuditWho(UUID.randomUUID().toString());
+    fundingReturnByFilterBusiness.process(request);
+    assertStatus(identifier, FundingStatus.RETURNED);
   }
   
   @Test

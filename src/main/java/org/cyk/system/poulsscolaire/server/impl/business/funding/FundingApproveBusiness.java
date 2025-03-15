@@ -36,17 +36,26 @@ public class FundingApproveBusiness extends AbstractIdentifiableUpdateBusiness<F
 
   @Override
   protected void validate(ByIdentifierRequestDto request, StringList messages,
-      Funding budget) {
-    super.validate(request, messages, budget);
-    validator.validateStatusChange(budget.status, FundingStatus.APPROVED, messages);
+      Funding funding) {
+    super.validate(request, messages, funding);
+    validate(funding, messages);
+  }
+  
+  void validate(Funding funding, StringList messages) {
+    validator.validateStatusChange(funding.status, FundingStatus.APPROVED, messages);
   }
 
   @Override
-  protected void prepare(Funding budget, ByIdentifierRequestDto request) {
-    super.prepare(budget, request);
-    budget.status = FundingStatus.APPROVED;
+  protected void prepare(Funding funding, ByIdentifierRequestDto request) {
+    super.prepare(funding, request);
+    prepare(funding);
   }
 
+  void prepare(Funding funding) {
+    funding.status = FundingStatus.APPROVED;
+    funding.statusReason = null;
+  }
+  
   @Override
   protected void processResponse(Funding budget, IdentifiableResponseDto response) {
     super.processResponse(budget, response);
