@@ -17,6 +17,8 @@ import jakarta.persistence.TypedQuery;
 import java.time.Month;
 import java.time.format.TextStyle;
 import java.util.Locale;
+import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingDto;
 import org.cyk.system.poulsscolaire.server.api.accounting.FundingFilter;
@@ -121,6 +123,18 @@ public class FundingDynamicQuery extends AbstractDynamicQuery<Funding> {
     projectionBuilder().name(FundingDto.JSON_STATUS_REASON).fieldName(Funding.FIELD_STATUS_REASON)
         .build();
 
+    buildStatusableProjection(FundingDto.JSON_TRANSMITABLE, Funding.FIELD_TRANSMITABLE,
+        FundingStatus.TRANSMITTED, (a, b) -> a.transmitable = b);
+
+    buildStatusableProjection(FundingDto.JSON_ACCEPTABLE, Funding.FIELD_ACCEPTABLE,
+        FundingStatus.ACCEPTED, (a, b) -> a.acceptable = b);
+
+    buildStatusableProjection(FundingDto.JSON_APPROVABLE, Funding.FIELD_APPROVABLE,
+        FundingStatus.APPROVED, (a, b) -> a.approvable = b);
+
+    buildStatusableProjection(FundingDto.JSON_RETURNABLE, Funding.FIELD_RETURNABLE,
+        FundingStatus.RETURNED, (a, b) -> a.returnable = b);
+    
     // Jointures
     joinBuilder().projectionsNames(FundingDto.JSON_DEPARTMENT_AS_STRING)
         .predicatesNames(FundingFilter.JSON_DEPARTMENT_IDENTIFIER).leftInnerOrRight(true)
@@ -148,6 +162,18 @@ public class FundingDynamicQuery extends AbstractDynamicQuery<Funding> {
         fieldName(Funding.FIELD_ACCOUNTING_ACCOUNT, AbstractIdentifiableCodableNamable.FIELD_NAME))
         .build();
   }
+  
+  void buildStatusableProjection(String name, String fieldName, FundingStatus status,
+      BiConsumer<Funding, Boolean> booleanConsumer) {
+    projectionBuilder().name(name).nameFieldName(fieldName)
+        .expression(status.getPrevious().stream()
+            .map(p -> String.format(STATUS_EQUALS_FORMAT, FundingStatus.class.getName(), p.name()))
+            .collect(Collectors.joining(OR)))
+        .resultConsumer((i, a) -> booleanConsumer.accept(i, a.getNextAsBoolean())).build();
+  }
+
+  static final String STATUS_EQUALS_FORMAT = "t.status = %s.%s";
+  static final String OR = " OR ";
 
   /**
    * Cette méthode permet de sommer le montant.
