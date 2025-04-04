@@ -62,6 +62,18 @@ public class SchoolConfigurationDynamicQuery extends AbstractDynamicQuery<School
             fieldName(variableName, SchoolConfiguration.FIELD_PAYMENT_ACCOUNTING_ACCOUNT)))
         .resultConsumer((i, a) -> i.paymentAccountingAccountAsString = a.getNextAsString()).build();
 
+    projectionBuilder().name(SchoolConfigurationDto.JSON_PAYMENT_FUNDING_SOURCE_IDENTIFIER)
+        .nameFieldName(SchoolConfiguration.FIELD_PAYMENT_FUNDING_SOURCE_IDENTIFIER)
+        .fieldName(fieldName(SchoolConfiguration.FIELD_PAYMENT_FUNDING_SOURCE,
+            AbstractIdentifiable.FIELD_IDENTIFIER))
+        .build();
+
+    projectionBuilder().name(SchoolConfigurationDto.JSON_PAYMENT_FUNDING_SOURCE_AS_STRING)
+        .nameFieldName(SchoolConfiguration.FIELD_PAYMENT_FUNDING_SOURCE_AS_STRING)
+        .expression(formatConcatCodeName(
+            fieldName(variableName, SchoolConfiguration.FIELD_PAYMENT_FUNDING_SOURCE)))
+        .resultConsumer((i, a) -> i.paymentFundingSourceAsString = a.getNextAsString()).build();
+
     // Jointures
     joinBuilder().projectionsNames(SchoolConfigurationDto.JSON_SCHOOL_AS_STRING)
         .predicatesNames(SchoolConfigurationDto.JSON_SCHOOL_IDENTIFIER)
