@@ -37,10 +37,9 @@ public class SchoolConfiguration extends AbstractIdentifiableAuditable {
   @JoinColumn(name = COLUMN_PAYMENT_ACCOUNTING_ACCOUNT_IDENTIFIER, nullable = false)
   public AccountingAccount paymentAccountingAccount;
 
-  //@NotNull
-  //@ManyToOne
-  //@JoinColumn(name = COLUMN_PAYMENT_FUNDING_SOURCE_IDENTIFIER, nullable = false)
-  @Transient
+  @NotNull
+  @ManyToOne
+  @JoinColumn(name = COLUMN_PAYMENT_FUNDING_SOURCE_IDENTIFIER, nullable = false)
   public FundingSource paymentFundingSource;
   
   /* Transient Fields */

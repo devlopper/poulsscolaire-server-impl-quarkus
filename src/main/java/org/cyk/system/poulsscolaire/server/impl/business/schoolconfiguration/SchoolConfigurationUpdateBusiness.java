@@ -7,6 +7,7 @@ import jakarta.inject.Inject;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolConfigurationService.SchoolConfigurationUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.business.accountingaccount.AccountingAccountValidator;
+import org.cyk.system.poulsscolaire.server.impl.business.fundingsource.FundingSourceValidator;
 import org.cyk.system.poulsscolaire.server.impl.persistence.SchoolConfiguration;
 import org.cyk.system.poulsscolaire.server.impl.persistence.SchoolConfigurationPersistence;
 
@@ -32,6 +33,9 @@ public class SchoolConfigurationUpdateBusiness
   @Inject
   AccountingAccountValidator accountingAccountValidator;
 
+  @Inject
+  FundingSourceValidator fundingSourceValidator;
+
   @Override
   protected void validate(SchoolConfigurationUpdateRequestDto request, StringList messages,
       SchoolConfiguration schoolConfiguration) {
@@ -39,5 +43,7 @@ public class SchoolConfigurationUpdateBusiness
     schoolConfiguration.schoolIdentifier = request.getSchoolIdentifier();
     schoolConfiguration.paymentAccountingAccount = accountingAccountValidator
         .validateInstanceByIdentifier(request.getPaymentAccountingAccountIdentifier(), messages);
+    schoolConfiguration.paymentFundingSource = fundingSourceValidator
+        .validateInstanceByIdentifier(request.getPaymentFundingSourceIdentifier(), messages);
   }
 }

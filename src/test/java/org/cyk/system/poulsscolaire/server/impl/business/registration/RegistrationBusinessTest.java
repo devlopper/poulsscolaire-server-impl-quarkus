@@ -460,6 +460,7 @@ class RegistrationBusinessTest extends AbstractTest {
     SchoolConfigurationCreateRequestDto request = new SchoolConfigurationCreateRequestDto();
     request.setSchoolIdentifier("2");
     request.setPaymentAccountingAccountIdentifier("1");
+    request.setPaymentFundingSourceIdentifier("1");
     request.setAuditWho("christian");
     long count = count(entityManager, SchoolConfiguration.ENTITY_NAME);
     schoolConfigurationCreateBusiness.process(request);
@@ -472,6 +473,7 @@ class RegistrationBusinessTest extends AbstractTest {
     request.setIdentifier("toupdate");
     request.setSchoolIdentifier("1");
     request.setPaymentAccountingAccountIdentifier("1");
+    request.setPaymentFundingSourceIdentifier("1");
     request.setAuditWho("christian");
     long count = count(entityManager, SchoolConfiguration.ENTITY_NAME);
     schoolConfigurationUpdateBusiness.process(request);

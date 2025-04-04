@@ -7,7 +7,9 @@ import jakarta.inject.Inject;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.configuration.SchoolConfigurationService.SchoolConfigurationCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.business.accountingaccount.AccountingAccountValidator;
+import org.cyk.system.poulsscolaire.server.impl.business.fundingsource.FundingSourceValidator;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AccountingAccount;
+import org.cyk.system.poulsscolaire.server.impl.persistence.FundingSource;
 import org.cyk.system.poulsscolaire.server.impl.persistence.SchoolConfiguration;
 import org.cyk.system.poulsscolaire.server.impl.persistence.SchoolConfigurationPersistence;
 
@@ -33,11 +35,16 @@ public class SchoolConfigurationCreateBusiness
   @Inject
   AccountingAccountValidator accountingAccountValidator;
 
+  @Inject
+  FundingSourceValidator fundingSourceValidator;
+
   @Override
   protected Object[] validate(SchoolConfigurationCreateRequestDto request, StringList messages) {
     AccountingAccount accountingAccount = accountingAccountValidator
         .validateInstanceByIdentifier(request.getPaymentAccountingAccountIdentifier(), messages);
-    return new Object[] {accountingAccount};
+    FundingSource fundingSource = fundingSourceValidator
+        .validateInstanceByIdentifier(request.getPaymentFundingSourceIdentifier(), messages);
+    return new Object[] {accountingAccount, fundingSource};
   }
 
   @Override
@@ -46,5 +53,6 @@ public class SchoolConfigurationCreateBusiness
     super.setFields(schooling, array, request);
     schooling.schoolIdentifier = request.getSchoolIdentifier();
     schooling.paymentAccountingAccount = (AccountingAccount) array[0];
+    schooling.paymentFundingSource = (FundingSource) array[1];
   }
 }
