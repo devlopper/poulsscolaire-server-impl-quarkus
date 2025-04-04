@@ -37,6 +37,12 @@ public class SchoolConfiguration extends AbstractIdentifiableAuditable {
   @JoinColumn(name = COLUMN_PAYMENT_ACCOUNTING_ACCOUNT_IDENTIFIER, nullable = false)
   public AccountingAccount paymentAccountingAccount;
 
+  //@NotNull
+  //@ManyToOne
+  //@JoinColumn(name = COLUMN_PAYMENT_FUNDING_SOURCE_IDENTIFIER, nullable = false)
+  @Transient
+  public FundingSource paymentFundingSource;
+  
   /* Transient Fields */
 
   @Transient
@@ -47,6 +53,12 @@ public class SchoolConfiguration extends AbstractIdentifiableAuditable {
 
   @Transient
   public String paymentAccountingAccountAsString;
+  
+  @Transient
+  public String paymentFundingSourceIdentifier;
+
+  @Transient
+  public String paymentFundingSourceAsString;
 
   public static final String FIELD_SCHOOL_IDENTIFIER = "schoolIdentifier";
   public static final String FIELD_SCHOOL_AS_STRING = "schoolAsString";
@@ -55,11 +67,18 @@ public class SchoolConfiguration extends AbstractIdentifiableAuditable {
       "paymentAccountingAccountIdentifier";
   public static final String FIELD_PAYMENT_ACCOUNTING_ACCOUNT_AS_STRING =
       "paymentAccountingAccountAsString";
-
+  public static final String FIELD_PAYMENT_FUNDING_SOURCE = "paymentFundingSource";
+  public static final String FIELD_PAYMENT_FUNDING_SOURCE_IDENTIFIER =
+      "paymentFundingSourceIdentifier";
+  public static final String FIELD_PAYMENT_FUNDING_SOURCE_AS_STRING =
+      "paymentFundingSourceAsString";
+  
   public static final String ENTITY_NAME = "SchoolConfiguration";
   public static final String TABLE_NAME = "TA_CONFIGURATION_ECOLE";
 
   public static final String COLUMN_SCHOOL_IDENTIFIER = "ECOLE";
   public static final String COLUMN_PAYMENT_ACCOUNTING_ACCOUNT_IDENTIFIER =
       "COMPTE_COMPTABLE_PAIEMENT";
+  public static final String COLUMN_PAYMENT_FUNDING_SOURCE_IDENTIFIER =
+      "SOURCE_FINANCEMENT_PAIEMENT";
 }

@@ -131,7 +131,7 @@ class BudgetBusinessTest extends AbstractTest {
   BudgetMapper mapper;
 
   /* Department */
-  
+
   @Inject
   DepartmentReadManyBusiness departmentReadManyBusiness;
 
@@ -145,12 +145,12 @@ class BudgetBusinessTest extends AbstractTest {
   DepartmentDynamicQuery departmentDynamicQuery;
 
   DynamicQueryParameters<Department> departmentParameters = new DynamicQueryParameters<>();
-  
+
   @Inject
   DepartmentMapper departmentMapper;
-  
+
   /* FundingSource */
-  
+
   @Inject
   FundingSourceCreateBusiness fundingSourceCreateBusiness;
 
@@ -177,9 +177,9 @@ class BudgetBusinessTest extends AbstractTest {
 
   DynamicQueryParameters<FundingSource> fundingSourceDynamicQueryParameters =
       new DynamicQueryParameters<>();
-  
+
   /* Funding */
-  
+
   @Inject
   FundingCreateBusiness fundingCreateBusiness;
 
@@ -188,25 +188,25 @@ class BudgetBusinessTest extends AbstractTest {
 
   @Inject
   FundingTransmitByFilterBusiness fundingTransmitByFilterBusiness;
-  
+
   @Inject
   FundingAcceptBusiness fundingAcceptBusiness;
 
   @Inject
   FundingAcceptByFilterBusiness fundingAcceptByFilterBusiness;
-  
+
   @Inject
   FundingApproveBusiness fundingApproveBusiness;
 
   @Inject
   FundingApproveByFilterBusiness fundingApproveByFilterBusiness;
-  
+
   @Inject
   FundingReturnBusiness fundingReturnBusiness;
-  
+
   @Inject
   FundingReturnByFilterBusiness fundingReturnByFilterBusiness;
-  
+
   @Inject
   FundingReadManyBusiness fundingReadManyBusiness;
 
@@ -256,7 +256,7 @@ class BudgetBusinessTest extends AbstractTest {
 
   @Inject
   FundingExecutionMapper executionMapper;
-  
+
   @Test
   void create() {
     BudgetCreateRequestDto request = new BudgetCreateRequestDto();
@@ -386,14 +386,14 @@ class BudgetBusinessTest extends AbstractTest {
   void instantiate() {
     assertNotNull(new BudgetAmount());
   }
-  
+
   /* Department */
 
   @Test
   void department_mapToDto_whenNull() {
     assertNull(departmentMapper.mapToDto(null));
   }
-  
+
   @Test
   void department_mapToDto_whenNotNull() {
     Department instance = new Department();
@@ -401,12 +401,12 @@ class BudgetBusinessTest extends AbstractTest {
     DepartmentDto dto = departmentMapper.mapToDto(instance);
     assertEquals(instance.getIdentifier(), dto.getIdentifier());
   }
-  
+
   @Test
   void department_mapFromDto_whenNull() {
     assertNull(departmentMapper.mapFromDto(null));
   }
-  
+
   @Test
   void department_mapFromDto() {
     DepartmentDto dto = new DepartmentDto();
@@ -414,24 +414,24 @@ class BudgetBusinessTest extends AbstractTest {
     Department instance = departmentMapper.mapFromDto(dto);
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
   }
-  
+
   @Test
   void department_readMany() {
     GetManyRequestDto request = new GetManyRequestDto();
     request.setAuditWho("christian");
     assertEquals(1, departmentReadManyBusiness.process(request).getCount());
   }
-  
+
   void assertStatus(String actIdentifier, BudgetStatus expectedStatus) {
     Budget budget = entityManager.find(Budget.class, actIdentifier);
     assertEquals(expectedStatus, budget.status);
   }
-  
+
   void assertStatus(String actIdentifier, FundingStatus expectedStatus) {
     Funding funding = entityManager.find(Funding.class, actIdentifier);
     assertEquals(expectedStatus, funding.status);
   }
-  
+
   /* FundingSource */
 
   @Test
@@ -503,9 +503,9 @@ class BudgetBusinessTest extends AbstractTest {
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
     assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
   }
-  
+
   /* Funding */
-  
+
   @Test
   void funding_create() {
     FundingCreateRequestDto request = new FundingCreateRequestDto();
@@ -530,7 +530,7 @@ class BudgetBusinessTest extends AbstractTest {
     fundingTransmitBusiness.process(request);
     assertStatus(request.getIdentifier(), FundingStatus.TRANSMITTED);
   }
-  
+
   @ParameterizedTest
   @ValueSource(strings = {"transmitbyfilter_when_created"})
   void funding_transmitByFilter(String identifier) {
@@ -552,7 +552,7 @@ class BudgetBusinessTest extends AbstractTest {
     fundingAcceptBusiness.process(request);
     assertStatus(request.getIdentifier(), FundingStatus.ACCEPTED);
   }
-  
+
   @ParameterizedTest
   @ValueSource(strings = {"acceptbyfilter_when_transmitted"})
   void funding_acceptByFilter(String identifier) {
@@ -574,7 +574,7 @@ class BudgetBusinessTest extends AbstractTest {
     fundingApproveBusiness.process(request);
     assertStatus(request.getIdentifier(), FundingStatus.APPROVED);
   }
-  
+
   @ParameterizedTest
   @ValueSource(strings = {"approvebyfilter_when_accepted"})
   void funding_approvedByFilter(String identifier) {
@@ -597,7 +597,7 @@ class BudgetBusinessTest extends AbstractTest {
     fundingReturnBusiness.process(request);
     assertStatus(request.getIdentifier(), FundingStatus.RETURNED);
   }
-  
+
   @ParameterizedTest
   @ValueSource(strings = {"returnbyfilter_when_accepted"})
   void funding_returnByFilter(String identifier) {
@@ -610,12 +610,13 @@ class BudgetBusinessTest extends AbstractTest {
     fundingReturnByFilterBusiness.process(request);
     assertStatus(identifier, FundingStatus.RETURNED);
   }
-  
+
   @Test
   void funding_readMany() {
     GetManyRequestDto request = new GetManyRequestDto();
-    request.projection().addNames(FundingDto.JSON_MONTH_AS_STRING,
-        FundingDto.JSON_AMOUNT_INPUTABLE);
+    request.projection().addNames(FundingDto.JSON_MONTH_AS_STRING, FundingDto.JSON_AMOUNT_INPUTABLE,
+        FundingDto.JSON_TRANSMITABLE, FundingDto.JSON_ACCEPTABLE, FundingDto.JSON_APPROVABLE,
+        FundingDto.JSON_RETURNABLE);
     request.setAuditWho("christian");
     assertTrue(fundingReadManyBusiness.process(request).getCount() > 0);
   }
@@ -772,7 +773,7 @@ class BudgetBusinessTest extends AbstractTest {
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
     assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
   }
-  
+
   public static class Profile implements QuarkusTestProfile {
 
     @Override
