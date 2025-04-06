@@ -61,6 +61,10 @@ public class Payment extends AbstractIdentifiableCodableAuditable {
   @Column(name = COLUMN_INITIATOR)
   public String initiator;
 
+  @ManyToOne
+  @JoinColumn(name = COLUMN_FUNDING_EXECUTION)
+  public FundingExecution fundingExecution;
+  
   /* Transients */
 
   @Transient
@@ -112,7 +116,9 @@ public class Payment extends AbstractIdentifiableCodableAuditable {
   public static final String FIELD_AUDIT_CANCELLATION_AS_STRING = "auditCancellationAsString";
   public static final String FIELD_BRANCH_INSTANCE_AS_STRING = "branchInstanceAsString";
   public static final String FIELD_ACCOUNTING_OPERATION_AS_STRING = "accountingOperationAsString";
-
+  public static final String FIELD_FUNDING_EXECUTION = "fundingExecution";
+  public static final String FIELD_FUNDING_EXECUTION_AS_STRING = "fundingExecutionAsString";
+  
   public static final String ENTITY_NAME = "Payment";
   public static final String TABLE_NAME = "TA_PAIEMENT";
 
@@ -122,7 +128,8 @@ public class Payment extends AbstractIdentifiableCodableAuditable {
   public static final String COLUMN_ACCOUNTING_OPERATION = "OPERATION_COMPTABLE";
   public static final String COLUMN_CANCELED = "ANNULE";
   public static final String COLUMN_INITIATOR = "INITIATEUR";
-
+  public static final String COLUMN_FUNDING_EXECUTION = "FINANCEMENT_EXECUTION";
+  
   public static final String QUERY_READ_BY_ACCOUNTING_OPERATION_IDENTIFIER =
       "Payment.readByAccountingOperation";
   public static final String QUERY_READ_BY_ACCOUNTING_OPERATION_VALUE =

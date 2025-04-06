@@ -32,16 +32,17 @@ public class SchoolConfiguration extends AbstractIdentifiableAuditable {
   @Column(name = COLUMN_SCHOOL_IDENTIFIER, nullable = false, unique = true)
   public String schoolIdentifier;
 
-  @NotNull
+  @Column(name = COLUMN_PAYMENT_DEPARTMENT_IDENTIFIER)
+  public String paymentDepartmentIdentifier;
+
   @ManyToOne
-  @JoinColumn(name = COLUMN_PAYMENT_ACCOUNTING_ACCOUNT_IDENTIFIER, nullable = false)
+  @JoinColumn(name = COLUMN_PAYMENT_ACCOUNTING_ACCOUNT_IDENTIFIER)
   public AccountingAccount paymentAccountingAccount;
 
-  @NotNull
   @ManyToOne
-  @JoinColumn(name = COLUMN_PAYMENT_FUNDING_SOURCE_IDENTIFIER, nullable = false)
+  @JoinColumn(name = COLUMN_PAYMENT_FUNDING_SOURCE_IDENTIFIER)
   public FundingSource paymentFundingSource;
-  
+
   /* Transient Fields */
 
   @Transient
@@ -52,7 +53,7 @@ public class SchoolConfiguration extends AbstractIdentifiableAuditable {
 
   @Transient
   public String paymentAccountingAccountAsString;
-  
+
   @Transient
   public String paymentFundingSourceIdentifier;
 
@@ -61,6 +62,9 @@ public class SchoolConfiguration extends AbstractIdentifiableAuditable {
 
   public static final String FIELD_SCHOOL_IDENTIFIER = "schoolIdentifier";
   public static final String FIELD_SCHOOL_AS_STRING = "schoolAsString";
+  /* Payment */
+  public static final String FIELD_PAYMENT_DEPARTMENT_IDENTIFIER = "paymentDepartmentIdentifier";
+  public static final String FIELD_PAYMENT_DEPARTMENT_AS_STRING = "paymentDepartmentAsString";
   public static final String FIELD_PAYMENT_ACCOUNTING_ACCOUNT = "paymentAccountingAccount";
   public static final String FIELD_PAYMENT_ACCOUNTING_ACCOUNT_IDENTIFIER =
       "paymentAccountingAccountIdentifier";
@@ -71,11 +75,13 @@ public class SchoolConfiguration extends AbstractIdentifiableAuditable {
       "paymentFundingSourceIdentifier";
   public static final String FIELD_PAYMENT_FUNDING_SOURCE_AS_STRING =
       "paymentFundingSourceAsString";
-  
+
   public static final String ENTITY_NAME = "SchoolConfiguration";
   public static final String TABLE_NAME = "TA_CONFIGURATION_ECOLE";
 
   public static final String COLUMN_SCHOOL_IDENTIFIER = "ECOLE";
+  /* Payment */
+  public static final String COLUMN_PAYMENT_DEPARTMENT_IDENTIFIER = "DEPARTEMENT_PAIEMENT";
   public static final String COLUMN_PAYMENT_ACCOUNTING_ACCOUNT_IDENTIFIER =
       "COMPTE_COMPTABLE_PAIEMENT";
   public static final String COLUMN_PAYMENT_FUNDING_SOURCE_IDENTIFIER =
