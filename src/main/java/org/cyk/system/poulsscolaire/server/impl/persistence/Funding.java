@@ -136,6 +136,9 @@ public class Funding extends AbstractIdentifiableAuditable {
   @Transient
   public Boolean approvable;
 
+  @Transient
+  public LocalDateTime date;
+  
   public static final String FIELD_BUDGET = "budget";
   public static final String FIELD_BUDGET_IDENTIFIER = "budgetIdentifier";
   public static final String FIELD_BUDGET_AS_STRING = "budgetAsString";

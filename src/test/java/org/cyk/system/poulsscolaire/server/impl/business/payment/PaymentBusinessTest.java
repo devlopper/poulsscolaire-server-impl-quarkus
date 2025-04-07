@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 
 import ci.gouv.dgbf.extension.server.business.BusinessInputValidationException;
 import ci.gouv.dgbf.extension.server.persistence.entity.embeddable.Audit;
@@ -12,11 +13,13 @@ import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
 import ci.gouv.dgbf.extension.server.service.api.entity.AuditDto;
 import ci.gouv.dgbf.extension.server.service.api.request.ByIdentifierRequestDto;
 import ci.gouv.dgbf.extension.test.AbstractTest;
+import io.quarkus.test.junit.QuarkusMock;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.QuarkusTestProfile;
 import io.quarkus.test.junit.TestProfile;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 import org.cyk.system.poulsscolaire.server.api.payment.PaymentAdjustedFeeDto;
@@ -37,6 +40,10 @@ import org.cyk.system.poulsscolaire.server.impl.business.paymentmode.PaymentMode
 import org.cyk.system.poulsscolaire.server.impl.business.paymentmode.PaymentModeReadManyBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.paymentmode.PaymentModeReadOneBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.paymentmode.PaymentModeUpdateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.persistence.Funding;
+import org.cyk.system.poulsscolaire.server.impl.persistence.FundingDynamicQuery;
+import org.cyk.system.poulsscolaire.server.impl.persistence.FundingExecution;
+import org.cyk.system.poulsscolaire.server.impl.persistence.FundingExecutionPersistence;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Payment;
 import org.cyk.system.poulsscolaire.server.impl.persistence.PaymentAdjustedFee;
 import org.cyk.system.poulsscolaire.server.impl.persistence.PaymentAdjustedFeeDynamicQuery;
@@ -44,9 +51,11 @@ import org.cyk.system.poulsscolaire.server.impl.persistence.PaymentAmounts;
 import org.cyk.system.poulsscolaire.server.impl.persistence.PaymentAudits;
 import org.cyk.system.poulsscolaire.server.impl.persistence.PaymentDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.PaymentMode;
+import org.cyk.system.poulsscolaire.server.impl.persistence.SchoolConfiguration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.Mockito;
 
 @QuarkusTest
 @TestProfile(PaymentBusinessTest.Profile.class)
@@ -109,27 +118,27 @@ class PaymentBusinessTest extends AbstractTest {
 
   @Inject
   PaymentAdjustedFeeMapper paymentAdjustedFeeMapper;
-  
+
   /* PaymentMode */
-  
+
   @Inject
   PaymentModeCreateBusiness paymentModeCreateBusiness;
 
   @Inject
   PaymentModeReadManyBusiness paymentModeReadManyBusiness;
-  
+
   @Inject
   PaymentModeReadOneBusiness paymentModeReadOneBusiness;
-  
+
   @Inject
   PaymentModeReadByIdentifierBusiness paymentModeReadByIdentifierBusiness;
-  
+
   @Inject
   PaymentModeUpdateBusiness paymentModeUpdateBusiness;
-  
+
   @Inject
   PaymentModeDeleteBusiness paymentModeDeleteBusiness;
-  
+
   @ParameterizedTest
   @CsvSource(value = {"2", "nofees", "unknown"})
   void create_whenPayablesEmpty(String registrationIdentifier) {
@@ -173,6 +182,92 @@ class PaymentBusinessTest extends AbstractTest {
   }
 
   @Test
+  void create_getConfiguredFunding_whenSchoolConfigurationNull() {
+    assertNull(createBusiness.getConfiguredFunding(null, null));
+  }
+
+  @Test
+  void create_getConfiguredFunding_whenSchoolConfigurationNotNull() {
+    FundingDynamicQuery fundingDynamicQuery = Mockito.mock(FundingDynamicQuery.class);
+    Mockito.when(fundingDynamicQuery.getOne(any())).thenReturn(new Funding());
+    QuarkusMock.installMockForType(fundingDynamicQuery, FundingDynamicQuery.class);
+    SchoolConfiguration schoolConfiguration = new SchoolConfiguration();
+    assertNotNull(createBusiness.getConfiguredFunding(LocalDateTime.now(), schoolConfiguration));
+  }
+
+  @Test
+  void create_instantiateFundingExecution_whenFundingNull() {
+    assertNull(createBusiness.instantiateFundingExecution(null, null, null));
+  }
+
+  @Test
+  void create_instantiateFundingExecution_whenFundingNotNull() {
+    assertNotNull(createBusiness.instantiateFundingExecution(new Payment(), LocalDateTime.now(),
+        new Funding()));
+  }
+
+  @Test
+  void create_createFundingExecution_whenFundingNull() {
+    Payment payment = new Payment();
+    payment.audit = new Audit();
+    assertDoesNotThrow(() -> createBusiness.createFundingExecution(payment, null));
+  }
+
+  @Test
+  void create_createFundingExecution_whenFundingNotNull_whenFundingExecutionNull() {
+    createBusiness = new PaymentCreateBusiness() {
+      {
+        fundingExecutionPersistence = Mockito.mock(FundingExecutionPersistence.class);
+
+      }
+
+      @Override
+      Funding getConfiguredFunding(LocalDateTime date, SchoolConfiguration schoolConfiguration) {
+        return new Funding();
+      }
+
+      @Override
+      FundingExecution instantiateFundingExecution(Payment payment, LocalDateTime date,
+          Funding funding) {
+        return null;
+      }
+    };
+
+    Payment payment = new Payment();
+    payment.date = LocalDateTime.now();
+    payment.audit = new Audit();
+    SchoolConfiguration schoolConfiguration = new SchoolConfiguration();
+    assertDoesNotThrow(() -> createBusiness.createFundingExecution(payment, schoolConfiguration));
+  }
+  
+  @Test
+  void create_createFundingExecution_whenFundingNotNull_whenFundingExecutionNotNull() {
+    createBusiness = new PaymentCreateBusiness() {
+      {
+        fundingExecutionPersistence = Mockito.mock(FundingExecutionPersistence.class);
+
+      }
+
+      @Override
+      Funding getConfiguredFunding(LocalDateTime date, SchoolConfiguration schoolConfiguration) {
+        return new Funding();
+      }
+
+      @Override
+      FundingExecution instantiateFundingExecution(Payment payment, LocalDateTime date,
+          Funding funding) {
+        return new FundingExecution();
+      }
+    };
+
+    Payment payment = new Payment();
+    payment.date = LocalDateTime.now();
+    payment.audit = new Audit();
+    SchoolConfiguration schoolConfiguration = new SchoolConfiguration();
+    assertDoesNotThrow(() -> createBusiness.createFundingExecution(payment, schoolConfiguration));
+  }
+
+  @Test
   void cancel() {
     ByIdentifierRequestDto request = new ByIdentifierRequestDto();
     request.setIdentifier("cancelable");
@@ -209,12 +304,12 @@ class PaymentBusinessTest extends AbstractTest {
   void paymentAdjustedFeeDynamicQuery() {
     assertNotNull(paymentAdjustedFeeDynamicQuery.buildQuery(parametersPaymentAdjustedFee));
   }
-  
+
   @Test
   void paymentAdjustedFee_mapToDto_whenNull() {
     assertNull(paymentAdjustedFeeMapper.mapToDto(null));
   }
-  
+
   @Test
   void paymentAdjustedFee_mapToDto_whenNotNull() {
     PaymentAdjustedFee instance = new PaymentAdjustedFee();
@@ -225,7 +320,7 @@ class PaymentBusinessTest extends AbstractTest {
     assertEquals(instance.getIdentifier(), dto.getIdentifier());
     assertEquals(instance.getAudit().getWho(), dto.getAudit().getWho());
   }
-  
+
   @Test
   void paymentAdjustedFee_mapToDto_whenNotNullAndAuditNull() {
     PaymentAdjustedFee instance = new PaymentAdjustedFee();
@@ -234,12 +329,12 @@ class PaymentBusinessTest extends AbstractTest {
     assertEquals(instance.getIdentifier(), dto.getIdentifier());
     assertNull(dto.getAudit());
   }
-  
+
   @Test
   void paymentAdjustedFee_mapFromDto_whenNull() {
     assertNull(paymentAdjustedFeeMapper.mapFromDto(null));
   }
-  
+
   @Test
   void paymentAdjustedFee_mapFromDto_whenAuditNull() {
     PaymentAdjustedFeeDto dto = new PaymentAdjustedFeeDto();
@@ -248,7 +343,7 @@ class PaymentBusinessTest extends AbstractTest {
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
     assertEquals(null, instance.getAudit());
   }
-  
+
   @Test
   void paymentAdjustedFee_mapFromDto_whenAuditNotNull() {
     PaymentAdjustedFeeDto dto = new PaymentAdjustedFeeDto();
@@ -259,7 +354,7 @@ class PaymentBusinessTest extends AbstractTest {
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
     assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
   }
- 
+
   @Test
   void paymentAdjustedFee_mapFromDto_whenAmountNotNull() {
     PaymentAdjustedFeeDto dto = new PaymentAdjustedFeeDto();
@@ -268,9 +363,9 @@ class PaymentBusinessTest extends AbstractTest {
     PaymentAdjustedFee instance = paymentAdjustedFeeMapper.mapFromDto(dto);
     assertEquals(dto.getAmount(), instance.amount);
   }
-  
+
   /* PaymentMode */
-  
+
   @Test
   void paymentMode_create() {
     PaymentModeCreateRequestDto request = new PaymentModeCreateRequestDto();

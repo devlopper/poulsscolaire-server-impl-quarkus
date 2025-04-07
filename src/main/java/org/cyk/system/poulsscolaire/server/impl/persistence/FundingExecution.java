@@ -9,6 +9,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,15 +38,21 @@ public class FundingExecution extends AbstractIdentifiableAuditable {
   @JoinColumn(name = COLUMN_FUNDING, nullable = false)
   public Funding funding;
 
-  @NotNull
-  @Column(name = COLUMN_AMOUNT, nullable = false)
-  public Integer amount;
-
   @Transient
   public String fundingIdentifier;
 
   @Transient
   public String fundingAsString;
+  
+  @Column(name = COLUMN_DATE)
+  public LocalDateTime date;
+  
+  @Transient
+  public String dateAsString;
+  
+  @NotNull
+  @Column(name = COLUMN_AMOUNT, nullable = false)
+  public Integer amount;
 
   @Transient
   public String amountAsString;
@@ -54,6 +61,9 @@ public class FundingExecution extends AbstractIdentifiableAuditable {
   public static final String FIELD_FUNDING_IDENTIFIER = "fundingIdentifier";
   public static final String FIELD_FUNDING_AS_STRING = "fundingAsString";
 
+  public static final String FIELD_DATE = "date";
+  public static final String FIELD_DATE_AS_STRING = "dateAsString";
+  
   public static final String FIELD_AMOUNT = "amount";
   public static final String FIELD_AMOUNT_AS_STRING = "amountAsString";
 
@@ -61,5 +71,6 @@ public class FundingExecution extends AbstractIdentifiableAuditable {
   public static final String TABLE_NAME = "TA_FINANCEMENT_EXECUTION";
 
   public static final String COLUMN_FUNDING = "FINANCEMENT";
+  public static final String COLUMN_DATE = "DATE_";
   public static final String COLUMN_AMOUNT = "MONTANT";
 }

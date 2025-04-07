@@ -12,6 +12,7 @@ import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.EqualsAndHashCode;
 import org.hibernate.envers.AuditOverride;
@@ -103,6 +104,9 @@ public class Payment extends AbstractIdentifiableCodableAuditable {
   @Transient
   public String accountingOperationAsString;
 
+  @Transient
+  public LocalDateTime date;
+  
   public static final String FIELD_REGISTRATION = "registration";
   public static final String FIELD_REGISTRATION_AS_STRING = "registrationAsString";
   public static final String FIELD_MODE = "mode";

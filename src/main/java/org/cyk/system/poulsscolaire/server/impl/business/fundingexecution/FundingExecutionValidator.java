@@ -1,5 +1,6 @@
 package org.cyk.system.poulsscolaire.server.impl.business.fundingexecution;
 
+import ci.gouv.dgbf.extension.core.StringList;
 import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableValidator;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -21,4 +22,7 @@ public class FundingExecutionValidator
   @Getter
   private FundingExecutionPersistence persistence;
 
+  boolean validateAmount(Integer amount, StringList messages) {
+    return validationHelper.validateLowerThanByName(this, amount, 0, "montant", "zéro", messages);
+  }
 }

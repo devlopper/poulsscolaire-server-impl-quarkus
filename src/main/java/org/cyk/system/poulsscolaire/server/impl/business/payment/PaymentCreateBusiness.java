@@ -8,12 +8,14 @@ import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters.Re
 import ci.gouv.dgbf.extension.server.service.api.request.FilterDto;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.accounting.AccountingAccountType;
+import org.cyk.system.poulsscolaire.server.api.accounting.FundingFilter;
 import org.cyk.system.poulsscolaire.server.api.payment.PaymentFilter;
 import org.cyk.system.poulsscolaire.server.api.payment.PaymentService.PaymentCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.business.accountingoperation.AccountingOperationCreateBusiness;
@@ -27,6 +29,10 @@ import org.cyk.system.poulsscolaire.server.impl.persistence.AccountingOperation;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AccountingOperationAccount;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AdjustedFee;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AdjustedFeePersistence;
+import org.cyk.system.poulsscolaire.server.impl.persistence.Funding;
+import org.cyk.system.poulsscolaire.server.impl.persistence.FundingDynamicQuery;
+import org.cyk.system.poulsscolaire.server.impl.persistence.FundingExecution;
+import org.cyk.system.poulsscolaire.server.impl.persistence.FundingExecutionPersistence;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Payment;
 import org.cyk.system.poulsscolaire.server.impl.persistence.PaymentAdjustedFee;
 import org.cyk.system.poulsscolaire.server.impl.persistence.PaymentAdjustedFeePersistence;
@@ -34,6 +40,8 @@ import org.cyk.system.poulsscolaire.server.impl.persistence.PaymentDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.PaymentMode;
 import org.cyk.system.poulsscolaire.server.impl.persistence.PaymentPersistence;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Registration;
+import org.cyk.system.poulsscolaire.server.impl.persistence.SchoolConfiguration;
+import org.cyk.system.poulsscolaire.server.impl.persistence.SchoolConfigurationPersistence;
 
 /**
  * Cette classe représente la création de {@link Payment}.
@@ -79,7 +87,16 @@ public class PaymentCreateBusiness extends AbstractIdentifiableCreateBusiness<Pa
 
   @Inject
   FundingExecutionCreateBusiness fundingExecutionCreateBusiness;
-  
+
+  @Inject
+  FundingExecutionPersistence fundingExecutionPersistence;
+
+  @Inject
+  SchoolConfigurationPersistence schoolConfigurationPersistence;
+
+  @Inject
+  FundingDynamicQuery fundingDynamicQuery;
+
   @Override
   protected Object[] validate(PaymentCreateRequestDto request, StringList messages) {
     Registration registration = registrationValidator
@@ -137,7 +154,7 @@ public class PaymentCreateBusiness extends AbstractIdentifiableCreateBusiness<Pa
     payment.canceled = false;
     payment.initiator = request.getInitiator();
     payment.isForSubsidy = request.getIsForSubsidy();
-    
+
     payment.accountingOperation = new AccountingOperation();
     payment.accountingOperation.generateIdentifier();
     payment.accountingOperation.audit = payment.audit;
@@ -157,6 +174,12 @@ public class PaymentCreateBusiness extends AbstractIdentifiableCreateBusiness<Pa
         payment.accountingOperation, payment.accountingAccount, payment.amount);
     accountingOperationAccountCreateBusiness.create(accountingOperationAccount);
 
+    // Find funding from school configuration
+    SchoolConfiguration schoolConfiguration = schoolConfigurationPersistence
+        .getByIdentifier(payment.registration.schooling.schoolIdentifier);
+
+    createFundingExecution(payment, schoolConfiguration);
+
     super.doTransact(payment);
     AtomicInteger amount = new AtomicInteger(payment.amount);
     Collection<PaymentAdjustedFee> paymentAdjustedFees =
@@ -175,5 +198,53 @@ public class PaymentCreateBusiness extends AbstractIdentifiableCreateBusiness<Pa
           return paymentAdjustedFee;
         }).toList();
     paymentAdjustedFeePersistence.create(paymentAdjustedFees);
+  }
+
+  /**
+   * Create funding execution. We find funding from school configuration then we create it.
+   *
+   * @param payment {@link Payment}
+   */
+  void createFundingExecution(Payment payment, SchoolConfiguration schoolConfiguration) {
+    LocalDateTime date = Optional.ofNullable(payment.date).orElse(payment.audit.when);
+    Funding funding = getConfiguredFunding(date, schoolConfiguration);
+    if (funding == null) {
+      return;
+    }
+    payment.fundingExecution = instantiateFundingExecution(payment, date, funding);
+    if (payment.fundingExecution == null) {
+      return;
+    }
+    fundingExecutionPersistence.create(payment.fundingExecution);
+  }
+
+  FundingExecution instantiateFundingExecution(Payment payment, LocalDateTime date,
+      Funding funding) {
+    if (funding == null) {
+      return null;
+    }
+    FundingExecution fundingExecution = new FundingExecution();
+    fundingExecution.generateIdentifier();
+    fundingExecution.audit = payment.audit;
+    fundingExecutionCreateBusiness.setFields(fundingExecution, funding, date, payment.amount);
+    return fundingExecution;
+  }
+
+  Funding getConfiguredFunding(LocalDateTime date, SchoolConfiguration schoolConfiguration) {
+    if (schoolConfiguration == null) {
+      return null;
+    }
+    FundingFilter fundingFilter = new FundingFilter();
+    // Compute budget year and month index from date
+    fundingFilter.setBudgetYear(date.getYear());
+    fundingFilter.setMonthIndex(date.getMonthValue());
+    fundingFilter.setDepartmentIdentifier(schoolConfiguration.paymentDepartmentIdentifier);
+    fundingFilter
+        .setAccountingAccountIdentifier(schoolConfiguration.paymentAccountingAccountIdentifier);
+    fundingFilter.setSourceIdentifier(schoolConfiguration.paymentFundingSourceIdentifier);
+    DynamicQueryParameters<Funding> parameters = new DynamicQueryParameters<>();
+    parameters.setResultMode(ResultMode.ONE);
+    parameters.setFilter(fundingFilter.toDto());
+    return fundingDynamicQuery.getOne(parameters);
   }
 }
