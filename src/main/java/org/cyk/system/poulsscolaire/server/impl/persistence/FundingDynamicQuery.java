@@ -150,22 +150,28 @@ public class FundingDynamicQuery extends AbstractDynamicQuery<Funding> {
         .fieldName(fieldName(Funding.FIELD_BUDGET, AbstractIdentifiable.FIELD_IDENTIFIER))
         .valueFunction(FundingFilter::getBudgetIdentifier).build();
 
+    predicateBuilder().name(FundingFilter.JSON_BUDGET_YEAR)
+        .fieldName(fieldName(Funding.FIELD_BUDGET, Budget.FIELD_YEAR))
+        .valueFunction(FundingFilter::getBudgetYear).build();
+
     predicateBuilder().name(FundingFilter.JSON_MONTH).fieldName(Funding.FIELD_MONTH)
         .valueFunction(FundingFilter::getMonth).build();
 
-    predicateBuilder().name(FundingFilter.JSON_MONTH_INDEX).expression("t.month.cardinal()")
-        .valueFunction(FundingFilter::getMonthIndex).build();
+    predicateBuilder().name(FundingFilter.JSON_MONTH_INDEX)
+        .expression("t.month = :%s".formatted(FundingFilter.JSON_MONTH_INDEX))
+        .valueFunction(FundingFilter::getMonthFromIndex).build();
 
     predicateBuilder().name(FundingFilter.JSON_DEPARTMENT_IDENTIFIER)
         .fieldName(Funding.FIELD_DEPARTMENT_IDENTIFIER)
         .valueFunction(FundingFilter::getDepartmentIdentifier).build();
 
     predicateBuilder().name(FundingFilter.JSON_ACCOUNTING_ACCOUNT_IDENTIFIER)
-        .fieldName(Funding.FIELD_ACCOUNTING_ACCOUNT_IDENTIFIER)
+        .fieldName(
+            fieldName(Funding.FIELD_ACCOUNTING_ACCOUNT, AbstractIdentifiable.FIELD_IDENTIFIER))
         .valueFunction(FundingFilter::getAccountingAccountIdentifier).build();
 
     predicateBuilder().name(FundingFilter.JSON_SOURCE_IDENTIFIER)
-        .fieldName(Funding.FIELD_SOURCE_IDENTIFIER)
+        .fieldName(fieldName(Funding.FIELD_SOURCE, AbstractIdentifiable.FIELD_IDENTIFIER))
         .valueFunction(FundingFilter::getSourceIdentifier).build();
 
     // Ordres par défaut
