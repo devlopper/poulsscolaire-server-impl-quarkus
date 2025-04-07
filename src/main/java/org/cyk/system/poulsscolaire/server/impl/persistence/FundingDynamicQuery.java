@@ -134,7 +134,7 @@ public class FundingDynamicQuery extends AbstractDynamicQuery<Funding> {
 
     buildStatusableProjection(FundingDto.JSON_RETURNABLE, Funding.FIELD_RETURNABLE,
         FundingStatus.RETURNED, (a, b) -> a.returnable = b);
-    
+
     // Jointures
     joinBuilder().projectionsNames(FundingDto.JSON_DEPARTMENT_AS_STRING)
         .predicatesNames(FundingFilter.JSON_DEPARTMENT_IDENTIFIER).leftInnerOrRight(true)
@@ -150,19 +150,35 @@ public class FundingDynamicQuery extends AbstractDynamicQuery<Funding> {
         .fieldName(fieldName(Funding.FIELD_BUDGET, AbstractIdentifiable.FIELD_IDENTIFIER))
         .valueFunction(FundingFilter::getBudgetIdentifier).build();
 
+    predicateBuilder().name(FundingFilter.JSON_MONTH).fieldName(Funding.FIELD_MONTH)
+        .valueFunction(FundingFilter::getMonth).build();
+
+    predicateBuilder().name(FundingFilter.JSON_MONTH_INDEX).expression("t.month.cardinal()")
+        .valueFunction(FundingFilter::getMonthIndex).build();
+
     predicateBuilder().name(FundingFilter.JSON_DEPARTMENT_IDENTIFIER)
         .fieldName(Funding.FIELD_DEPARTMENT_IDENTIFIER)
         .valueFunction(FundingFilter::getDepartmentIdentifier).build();
 
-    predicateBuilder().name(FundingFilter.JSON_MONTH).fieldName(Funding.FIELD_MONTH)
-        .valueFunction(FundingFilter::getMonth).build();
+    predicateBuilder().name(FundingFilter.JSON_ACCOUNTING_ACCOUNT_IDENTIFIER)
+        .fieldName(Funding.FIELD_ACCOUNTING_ACCOUNT_IDENTIFIER)
+        .valueFunction(FundingFilter::getAccountingAccountIdentifier).build();
+
+    predicateBuilder().name(FundingFilter.JSON_SOURCE_IDENTIFIER)
+        .fieldName(Funding.FIELD_SOURCE_IDENTIFIER)
+        .valueFunction(FundingFilter::getSourceIdentifier).build();
 
     // Ordres par défaut
+    orderBuilder().fieldName(fieldName(Funding.FIELD_BUDGET, Budget.FIELD_YEAR)).ascending(false)
+        .build();
     orderBuilder().fieldName(
         fieldName(Funding.FIELD_ACCOUNTING_ACCOUNT, AbstractIdentifiableCodableNamable.FIELD_NAME))
         .build();
+    orderBuilder()
+        .fieldName(fieldName(Funding.FIELD_SOURCE, AbstractIdentifiableCodableNamable.FIELD_NAME))
+        .build();
   }
-  
+
   void buildStatusableProjection(String name, String fieldName, FundingStatus status,
       BiConsumer<Funding, Boolean> booleanConsumer) {
     projectionBuilder().name(name).nameFieldName(fieldName)

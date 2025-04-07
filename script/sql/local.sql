@@ -1639,6 +1639,7 @@ CREATE TABLE TA_CONFIGURATION_ECOLE (
 	IDENTIFIANT VARCHAR(36) NOT NULL COMMENT 'Identifiant',
 	
 	ECOLE VARCHAR(36) NOT NULL COMMENT 'Référence de l''école',
+	DEPARTEMENT_PAIEMENT VARCHAR(36) NOT NULL COMMENT 'Référence du département de paiement',
 	COMPTE_COMPTABLE_PAIEMENT VARCHAR(36) NOT NULL COMMENT 'Référence du compte comptable de paiement',
 	SOURCE_FINANCEMENT_PAIEMENT VARCHAR(36) NOT NULL COMMENT 'Référence de la source de financement de paiement',
 	
@@ -1666,6 +1667,7 @@ CREATE TABLE TA_CONFIGURATION_ECOLE_AUD (
 	REVTYPE TINYINT NOT NULL COMMENT 'Type de révision',
 	
 	ECOLE VARCHAR(36) NOT NULL COMMENT 'Référence de l''école',
+	DEPARTEMENT_PAIEMENT VARCHAR(36) NOT NULL COMMENT 'Référence du département de paiement',
 	COMPTE_COMPTABLE_PAIEMENT VARCHAR(36) NOT NULL COMMENT 'Référence du compte comptable de paiement',
 	SOURCE_FINANCEMENT_PAIEMENT VARCHAR(36) NOT NULL COMMENT 'Référence de la source de financement de paiement',
 	

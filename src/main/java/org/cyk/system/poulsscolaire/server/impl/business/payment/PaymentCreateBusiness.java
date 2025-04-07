@@ -18,6 +18,7 @@ import org.cyk.system.poulsscolaire.server.api.payment.PaymentFilter;
 import org.cyk.system.poulsscolaire.server.api.payment.PaymentService.PaymentCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.business.accountingoperation.AccountingOperationCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.accountingoperationaccount.AccountingOperationAccountCreateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.fundingexecution.FundingExecutionCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.paymentmode.PaymentModeValidator;
 import org.cyk.system.poulsscolaire.server.impl.business.registration.RegistrationValidator;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AccountingAccount;
@@ -76,6 +77,9 @@ public class PaymentCreateBusiness extends AbstractIdentifiableCreateBusiness<Pa
   @Inject
   AccountingOperationAccountCreateBusiness accountingOperationAccountCreateBusiness;
 
+  @Inject
+  FundingExecutionCreateBusiness fundingExecutionCreateBusiness;
+  
   @Override
   protected Object[] validate(PaymentCreateRequestDto request, StringList messages) {
     Registration registration = registrationValidator

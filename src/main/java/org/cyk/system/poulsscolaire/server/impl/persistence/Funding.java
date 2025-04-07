@@ -31,7 +31,7 @@ import org.hibernate.envers.Audited;
 @Entity(name = Funding.ENTITY_NAME)
 @Table(name = Funding.TABLE_NAME,
     uniqueConstraints = {@UniqueConstraint(columnNames = {Funding.COLUMN_BUDGET,
-        Funding.COLUMN_DEPARTMENT_IDENTIFIER, Funding.COLUMN_MONTH,
+        Funding.COLUMN_MONTH, Funding.COLUMN_DEPARTMENT_IDENTIFIER,
         Funding.COLUMN_ACCOUNTING_ACCOUNT, Funding.COLUMN_SOURCE})})
 @Audited
 @AuditOverrides(value = {@AuditOverride(forClass = AbstractIdentifiableAuditable.class),
@@ -47,7 +47,7 @@ public class Funding extends AbstractIdentifiableAuditable {
   @NotNull
   @Column(name = COLUMN_MONTH, nullable = false)
   public Month month;
-  
+
   @NotNull
   @Column(name = COLUMN_DEPARTMENT_IDENTIFIER, nullable = false)
   public String departmentIdentifier;
@@ -72,16 +72,16 @@ public class Funding extends AbstractIdentifiableAuditable {
   @NotNull
   @Column(name = COLUMN_STATUS, nullable = false)
   public FundingStatus status;
-  
+
   @Column(name = COLUMN_STATUS_REASON)
   public String statusReason;
-  
+
   @Column(name = COLUMN_INPUT_DEADLINE)
   public LocalDateTime inputDeadline;
-  
+
   @Transient
   public String statusAsString;
-  
+
   @Transient
   public String budgetIdentifier;
 
@@ -90,7 +90,7 @@ public class Funding extends AbstractIdentifiableAuditable {
 
   @Transient
   public String monthAsString;
-  
+
   @Transient
   public String departmentAsString;
 
@@ -99,7 +99,7 @@ public class Funding extends AbstractIdentifiableAuditable {
 
   @Transient
   public String accountingAccountAsString;
-  
+
   @Transient
   public String sourceIdentifier;
 
@@ -108,7 +108,7 @@ public class Funding extends AbstractIdentifiableAuditable {
 
   @Transient
   public String amountAsString;
-  
+
   @Transient
   public Boolean amountInputable;
 
@@ -135,7 +135,7 @@ public class Funding extends AbstractIdentifiableAuditable {
    */
   @Transient
   public Boolean approvable;
-  
+
   public static final String FIELD_BUDGET = "budget";
   public static final String FIELD_BUDGET_IDENTIFIER = "budgetIdentifier";
   public static final String FIELD_BUDGET_AS_STRING = "budgetAsString";
@@ -157,7 +157,7 @@ public class Funding extends AbstractIdentifiableAuditable {
   public static final String FIELD_AMOUNT = "amount";
   public static final String FIELD_AMOUNT_AS_STRING = "amountAsString";
   public static final String FIELD_AMOUNT_INPUTABLE = "amountInputable";
-  
+
   public static final String FIELD_JUSTIFICATION = "justification";
 
   public static final String FIELD_STATUS = "status";
@@ -167,7 +167,7 @@ public class Funding extends AbstractIdentifiableAuditable {
   public static final String FIELD_RETURNABLE = "returnable";
   public static final String FIELD_APPROVABLE = "approvable";
   public static final String FIELD_STATUS_REASON = "statusReason";
-  
+
   public static final String ENTITY_NAME = "Funding";
   public static final String TABLE_NAME = "TA_FINANCEMENT";
 
