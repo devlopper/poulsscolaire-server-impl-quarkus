@@ -5,6 +5,7 @@ import ci.gouv.dgbf.extension.core.StringList;
 import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableCreateBusiness;
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters.ResultMode;
+import ci.gouv.dgbf.extension.server.service.api.entity.AbstractIdentifiableDto;
 import ci.gouv.dgbf.extension.server.service.api.request.FilterDto;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -33,6 +34,7 @@ import org.cyk.system.poulsscolaire.server.impl.persistence.Funding;
 import org.cyk.system.poulsscolaire.server.impl.persistence.FundingDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.FundingExecution;
 import org.cyk.system.poulsscolaire.server.impl.persistence.FundingExecutionPersistence;
+import org.cyk.system.poulsscolaire.server.impl.persistence.FundingPersistence;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Payment;
 import org.cyk.system.poulsscolaire.server.impl.persistence.PaymentAdjustedFee;
 import org.cyk.system.poulsscolaire.server.impl.persistence.PaymentAdjustedFeePersistence;
@@ -96,6 +98,9 @@ public class PaymentCreateBusiness extends AbstractIdentifiableCreateBusiness<Pa
 
   @Inject
   FundingDynamicQuery fundingDynamicQuery;
+
+  @Inject
+  FundingPersistence fundingPersistence;
 
   @Override
   protected Object[] validate(PaymentCreateRequestDto request, StringList messages) {
@@ -176,7 +181,7 @@ public class PaymentCreateBusiness extends AbstractIdentifiableCreateBusiness<Pa
 
     // Find funding from school configuration
     SchoolConfiguration schoolConfiguration = schoolConfigurationPersistence
-        .getByIdentifier(payment.registration.schooling.schoolIdentifier);
+        .getBySchoolIdentifier(payment.registration.schooling.schoolIdentifier);
 
     createFundingExecution(payment, schoolConfiguration);
 
@@ -244,7 +249,9 @@ public class PaymentCreateBusiness extends AbstractIdentifiableCreateBusiness<Pa
     fundingFilter.setSourceIdentifier(schoolConfiguration.paymentFundingSourceIdentifier);
     DynamicQueryParameters<Funding> parameters = new DynamicQueryParameters<>();
     parameters.setResultMode(ResultMode.ONE);
+    parameters.projection().addNames(AbstractIdentifiableDto.JSON_IDENTIFIER);
     parameters.setFilter(fundingFilter.toDto());
-    return fundingDynamicQuery.getOne(parameters);
+    return Optional.ofNullable(fundingDynamicQuery.getOne(parameters))
+        .map(funding -> fundingPersistence.getByIdentifier(funding.getIdentifier())).orElse(null);
   }
 }

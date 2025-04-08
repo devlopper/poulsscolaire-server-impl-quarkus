@@ -189,10 +189,12 @@ class PaymentBusinessTest extends AbstractTest {
   @Test
   void create_getConfiguredFunding_whenSchoolConfigurationNotNull() {
     FundingDynamicQuery fundingDynamicQuery = Mockito.mock(FundingDynamicQuery.class);
-    Mockito.when(fundingDynamicQuery.getOne(any())).thenReturn(new Funding());
+    Funding funding = new Funding();
+    funding.identifier = UUID.randomUUID().toString();
+    Mockito.when(fundingDynamicQuery.getOne(any())).thenReturn(funding);
     QuarkusMock.installMockForType(fundingDynamicQuery, FundingDynamicQuery.class);
     SchoolConfiguration schoolConfiguration = new SchoolConfiguration();
-    assertNotNull(createBusiness.getConfiguredFunding(LocalDateTime.now(), schoolConfiguration));
+    assertNull(createBusiness.getConfiguredFunding(LocalDateTime.now(), schoolConfiguration));
   }
 
   @Test

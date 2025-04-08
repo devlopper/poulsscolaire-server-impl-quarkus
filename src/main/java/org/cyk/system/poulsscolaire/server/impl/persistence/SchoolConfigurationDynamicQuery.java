@@ -27,6 +27,9 @@ public class SchoolConfigurationDynamicQuery extends AbstractDynamicQuery<School
   EntityManager entityManager;
 
   String schoolVariableName;
+  String departmentVariableName;
+  String accountingAccountVariableName;
+  String fundingSourceVariableName;
 
   /**
    * Cette méthode permet d'instancier un object.
@@ -34,6 +37,9 @@ public class SchoolConfigurationDynamicQuery extends AbstractDynamicQuery<School
   public SchoolConfigurationDynamicQuery() {
     super(SchoolConfiguration.class);
     schoolVariableName = "s";
+    departmentVariableName = "d";
+    accountingAccountVariableName = "ac";
+    fundingSourceVariableName = "fs";
   }
 
   @PostConstruct
@@ -50,35 +56,61 @@ public class SchoolConfigurationDynamicQuery extends AbstractDynamicQuery<School
         .tupleVariableName(schoolVariableName).fieldName(AbstractIdentifiableNamable.FIELD_NAME)
         .build();
 
+    projectionBuilder().name(SchoolConfigurationDto.JSON_PAYMENT_DEPARTMENT_IDENTIFIER)
+        .fieldName(SchoolConfiguration.FIELD_PAYMENT_DEPARTMENT_IDENTIFIER).build();
+
+    projectionBuilder().name(SchoolConfigurationDto.JSON_PAYMENT_DEPARTMENT_AS_STRING)
+        .nameFieldName(SchoolConfiguration.FIELD_PAYMENT_DEPARTMENT_AS_STRING)
+        .expression(formatConcatCodeName(departmentVariableName))
+        .resultConsumer((i, a) -> i.paymentDepartmentAsString = a.getNextAsString()).build();
+
     projectionBuilder().name(SchoolConfigurationDto.JSON_PAYMENT_ACCOUNTING_ACCOUNT_IDENTIFIER)
         .nameFieldName(SchoolConfiguration.FIELD_PAYMENT_ACCOUNTING_ACCOUNT_IDENTIFIER)
-        .fieldName(fieldName(SchoolConfiguration.FIELD_PAYMENT_ACCOUNTING_ACCOUNT,
-            AbstractIdentifiable.FIELD_IDENTIFIER))
-        .build();
+        .tupleVariableName(accountingAccountVariableName)
+        .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER).build();
 
     projectionBuilder().name(SchoolConfigurationDto.JSON_PAYMENT_ACCOUNTING_ACCOUNT_AS_STRING)
         .nameFieldName(SchoolConfiguration.FIELD_PAYMENT_ACCOUNTING_ACCOUNT_AS_STRING)
-        .expression(formatConcatCodeName(
-            fieldName(variableName, SchoolConfiguration.FIELD_PAYMENT_ACCOUNTING_ACCOUNT)))
+        .expression(formatConcatCodeName(accountingAccountVariableName))
         .resultConsumer((i, a) -> i.paymentAccountingAccountAsString = a.getNextAsString()).build();
 
     projectionBuilder().name(SchoolConfigurationDto.JSON_PAYMENT_FUNDING_SOURCE_IDENTIFIER)
         .nameFieldName(SchoolConfiguration.FIELD_PAYMENT_FUNDING_SOURCE_IDENTIFIER)
-        .fieldName(fieldName(SchoolConfiguration.FIELD_PAYMENT_FUNDING_SOURCE,
-            AbstractIdentifiable.FIELD_IDENTIFIER))
-        .build();
+        .tupleVariableName(fundingSourceVariableName)
+        .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER).build();
 
     projectionBuilder().name(SchoolConfigurationDto.JSON_PAYMENT_FUNDING_SOURCE_AS_STRING)
         .nameFieldName(SchoolConfiguration.FIELD_PAYMENT_FUNDING_SOURCE_AS_STRING)
-        .expression(formatConcatCodeName(
-            fieldName(variableName, SchoolConfiguration.FIELD_PAYMENT_FUNDING_SOURCE)))
+        .expression(formatConcatCodeName(fundingSourceVariableName))
         .resultConsumer((i, a) -> i.paymentFundingSourceAsString = a.getNextAsString()).build();
 
     // Jointures
     joinBuilder().projectionsNames(SchoolConfigurationDto.JSON_SCHOOL_AS_STRING)
-        .predicatesNames(SchoolConfigurationDto.JSON_SCHOOL_IDENTIFIER)
-        .entityName(School.ENTITY_NAME).tupleVariableName(schoolVariableName)
-        .parentFieldName(SchoolConfiguration.FIELD_SCHOOL_IDENTIFIER).leftInnerOrRight(true)
+        .predicatesNames(SchoolConfigurationDto.JSON_SCHOOL_IDENTIFIER).leftInnerOrRight(true)
+        .entityClass(School.class).tupleVariableName(schoolVariableName)
+        .parentFieldName(SchoolConfiguration.FIELD_SCHOOL_IDENTIFIER).build();
+
+    joinBuilder().projectionsNames(SchoolConfigurationDto.JSON_PAYMENT_DEPARTMENT_AS_STRING)
+        .leftInnerOrRight(true).entityClass(Department.class)
+        .tupleVariableName(departmentVariableName)
+        .parentFieldName(SchoolConfiguration.FIELD_PAYMENT_DEPARTMENT_IDENTIFIER).build();
+
+    joinBuilder()
+        .projectionsNames(SchoolConfigurationDto.JSON_PAYMENT_ACCOUNTING_ACCOUNT_IDENTIFIER,
+            SchoolConfigurationDto.JSON_PAYMENT_ACCOUNTING_ACCOUNT_AS_STRING)
+        .leftInnerOrRight(true).entityClass(AccountingAccount.class)
+        .tupleVariableName(accountingAccountVariableName)
+        .parentFieldName(fieldName(SchoolConfiguration.FIELD_PAYMENT_ACCOUNTING_ACCOUNT,
+            AbstractIdentifiable.FIELD_IDENTIFIER))
+        .build();
+
+    joinBuilder()
+        .projectionsNames(SchoolConfigurationDto.JSON_PAYMENT_FUNDING_SOURCE_IDENTIFIER,
+            SchoolConfigurationDto.JSON_PAYMENT_FUNDING_SOURCE_AS_STRING)
+        .leftInnerOrRight(true).entityClass(FundingSource.class)
+        .tupleVariableName(fundingSourceVariableName)
+        .parentFieldName(fieldName(SchoolConfiguration.FIELD_PAYMENT_FUNDING_SOURCE,
+            AbstractIdentifiable.FIELD_IDENTIFIER))
         .build();
 
     // Prédicats

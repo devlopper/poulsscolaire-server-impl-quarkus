@@ -41,6 +41,7 @@ public class SchoolConfigurationUpdateBusiness
       SchoolConfiguration schoolConfiguration) {
     super.validate(request, messages, schoolConfiguration);
     schoolConfiguration.schoolIdentifier = request.getSchoolIdentifier();
+    schoolConfiguration.paymentDepartmentIdentifier = request.getPaymentDepartmentIdentifier();
     schoolConfiguration.paymentAccountingAccount = accountingAccountValidator
         .validateInstanceByIdentifier(request.getPaymentAccountingAccountIdentifier(), messages);
     schoolConfiguration.paymentFundingSource = fundingSourceValidator
