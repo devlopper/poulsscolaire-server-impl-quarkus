@@ -12,12 +12,14 @@ import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters;
 import ci.gouv.dgbf.extension.server.persistence.query.DynamicQueryParameters.ResultMode;
 import ci.gouv.dgbf.extension.server.service.api.entity.AuditDto;
 import ci.gouv.dgbf.extension.server.service.api.request.DeleteOneRequestDto;
+import ci.gouv.dgbf.extension.server.service.api.request.GetManyRequestDto;
 import ci.gouv.dgbf.extension.test.AbstractTest;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.QuarkusTestProfile;
 import io.quarkus.test.junit.TestProfile;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 import org.cyk.system.poulsscolaire.server.api.fee.FeeCategoryDto;
@@ -29,6 +31,9 @@ import org.cyk.system.poulsscolaire.server.api.fee.StockMovementService.StockMov
 import org.cyk.system.poulsscolaire.server.api.fee.StockMovementService.StockMovementUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.fee.StockService.StockCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.fee.StockService.StockUpdateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.registration.StockDistributionDto;
+import org.cyk.system.poulsscolaire.server.api.registration.StockDistributionService.StockDistributionCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.registration.StockDistributionService.StockDistributionUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.business.stock.StockCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stock.StockDeleteBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stock.StockMapper;
@@ -37,6 +42,13 @@ import org.cyk.system.poulsscolaire.server.impl.business.stock.StockReadManyBusi
 import org.cyk.system.poulsscolaire.server.impl.business.stock.StockReadOneBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stock.StockUpdateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stock.StockValidator;
+import org.cyk.system.poulsscolaire.server.impl.business.stockdistribution.StockDistributionCreateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.stockdistribution.StockDistributionDeleteBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.stockdistribution.StockDistributionMapper;
+import org.cyk.system.poulsscolaire.server.impl.business.stockdistribution.StockDistributionReadByIdentifierBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.stockdistribution.StockDistributionReadManyBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.stockdistribution.StockDistributionReadOneBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.stockdistribution.StockDistributionUpdateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stockmovement.StockMovementCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stockmovement.StockMovementDeleteBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stockmovement.StockMovementMapper;
@@ -48,6 +60,8 @@ import org.cyk.system.poulsscolaire.server.impl.business.stockmovement.StockMove
 import org.cyk.system.poulsscolaire.server.impl.persistence.FeeCategory;
 import org.cyk.system.poulsscolaire.server.impl.persistence.FeeCategoryDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Stock;
+import org.cyk.system.poulsscolaire.server.impl.persistence.StockDistribution;
+import org.cyk.system.poulsscolaire.server.impl.persistence.StockDistributionDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.StockDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.StockMovement;
 import org.cyk.system.poulsscolaire.server.impl.persistence.StockMovementDynamicQuery;
@@ -151,6 +165,38 @@ class FeeCategoryBusinessTest extends AbstractTest {
 
   @Inject
   StockMovementValidator stockMovementValidator;
+
+  /* StockDistribution */
+
+  @Inject
+  StockDistributionCreateBusiness stockDistributionCreateBusiness;
+
+  @Inject
+  StockDistributionReadManyBusiness stockDistributionReadManyBusiness;
+
+  @Inject
+  StockDistributionReadOneBusiness stockDistributionReadOneBusiness;
+
+  @Inject
+  StockDistributionReadByIdentifierBusiness stockDistributionReadByIdentifierBusiness;
+
+  @Inject
+  StockDistributionUpdateBusiness stockDistributionUpdateBusiness;
+
+  @Inject
+  StockDistributionDeleteBusiness stockDistributionDeleteBusiness;
+
+  @Inject
+  StockDistributionMapper stockDistributionMapper;
+
+  @Inject
+  StockDistributionDynamicQuery stockDistributionDynamicQuery;
+
+  DynamicQueryParameters<StockDistribution> stockDistributionParameters =
+      new DynamicQueryParameters<>();
+
+  @Inject
+  StockValidator stockDistributionValidator;
 
   @Test
   void create() {
@@ -525,6 +571,91 @@ class FeeCategoryBusinessTest extends AbstractTest {
     assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
   }
 
+  /* Stock Distribution */
+
+  @Test
+  void stockDistribution_create() {
+    StockDistributionCreateRequestDto request = new StockDistributionCreateRequestDto();
+    request.setStockIdentifier("1");
+    request.setBranchInstanceIdentifier("1");
+    request.setDate(LocalDateTime.now());
+    request.setAuditWho("christian");
+    long count = count(entityManager, StockDistribution.ENTITY_NAME);
+    stockDistributionCreateBusiness.process(request);
+    assertEquals(count + 1, count(entityManager, StockDistribution.ENTITY_NAME));
+  }
+
+  @Test
+  void stockDistribution_update() {
+    StockDistributionUpdateRequestDto request = new StockDistributionUpdateRequestDto();
+    request.setIdentifier("stockdistributiontoupdate");
+    request.setStockIdentifier("1");
+    request.setBranchInstanceIdentifier("1");
+    request.setDate(LocalDateTime.now());
+    request.setAuditWho("christian");
+    long count = count(entityManager, StockDistribution.ENTITY_NAME);
+    stockDistributionUpdateBusiness.process(request);
+    assertEquals(count + 0, count(entityManager, StockDistribution.ENTITY_NAME));
+  }
+
+  @Test
+  void stockDistribution_readMany() {
+    GetManyRequestDto request = new GetManyRequestDto();
+    request.filter().addCriteria(StockDistributionDto.JSON_IDENTIFIER, "unknown");
+    request.setAuditWho("christian");
+    assertDoesNotThrow(() -> stockDistributionReadManyBusiness.process(request));
+  }
+  
+  @Test
+  void stockDistribution_mapToDto_whenNull() {
+    assertNull(stockDistributionMapper.mapToDto(null));
+  }
+
+  @Test
+  void stockDistribution_mapToDto_whenNotNull() {
+    StockDistribution instance = new StockDistribution();
+    instance.setIdentifier("1");
+    instance.setAudit(new Audit());
+    instance.getAudit().setWho("christian");
+    StockDistributionDto dto = stockDistributionMapper.mapToDto(instance);
+    assertEquals(instance.getIdentifier(), dto.getIdentifier());
+    assertEquals(instance.getAudit().getWho(), dto.getAudit().getWho());
+  }
+
+  @Test
+  void stockDistribution_mapToDto_whenNotNullAndAuditNull() {
+    StockDistribution instance = new StockDistribution();
+    instance.setIdentifier("1");
+    StockDistributionDto dto = stockDistributionMapper.mapToDto(instance);
+    assertEquals(instance.getIdentifier(), dto.getIdentifier());
+    assertNull(dto.getAudit());
+  }
+
+  @Test
+  void stockDistribution_mapFromDto_whenNull() {
+    assertNull(stockDistributionMapper.mapFromDto(null));
+  }
+
+  @Test
+  void stockDistribution_mapFromDto_whenAuditNull() {
+    StockDistributionDto dto = new StockDistributionDto();
+    dto.setIdentifier("1");
+    StockDistribution instance = stockDistributionMapper.mapFromDto(dto);
+    assertEquals(dto.getIdentifier(), instance.getIdentifier());
+    assertEquals(null, instance.getAudit());
+  }
+
+  @Test
+  void stockDistribution_mapFromDto_whenAuditNotNull() {
+    StockDistributionDto dto = new StockDistributionDto();
+    dto.setIdentifier("1");
+    dto.setAudit(new AuditDto());
+    dto.getAudit().setWho("meliane");
+    StockDistribution instance = stockDistributionMapper.mapFromDto(dto);
+    assertEquals(dto.getIdentifier(), instance.getIdentifier());
+    assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
+  }
+  
   @Test
   void instantiate() {
     assertNotNull(stockValidator.toString());
