@@ -32,6 +32,9 @@ import org.cyk.system.poulsscolaire.server.api.fee.StockMovementService.StockMov
 import org.cyk.system.poulsscolaire.server.api.fee.StockService.StockCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.fee.StockService.StockUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.registration.StockDistributionDto;
+import org.cyk.system.poulsscolaire.server.api.registration.StockDistributionRegistrationDto;
+import org.cyk.system.poulsscolaire.server.api.registration.StockDistributionRegistrationService.StockDistributionRegistrationCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.registration.StockDistributionRegistrationService.StockDistributionRegistrationUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.registration.StockDistributionService.StockDistributionCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.registration.StockDistributionService.StockDistributionUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.business.stock.StockCreateBusiness;
@@ -49,6 +52,14 @@ import org.cyk.system.poulsscolaire.server.impl.business.stockdistribution.Stock
 import org.cyk.system.poulsscolaire.server.impl.business.stockdistribution.StockDistributionReadManyBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stockdistribution.StockDistributionReadOneBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stockdistribution.StockDistributionUpdateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationCreateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationDeleteBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationMapper;
+import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationReadByIdentifierBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationReadManyBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationReadOneBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationUpdateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationValidator;
 import org.cyk.system.poulsscolaire.server.impl.business.stockmovement.StockMovementCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stockmovement.StockMovementDeleteBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stockmovement.StockMovementMapper;
@@ -62,6 +73,8 @@ import org.cyk.system.poulsscolaire.server.impl.persistence.FeeCategoryDynamicQu
 import org.cyk.system.poulsscolaire.server.impl.persistence.Stock;
 import org.cyk.system.poulsscolaire.server.impl.persistence.StockDistribution;
 import org.cyk.system.poulsscolaire.server.impl.persistence.StockDistributionDynamicQuery;
+import org.cyk.system.poulsscolaire.server.impl.persistence.StockDistributionRegistration;
+import org.cyk.system.poulsscolaire.server.impl.persistence.StockDistributionRegistrationDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.StockDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.StockMovement;
 import org.cyk.system.poulsscolaire.server.impl.persistence.StockMovementDynamicQuery;
@@ -197,6 +210,39 @@ class FeeCategoryBusinessTest extends AbstractTest {
 
   @Inject
   StockValidator stockDistributionValidator;
+
+  /* StockDistributionRegistration */
+
+  @Inject
+  StockDistributionRegistrationCreateBusiness stockDistributionRegistrationCreateBusiness;
+
+  @Inject
+  StockDistributionRegistrationReadManyBusiness stockDistributionRegistrationReadManyBusiness;
+
+  @Inject
+  StockDistributionRegistrationReadOneBusiness stockDistributionRegistrationReadOneBusiness;
+
+  @Inject
+  StockDistributionRegistrationReadByIdentifierBusiness
+      stockDistributionRegistrationReadByIdentifierBusiness;
+
+  @Inject
+  StockDistributionRegistrationUpdateBusiness stockDistributionRegistrationUpdateBusiness;
+
+  @Inject
+  StockDistributionRegistrationDeleteBusiness stockDistributionRegistrationDeleteBusiness;
+
+  @Inject
+  StockDistributionRegistrationMapper stockDistributionRegistrationMapper;
+
+  @Inject
+  StockDistributionRegistrationDynamicQuery stockDistributionRegistrationDynamicQuery;
+
+  DynamicQueryParameters<StockDistributionRegistration> stockDistributionRegistrationParameters =
+      new DynamicQueryParameters<>();
+
+  @Inject
+  StockDistributionRegistrationValidator stockDistributionRegistrationValidator;
 
   @Test
   void create() {
@@ -605,7 +651,7 @@ class FeeCategoryBusinessTest extends AbstractTest {
     request.setAuditWho("christian");
     assertDoesNotThrow(() -> stockDistributionReadManyBusiness.process(request));
   }
-  
+
   @Test
   void stockDistribution_mapToDto_whenNull() {
     assertNull(stockDistributionMapper.mapToDto(null));
@@ -655,7 +701,94 @@ class FeeCategoryBusinessTest extends AbstractTest {
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
     assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
   }
-  
+
+  /* Stock Distribution Registration */
+
+  @Test
+  void stockDistributionRegistration_create() {
+    StockDistributionRegistrationCreateRequestDto request =
+        new StockDistributionRegistrationCreateRequestDto();
+    request.setStockDistributionIdentifier("1");
+    request.setRegistrationIdentifier("i1");
+    request.setQuantity(1);
+    request.setAuditWho("christian");
+    long count = count(entityManager, StockDistributionRegistration.ENTITY_NAME);
+    stockDistributionRegistrationCreateBusiness.process(request);
+    assertEquals(count + 1, count(entityManager, StockDistributionRegistration.ENTITY_NAME));
+  }
+
+  @Test
+  void stockDistributionRegistration_update() {
+    StockDistributionRegistrationUpdateRequestDto request =
+        new StockDistributionRegistrationUpdateRequestDto();
+    request.setIdentifier("stockdistributionregistrationtoupdate");
+    request.setStockDistributionIdentifier("1");
+    request.setRegistrationIdentifier("i1");
+    request.setQuantity(1);
+    request.setAuditWho("christian");
+    long count = count(entityManager, StockDistributionRegistration.ENTITY_NAME);
+    stockDistributionRegistrationUpdateBusiness.process(request);
+    assertEquals(count + 0, count(entityManager, StockDistributionRegistration.ENTITY_NAME));
+  }
+
+  @Test
+  void stockDistributionRegistration_readMany() {
+    GetManyRequestDto request = new GetManyRequestDto();
+    request.filter().addCriteria(StockDistributionRegistrationDto.JSON_IDENTIFIER, "unknown");
+    request.setAuditWho("christian");
+    assertDoesNotThrow(() -> stockDistributionRegistrationReadManyBusiness.process(request));
+  }
+
+  @Test
+  void stockDistributionRegistration_mapToDto_whenNull() {
+    assertNull(stockDistributionRegistrationMapper.mapToDto(null));
+  }
+
+  @Test
+  void stockDistributionRegistration_mapToDto_whenNotNull() {
+    StockDistributionRegistration instance = new StockDistributionRegistration();
+    instance.setIdentifier("1");
+    instance.setAudit(new Audit());
+    instance.getAudit().setWho("christian");
+    StockDistributionRegistrationDto dto = stockDistributionRegistrationMapper.mapToDto(instance);
+    assertEquals(instance.getIdentifier(), dto.getIdentifier());
+    assertEquals(instance.getAudit().getWho(), dto.getAudit().getWho());
+  }
+
+  @Test
+  void stockDistributionRegistration_mapToDto_whenNotNullAndAuditNull() {
+    StockDistributionRegistration instance = new StockDistributionRegistration();
+    instance.setIdentifier("1");
+    StockDistributionRegistrationDto dto = stockDistributionRegistrationMapper.mapToDto(instance);
+    assertEquals(instance.getIdentifier(), dto.getIdentifier());
+    assertNull(dto.getAudit());
+  }
+
+  @Test
+  void stockDistributionRegistration_mapFromDto_whenNull() {
+    assertNull(stockDistributionRegistrationMapper.mapFromDto(null));
+  }
+
+  @Test
+  void stockDistributionRegistration_mapFromDto_whenAuditNull() {
+    StockDistributionRegistrationDto dto = new StockDistributionRegistrationDto();
+    dto.setIdentifier("1");
+    StockDistributionRegistration instance = stockDistributionRegistrationMapper.mapFromDto(dto);
+    assertEquals(dto.getIdentifier(), instance.getIdentifier());
+    assertEquals(null, instance.getAudit());
+  }
+
+  @Test
+  void stockDistributionRegistration_mapFromDto_whenAuditNotNull() {
+    StockDistributionRegistrationDto dto = new StockDistributionRegistrationDto();
+    dto.setIdentifier("1");
+    dto.setAudit(new AuditDto());
+    dto.getAudit().setWho("meliane");
+    StockDistributionRegistration instance = stockDistributionRegistrationMapper.mapFromDto(dto);
+    assertEquals(dto.getIdentifier(), instance.getIdentifier());
+    assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
+  }
+
   @Test
   void instantiate() {
     assertNotNull(stockValidator.toString());
