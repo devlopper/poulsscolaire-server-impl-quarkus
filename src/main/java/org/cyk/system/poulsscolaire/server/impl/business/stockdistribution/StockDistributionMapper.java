@@ -1,7 +1,7 @@
 package org.cyk.system.poulsscolaire.server.impl.business.stockdistribution;
 
 import ci.gouv.dgbf.extension.server.business.IdentifiableMapper;
-import org.cyk.system.poulsscolaire.server.api.registration.StockDistributionDto;
+import org.cyk.system.poulsscolaire.server.api.fee.StockDistributionDto;
 import org.cyk.system.poulsscolaire.server.impl.persistence.StockDistribution;
 import org.mapstruct.Mapper;
 

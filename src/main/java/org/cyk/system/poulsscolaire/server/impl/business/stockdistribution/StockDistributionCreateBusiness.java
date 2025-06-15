@@ -5,7 +5,7 @@ import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableCreateBusiness
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
-import org.cyk.system.poulsscolaire.server.api.registration.StockDistributionService.StockDistributionCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.fee.StockDistributionService.StockDistributionCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.business.stock.StockValidator;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Stock;
 import org.cyk.system.poulsscolaire.server.impl.persistence.StockDistribution;

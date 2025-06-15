@@ -5,7 +5,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
-import org.cyk.system.poulsscolaire.server.api.registration.StockDistributionDto;
+import org.cyk.system.poulsscolaire.server.api.fee.StockDistributionDto;
 
 /**
  * Cette classe représente les fonctionnalités de persistance de {@link StockDistribution}.

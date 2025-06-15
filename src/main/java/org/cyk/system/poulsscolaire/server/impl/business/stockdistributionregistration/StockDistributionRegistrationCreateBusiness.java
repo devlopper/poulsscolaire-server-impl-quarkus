@@ -5,7 +5,7 @@ import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableCreateBusiness
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
-import org.cyk.system.poulsscolaire.server.api.registration.StockDistributionRegistrationService.StockDistributionRegistrationCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.fee.StockDistributionRegistrationService.StockDistributionRegistrationCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.business.registration.RegistrationValidator;
 import org.cyk.system.poulsscolaire.server.impl.business.stockdistribution.StockDistributionValidator;
 import org.cyk.system.poulsscolaire.server.impl.persistence.Registration;
@@ -48,7 +48,7 @@ public class StockDistributionRegistrationCreateBusiness extends
   protected Object[] validate(StockDistributionRegistrationCreateRequestDto request,
       StringList messages) {
     StockDistribution distribution = distributionValidator
-        .validateInstanceByIdentifier(request.getStockDistributionIdentifier(), messages);
+        .validateInstanceByIdentifier(request.getDistributionIdentifier(), messages);
     Registration registration = registrationValidator
         .validateInstanceByIdentifier(request.getRegistrationIdentifier(), messages);
     return new Object[] {distribution, registration};

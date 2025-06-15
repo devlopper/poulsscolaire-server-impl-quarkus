@@ -25,18 +25,18 @@ import java.util.UUID;
 import org.cyk.system.poulsscolaire.server.api.fee.FeeCategoryDto;
 import org.cyk.system.poulsscolaire.server.api.fee.FeeCategoryService.FeeCategoryCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.fee.FeeCategoryService.FeeCategoryUpdateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.fee.StockDistributionDto;
+import org.cyk.system.poulsscolaire.server.api.fee.StockDistributionRegistrationDto;
+import org.cyk.system.poulsscolaire.server.api.fee.StockDistributionRegistrationService.StockDistributionRegistrationCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.fee.StockDistributionRegistrationService.StockDistributionRegistrationUpdateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.fee.StockDistributionService.StockDistributionCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.fee.StockDistributionService.StockDistributionUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.fee.StockDto;
 import org.cyk.system.poulsscolaire.server.api.fee.StockMovementDto;
 import org.cyk.system.poulsscolaire.server.api.fee.StockMovementService.StockMovementCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.fee.StockMovementService.StockMovementUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.fee.StockService.StockCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.fee.StockService.StockUpdateRequestDto;
-import org.cyk.system.poulsscolaire.server.api.registration.StockDistributionDto;
-import org.cyk.system.poulsscolaire.server.api.registration.StockDistributionRegistrationDto;
-import org.cyk.system.poulsscolaire.server.api.registration.StockDistributionRegistrationService.StockDistributionRegistrationCreateRequestDto;
-import org.cyk.system.poulsscolaire.server.api.registration.StockDistributionRegistrationService.StockDistributionRegistrationUpdateRequestDto;
-import org.cyk.system.poulsscolaire.server.api.registration.StockDistributionService.StockDistributionCreateRequestDto;
-import org.cyk.system.poulsscolaire.server.api.registration.StockDistributionService.StockDistributionUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.impl.business.stock.StockCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stock.StockDeleteBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stock.StockMapper;
@@ -708,7 +708,7 @@ class FeeCategoryBusinessTest extends AbstractTest {
   void stockDistributionRegistration_create() {
     StockDistributionRegistrationCreateRequestDto request =
         new StockDistributionRegistrationCreateRequestDto();
-    request.setStockDistributionIdentifier("1");
+    request.setDistributionIdentifier("1");
     request.setRegistrationIdentifier("i1");
     request.setQuantity(1);
     request.setAuditWho("christian");
@@ -722,7 +722,7 @@ class FeeCategoryBusinessTest extends AbstractTest {
     StockDistributionRegistrationUpdateRequestDto request =
         new StockDistributionRegistrationUpdateRequestDto();
     request.setIdentifier("stockdistributionregistrationtoupdate");
-    request.setStockDistributionIdentifier("1");
+    request.setDistributionIdentifier("1");
     request.setRegistrationIdentifier("i1");
     request.setQuantity(1);
     request.setAuditWho("christian");
