@@ -5,7 +5,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
 import org.cyk.system.poulsscolaire.server.api.fee.StockDistributionRegistrationService.StockDistributionRegistrationUpdateRequestDto;
-import org.cyk.system.poulsscolaire.server.impl.business.stock.StockValidator;
 import org.cyk.system.poulsscolaire.server.impl.persistence.StockDistributionRegistration;
 import org.cyk.system.poulsscolaire.server.impl.persistence.StockDistributionRegistrationPersistence;
 
@@ -28,9 +27,4 @@ public class StockDistributionRegistrationUpdateBusiness extends
   @Inject
   @Getter
   StockDistributionRegistrationValidator validator;
-
-  @Inject
-  StockValidator stockValidator;
-
-
 }

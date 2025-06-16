@@ -20,6 +20,7 @@ import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregist
 import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationReadManyBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationReadOneBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationUpdateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationUpdateQuantityBusiness;
 
 /**
  * Cette classe représente l'implémentation de {@link StockDistributionRegistrationService}.
@@ -45,6 +46,9 @@ public class StockDistributionRegistrationServiceImpl extends AbstractServiceImp
 
   @Inject
   StockDistributionRegistrationUpdateBusiness updateBusiness;
+
+  @Inject
+  StockDistributionRegistrationUpdateQuantityBusiness updateQuantityBusiness;
 
   @Inject
   StockDistributionRegistrationDeleteBusiness deleteBusiness;
@@ -85,6 +89,14 @@ public class StockDistributionRegistrationServiceImpl extends AbstractServiceImp
   @Override
   public Response update(StockDistributionRegistrationUpdateRequestDto request) {
     IdentifiableResponseDto dto = updateBusiness.process(request);
+    ResponseBuilder responseBuilder = new ResponseBuilder();
+    responseBuilder.setDto(dto);
+    return responseBuilder.build();
+  }
+
+  @Override
+  public Response updateQuantity(StockDistributionRegistrationUpdateQuantityRequestDto request) {
+    IdentifiableResponseDto dto = updateQuantityBusiness.process(request);
     ResponseBuilder responseBuilder = new ResponseBuilder();
     responseBuilder.setDto(dto);
     return responseBuilder.build();

@@ -28,6 +28,7 @@ import org.cyk.system.poulsscolaire.server.api.fee.FeeCategoryService.FeeCategor
 import org.cyk.system.poulsscolaire.server.api.fee.StockDistributionDto;
 import org.cyk.system.poulsscolaire.server.api.fee.StockDistributionRegistrationDto;
 import org.cyk.system.poulsscolaire.server.api.fee.StockDistributionRegistrationService.StockDistributionRegistrationCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.fee.StockDistributionRegistrationService.StockDistributionRegistrationUpdateQuantityRequestDto;
 import org.cyk.system.poulsscolaire.server.api.fee.StockDistributionRegistrationService.StockDistributionRegistrationUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.fee.StockDistributionService.StockDistributionCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.fee.StockDistributionService.StockDistributionUpdateRequestDto;
@@ -59,6 +60,7 @@ import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregist
 import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationReadManyBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationReadOneBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationUpdateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationUpdateQuantityBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationValidator;
 import org.cyk.system.poulsscolaire.server.impl.business.stockmovement.StockMovementCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stockmovement.StockMovementDeleteBusiness;
@@ -229,6 +231,10 @@ class FeeCategoryBusinessTest extends AbstractTest {
   @Inject
   StockDistributionRegistrationUpdateBusiness stockDistributionRegistrationUpdateBusiness;
 
+  @Inject
+  StockDistributionRegistrationUpdateQuantityBusiness
+      stockDistributionRegistrationUpdateQuantityBusiness;
+  
   @Inject
   StockDistributionRegistrationDeleteBusiness stockDistributionRegistrationDeleteBusiness;
 
@@ -731,6 +737,18 @@ class FeeCategoryBusinessTest extends AbstractTest {
     assertEquals(count + 0, count(entityManager, StockDistributionRegistration.ENTITY_NAME));
   }
 
+  @Test
+  void stockDistributionRegistration_updatequantity() {
+    StockDistributionRegistrationUpdateQuantityRequestDto request =
+        new StockDistributionRegistrationUpdateQuantityRequestDto();
+    request.setIdentifier("stockdistributionregistrationtoupdatequantity");
+    request.setQuantity(1);
+    request.setAuditWho("christian");
+    long count = count(entityManager, StockDistributionRegistration.ENTITY_NAME);
+    stockDistributionRegistrationUpdateQuantityBusiness.process(request);
+    assertEquals(count + 0, count(entityManager, StockDistributionRegistration.ENTITY_NAME));
+  }
+  
   @Test
   void stockDistributionRegistration_readMany() {
     GetManyRequestDto request = new GetManyRequestDto();

@@ -18,6 +18,7 @@ import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregist
 import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationReadManyBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationReadOneBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationUpdateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationUpdateQuantityBusiness;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -89,6 +90,18 @@ class StockDistributionRegistrationServiceImplTest extends AbstractTest {
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
         .put(StockDistributionRegistrationService.PATH + "/"
             + StockDistributionRegistrationService.UPDATE_PATH)
+        .then().log().ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
+  }
+
+  @Test
+  void updateQuantity() {
+    StockDistributionRegistrationUpdateQuantityBusiness business =
+        installMockForType(StockDistributionRegistrationUpdateQuantityBusiness.class);
+    Mockito.when(business.process(any())).thenReturn(new IdentifiableResponseDto());
+
+    RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
+        .put(StockDistributionRegistrationService.PATH + "/"
+            + StockDistributionRegistrationService.UPDATE_QUANTITY_PATH)
         .then().log().ifError().statusCode(jakarta.ws.rs.core.Response.Status.OK.getStatusCode());
   }
 
