@@ -45,6 +45,6 @@ public class FundingSourcePersistence
         .createNamedQuery(FundingSource.QUERY_COUNT_BY_SCHOOL_IDENTIFIER_BY_CODE_IDENTIFIER,
             Long.class)
         .setParameter(FundingSource.FIELD_SCHOOL_IDENTIFIER, schoolIdentifier)
-        .setParameter(AbstractIdentifiableCodable.FIELD_CODE, code)).get(), 1);
+        .setParameter(AbstractIdentifiableCodable.FIELD_CODE, code)).get(), 1L);
   }
 }

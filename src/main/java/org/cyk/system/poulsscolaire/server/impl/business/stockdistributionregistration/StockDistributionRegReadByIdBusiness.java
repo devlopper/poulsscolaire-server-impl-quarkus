@@ -16,12 +16,12 @@ import org.cyk.system.poulsscolaire.server.impl.persistence.StockDistributionReg
  *
  */
 @ApplicationScoped
-public class StockDistributionRegistrationReadByIdentifierBusiness extends
+public class StockDistributionRegReadByIdBusiness extends
     AbstractIdentifiableReadByIdentifierBusiness<StockDistributionRegistration,
         StockDistributionRegistrationPersistence, StockDistributionRegistrationDynamicQuery,
         StockDistributionRegistrationDto, StockDistributionRegistrationMapper> {
 
-  protected StockDistributionRegistrationReadByIdentifierBusiness() {
+  protected StockDistributionRegReadByIdBusiness() {
     super(StockDistributionRegistrationDto.class);
   }
 

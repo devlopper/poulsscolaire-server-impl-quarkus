@@ -14,9 +14,9 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 import org.cyk.system.poulsscolaire.server.api.fee.StockDistributionRegistrationDto;
 import org.cyk.system.poulsscolaire.server.api.fee.StockDistributionRegistrationService;
+import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegReadByIdBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationDeleteBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationReadByIdentifierBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationReadManyBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationReadOneBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationUpdateBusiness;
@@ -42,7 +42,7 @@ public class StockDistributionRegistrationServiceImpl extends AbstractServiceImp
   StockDistributionRegistrationReadOneBusiness readOneBusiness;
 
   @Inject
-  StockDistributionRegistrationReadByIdentifierBusiness readByIdentifierBusiness;
+  StockDistributionRegReadByIdBusiness readByIdentifierBusiness;
 
   @Inject
   StockDistributionRegistrationUpdateBusiness updateBusiness;

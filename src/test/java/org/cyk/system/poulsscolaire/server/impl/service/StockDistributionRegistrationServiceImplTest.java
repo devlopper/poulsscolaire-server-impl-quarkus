@@ -12,9 +12,9 @@ import io.restassured.http.ContentType;
 import org.cyk.system.poulsscolaire.server.api.fee.StockDistributionRegistrationDto;
 import org.cyk.system.poulsscolaire.server.api.fee.StockDistributionRegistrationService;
 import org.cyk.system.poulsscolaire.server.api.fee.StockDistributionRegistrationService.StockDistributionRegistrationGetManyResponseDto;
+import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegReadByIdBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationDeleteBusiness;
-import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationReadByIdentifierBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationReadManyBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationReadOneBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationUpdateBusiness;
@@ -71,8 +71,8 @@ class StockDistributionRegistrationServiceImplTest extends AbstractTest {
 
   @Test
   void readByIdentifier() {
-    StockDistributionRegistrationReadByIdentifierBusiness business =
-        installMockForType(StockDistributionRegistrationReadByIdentifierBusiness.class);
+    StockDistributionRegReadByIdBusiness business =
+        installMockForType(StockDistributionRegReadByIdBusiness.class);
     Mockito.when(business.process(any())).thenReturn(new StockDistributionRegistrationDto());
 
     RestAssured.given().contentType(ContentType.JSON).accept(ContentType.JSON).when()
