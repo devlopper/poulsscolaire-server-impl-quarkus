@@ -3,6 +3,7 @@ package org.cyk.system.poulsscolaire.server.impl.persistence;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableNamable;
+import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableValueBasedQuery;
 import ci.gouv.dgbf.extension.server.persistence.query.AbstractDynamicQuery;
 import ci.gouv.dgbf.extension.server.service.api.AbstractIdentifiableFilter;
 import ci.gouv.dgbf.extension.server.service.api.entity.AbstractIdentifiableCodableDto;
@@ -30,6 +31,9 @@ public class SubsidyDecisionDynamicQuery extends AbstractDynamicQuery<SubsidyDec
 
   String schoolVariableName;
   String branchVariableName;
+  String schoolingVariableName;
+  String subsidyDecisionPaymentsVariableName;
+  String subsidyDecisionRegistrationsVariableName;
 
   /**
    * Cette méthode permet d'instancier un object.
@@ -38,6 +42,9 @@ public class SubsidyDecisionDynamicQuery extends AbstractDynamicQuery<SubsidyDec
     super(SubsidyDecision.class);
     schoolVariableName = "school";
     branchVariableName = "branch";
+    schoolingVariableName = "schooling";
+    subsidyDecisionPaymentsVariableName = "subsidyDecisionPayments";
+    subsidyDecisionRegistrationsVariableName = "subsidyDecisionRegistrations";
   }
 
   @PostConstruct
@@ -65,15 +72,59 @@ public class SubsidyDecisionDynamicQuery extends AbstractDynamicQuery<SubsidyDec
         .fieldName(AbstractIdentifiableCodableNamable.FIELD_NAME)
         .nameFieldName(SubsidyDecision.FIELD_SCHOOLING_AS_STRING).build();
 
+    projectionBuilder().name(SubsidyDecisionDto.JSON_SCHOOL_IDENTIFIER)
+        .nameFieldName(SubsidyDecision.FIELD_SCHOOL_IDENTIFIER)
+        .tupleVariableName(schoolingVariableName).fieldName(Schooling.FIELD_SCHOOL_IDENTIFIER)
+        .build();
+
     projectionBuilder().name(SubsidyDecisionDto.JSON_AMOUNT_AS_STRING)
         .fieldName(SubsidyDecision.FIELD_AMOUNT)
         .nameFieldName(SubsidyDecision.FIELD_AMOUNT_AS_STRING).build();
+
+    projectionBuilder().name(SubsidyDecisionDto.JSON_REGISTRATION_COUNT_AS_STRING)
+        .nameFieldName(SubsidyDecision.FIELD_REGISTRATION_COUNT_AS_STRING)
+        .tupleVariableName(subsidyDecisionRegistrationsVariableName)
+        .fieldName(AbstractIdentifiableValueBasedQuery.FIELD_VALUE).nullValueIsZeroNumberString()
+        .build();
+
+    projectionBuilder().name(SubsidyDecisionDto.JSON_PAYMENT_COUNT_AS_STRING)
+        .nameFieldName(SubsidyDecision.FIELD_PAYMENT_COUNT_AS_STRING)
+        .tupleVariableName(subsidyDecisionPaymentsVariableName)
+        .fieldName(SubsidyDecisionPayments.FIELD_COUNT).nullValueIsZeroNumberString().build();
+
+    projectionBuilder().name(SubsidyDecisionDto.JSON_PAID_AMOUNT_AS_STRING)
+        .nameFieldName(SubsidyDecision.FIELD_PAID_AMOUNT_AS_STRING)
+        .tupleVariableName(subsidyDecisionPaymentsVariableName)
+        .fieldName(SubsidyDecisionPayments.FIELD_PAID_AMOUNT).nullValueIsZeroNumberString().build();
+
+    projectionBuilder().name(SubsidyDecisionDto.JSON_REMAINING_AMOUNT_TO_PAY_AS_STRING)
+        .nameFieldName(SubsidyDecision.FIELD_REMAINING_AMOUNT_TO_PAY_AS_STRING)
+        .tupleVariableName(subsidyDecisionPaymentsVariableName)
+        .fieldName(SubsidyDecisionPayments.FIELD_REMAINING_AMOUNT_TO_PAY)
+        .nullValueIsZeroNumberString().build();
 
     // Jointures
     joinBuilder().projectionsNames(SubsidyDecisionDto.JSON_SCHOOLING_AS_STRING)
         .entityClass(Branch.class).tupleVariableName(branchVariableName).parentFieldName(
             fieldName(SubsidyDecision.FIELD_SCHOOLING, Schooling.FIELD_BRANCH_IDENTIFIER))
         .build();
+
+    joinBuilder().projectionsNames(SubsidyDecisionDto.JSON_SCHOOL_IDENTIFIER)
+        .entityClass(Schooling.class).tupleVariableName(schoolingVariableName)
+        .parentFieldName(
+            fieldName(SubsidyDecision.FIELD_SCHOOLING, AbstractIdentifiable.FIELD_IDENTIFIER))
+        .build();
+
+    joinBuilder()
+        .projectionsNames(SubsidyDecisionDto.JSON_PAYMENT_COUNT_AS_STRING,
+            SubsidyDecisionDto.JSON_PAID_AMOUNT_AS_STRING,
+            SubsidyDecisionDto.JSON_REMAINING_AMOUNT_TO_PAY_AS_STRING)
+        .leftInnerOrRight(true).entityClass(SubsidyDecisionPayments.class)
+        .tupleVariableName(subsidyDecisionPaymentsVariableName).build();
+
+    joinBuilder().projectionsNames(SubsidyDecisionDto.JSON_REGISTRATION_COUNT_AS_STRING)
+        .leftInnerOrRight(true).entityClass(SubsidyDecisionRegistrations.class)
+        .tupleVariableName(subsidyDecisionRegistrationsVariableName).build();
 
     // Prédicats
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)

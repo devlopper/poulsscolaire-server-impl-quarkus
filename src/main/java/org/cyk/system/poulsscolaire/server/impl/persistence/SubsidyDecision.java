@@ -36,12 +36,15 @@ public class SubsidyDecision extends AbstractIdentifiableCodableAuditable {
   @ManyToOne
   @JoinColumn(name = COLUMN_SCHOOLING, nullable = false)
   public Schooling schooling;
-  
+
   @Transient
   public String schoolingIdentifier;
 
   @Transient
   public String schoolingAsString;
+
+  @Transient
+  public String schoolIdentifier;
   
   @NotNull
   @Column(name = COLUMN_AMOUNT, nullable = false)
@@ -49,10 +52,22 @@ public class SubsidyDecision extends AbstractIdentifiableCodableAuditable {
 
   @Transient
   public String amountAsString;
-  
+
   @Transient
   public Collection<Registration> registrations;
-  
+
+  @Transient
+  public String registrationCountAsString;
+
+  @Transient
+  public String paymentCountAsString;
+
+  @Transient
+  public String paidAmountAsString;
+
+  @Transient
+  public String remainingAmountToPayAsString;
+
   /**
    * Cette méthode permet d'obtenir {@link #registrations} non null.
    *
@@ -64,12 +79,18 @@ public class SubsidyDecision extends AbstractIdentifiableCodableAuditable {
     }
     return registrations;
   }
-  
+
   public static final String FIELD_SCHOOLING = "schooling";
   public static final String FIELD_SCHOOLING_IDENTIFIER = "schoolingIdentifier";
   public static final String FIELD_SCHOOLING_AS_STRING = "schoolingAsString";
+  public static final String FIELD_SCHOOL_IDENTIFIER = "schoolIdentifier";
   public static final String FIELD_AMOUNT = "amount";
   public static final String FIELD_AMOUNT_AS_STRING = "amountAsString";
+  public static final String FIELD_PAYMENT_COUNT_AS_STRING = "paymentCountAsString";
+  public static final String FIELD_REGISTRATION_COUNT_AS_STRING = "registrationCountAsString";
+  public static final String FIELD_PAID_AMOUNT_AS_STRING = "paidAmountAsString";
+  public static final String FIELD_REMAINING_AMOUNT_TO_PAY_AS_STRING =
+      "remainingAmountToPayAsString";
 
   public static final String ENTITY_NAME = "SubsidyDecision";
   public static final String TABLE_NAME = "TA_DECISION_SUBVENTION";

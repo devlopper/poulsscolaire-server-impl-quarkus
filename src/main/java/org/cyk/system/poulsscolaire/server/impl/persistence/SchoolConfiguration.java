@@ -17,7 +17,7 @@ import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
 
 /**
- * Cette classe représente une scolarité.
+ * Cette classe représente une configuration de {@link School}.
  *
  * @author Christian
  *

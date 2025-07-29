@@ -181,6 +181,10 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
         .valueFunction(AbstractIdentifiableFilter::getIdentifier).build();
 
+    predicateBuilder().name(RegistrationFilter.JSON_SCHOOLING_IDENTIFIER)
+        .fieldName(fieldName(Registration.FIELD_SCHOOLING, AbstractIdentifiable.FIELD_IDENTIFIER))
+        .valueFunction(RegistrationFilter::getSchoolingIdentifier).build();
+
     predicateBuilder().name(RegistrationFilter.JSON_STUDENT_IDENTIFIER)
         .fieldName(fieldName(Registration.FIELD_STUDENT, AbstractIdentifiable.FIELD_IDENTIFIER))
         .valueFunction(RegistrationFilter::getStudentIdentifier).build();
@@ -188,6 +192,10 @@ public class RegistrationDynamicQuery extends AbstractDynamicQuery<Registration>
     predicateBuilder().name(RegistrationFilter.JSON_SCHOOL_IDENTIFIER)
         .fieldName(fieldName(Registration.FIELD_SCHOOLING, Schooling.FIELD_SCHOOL_IDENTIFIER))
         .valueFunction(RegistrationFilter::getSchoolIdentifier).build();
+
+    predicateBuilder().name(RegistrationFilter.JSON_BRANCH_IDENTIFIER)
+        .fieldName(fieldName(Registration.FIELD_SCHOOLING, Schooling.FIELD_BRANCH_IDENTIFIER))
+        .valueFunction(RegistrationFilter::getBranchIdentifier).build();
 
     predicateBuilder().name(RegistrationFilter.JSON_BRANCH_INSTANCE_IDENTIFIER)
         .tupleVariableName(branchInstanceVariableName)
