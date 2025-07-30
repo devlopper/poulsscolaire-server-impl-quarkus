@@ -1,5 +1,6 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
+import ci.gouv.dgbf.extension.core.ArrayContainer;
 import ci.gouv.dgbf.extension.core.Core;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableNamable;
@@ -53,12 +54,8 @@ public class FundingDynamicQuery extends AbstractDynamicQuery<Funding> {
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER).build();
 
     projectionBuilder().name(AbstractIdentifiableDto.JSON_AS_STRING)
-        .expression(formatConcat(
-            fieldName(Funding.FIELD_BUDGET, AbstractIdentifiableCodableNamable.FIELD_NAME), "' '",
-            Funding.FIELD_MONTH, "' '",
-            fieldName(Funding.FIELD_SOURCE, AbstractIdentifiableCodableNamable.FIELD_NAME), "' '",
-            Funding.FIELD_AMOUNT))
-        .resultConsumer((i, a) -> i.asString = a.getNextAsString()).build();
+        .expression(projectionAsStringExpression())
+        .resultConsumer(projectionAsStringResultConsumer()).build();
 
     projectionBuilder().name(FundingDto.JSON_BUDGET_IDENTIFIER)
         .fieldName(fieldName(Funding.FIELD_BUDGET, AbstractIdentifiable.FIELD_IDENTIFIER))
@@ -136,7 +133,9 @@ public class FundingDynamicQuery extends AbstractDynamicQuery<Funding> {
         FundingStatus.RETURNED, (a, b) -> a.returnable = b);
 
     // Jointures
-    joinBuilder().projectionsNames(FundingDto.JSON_DEPARTMENT_AS_STRING)
+    joinBuilder()
+        .projectionsNames(FundingDto.JSON_DEPARTMENT_AS_STRING,
+            AbstractIdentifiableDto.JSON_AS_STRING)
         .predicatesNames(FundingFilter.JSON_DEPARTMENT_IDENTIFIER).leftInnerOrRight(true)
         .entityClass(Department.class).tupleVariableName(departmentVariableName)
         .parentFieldName(Funding.FIELD_DEPARTMENT_IDENTIFIER).build();
@@ -183,6 +182,27 @@ public class FundingDynamicQuery extends AbstractDynamicQuery<Funding> {
     orderBuilder()
         .fieldName(fieldName(Funding.FIELD_SOURCE, AbstractIdentifiableCodableNamable.FIELD_NAME))
         .build();
+  }
+
+  String projectionAsStringExpression(String variableName, String departmentVariableName) {
+    return formatConcat(
+        fieldName(variableName, Funding.FIELD_BUDGET,
+            AbstractIdentifiableCodableNamable.FIELD_NAME),
+        "' '", fieldName(variableName, Funding.FIELD_MONTH), "' '",
+        fieldName(departmentVariableName, AbstractIdentifiableCodableNamable.FIELD_NAME), "' '",
+        fieldName(variableName, Funding.FIELD_ACCOUNTING_ACCOUNT,
+            AbstractIdentifiableCodableNamable.FIELD_NAME),
+        "' '", fieldName(variableName, Funding.FIELD_SOURCE,
+            AbstractIdentifiableCodableNamable.FIELD_NAME),
+        "' '", Funding.FIELD_AMOUNT);
+  }
+
+  String projectionAsStringExpression() {
+    return projectionAsStringExpression(variableName, departmentVariableName);
+  }
+
+  BiConsumer<Funding, ArrayContainer> projectionAsStringResultConsumer() {
+    return (i, a) -> i.asString = a.getNextAsString();
   }
 
   void buildStatusableProjection(String name, String fieldName, FundingStatus status,

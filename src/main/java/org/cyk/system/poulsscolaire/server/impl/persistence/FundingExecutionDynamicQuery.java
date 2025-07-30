@@ -1,7 +1,6 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
-import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableNamable;
 import ci.gouv.dgbf.extension.server.persistence.query.AbstractDynamicQuery;
 import ci.gouv.dgbf.extension.server.service.api.AbstractIdentifiableFilter;
 import ci.gouv.dgbf.extension.server.service.api.entity.AbstractIdentifiableDto;
@@ -26,11 +25,17 @@ public class FundingExecutionDynamicQuery extends AbstractDynamicQuery<FundingEx
   @Getter
   EntityManager entityManager;
 
+  String departmentVariableName;
+
+  @Inject
+  FundingDynamicQuery fundingDynamicQuery;
+
   /**
    * Cette méthode permet d'instancier un object.
    */
   public FundingExecutionDynamicQuery() {
     super(FundingExecution.class);
+    departmentVariableName = "d";
   }
 
   @PostConstruct
@@ -43,9 +48,10 @@ public class FundingExecutionDynamicQuery extends AbstractDynamicQuery<FundingEx
         .nameFieldName(FundingExecution.FIELD_FUNDING_IDENTIFIER).build();
 
     projectionBuilder().name(FundingExecutionDto.JSON_FUNDING_AS_STRING)
-        .fieldName(fieldName(FundingExecution.FIELD_FUNDING, Funding.FIELD_BUDGET,
-            AbstractIdentifiableCodableNamable.FIELD_NAME))
-        .nameFieldName(FundingExecution.FIELD_FUNDING_AS_STRING).build();
+        .nameFieldName(FundingExecution.FIELD_FUNDING_AS_STRING)
+        .expression(fundingDynamicQuery.projectionAsStringExpression(FundingExecution.FIELD_FUNDING,
+            departmentVariableName))
+        .resultConsumer((i, a) -> i.fundingAsString = a.getNextAsString()).build();
 
     projectionBuilder().name(FundingExecutionDto.JSON_AMOUNT)
         .fieldName(FundingExecution.FIELD_AMOUNT).build();
@@ -55,6 +61,11 @@ public class FundingExecutionDynamicQuery extends AbstractDynamicQuery<FundingEx
         .nameFieldName(FundingExecution.FIELD_AMOUNT_AS_STRING).build();
 
     // Jointures
+    joinBuilder().projectionsNames(FundingExecutionDto.JSON_FUNDING_AS_STRING)
+        .leftInnerOrRight(true).entityClass(Department.class)
+        .tupleVariableName(departmentVariableName).parentFieldName(
+            fieldName(FundingExecution.FIELD_FUNDING, Funding.FIELD_DEPARTMENT_IDENTIFIER))
+        .build();
 
     // Prédicats
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)
