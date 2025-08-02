@@ -326,6 +326,7 @@ class BudgetBusinessTest extends AbstractTest {
     request.setSchoolIdentifier(UUID.randomUUID().toString());
     request.setAccountingPlanIdentifier("1");
     request.setName(UUID.randomUUID().toString());
+    request.setYear(2025);
     request.setAuditWho("christian");
     long count = count(entityManager, Budget.ENTITY_NAME);
     updateBusiness.process(request);

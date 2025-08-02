@@ -1,5 +1,7 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
+import ci.gouv.dgbf.extension.core.segregation.HasDeadline;
+import ci.gouv.dgbf.extension.core.segregation.HasDeadlineAsString;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableNamable;
@@ -11,6 +13,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -36,12 +39,13 @@ import org.hibernate.envers.Audited;
         @AuditOverride(forClass = AbstractIdentifiableCodable.class),
         @AuditOverride(forClass = AbstractIdentifiable.class)})
 @EqualsAndHashCode(callSuper = true)
-public class Budget extends AbstractIdentifiableCodableNamableAuditable {
+public class Budget extends AbstractIdentifiableCodableNamableAuditable
+    implements HasDeadline<LocalDateTime>, HasDeadlineAsString {
 
   @NotNull
   @Column(name = COLUMN_SCHOOL_IDENTIFIER, nullable = false)
   public String schoolIdentifier;
-  
+
   @NotNull
   @ManyToOne
   @JoinColumn(name = COLUMN_ACCOUNTING_PLAN, nullable = false)
@@ -50,29 +54,35 @@ public class Budget extends AbstractIdentifiableCodableNamableAuditable {
   @NotNull
   @Column(name = COLUMN_YEAR, nullable = false)
   public Integer year;
-  
+
   @NotNull
   @Column(name = COLUMN_STATUS, nullable = false)
   public BudgetStatus status;
-  
+
   @Column(name = COLUMN_STATUS_REASON)
   public String statusReason;
-  
+
+  @Column(name = COLUMN_DEADLINE)
+  public LocalDateTime deadline;
+
+  @Transient
+  public String deadlineAsString;
+
   @Transient
   public String statusAsString;
-  
+
   @Transient
   public String schoolAsString;
 
   @Transient
   public String accountingPlanIdentifier;
-  
+
   @Transient
   public String accountingPlanAsString;
 
   @Transient
   public String amountAsString;
-  
+
   /**
    * Transmissible.
    */
@@ -96,7 +106,7 @@ public class Budget extends AbstractIdentifiableCodableNamableAuditable {
    */
   @Transient
   public Boolean approvable;
-  
+
   public static final String FIELD_SCHOOL_IDENTIFIER = "schoolIdentifier";
   public static final String FIELD_SCHOOL_AS_STRING = "schoolAsString";
   public static final String FIELD_ACCOUNTING_PLAN = "accountingPlan";
@@ -111,13 +121,14 @@ public class Budget extends AbstractIdentifiableCodableNamableAuditable {
   public static final String FIELD_RETURNABLE = "returnable";
   public static final String FIELD_APPROVABLE = "approvable";
   public static final String FIELD_STATUS_REASON = "statusReason";
-  
+
   public static final String ENTITY_NAME = "Budget";
   public static final String TABLE_NAME = "TA_BUDGET";
 
   public static final String COLUMN_SCHOOL_IDENTIFIER = "ECOLE";
   public static final String COLUMN_ACCOUNTING_PLAN = "PLAN_COMPTABLE";
   public static final String COLUMN_YEAR = "ANNEE";
+  public static final String COLUMN_DEADLINE = "DATE_BUTOIR";
   public static final String COLUMN_STATUS = "STATUT";
   public static final String COLUMN_STATUS_REASON = "MOTIF";
 }

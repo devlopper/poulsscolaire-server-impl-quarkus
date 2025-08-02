@@ -53,6 +53,7 @@ public class BudgetCreateBusiness extends AbstractIdentifiableCreateBusiness<Bud
     budget.schoolIdentifier = request.getSchoolIdentifier();
     budget.accountingPlan = (AccountingPlan) array[0];
     budget.year = request.getYear();
+    budget.deadline = request.getDeadline();
     budget.status = BudgetStatus.CREATED;
   }
 }

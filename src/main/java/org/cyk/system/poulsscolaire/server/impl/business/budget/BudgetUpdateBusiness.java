@@ -43,8 +43,10 @@ public class BudgetUpdateBusiness extends AbstractIdentifiableUpdateBusiness<Bud
   }
 
   @Override
-  protected void prepare(Budget accountingOperation, BudgetUpdateRequestDto request) {
-    super.prepare(accountingOperation, request);
-    accountingOperation.schoolIdentifier = request.getSchoolIdentifier();
+  protected void prepare(Budget budget, BudgetUpdateRequestDto request) {
+    super.prepare(budget, request);
+    budget.schoolIdentifier = request.getSchoolIdentifier();
+    budget.year = request.getYear();
+    budget.deadline = request.getDeadline();
   }
 }

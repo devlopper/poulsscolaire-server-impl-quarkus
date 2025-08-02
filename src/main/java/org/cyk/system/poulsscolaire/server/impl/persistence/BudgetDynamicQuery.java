@@ -1,5 +1,8 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
+import ci.gouv.dgbf.extension.core.segregation.HasDeadline;
+import ci.gouv.dgbf.extension.core.segregation.HasDeadlineAsStringDto;
+import ci.gouv.dgbf.extension.core.segregation.HasDeadlineDto;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableNamable;
@@ -74,6 +77,12 @@ public class BudgetDynamicQuery extends AbstractDynamicQuery<Budget> {
         .nameFieldName(Budget.FIELD_ACCOUNTING_PLAN_AS_STRING).build();
 
     projectionBuilder().name(BudgetDto.JSON_YEAR).fieldName(Budget.FIELD_YEAR).build();
+
+    projectionBuilder().name(HasDeadlineDto.JSON_DEADLINE).fieldName(HasDeadline.FIELD_DEADLINE)
+        .build();
+    projectionBuilder().name(HasDeadlineAsStringDto.JSON_DEADLINE_AS_STRING)
+        .fieldName(HasDeadline.FIELD_DEADLINE)
+        .resultConsumer((i, a) -> i.deadlineAsString = a.getNextAsLocalDateTimeFormatted()).build();
 
     projectionBuilder().name(BudgetDto.JSON_STATUS).fieldName(Budget.FIELD_STATUS).build();
 
