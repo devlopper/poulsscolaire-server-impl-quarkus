@@ -66,6 +66,12 @@ public class StockDistributionDynamicQuery extends AbstractDynamicQuery<StockDis
             fieldName(StockDistribution.FIELD_STOCK, AbstractIdentifiableDto.JSON_IDENTIFIER))
         .build();
 
+    projectionBuilder().name(AbstractIdentifiableDto.JSON_AS_STRING)
+        .nameFieldName(AbstractIdentifiable.FIELD_AS_STRING)
+        .fieldName(
+            fieldName(StockDistribution.FIELD_STOCK, AbstractIdentifiableCodableNamable.FIELD_NAME))
+        .build();
+
     projectionBuilder().name(HasStockAsStringDto.JSON_STOCK_AS_STRING)
         .nameFieldName(HasStockAsString.FIELD_STOCK_AS_STRING)
         .fieldName(
@@ -103,8 +109,6 @@ public class StockDistributionDynamicQuery extends AbstractDynamicQuery<StockDis
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER)
         .valueFunction(AbstractIdentifiableFilter::getIdentifier).build();
-
-
 
     // Ordres par défaut
     orderBuilder().fieldName(AbstractIdentifiableCodable.FIELD_CODE).build();
