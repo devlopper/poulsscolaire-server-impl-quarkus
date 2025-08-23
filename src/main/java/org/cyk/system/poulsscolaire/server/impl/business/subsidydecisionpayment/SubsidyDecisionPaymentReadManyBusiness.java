@@ -22,10 +22,6 @@ public class SubsidyDecisionPaymentReadManyBusiness extends
         SubsidyDecisionPaymentDynamicQuery, SubsidyDecisionPaymentDto, SubsidyDecisionPaymentMapper,
         SubsidyDecisionPaymentGetManyResponseDto> {
 
-  protected SubsidyDecisionPaymentReadManyBusiness() {
-    super(SubsidyDecisionPaymentGetManyResponseDto.class);
-  }
-
   @Inject
   @Getter
   SubsidyDecisionPaymentPersistence persistence;
@@ -37,4 +33,11 @@ public class SubsidyDecisionPaymentReadManyBusiness extends
   @Inject
   @Getter
   SubsidyDecisionPaymentMapper mapper;
+  
+  /**
+   * Cette méthode permet de construire.
+   */
+  protected SubsidyDecisionPaymentReadManyBusiness() {
+    super(SubsidyDecisionPaymentGetManyResponseDto.class);
+  }
 }

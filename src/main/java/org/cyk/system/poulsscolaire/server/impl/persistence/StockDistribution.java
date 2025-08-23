@@ -1,5 +1,7 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
+import ci.gouv.dgbf.extension.core.segregation.HasBranchInstanceAsString;
+import ci.gouv.dgbf.extension.core.segregation.HasBranchInstanceIdentifier;
 import ci.gouv.dgbf.extension.core.segregation.HasDate;
 import ci.gouv.dgbf.extension.core.segregation.HasDateAsString;
 import ci.gouv.dgbf.extension.core.segregation.HasQuantityAsString;
@@ -19,8 +21,6 @@ import java.time.LocalDateTime;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.cyk.system.poulsscolaire.server.api.configuration.HasBranchInstanceAsString;
-import org.cyk.system.poulsscolaire.server.api.configuration.HasBranchInstanceIdentifier;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;

@@ -1,5 +1,9 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
+import ci.gouv.dgbf.extension.core.segregation.HasBranchInstanceAsString;
+import ci.gouv.dgbf.extension.core.segregation.HasBranchInstanceAsStringDto;
+import ci.gouv.dgbf.extension.core.segregation.HasBranchInstanceIdentifier;
+import ci.gouv.dgbf.extension.core.segregation.HasBranchInstanceIdentifierDto;
 import ci.gouv.dgbf.extension.core.segregation.HasDate;
 import ci.gouv.dgbf.extension.core.segregation.HasDateAsString;
 import ci.gouv.dgbf.extension.core.segregation.HasDateAsStringDto;
@@ -22,10 +26,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
-import org.cyk.system.poulsscolaire.server.api.configuration.HasBranchInstanceAsString;
-import org.cyk.system.poulsscolaire.server.api.configuration.HasBranchInstanceAsStringDto;
-import org.cyk.system.poulsscolaire.server.api.configuration.HasBranchInstanceIdentifier;
-import org.cyk.system.poulsscolaire.server.api.configuration.HasBranchInstanceIdentifierDto;
 
 /**
  * Cette classe représente la requête dynamique de {@link StockDistribution}.

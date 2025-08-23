@@ -49,6 +49,9 @@ import org.cyk.system.poulsscolaire.server.api.registration.SubsidyDecisionDto;
 import org.cyk.system.poulsscolaire.server.api.registration.SubsidyDecisionPaymentDto;
 import org.cyk.system.poulsscolaire.server.api.registration.SubsidyDecisionPaymentService.SubsidyDecisionPaymentCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.registration.SubsidyDecisionPaymentService.SubsidyDecisionPaymentUpdateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.registration.SubsidyDecisionRegistrationDto;
+import org.cyk.system.poulsscolaire.server.api.registration.SubsidyDecisionRegistrationService.SubsidyDecisionRegistrationCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.registration.SubsidyDecisionRegistrationService.SubsidyDecisionRegistrationUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.registration.SubsidyDecisionService.SubsidyDecisionCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.registration.SubsidyDecisionService.SubsidyDecisionUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.registration.SubsidyDecisionService.SubsidyDecisionUpdateSubsidiesRequestDto;
@@ -108,6 +111,13 @@ import org.cyk.system.poulsscolaire.server.impl.business.subsidydecisionpayment.
 import org.cyk.system.poulsscolaire.server.impl.business.subsidydecisionpayment.SubsidyDecisionPaymentReadManyBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.subsidydecisionpayment.SubsidyDecisionPaymentReadOneBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.subsidydecisionpayment.SubsidyDecisionPaymentUpdateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.subsidydecisionregistration.SubsidyDecisionRegistrationCreateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.subsidydecisionregistration.SubsidyDecisionRegistrationDeleteBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.subsidydecisionregistration.SubsidyDecisionRegistrationMapper;
+import org.cyk.system.poulsscolaire.server.impl.business.subsidydecisionregistration.SubsidyDecisionRegistrationReadByIdentifierBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.subsidydecisionregistration.SubsidyDecisionRegistrationReadManyBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.subsidydecisionregistration.SubsidyDecisionRegistrationReadOneBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.subsidydecisionregistration.SubsidyDecisionRegistrationUpdateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AdjustedFee;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AdjustedFeeAmounts;
 import org.cyk.system.poulsscolaire.server.impl.persistence.AdjustedFeeDynamicQuery;
@@ -130,6 +140,8 @@ import org.cyk.system.poulsscolaire.server.impl.persistence.SubsidyDecision;
 import org.cyk.system.poulsscolaire.server.impl.persistence.SubsidyDecisionDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.SubsidyDecisionPayment;
 import org.cyk.system.poulsscolaire.server.impl.persistence.SubsidyDecisionPaymentDynamicQuery;
+import org.cyk.system.poulsscolaire.server.impl.persistence.SubsidyDecisionRegistration;
+import org.cyk.system.poulsscolaire.server.impl.persistence.SubsidyDecisionRegistrationDynamicQuery;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest
@@ -381,6 +393,36 @@ class RegistrationBusinessTest extends AbstractTest {
   DynamicQueryParameters<SubsidyDecisionPayment> subsidyDecisionPaymentParameters =
       new DynamicQueryParameters<>();
 
+  /* SubsidyDecisionPayment */
+
+  @Inject
+  SubsidyDecisionRegistrationCreateBusiness subsidyDecisionRegistrationCreateBusiness;
+
+  @Inject
+  SubsidyDecisionRegistrationReadManyBusiness subsidyDecisionRegistrationReadManyBusiness;
+
+  @Inject
+  SubsidyDecisionRegistrationReadOneBusiness subsidyDecisionRegistrationReadOneBusiness;
+
+  @Inject
+  SubsidyDecisionRegistrationReadByIdentifierBusiness
+      subsidyDecisionRegistrationReadByIdentifierBusiness;
+
+  @Inject
+  SubsidyDecisionRegistrationUpdateBusiness subsidyDecisionRegistrationUpdateBusiness;
+
+  @Inject
+  SubsidyDecisionRegistrationDeleteBusiness subsidyDecisionRegistrationDeleteBusiness;
+
+  @Inject
+  SubsidyDecisionRegistrationMapper subsidyDecisionRegistrationMapper;
+
+  @Inject
+  SubsidyDecisionRegistrationDynamicQuery subsidyDecisionRegistrationDynamicQuery;
+
+  DynamicQueryParameters<SubsidyDecisionRegistration> subsidyDecisionRegistrationParameters =
+      new DynamicQueryParameters<>();
+  
   /* School */
 
   @Test
@@ -1039,17 +1081,6 @@ class RegistrationBusinessTest extends AbstractTest {
         instances.stream().map(i -> i.getIdentifier()).sorted().toList());
   }
 
-  // @Test
-  void adjustedFee_get_whenFilterAmountValuePayableLessThanOrEqualsZeroFalse() {
-    adjustedFeeParameters.projection().addNames(AdjustedFeeDto.JSON_IDENTIFIER,
-        AdjustedFeeDto.JSON_REGISTRATION_AS_STRING);
-    adjustedFeeParameters.filter()
-        .addCriteria(AdjustedFeeFilter.JSON_AMOUNT_VALUE_PAYABLE_LESS_THAN_OR_EQUALS_ZERO, false);
-    List<AdjustedFee> instances = adjustedFeeDynamicQuery.getMany(adjustedFeeParameters);
-    assertLinesMatch(List.of("amountvaluepayable"),
-        instances.stream().map(i -> i.getIdentifier()).toList());
-  }
-
   /* IdentityRelationship */
 
   @Test
@@ -1346,6 +1377,92 @@ class RegistrationBusinessTest extends AbstractTest {
     assertNotNull(subsidyDecisionPaymentReadManyBusiness.process(request));
   }
 
+  /* SubsidyDecisionRegistration */
+
+  @Test
+  void subsidyDecisionRegistration_mapToDto_whenNull() {
+    assertNull(subsidyDecisionRegistrationMapper.mapToDto(null));
+  }
+
+  @Test
+  void subsidyDecisionRegistration_mapToDto_whenNotNull() {
+    SubsidyDecisionRegistration instance = new SubsidyDecisionRegistration();
+    instance.setIdentifier("1");
+    instance.setAudit(new Audit());
+    instance.getAudit().setWho("christian");
+    SubsidyDecisionRegistrationDto dto = subsidyDecisionRegistrationMapper.mapToDto(instance);
+    assertEquals(instance.getIdentifier(), dto.getIdentifier());
+    assertEquals(instance.getAudit().getWho(), dto.getAudit().getWho());
+  }
+
+  @Test
+  void subsidyDecisionRegistration_mapToDto_whenNotNullAndAuditNull() {
+    SubsidyDecisionRegistration instance = new SubsidyDecisionRegistration();
+    instance.setIdentifier("1");
+    SubsidyDecisionRegistrationDto dto = subsidyDecisionRegistrationMapper.mapToDto(instance);
+    assertEquals(instance.getIdentifier(), dto.getIdentifier());
+    assertNull(dto.getAudit());
+  }
+
+  @Test
+  void subsidyDecisionRegistration_mapFromDto_whenNull() {
+    assertNull(subsidyDecisionRegistrationMapper.mapFromDto(null));
+  }
+
+  @Test
+  void subsidyDecisionRegistration_mapFromDto_whenAuditNull() {
+    SubsidyDecisionRegistrationDto dto = new SubsidyDecisionRegistrationDto();
+    dto.setIdentifier("1");
+    SubsidyDecisionRegistration instance = subsidyDecisionRegistrationMapper.mapFromDto(dto);
+    assertEquals(dto.getIdentifier(), instance.getIdentifier());
+    assertEquals(null, instance.getAudit());
+  }
+
+  @Test
+  void subsidyDecisionRegistration_mapFromDto_whenAuditNotNull() {
+    SubsidyDecisionRegistrationDto dto = new SubsidyDecisionRegistrationDto();
+    dto.setIdentifier("1");
+    dto.setAudit(new AuditDto());
+    dto.getAudit().setWho("meliane");
+    SubsidyDecisionRegistration instance = subsidyDecisionRegistrationMapper.mapFromDto(dto);
+    assertEquals(dto.getIdentifier(), instance.getIdentifier());
+    assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
+  }
+
+
+  @Test
+  void subsidyDecisionRegistration_create() {
+    SubsidyDecisionRegistrationCreateRequestDto request =
+        new SubsidyDecisionRegistrationCreateRequestDto();
+    request.setSubsidyDecisionIdentifier("1");
+    request.setRegistrationIdentifier("1");
+    request.setAuditWho("christian");
+    long count = count(entityManager, SubsidyDecisionRegistration.ENTITY_NAME);
+    subsidyDecisionRegistrationCreateBusiness.process(request);
+    assertEquals(count + 1, count(entityManager, SubsidyDecisionRegistration.ENTITY_NAME));
+  }
+
+  @Test
+  void subsidyDecisionRegistration_update() {
+    SubsidyDecisionRegistrationUpdateRequestDto request =
+        new SubsidyDecisionRegistrationUpdateRequestDto();
+    request.setIdentifier("toupdate");
+    request.setSubsidyDecisionIdentifier("1");
+    request.setRegistrationIdentifier("1");
+    request.setAuditWho("christian");
+    long count = count(entityManager, SubsidyDecisionRegistration.ENTITY_NAME);
+    subsidyDecisionRegistrationUpdateBusiness.process(request);
+    assertEquals(count, count(entityManager, SubsidyDecisionRegistration.ENTITY_NAME));
+  }
+
+  @Test
+  void subsidyDecisionRegistration_getMany() {
+    GetManyRequestDto request = new GetManyRequestDto();
+    request.setAuditWho("christian");
+    subsidyDecisionRegistrationReadManyBusiness.process(request);
+    assertNotNull(subsidyDecisionRegistrationReadManyBusiness.process(request));
+  }
+  
   public static class Profile implements QuarkusTestProfile {
 
     @Override
