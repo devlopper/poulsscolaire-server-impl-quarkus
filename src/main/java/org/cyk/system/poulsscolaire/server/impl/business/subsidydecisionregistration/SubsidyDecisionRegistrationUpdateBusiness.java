@@ -51,6 +51,6 @@ public class SubsidyDecisionRegistrationUpdateBusiness extends
   protected void prepare(SubsidyDecisionRegistration subsidyDecision,
       SubsidyDecisionRegistrationUpdateRequestDto request) {
     super.prepare(subsidyDecision, request);
-    subsidyDecision.accepted = request.getAccepted();
+    subsidyDecision.rejected = request.getRejected();
   }
 }

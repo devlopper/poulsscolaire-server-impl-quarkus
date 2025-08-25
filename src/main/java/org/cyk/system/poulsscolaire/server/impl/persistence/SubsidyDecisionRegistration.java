@@ -50,11 +50,11 @@ public class SubsidyDecisionRegistration extends AbstractIdentifiableAuditable {
   @Transient
   public String sregistrationAsString;
   
-  @Column(name = COLUMN_ACCEPTED)
-  public Boolean accepted;
+  @Column(name = COLUMN_REJECTED)
+  public Boolean rejected;
 
   @Transient
-  public String acceptedAsString;
+  public String rejectedAsString;
 
   public static final String FIELD_SUBSIDY_DECISION = "subsidyDecision";
   public static final String FIELD_SUBSIDY_DECISION_IDENTIFIER = "subsidyDecisionIdentifier";
@@ -62,13 +62,13 @@ public class SubsidyDecisionRegistration extends AbstractIdentifiableAuditable {
   public static final String FIELD_REGISTRATION = "registration";
   public static final String FIELD_REGISTRATION_IDENTIFIER = "registrationIdentifier";
   public static final String FIELD_REGISTRATION_AS_STRING = "registrationAsString";
-  public static final String FIELD_ACCEPTED = "accepted";
-  public static final String FIELD_ACCEPTED_AS_STRING = "acceptedAsString";
+  public static final String FIELD_REJECTED = "rejected";
+  public static final String FIELD_REJECTED_AS_STRING = "rejectedAsString";
 
   public static final String ENTITY_NAME = "SubsidyDecisionRegistration";
   public static final String TABLE_NAME = "TA_INSCRIPTION_DECISION_SUBVENTION";
 
   public static final String COLUMN_SUBSIDY_DECISION = "DECISION_SUBVENTION";
   public static final String COLUMN_REGISTRATION = "INSCRIPTION";
-  public static final String COLUMN_ACCEPTED = "ACCEPTE";
+  public static final String COLUMN_REJECTED = "REJETEE";
 }

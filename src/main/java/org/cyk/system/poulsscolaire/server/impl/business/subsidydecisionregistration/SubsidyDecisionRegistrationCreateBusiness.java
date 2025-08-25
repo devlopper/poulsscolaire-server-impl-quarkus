@@ -55,6 +55,6 @@ public class SubsidyDecisionRegistrationCreateBusiness extends
     super.setFields(subsidyDecision, array, request);
     subsidyDecision.subsidyDecision = (SubsidyDecision) array[0];
     subsidyDecision.registration = (Registration) array[1];
-    subsidyDecision.accepted = request.getAccepted();
+    subsidyDecision.rejected = request.getRejected();
   }
 }

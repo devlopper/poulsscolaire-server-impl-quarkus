@@ -39,8 +39,8 @@ public class SubsidyDecisionRegistrationDynamicQuery
     projectionBuilder().name(AbstractIdentifiableDto.JSON_IDENTIFIER)
         .fieldName(AbstractIdentifiable.FIELD_IDENTIFIER).build();
 
-    projectionBuilder().name(SubsidyDecisionRegistrationDto.JSON_ACCEPTED)
-        .fieldName(SubsidyDecisionRegistration.FIELD_ACCEPTED).build();
+    projectionBuilder().name(SubsidyDecisionRegistrationDto.JSON_REJECTED)
+        .fieldName(SubsidyDecisionRegistration.FIELD_REJECTED).build();
 
     projectionBuilder().name(SubsidyDecisionRegistrationDto.JSON_SUBSIDY_DECISION_IDENTIFIER)
         .nameFieldName(SubsidyDecisionRegistration.FIELD_SUBSIDY_DECISION_IDENTIFIER)
@@ -54,9 +54,9 @@ public class SubsidyDecisionRegistrationDynamicQuery
             AbstractIdentifiableCodable.FIELD_CODE))
         .build();
 
-    projectionBuilder().name(SubsidyDecisionRegistrationDto.JSON_ACCEPTED_AS_STRING)
-        .nameFieldName(SubsidyDecisionRegistration.FIELD_ACCEPTED_AS_STRING)
-        .fieldName(SubsidyDecisionRegistration.FIELD_ACCEPTED).build();
+    projectionBuilder().name(SubsidyDecisionRegistrationDto.JSON_REJECTED_AS_STRING)
+        .nameFieldName(SubsidyDecisionRegistration.FIELD_REJECTED_AS_STRING)
+        .fieldName(SubsidyDecisionRegistration.FIELD_REJECTED).build();
 
     // Prédicats
     predicateBuilder().name(AbstractIdentifiableFilter.JSON_IDENTIFIER)
