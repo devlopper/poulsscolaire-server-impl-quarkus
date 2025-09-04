@@ -37,6 +37,8 @@ public class SubsidyDecisionCreateBusiness
   protected Object[] validate(SubsidyDecisionCreateRequestDto request, StringList messages) {
     Schooling schooling =
         schoolingValidator.validateInstanceByIdentifier(request.getSchoolingIdentifier(), messages);
+    validator.validateAmount(request.getAmount(), messages);
+    validator.validateDate(request.getDate(), messages);
     return new Object[] {schooling};
   }
 
@@ -46,5 +48,6 @@ public class SubsidyDecisionCreateBusiness
     super.setFields(subsidyDecision, array, request);
     subsidyDecision.schooling = (Schooling) array[0];
     subsidyDecision.amount = request.getAmount();
+    subsidyDecision.setDate(request.getDate());
   }
 }

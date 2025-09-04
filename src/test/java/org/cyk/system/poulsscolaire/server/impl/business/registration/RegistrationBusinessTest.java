@@ -19,6 +19,7 @@ import io.quarkus.test.junit.QuarkusTestProfile;
 import io.quarkus.test.junit.TestProfile;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -1226,6 +1227,7 @@ class RegistrationBusinessTest extends AbstractTest {
     request.setCode("mycode");
     request.setSchoolingIdentifier("1");
     request.setAmount(0);
+    request.setDate(LocalDateTime.now());
     request.setAuditWho("christian");
     long count = count(entityManager, SubsidyDecision.ENTITY_NAME);
     subsidyDecisionCreateBusiness.process(request);
@@ -1238,6 +1240,7 @@ class RegistrationBusinessTest extends AbstractTest {
     request.setIdentifier("toupdate");
     request.setCode("mycode2");
     request.setSchoolingIdentifier("1");
+    request.setDate(LocalDateTime.now());
     request.setAmount(0);
     request.setAuditWho("christian");
     long count = count(entityManager, SubsidyDecision.ENTITY_NAME);
@@ -1436,6 +1439,7 @@ class RegistrationBusinessTest extends AbstractTest {
         new SubsidyDecisionRegistrationCreateRequestDto();
     request.setSubsidyDecisionIdentifier("1");
     request.setRegistrationIdentifier("1");
+    request.setIsRejected(false);
     request.setAuditWho("christian");
     long count = count(entityManager, SubsidyDecisionRegistration.ENTITY_NAME);
     subsidyDecisionRegistrationCreateBusiness.process(request);
@@ -1449,6 +1453,7 @@ class RegistrationBusinessTest extends AbstractTest {
     request.setIdentifier("toupdate");
     request.setSubsidyDecisionIdentifier("1");
     request.setRegistrationIdentifier("1");
+    request.setIsRejected(false);
     request.setAuditWho("christian");
     long count = count(entityManager, SubsidyDecisionRegistration.ENTITY_NAME);
     subsidyDecisionRegistrationUpdateBusiness.process(request);

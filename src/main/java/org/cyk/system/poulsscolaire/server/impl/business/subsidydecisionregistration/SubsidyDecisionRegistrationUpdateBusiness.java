@@ -45,12 +45,13 @@ public class SubsidyDecisionRegistrationUpdateBusiness extends
         .validateInstanceByIdentifier(request.getSubsidyDecisionIdentifier(), messages);
     subsidyDecision.registration = registrationValidator
         .validateInstanceByIdentifier(request.getRegistrationIdentifier(), messages);
+    validator.validateIsRejected(request.getIsRejected(), messages);
   }
 
   @Override
   protected void prepare(SubsidyDecisionRegistration subsidyDecision,
       SubsidyDecisionRegistrationUpdateRequestDto request) {
     super.prepare(subsidyDecision, request);
-    subsidyDecision.rejected = request.getRejected();
+    subsidyDecision.setIsRejected(request.getIsRejected());
   }
 }

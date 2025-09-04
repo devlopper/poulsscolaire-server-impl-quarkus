@@ -1,5 +1,7 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
+import ci.gouv.dgbf.extension.core.segregation.HasIsRejected;
+import ci.gouv.dgbf.extension.core.segregation.HasIsRejectedAsString;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableAuditable;
 import jakarta.persistence.Column;
@@ -10,6 +12,8 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
@@ -26,7 +30,8 @@ import org.hibernate.envers.Audited;
 @AuditOverrides(value = {@AuditOverride(forClass = AbstractIdentifiableAuditable.class),
     @AuditOverride(forClass = AbstractIdentifiable.class)})
 @EqualsAndHashCode(callSuper = true)
-public class SubsidyDecisionRegistration extends AbstractIdentifiableAuditable {
+public class SubsidyDecisionRegistration extends AbstractIdentifiableAuditable
+    implements HasIsRejected, HasIsRejectedAsString {
 
   @NotNull
   @ManyToOne
@@ -35,10 +40,10 @@ public class SubsidyDecisionRegistration extends AbstractIdentifiableAuditable {
 
   @Transient
   public String subsidyDecisionIdentifier;
-  
+
   @Transient
   public String subsidyDecisionAsString;
-  
+
   @NotNull
   @ManyToOne
   @JoinColumn(name = COLUMN_REGISTRATION, nullable = false)
@@ -46,15 +51,20 @@ public class SubsidyDecisionRegistration extends AbstractIdentifiableAuditable {
 
   @Transient
   public String registrationIdentifier;
-  
-  @Transient
-  public String sregistrationAsString;
-  
-  @Column(name = COLUMN_REJECTED)
-  public Boolean rejected;
 
   @Transient
-  public String rejectedAsString;
+  public String registrationAsString;
+
+  @NotNull
+  @Getter
+  @Setter
+  @Column(name = COLUMN_IS_REJECTED, nullable = false)
+  public Boolean isRejected;
+
+  @Getter
+  @Setter
+  @Transient
+  public String isRejectedAsString;
 
   public static final String FIELD_SUBSIDY_DECISION = "subsidyDecision";
   public static final String FIELD_SUBSIDY_DECISION_IDENTIFIER = "subsidyDecisionIdentifier";
@@ -62,13 +72,11 @@ public class SubsidyDecisionRegistration extends AbstractIdentifiableAuditable {
   public static final String FIELD_REGISTRATION = "registration";
   public static final String FIELD_REGISTRATION_IDENTIFIER = "registrationIdentifier";
   public static final String FIELD_REGISTRATION_AS_STRING = "registrationAsString";
-  public static final String FIELD_REJECTED = "rejected";
-  public static final String FIELD_REJECTED_AS_STRING = "rejectedAsString";
 
   public static final String ENTITY_NAME = "SubsidyDecisionRegistration";
   public static final String TABLE_NAME = "TA_INSCRIPTION_DECISION_SUBVENTION";
 
   public static final String COLUMN_SUBSIDY_DECISION = "DECISION_SUBVENTION";
   public static final String COLUMN_REGISTRATION = "INSCRIPTION";
-  public static final String COLUMN_REJECTED = "REJETEE";
+  public static final String COLUMN_IS_REJECTED = "REJETEE";
 }

@@ -46,6 +46,7 @@ public class SubsidyDecisionRegistrationCreateBusiness extends
         .validateInstanceByIdentifier(request.getSubsidyDecisionIdentifier(), messages);
     Registration registration = registrationValidator
         .validateInstanceByIdentifier(request.getRegistrationIdentifier(), messages);
+    validator.validateIsRejected(request.getIsRejected(), messages);
     return new Object[] {subsidyDecision, registration};
   }
 
@@ -55,6 +56,6 @@ public class SubsidyDecisionRegistrationCreateBusiness extends
     super.setFields(subsidyDecision, array, request);
     subsidyDecision.subsidyDecision = (SubsidyDecision) array[0];
     subsidyDecision.registration = (Registration) array[1];
-    subsidyDecision.rejected = request.getRejected();
+    subsidyDecision.setIsRejected(request.getIsRejected());
   }
 }

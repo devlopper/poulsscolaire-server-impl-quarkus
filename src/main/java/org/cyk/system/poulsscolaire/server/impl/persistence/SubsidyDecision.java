@@ -1,5 +1,7 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
+import ci.gouv.dgbf.extension.core.segregation.HasDate;
+import ci.gouv.dgbf.extension.core.segregation.HasDateAsString;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableAuditable;
@@ -10,9 +12,12 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
@@ -30,7 +35,8 @@ import org.hibernate.envers.Audited;
     @AuditOverride(forClass = AbstractIdentifiableCodable.class),
     @AuditOverride(forClass = AbstractIdentifiable.class)})
 @EqualsAndHashCode(callSuper = true)
-public class SubsidyDecision extends AbstractIdentifiableCodableAuditable {
+public class SubsidyDecision extends AbstractIdentifiableCodableAuditable
+    implements HasDate, HasDateAsString {
 
   @NotNull
   @ManyToOne
@@ -45,10 +51,21 @@ public class SubsidyDecision extends AbstractIdentifiableCodableAuditable {
 
   @Transient
   public String schoolIdentifier;
-  
+
   @NotNull
   @Column(name = COLUMN_AMOUNT, nullable = false)
   public Integer amount;
+
+  @Getter
+  @Setter
+  @NotNull
+  @Column(name = COLUMN_DATE, nullable = false)
+  private LocalDateTime date;
+
+  @Getter
+  @Setter
+  @Transient
+  private String dateAsString;
 
   @Transient
   public String amountAsString;
@@ -97,4 +114,5 @@ public class SubsidyDecision extends AbstractIdentifiableCodableAuditable {
 
   public static final String COLUMN_SCHOOLING = "SCOLARITE";
   public static final String COLUMN_AMOUNT = "MONTANT";
+  public static final String COLUMN_DATE = "DATE_";
 }

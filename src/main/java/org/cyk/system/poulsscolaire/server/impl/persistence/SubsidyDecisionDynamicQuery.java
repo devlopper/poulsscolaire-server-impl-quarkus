@@ -1,5 +1,9 @@
 package org.cyk.system.poulsscolaire.server.impl.persistence;
 
+import ci.gouv.dgbf.extension.core.segregation.HasDate;
+import ci.gouv.dgbf.extension.core.segregation.HasDateAsString;
+import ci.gouv.dgbf.extension.core.segregation.HasDateAsStringDto;
+import ci.gouv.dgbf.extension.core.segregation.HasDateDto;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodable;
 import ci.gouv.dgbf.extension.server.persistence.entity.AbstractIdentifiableCodableNamable;
@@ -59,8 +63,15 @@ public class SubsidyDecisionDynamicQuery extends AbstractDynamicQuery<SubsidyDec
         .fieldName(AbstractIdentifiableCodable.FIELD_CODE)
         .nameFieldName(AbstractIdentifiable.FIELD_AS_STRING).build();
 
+    projectionBuilder().name(HasDateDto.JSON_DATE).fieldName(HasDate.FIELD_DATE).build();
+
+    projectionBuilder().name(HasDateAsStringDto.JSON_DATE_AS_STRING).fieldName(HasDate.FIELD_DATE)
+        .nameFieldName(HasDateAsString.FIELD_DATE_AS_STRING).build();
+
     projectionBuilder().name(SubsidyDecisionDto.JSON_AMOUNT).fieldName(SubsidyDecision.FIELD_AMOUNT)
         .build();
+
+    
 
     projectionBuilder().name(SubsidyDecisionDto.JSON_SCHOOLING_IDENTIFIER)
         .fieldName(

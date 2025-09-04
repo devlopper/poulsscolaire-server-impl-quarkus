@@ -38,11 +38,14 @@ public class SubsidyDecisionUpdateBusiness
     super.validate(request, messages, subsidyDecision);
     subsidyDecision.schooling =
         schoolingValidator.validateInstanceByIdentifier(request.getSchoolingIdentifier(), messages);
+    validator.validateAmount(request.getAmount(), messages);
+    validator.validateDate(request.getDate(), messages);
   }
 
   @Override
   protected void prepare(SubsidyDecision subsidyDecision, SubsidyDecisionUpdateRequestDto request) {
     super.prepare(subsidyDecision, request);
     subsidyDecision.amount = request.getAmount();
+    subsidyDecision.setDate(request.getDate());
   }
 }

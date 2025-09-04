@@ -1,5 +1,6 @@
 package org.cyk.system.poulsscolaire.server.impl.business.subsidydecisionregistration;
 
+import ci.gouv.dgbf.extension.core.StringList;
 import ci.gouv.dgbf.extension.server.business.AbstractIdentifiableValidator;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -21,4 +22,7 @@ public class SubsidyDecisionRegistrationValidator
   @Getter
   private SubsidyDecisionRegistrationPersistence persistence;
 
+  boolean validateIsRejected(Boolean isRejected, StringList messages) {
+    return validationHelper.validateNullByName(this, isRejected, "rejet", messages);
+  }
 }
