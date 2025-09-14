@@ -33,6 +33,9 @@ import org.cyk.system.poulsscolaire.server.api.fee.StockDistributionRegistration
 import org.cyk.system.poulsscolaire.server.api.fee.StockDistributionService.StockDistributionCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.fee.StockDistributionService.StockDistributionUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.fee.StockDto;
+import org.cyk.system.poulsscolaire.server.api.fee.StockFeeCategoryDto;
+import org.cyk.system.poulsscolaire.server.api.fee.StockFeeCategoryService.StockFeeCategoryCreateRequestDto;
+import org.cyk.system.poulsscolaire.server.api.fee.StockFeeCategoryService.StockFeeCategoryUpdateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.fee.StockMovementDto;
 import org.cyk.system.poulsscolaire.server.api.fee.StockMovementService.StockMovementCreateRequestDto;
 import org.cyk.system.poulsscolaire.server.api.fee.StockMovementService.StockMovementUpdateRequestDto;
@@ -62,6 +65,14 @@ import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregist
 import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationUpdateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationUpdateQuantityBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stockdistributionregistration.StockDistributionRegistrationValidator;
+import org.cyk.system.poulsscolaire.server.impl.business.stockfeecategory.StockFeeCategoryCreateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.stockfeecategory.StockFeeCategoryDeleteBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.stockfeecategory.StockFeeCategoryMapper;
+import org.cyk.system.poulsscolaire.server.impl.business.stockfeecategory.StockFeeCategoryReadByIdentifierBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.stockfeecategory.StockFeeCategoryReadManyBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.stockfeecategory.StockFeeCategoryReadOneBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.stockfeecategory.StockFeeCategoryUpdateBusiness;
+import org.cyk.system.poulsscolaire.server.impl.business.stockfeecategory.StockFeeCategoryValidator;
 import org.cyk.system.poulsscolaire.server.impl.business.stockmovement.StockMovementCreateBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stockmovement.StockMovementDeleteBusiness;
 import org.cyk.system.poulsscolaire.server.impl.business.stockmovement.StockMovementMapper;
@@ -78,6 +89,8 @@ import org.cyk.system.poulsscolaire.server.impl.persistence.StockDistributionDyn
 import org.cyk.system.poulsscolaire.server.impl.persistence.StockDistributionRegistration;
 import org.cyk.system.poulsscolaire.server.impl.persistence.StockDistributionRegistrationDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.StockDynamicQuery;
+import org.cyk.system.poulsscolaire.server.impl.persistence.StockFeeCategory;
+import org.cyk.system.poulsscolaire.server.impl.persistence.StockFeeCategoryDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.StockMovement;
 import org.cyk.system.poulsscolaire.server.impl.persistence.StockMovementDynamicQuery;
 import org.cyk.system.poulsscolaire.server.impl.persistence.StockQuantity;
@@ -150,6 +163,38 @@ class FeeCategoryBusinessTest extends AbstractTest {
   @Inject
   StockValidator stockValidator;
 
+  /* Stock Fee Category */
+
+  @Inject
+  StockFeeCategoryCreateBusiness stockFeeCategoryCreateBusiness;
+
+  @Inject
+  StockFeeCategoryReadManyBusiness stockFeeCategoryReadManyBusiness;
+
+  @Inject
+  StockFeeCategoryReadOneBusiness stockFeeCategoryReadOneBusiness;
+
+  @Inject
+  StockFeeCategoryReadByIdentifierBusiness stockFeeCategoryReadByIdentifierBusiness;
+
+  @Inject
+  StockFeeCategoryUpdateBusiness stockFeeCategoryUpdateBusiness;
+
+  @Inject
+  StockFeeCategoryDeleteBusiness stockFeeCategoryDeleteBusiness;
+
+  @Inject
+  StockFeeCategoryMapper stockFeeCategoryMapper;
+
+  @Inject
+  StockFeeCategoryDynamicQuery stockFeeCategoryDynamicQuery;
+
+  DynamicQueryParameters<StockFeeCategory> stockFeeCategoryParameters =
+      new DynamicQueryParameters<>();
+
+  @Inject
+  StockFeeCategoryValidator stockFeeCategoryValidator;
+  
   /* Stock Movement */
 
   @Inject
@@ -522,6 +567,88 @@ class FeeCategoryBusinessTest extends AbstractTest {
     dto.setAudit(new AuditDto());
     dto.getAudit().setWho("meliane");
     Stock instance = stockMapper.mapFromDto(dto);
+    assertEquals(dto.getIdentifier(), instance.getIdentifier());
+    assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
+  }
+  
+  /* Stock Fee Category */
+
+  @Test
+  void stockFeeCategory_dynamicQuery() {
+    assertNotNull(stockFeeCategoryDynamicQuery.toString());
+  }
+  
+  @Test
+  void stockFeeCategory_create() {
+    StockFeeCategoryCreateRequestDto request = new StockFeeCategoryCreateRequestDto();
+    request.setName(UUID.randomUUID().toString());
+    request.setStockIdentifier("1");
+    request.setFeeCategoryIdentifier("1");
+    request.setAuditWho("christian");
+    long count = count(entityManager, StockFeeCategory.ENTITY_NAME);
+    stockFeeCategoryCreateBusiness.process(request);
+    assertEquals(count + 1, count(entityManager, StockFeeCategory.ENTITY_NAME));
+  }
+
+  @Test
+  void stockFeeCategory_update() {
+    StockFeeCategoryUpdateRequestDto request = new StockFeeCategoryUpdateRequestDto();
+    request.setIdentifier("toupdate");
+    request.setName(UUID.randomUUID().toString());
+    request.setStockIdentifier("1");
+    request.setFeeCategoryIdentifier("1");
+    request.setAuditWho("christian");
+    long count = count(entityManager, StockFeeCategory.ENTITY_NAME);
+    stockFeeCategoryUpdateBusiness.process(request);
+    assertEquals(count + 0, count(entityManager, StockFeeCategory.ENTITY_NAME));
+  }
+
+  @Test
+  void stockFeeCategory_mapToDto_whenNull() {
+    assertNull(stockFeeCategoryMapper.mapToDto(null));
+  }
+
+  @Test
+  void stockFeeCategory_mapToDto_whenNotNull() {
+    StockFeeCategory instance = new StockFeeCategory();
+    instance.setIdentifier("1");
+    instance.setAudit(new Audit());
+    instance.getAudit().setWho("christian");
+    StockFeeCategoryDto dto = stockFeeCategoryMapper.mapToDto(instance);
+    assertEquals(instance.getIdentifier(), dto.getIdentifier());
+    assertEquals(instance.getAudit().getWho(), dto.getAudit().getWho());
+  }
+
+  @Test
+  void stockFeeCategory_mapToDto_whenNotNullAndAuditNull() {
+    StockFeeCategory instance = new StockFeeCategory();
+    instance.setIdentifier("1");
+    StockFeeCategoryDto dto = stockFeeCategoryMapper.mapToDto(instance);
+    assertEquals(instance.getIdentifier(), dto.getIdentifier());
+    assertNull(dto.getAudit());
+  }
+
+  @Test
+  void stockFeeCategory_mapFromDto_whenNull() {
+    assertNull(stockFeeCategoryMapper.mapFromDto(null));
+  }
+
+  @Test
+  void stockFeeCategory_mapFromDto_whenAuditNull() {
+    StockFeeCategoryDto dto = new StockFeeCategoryDto();
+    dto.setIdentifier("1");
+    StockFeeCategory instance = stockFeeCategoryMapper.mapFromDto(dto);
+    assertEquals(dto.getIdentifier(), instance.getIdentifier());
+    assertEquals(null, instance.getAudit());
+  }
+
+  @Test
+  void stockFeeCategory_mapFromDto_whenAuditNotNull() {
+    StockFeeCategoryDto dto = new StockFeeCategoryDto();
+    dto.setIdentifier("1");
+    dto.setAudit(new AuditDto());
+    dto.getAudit().setWho("meliane");
+    StockFeeCategory instance = stockFeeCategoryMapper.mapFromDto(dto);
     assertEquals(dto.getIdentifier(), instance.getIdentifier());
     assertEquals(dto.getAudit().getWho(), instance.getAudit().getWho());
   }
