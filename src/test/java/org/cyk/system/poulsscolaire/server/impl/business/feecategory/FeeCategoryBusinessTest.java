@@ -596,7 +596,7 @@ class FeeCategoryBusinessTest extends AbstractTest {
     request.setIdentifier("toupdate");
     request.setName(UUID.randomUUID().toString());
     request.setStockIdentifier("1");
-    request.setFeeCategoryIdentifier("1");
+    request.setFeeCategoryIdentifier("2");
     request.setAuditWho("christian");
     long count = count(entityManager, StockFeeCategory.ENTITY_NAME);
     stockFeeCategoryUpdateBusiness.process(request);

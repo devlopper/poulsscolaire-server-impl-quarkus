@@ -33,7 +33,7 @@ VALUES ('stocktoupdate','stocktoupdate','1','1','1','1','1','CREATION',DATE '200
 -- Stock rubrique
 
 INSERT INTO TA_STOCK_RUBRIQUE(IDENTIFIANT,STOCK,RUBRIQUE,AUDIT_IDENTIFIANT,AUDIT_ACTEUR,AUDIT_FONCTIONNALITE,AUDIT_ACTION,AUDIT_DATE)
-VALUES ('toupdate','1','1','1','1','1','CREATION',DATE '2000-1-1');
+VALUES ('toupdate','1','2','1','1','1','CREATION',DATE '2000-1-1');
 
 -- Stock mouvement
 

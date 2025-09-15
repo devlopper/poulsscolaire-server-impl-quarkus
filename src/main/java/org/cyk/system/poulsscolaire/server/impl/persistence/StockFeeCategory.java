@@ -11,6 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -28,7 +29,9 @@ import org.hibernate.envers.Audited;
 @Getter
 @Setter
 @Entity(name = StockFeeCategory.ENTITY_NAME)
-@Table(name = StockFeeCategory.TABLE_NAME)
+@Table(name = StockFeeCategory.TABLE_NAME,
+    uniqueConstraints = {@UniqueConstraint(
+        columnNames = {StockFeeCategory.COLUMN_STOCK, StockFeeCategory.COLUMN_FEE_CATEGORY})})
 @Audited
 @AuditOverrides(value = {@AuditOverride(forClass = AbstractIdentifiableAuditable.class),
     @AuditOverride(forClass = AbstractIdentifiable.class)})
@@ -46,7 +49,7 @@ public class StockFeeCategory extends AbstractIdentifiableAuditable implements H
 
   @Transient
   private String stockAsString;
-  
+
   @NotNull
   @ManyToOne
   @JoinColumn(name = COLUMN_FEE_CATEGORY, nullable = false)
